@@ -1,0 +1,32 @@
+{
+  "header": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "login": "Iniciar sesión"
+  },
+  "footer": {
+    "allRightsReserved": "© 2025 Brickify. Todos los derechos reservados.",
+    "termsOfService": "Términos de servicio",
+    "privacyPolicy": "Política de privacidad",
+    "contactUs": "Contáctenos"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "welcome": "Bienvenido",
+    "welcomeMessage": "Bienvenido a su panel de Brickify. Aquí puede administrar sus proyectos y configuraciones.",
+    "recentActivity": "Actividad reciente",
+    "noRecentActivity": "No hay actividad reciente para mostrar.",
+    "quickActions": "Acciones rápidas",
+    "createNewProject": "Crear nuevo proyecto",
+    "viewSettings": "Ver configuración",
+    "logout": "Cerrar sesión"
+  },
+  "login": {
+    "title": "Iniciar sesión - Brickify"
+  },
+  "languageSelector": {
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español"
+  }
+}

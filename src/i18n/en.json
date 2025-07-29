@@ -1,0 +1,32 @@
+{
+  "header": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "login": "Login"
+  },
+  "footer": {
+    "allRightsReserved": "© 2025 Brickify. All rights reserved.",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "contactUs": "Contact Us"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "welcomeMessage": "Welcome to your Brickify dashboard. This is where you can manage your projects and settings.",
+    "recentActivity": "Recent Activity",
+    "noRecentActivity": "No recent activity to display.",
+    "quickActions": "Quick Actions",
+    "createNewProject": "Create New Project",
+    "viewSettings": "View Settings",
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "Login - Brickify"
+  },
+  "languageSelector": {
+    "language": "Language",
+    "english": "English",
+    "spanish": "Spanish"
+  }
+}

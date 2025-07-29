@@ -1,16 +1,24 @@
 ---
 import '../styles/global.css';
+import {Footer} from './components/Footer';
+import {Header} from "./components/Header";
+
 const { content } = Astro.props;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>{content.title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang={Astro.currentLocale || "en"}>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{content?.title || 'Brickify'}</title>
+    </head>
+    <body class="min-h-screen flex flex-col">
+        <Header client:only="react"/>
+        <main class="flex-1">
+            <slot />
+        </main>
+        <Footer client:only="react" />
+    </body>
 </html>
