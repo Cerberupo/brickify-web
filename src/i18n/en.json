@@ -22,11 +22,138 @@
     "logout": "Logout"
   },
   "login": {
-    "title": "Login - Brickify"
+    "title": "Login - Brickify",
+    "login": "Login",
+    "enterCredentials": "Enter your credentials to access your account",
+    "loginWithGoogle": "Login with Google",
+    "noAccount": "Don't have an account?",
+    "register": "Register"
+  },
+  "register": {
+    "title": "Register - Brickify",
+    "register": "Register",
+    "createAccount": "Create a new account",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "form": {
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter your email",
+      "required": "Email is required",
+      "invalid": "Invalid email address"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "required": "Password is required"
+    },
+    "name": {
+      "label": "Name",
+      "placeholder": "Enter your name",
+      "required": "Name is required"
+    }
   },
   "languageSelector": {
     "language": "Language",
     "english": "English",
     "spanish": "Spanish"
+  },
+  "termsOfService": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last Updated: June 1, 2025",
+    "introduction": "Welcome to Brickify. By accessing or using our service, you agree to be bound by these Terms of Service.",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "content": "By accessing or using our service, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We reserve the right to modify or replace these Terms of Service at any time. It is your responsibility to check these Terms periodically for changes."
+      },
+      "accountTerms": {
+        "title": "Account Terms",
+        "content": "You are responsible for maintaining the security of your account and password. The company cannot and will not be liable for any loss or damage from your failure to comply with this security obligation."
+      },
+      "intellectualProperty": {
+        "title": "Intellectual Property",
+        "content": "The Service and its original content, features, and functionality are and will remain the exclusive property of Brickify and its licensors."
+      },
+      "termination": {
+        "title": "Termination",
+        "content": "We may terminate or suspend your account and bar access to the Service immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever."
+      },
+      "limitation": {
+        "title": "Limitation of Liability",
+        "content": "In no event shall Brickify, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages."
+      },
+      "governing": {
+        "title": "Governing Law",
+        "content": "These Terms shall be governed and construed in accordance with the laws, without regard to its conflict of law provisions."
+      }
+    },
+    "contact": "If you have any questions about these Terms, please contact us."
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: June 1, 2025",
+    "introduction": "This Privacy Policy describes how your personal information is collected, used, and shared when you visit or make a purchase from Brickify.",
+    "sections": {
+      "collection": {
+        "title": "Information We Collect",
+        "content": "When you visit the Site, we automatically collect certain information about your device, including information about your web browser, IP address, time zone, and some of the cookies that are installed on your device."
+      },
+      "usage": {
+        "title": "How We Use Your Information",
+        "content": "We use the information we collect to help us screen for potential risk and fraud, and more generally to improve and optimize our Site."
+      },
+      "sharing": {
+        "title": "Sharing Your Information",
+        "content": "We share your Personal Information with third parties to help us use your Personal Information, as described above."
+      },
+      "tracking": {
+        "title": "Behavioral Advertising",
+        "content": "We use your Personal Information to provide you with targeted advertisements or marketing communications we believe may be of interest to you."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "content": "If you are a European resident, you have the right to access personal information we hold about you and to ask that your personal information be corrected, updated, or deleted."
+      },
+      "changes": {
+        "title": "Changes",
+        "content": "We may update this privacy policy from time to time in order to reflect, for example, changes to our practices or for other operational, legal or regulatory reasons."
+      }
+    },
+    "contact": "If you have any questions about our Privacy Policy, please contact us."
+  },
+  "contactUs": {
+    "title": "Contact Us",
+    "introduction": "We'd love to hear from you! Please fill out the form below and we'll get back to you as soon as possible.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Submit",
+      "namePlaceholder": "Enter your name",
+      "emailPlaceholder": "Enter your email",
+      "subjectPlaceholder": "Enter the subject",
+      "messagePlaceholder": "Enter your message",
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "subjectRequired": "Subject is required",
+      "messageRequired": "Message is required"
+    },
+    "contactInfo": {
+      "title": "Contact Information",
+      "address": "123 Brickify Street, Tech City, TC 12345",
+      "email": "support@brickify.com",
+      "phone": "+1 (555) 123-4567",
+      "hours": "Monday - Friday: 9am - 5pm"
+    },
+    "success": "Thank you for your message. We'll get back to you soon!",
+    "error": "There was an error sending your message. Please try again."
   }
 }

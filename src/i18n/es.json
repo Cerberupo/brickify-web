@@ -22,11 +22,138 @@
     "logout": "Cerrar sesión"
   },
   "login": {
-    "title": "Iniciar sesión - Brickify"
+    "title": "Iniciar sesión - Brickify",
+    "login": "Iniciar sesión",
+    "enterCredentials": "Ingrese sus credenciales para acceder a su cuenta",
+    "loginWithGoogle": "Iniciar sesión con Google",
+    "noAccount": "¿No tiene una cuenta?",
+    "register": "Registrarse"
+  },
+  "register": {
+    "title": "Registrarse - Brickify",
+    "register": "Registrarse",
+    "createAccount": "Crear una nueva cuenta",
+    "alreadyHaveAccount": "¿Ya tiene una cuenta?",
+    "login": "Iniciar sesión"
+  },
+  "form": {
+    "email": {
+      "label": "Correo electrónico",
+      "placeholder": "Ingrese su correo electrónico",
+      "required": "El correo electrónico es obligatorio",
+      "invalid": "Dirección de correo electrónico inválida"
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Ingrese su contraseña",
+      "required": "La contraseña es obligatoria"
+    },
+    "name": {
+      "label": "Nombre",
+      "placeholder": "Ingrese su nombre",
+      "required": "El nombre es obligatorio"
+    }
   },
   "languageSelector": {
     "language": "Idioma",
     "english": "Inglés",
     "spanish": "Español"
+  },
+  "termsOfService": {
+    "title": "Términos de Servicio",
+    "lastUpdated": "Última Actualización: 1 de junio de 2025",
+    "introduction": "Bienvenido a Brickify. Al acceder o utilizar nuestro servicio, acepta estar sujeto a estos Términos de Servicio.",
+    "sections": {
+      "acceptance": {
+        "title": "Aceptación de Términos",
+        "content": "Al acceder o utilizar nuestro servicio, acepta estar sujeto a estos Términos de Servicio y a todas las leyes y regulaciones aplicables. Si no está de acuerdo con alguno de estos términos, se le prohíbe usar o acceder a este sitio."
+      },
+      "changes": {
+        "title": "Cambios en los Términos",
+        "content": "Nos reservamos el derecho de modificar o reemplazar estos Términos de Servicio en cualquier momento. Es su responsabilidad revisar estos Términos periódicamente para ver si hay cambios."
+      },
+      "accountTerms": {
+        "title": "Términos de la Cuenta",
+        "content": "Usted es responsable de mantener la seguridad de su cuenta y contraseña. La empresa no puede y no será responsable de ninguna pérdida o daño por su incumplimiento de esta obligación de seguridad."
+      },
+      "intellectualProperty": {
+        "title": "Propiedad Intelectual",
+        "content": "El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de Brickify y sus licenciantes."
+      },
+      "termination": {
+        "title": "Terminación",
+        "content": "Podemos terminar o suspender su cuenta y prohibir el acceso al Servicio inmediatamente, sin previo aviso o responsabilidad, bajo nuestra única discreción, por cualquier motivo."
+      },
+      "limitation": {
+        "title": "Limitación de Responsabilidad",
+        "content": "En ningún caso Brickify, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por cualquier daño indirecto, incidental, especial, consecuente o punitivo."
+      },
+      "governing": {
+        "title": "Ley Aplicable",
+        "content": "Estos Términos se regirán e interpretarán de acuerdo con las leyes, sin tener en cuenta sus disposiciones sobre conflictos de leyes."
+      }
+    },
+    "contact": "Si tiene alguna pregunta sobre estos Términos, contáctenos."
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última Actualización: 1 de junio de 2025",
+    "introduction": "Esta Política de Privacidad describe cómo se recopila, utiliza y comparte su información personal cuando visita o realiza una compra en Brickify.",
+    "sections": {
+      "collection": {
+        "title": "Información que Recopilamos",
+        "content": "Cuando visita el Sitio, recopilamos automáticamente cierta información sobre su dispositivo, incluida información sobre su navegador web, dirección IP, zona horaria y algunas de las cookies que están instaladas en su dispositivo."
+      },
+      "usage": {
+        "title": "Cómo Usamos su Información",
+        "content": "Utilizamos la información que recopilamos para ayudarnos a detectar posibles riesgos y fraudes, y más generalmente para mejorar y optimizar nuestro Sitio."
+      },
+      "sharing": {
+        "title": "Compartiendo su Información",
+        "content": "Compartimos su Información Personal con terceros para ayudarnos a utilizar su Información Personal, como se describió anteriormente."
+      },
+      "tracking": {
+        "title": "Publicidad Conductual",
+        "content": "Utilizamos su Información Personal para proporcionarle anuncios dirigidos o comunicaciones de marketing que creemos que pueden ser de su interés."
+      },
+      "rights": {
+        "title": "Sus Derechos",
+        "content": "Si es residente europeo, tiene derecho a acceder a la información personal que tenemos sobre usted y a solicitar que su información personal sea corregida, actualizada o eliminada."
+      },
+      "changes": {
+        "title": "Cambios",
+        "content": "Podemos actualizar esta política de privacidad de vez en cuando para reflejar, por ejemplo, cambios en nuestras prácticas o por otras razones operativas, legales o regulatorias."
+      }
+    },
+    "contact": "Si tiene alguna pregunta sobre nuestra Política de Privacidad, contáctenos."
+  },
+  "contactUs": {
+    "title": "Contáctenos",
+    "introduction": "¡Nos encantaría saber de usted! Complete el formulario a continuación y nos pondremos en contacto con usted lo antes posible.",
+    "form": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "subject": "Asunto",
+      "message": "Mensaje",
+      "submit": "Enviar",
+      "namePlaceholder": "Ingrese su nombre",
+      "emailPlaceholder": "Ingrese su correo electrónico",
+      "subjectPlaceholder": "Ingrese el asunto",
+      "messagePlaceholder": "Ingrese su mensaje",
+      "nameRequired": "El nombre es obligatorio",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Dirección de correo electrónico inválida",
+      "subjectRequired": "El asunto es obligatorio",
+      "messageRequired": "El mensaje es obligatorio"
+    },
+    "contactInfo": {
+      "title": "Información de Contacto",
+      "address": "123 Calle Brickify, Ciudad Tecnológica, CT 12345",
+      "email": "soporte@brickify.com",
+      "phone": "+1 (555) 123-4567",
+      "hours": "Lunes - Viernes: 9am - 5pm"
+    },
+    "success": "Gracias por su mensaje. ¡Nos pondremos en contacto con usted pronto!",
+    "error": "Hubo un error al enviar su mensaje. Por favor, inténtelo de nuevo."
   }
 }

@@ -1,84 +1,85 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {useForm} from 'react-hook-form';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from 'react-i18next';
+import {EmailField} from './EmailField';
+import {PasswordField} from './PasswordField';
+import {GoogleLogin} from '@react-oauth/google';
+import {googleLoginRequest} from '@/lib/services/auth';
 
 
 export function LoginForm() {
-    const {t} = useTranslation();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const {t, i18n} = useTranslation();
+    const {register, handleSubmit, formState: {errors}} = useForm({
+        defaultValues: {
+            email: '',
+            password: ''
+        }
+    });
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleLogin = (data: { email: string; password: string }) => {
         // In a real app, you would validate credentials here
-        console.log('Login attempt with:', username, password);
+        console.log('Login attempt with:', data);
         // Navigate to dashboard after successful login
-        window.location.href = '/dashboard';
+        // window.location.href = '/dashboard';
     };
 
-    const handleGoogleLogin = () => {
-        // In a real app, you would implement Google OAuth here
-        console.log('Google login clicked');
-        // Navigate to dashboard after successful login
-        window.location.href = '/dashboard';
+    const handleGoogleLoginSuccess = async (credentialResponse: any) => {
+        // Validate the credential with the backend
+        console.log('Google login success:', credentialResponse);
+
+        try {
+            const data = await googleLoginRequest(credentialResponse);
+            console.log('Login response:', data);
+
+            // Navigate to dashboard after successful login
+            // window.location.href = '/dashboard';
+        } catch (error) {
+            console.error('Error during Google login:', error);
+            // Handle error appropriately
+        }
+    };
+
+    const handleGoogleLoginError = () => {
+        console.error('Google login failed');
+        // In a real app, you would show an error message to the user
     };
 
     return (
         <Card className="w-[350px] mx-auto">
             <CardHeader>
-                <CardTitle>{t('login')}</CardTitle>
-                <CardDescription>{t('enterCredentials')}</CardDescription>
+                <CardTitle>{t('login.login')}</CardTitle>
+                <CardDescription>{t('login.enterCredentials')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleSubmit(handleLogin)}>
                     <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="username">{t('username')}</Label>
-                            <Input
-                                id="username"
-                                placeholder={t('enterUsername')}
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="password">{t('password')}</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder={t('enterPassword')}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
+                        <EmailField register={register} errors={errors}/>
+                        <PasswordField register={register} errors={errors}/>
                     </div>
                     <div className="flex flex-col gap-2 mt-4">
-                        <Button type="submit">{t('login')}</Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleGoogleLogin}
-                            className="flex items-center justify-center gap-2"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                 strokeLinejoin="round" className="lucide lucide-chrome">
-                                <circle cx="12" cy="12" r="10"/>
-                                <circle cx="12" cy="12" r="4"/>
-                                <line x1="21.17" x2="12" y1="8" y2="8"/>
-                                <line x1="3.95" x2="8.54" y1="6.06" y2="14"/>
-                                <line x1="10.88" x2="15.46" y1="21.94" y2="14"/>
-                            </svg>
-                            {t('loginWithGoogle')}
-                        </Button>
+                        <Button type="submit">{t('login.login')}</Button>
+                        <div className="flex justify-center">
+                            <GoogleLogin
+                                width="300px"
+                                onSuccess={handleGoogleLoginSuccess}
+                                onError={handleGoogleLoginError}
+                                text="signin_with"
+                                shape="pill"
+                                locale={i18n.language}
+                                theme="outline"
+                                logo_alignment="left"
+                            />
+                        </div>
                     </div>
                 </form>
             </CardContent>
             <CardFooter className="flex justify-center">
-                <p className="text-sm text-muted-foreground">{t('noAccount')}</p>
+                <p className="text-sm text-muted-foreground">
+                    {t('login.noAccount')} <a href="/register"
+                                              className="text-blue-500 hover:underline">{t('login.register')}</a>
+                </p>
             </CardFooter>
         </Card>
     );

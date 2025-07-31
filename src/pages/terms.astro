@@ -1,0 +1,8 @@
+---
+import MainLayout from "../layouts/main.astro";
+import {TermsOfServicePage} from "../components/pages/TermsOfService";
+import {PROJECT_NAME} from "../config";
+---
+<MainLayout content={{title: `${PROJECT_NAME} - Terms of Service`}}>
+    <TermsOfServicePage client:only="react"/>
+</MainLayout>

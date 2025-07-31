@@ -1,17 +1,8 @@
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
-import {useEffect} from "react";
-import '../../lib/i18n';
 
 export function Header() {
-    const {t, i18n} = useTranslation();
-
-    useEffect(() => {
-        const pathLang = window.location.pathname.split("/")[1]
-        const supportedLangs = ["en", "es"]
-        const lang = supportedLangs.includes(pathLang) ? pathLang : "en";
-        i18n.changeLanguage(lang)
-    }, [])
+    const {t} = useTranslation();
 
     return (
         <header className="bg-background border-b border-border">

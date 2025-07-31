@@ -11,15 +11,15 @@ export function Footer() {
                             Brickify. {t('footer.allRightsReserved')}</p>
                     </div>
                     <div className="flex space-x-6">
-                        <a href={'#'}
+                        <a href={'/terms'}
                            className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             {t('footer.termsOfService')}
                         </a>
-                        <a href={'#'}
+                        <a href={'/privacy'}
                            className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             {t('footer.privacyPolicy')}
                         </a>
-                        <a href={'#'}
+                        <a href={'/contact'}
                            className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             {t('footer.contactUs')}
                         </a>

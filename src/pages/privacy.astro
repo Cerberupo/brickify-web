@@ -1,0 +1,8 @@
+---
+import MainLayout from "../layouts/main.astro";
+import {PrivacyPolicyPage} from "../components/pages/PrivacyPolicy";
+import {PROJECT_NAME} from "../config";
+---
+<MainLayout content={{title: `${PROJECT_NAME} - Privacy Policy`}}>
+    <PrivacyPolicyPage client:only="react"/>
+</MainLayout>
