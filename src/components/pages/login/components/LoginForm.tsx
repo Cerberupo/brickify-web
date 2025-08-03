@@ -1,16 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
+import {Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui";
 import {useTranslation} from 'react-i18next';
-import {EmailField} from './EmailField';
-import {PasswordField} from './PasswordField';
 import {GoogleLogin} from '@react-oauth/google';
-import {googleLoginRequest} from '@/lib/services/auth';
+import {googleLoginRequest, login, AppRoutes} from '@/lib';
+import {EmailField, PasswordField} from "@/components/inputFields";
+import {toast} from 'sonner';
 
 
 export function LoginForm() {
     const {t, i18n} = useTranslation();
+    const [isLoading, setIsLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm({
         defaultValues: {
             email: '',
@@ -18,32 +18,55 @@ export function LoginForm() {
         }
     });
 
-    const handleLogin = (data: { email: string; password: string }) => {
-        // In a real app, you would validate credentials here
-        console.log('Login attempt with:', data);
-        // Navigate to dashboard after successful login
-        // window.location.href = '/dashboard';
+    const handleLogin = async (data: { email: string; password: string }) => {
+        setIsLoading(true);
+        try {
+            console.log('Login attempt with:', data);
+            const response = await login(data.email, data.password);
+            console.log('Login response:', response);
+
+            toast.success(t('login.successMessage', 'Login successful!'));
+            // Navigate to dashboard after successful login
+            window.location.href = AppRoutes.DASHBOARD;
+        } catch (error) {
+            console.error('Error during login:', error);
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : t('login.errorMessage', 'Login failed. Please try again.')
+            );
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleGoogleLoginSuccess = async (credentialResponse: any) => {
         // Validate the credential with the backend
         console.log('Google login success:', credentialResponse);
+        setIsLoading(true);
 
         try {
-            const data = await googleLoginRequest(credentialResponse);
+            const data = await googleLoginRequest(credentialResponse, i18n.language);
             console.log('Login response:', data);
 
+            toast.success(t('login.successMessage', 'Login successful!'));
             // Navigate to dashboard after successful login
-            // window.location.href = '/dashboard';
+            window.location.href = AppRoutes.DASHBOARD;
         } catch (error) {
             console.error('Error during Google login:', error);
-            // Handle error appropriately
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : t('login.googleErrorMessage', 'Google login failed. Please try again.')
+            );
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleGoogleLoginError = () => {
         console.error('Google login failed');
-        // In a real app, you would show an error message to the user
+        toast.error(t('login.googleErrorMessage', 'Google login failed. Please try again.'));
     };
 
     return (
@@ -59,8 +82,10 @@ export function LoginForm() {
                         <PasswordField register={register} errors={errors}/>
                     </div>
                     <div className="flex flex-col gap-2 mt-4">
-                        <Button type="submit">{t('login.login')}</Button>
-                        <div className="flex justify-center">
+                        <Button type="submit" isLoading={isLoading}>
+                            {isLoading ? t('login.loggingIn', 'Logging in...') : t('login.login')}
+                        </Button>
+                        <div className={`flex justify-center ${isLoading ? 'pointer-events-none' : ''}`}>
                             <GoogleLogin
                                 width="300px"
                                 onSuccess={handleGoogleLoginSuccess}
@@ -77,7 +102,7 @@ export function LoginForm() {
             </CardContent>
             <CardFooter className="flex justify-center">
                 <p className="text-sm text-muted-foreground">
-                    {t('login.noAccount')} <a href="/register"
+                    {t('login.noAccount')} <a href={AppRoutes.REGISTER}
                                               className="text-blue-500 hover:underline">{t('login.register')}</a>
                 </p>
             </CardFooter>

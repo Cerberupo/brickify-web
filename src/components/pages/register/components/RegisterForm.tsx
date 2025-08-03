@@ -1,0 +1,68 @@
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui";
+import {useTranslation} from 'react-i18next';
+import {EmailField, NameField, PasswordField} from "@/components/inputFields";
+import {register as registerUser} from '@/lib/services/auth';
+import {toast} from 'sonner';
+import {AppRoutes} from '@/lib';
+
+export function RegisterForm() {
+    const {t, i18n} = useTranslation();
+    const [isLoading, setIsLoading] = useState(false);
+    const {register, handleSubmit, formState: {errors}} = useForm({
+        defaultValues: {
+            name: '',
+            email: '',
+            password: ''
+        }
+    });
+
+    const handleRegister = async (data: { name: string; email: string; password: string }) => {
+        setIsLoading(true);
+        try {
+            await registerUser(data.name, data.email, data.password, i18n.language);
+            toast.success(t('register.successMessage', 'Registration successful! You can now log in.'));
+            // Navigate to login after successful registration
+            window.location.href = AppRoutes.LOGIN;
+        } catch (error) {
+            console.error('Registration error:', error);
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : t('register.errorMessage', 'Registration failed. Please try again.')
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <Card className="w-[350px] mx-auto">
+            <CardHeader>
+                <CardTitle>{t('register.register')}</CardTitle>
+                <CardDescription>{t('register.createAccount')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit(handleRegister)}>
+                    <div className="grid w-full items-center gap-4">
+                        <NameField register={register} errors={errors}/>
+                        <EmailField register={register} errors={errors}/>
+                        <PasswordField register={register} errors={errors}/>
+                    </div>
+                    <div className="flex flex-col gap-2 mt-4">
+                        <Button type="submit" isLoading={isLoading}>
+                            {isLoading ? t('register.registering', 'Registering...') : t('register.register')}
+                        </Button>
+                    </div>
+                </form>
+            </CardContent>
+            <CardFooter className="flex justify-center">
+                <p className="text-sm text-muted-foreground">
+                    {t('register.alreadyHaveAccount')} <a href={AppRoutes.LOGIN}
+                                                          className="text-blue-500 hover:underline">{t('register.login')}</a>
+                </p>
+            </CardFooter>
+        </Card>
+    );
+}

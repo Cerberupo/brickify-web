@@ -1,8 +1,11 @@
 ---
 import MainLayout from "../layouts/main.astro";
-import {RegisterPage} from "../components/pages/Register";
+import {RegisterPage} from "../components/";
 import {PROJECT_NAME} from "../config";
+import {AppWrapper} from "../layouts";
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Register`}}>
-    <RegisterPage client:only="react"/>
+    <AppWrapper client:only="react">
+        <RegisterPage client:only="react"/>
+    </AppWrapper>
 </MainLayout>

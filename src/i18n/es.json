@@ -1,8 +1,12 @@
 {
+  "common": {
+    "loading": "Cargando..."
+  },
   "header": {
     "home": "Inicio",
     "dashboard": "Panel",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
   },
   "footer": {
     "allRightsReserved": "© 2025 Brickify. Todos los derechos reservados.",
@@ -27,14 +31,21 @@
     "enterCredentials": "Ingrese sus credenciales para acceder a su cuenta",
     "loginWithGoogle": "Iniciar sesión con Google",
     "noAccount": "¿No tiene una cuenta?",
-    "register": "Registrarse"
+    "register": "Registrarse",
+    "successMessage": "¡Inicio de sesión exitoso!",
+    "errorMessage": "Error al iniciar sesión. Por favor, inténtelo de nuevo.",
+    "googleErrorMessage": "Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.",
+    "loggingIn": "Iniciando sesión..."
   },
   "register": {
     "title": "Registrarse - Brickify",
     "register": "Registrarse",
     "createAccount": "Crear una nueva cuenta",
     "alreadyHaveAccount": "¿Ya tiene una cuenta?",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "successMessage": "¡Registro exitoso! Ahora puede iniciar sesión.",
+    "errorMessage": "Error al registrarse. Por favor, inténtelo de nuevo.",
+    "registering": "Registrando..."
   },
   "form": {
     "email": {
@@ -46,7 +57,13 @@
     "password": {
       "label": "Contraseña",
       "placeholder": "Ingrese su contraseña",
-      "required": "La contraseña es obligatoria"
+      "required": "La contraseña es obligatoria",
+      "minLength": "La contraseña debe tener al menos 8 caracteres",
+      "hasUppercase": "La contraseña debe contener al menos una letra mayúscula",
+      "hasLowercase": "La contraseña debe contener al menos una letra minúscula",
+      "hasNumber": "La contraseña debe contener al menos un número",
+      "hasSpecialChar": "La contraseña debe contener al menos un carácter especial",
+      "requirements": "La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, números y caracteres especiales."
     },
     "name": {
       "label": "Nombre",
@@ -155,5 +172,18 @@
     },
     "success": "Gracias por su mensaje. ¡Nos pondremos en contacto con usted pronto!",
     "error": "Hubo un error al enviar su mensaje. Por favor, inténtelo de nuevo."
+  },
+  "verify": {
+    "title": "Verificación de Cuenta",
+    "verifying": "Verificando su cuenta...",
+    "verified": "¡Su cuenta ha sido verificada!",
+    "failed": "Verificación fallida",
+    "success": "¡Su cuenta ha sido verificada con éxito!",
+    "successMessage": "Su cuenta ha sido verificada con éxito. Será redirigido a la página de inicio de sesión en breve.",
+    "error": "No se pudo verificar su cuenta. Es posible que el código de verificación no sea válido o haya caducado.",
+    "missingParams": "Falta el correo electrónico o el código de verificación en la URL.",
+    "tryAgain": "Por favor, inténtelo de nuevo o contacte con soporte si el problema persiste.",
+    "login": "Ir a Iniciar Sesión",
+    "backToLogin": "Volver a Iniciar Sesión"
   }
 }

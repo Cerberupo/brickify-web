@@ -1,4 +1,5 @@
 import {useTranslation} from "react-i18next";
+import {AppRoutes} from "@/lib";
 
 export function Footer() {
     const {t} = useTranslation();
@@ -11,15 +12,15 @@ export function Footer() {
                             Brickify. {t('footer.allRightsReserved')}</p>
                     </div>
                     <div className="flex space-x-6">
-                        <a href={'/terms'}
+                        <a href={AppRoutes.TERMS}
                            className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             {t('footer.termsOfService')}
                         </a>
-                        <a href={'/privacy'}
+                        <a href={AppRoutes.PRIVACY}
                            className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             {t('footer.privacyPolicy')}
                         </a>
-                        <a href={'/contact'}
+                        <a href={AppRoutes.CONTACT}
                            className="text-sm text-muted-foreground hover:text-primary transition-colors">
                             {t('footer.contactUs')}
                         </a>

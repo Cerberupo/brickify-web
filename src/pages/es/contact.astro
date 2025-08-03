@@ -1,8 +1,11 @@
 ---
 import {PROJECT_NAME} from "../../config";
 import MainLayout from "../../layouts/main.astro";
-import {ContactUsPage} from "../../components/pages/ContactUs";
+import {ContactUsPage} from "../../components";
+import {AppWrapper} from "../../layouts";
 ---
-<MainLayout content={{title: `${PROJECT_NAME} - Contacto`}}>
-    <ContactUsPage client:only="react"/>
+<MainLayout content={{title: `${PROJECT_NAME} - Contáctenos`}}>
+    <AppWrapper client:only="react">
+        <ContactUsPage client:only="react"/>
+    </AppWrapper>
 </MainLayout>

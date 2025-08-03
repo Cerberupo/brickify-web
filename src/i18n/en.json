@@ -1,8 +1,12 @@
 {
+  "common": {
+    "loading": "Loading..."
+  },
   "header": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "login": "Login"
+    "login": "Login",
+    "logout": "Logout"
   },
   "footer": {
     "allRightsReserved": "© 2025 Brickify. All rights reserved.",
@@ -27,14 +31,21 @@
     "enterCredentials": "Enter your credentials to access your account",
     "loginWithGoogle": "Login with Google",
     "noAccount": "Don't have an account?",
-    "register": "Register"
+    "register": "Register",
+    "successMessage": "Login successful!",
+    "errorMessage": "Login failed. Please try again.",
+    "googleErrorMessage": "Google login failed. Please try again.",
+    "loggingIn": "Logging in..."
   },
   "register": {
     "title": "Register - Brickify",
     "register": "Register",
     "createAccount": "Create a new account",
     "alreadyHaveAccount": "Already have an account?",
-    "login": "Login"
+    "login": "Login",
+    "successMessage": "Registration successful! You can now log in.",
+    "errorMessage": "Registration failed. Please try again.",
+    "registering": "Registering..."
   },
   "form": {
     "email": {
@@ -46,7 +57,13 @@
     "password": {
       "label": "Password",
       "placeholder": "Enter your password",
-      "required": "Password is required"
+      "required": "Password is required",
+      "minLength": "Password must be at least 8 characters long",
+      "hasUppercase": "Password must contain at least one uppercase letter",
+      "hasLowercase": "Password must contain at least one lowercase letter",
+      "hasNumber": "Password must contain at least one number",
+      "hasSpecialChar": "Password must contain at least one special character",
+      "requirements": "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
     },
     "name": {
       "label": "Name",
@@ -155,5 +172,18 @@
     },
     "success": "Thank you for your message. We'll get back to you soon!",
     "error": "There was an error sending your message. Please try again."
+  },
+  "verify": {
+    "title": "Account Verification",
+    "verifying": "Verifying your account...",
+    "verified": "Your account has been verified!",
+    "failed": "Verification failed",
+    "success": "Your account has been verified successfully!",
+    "successMessage": "Your account has been successfully verified. You will be redirected to the login page shortly.",
+    "error": "Failed to verify your account. The verification code may be invalid or expired.",
+    "missingParams": "Missing email or verification code in URL.",
+    "tryAgain": "Please try again or contact support if the problem persists.",
+    "login": "Go to Login",
+    "backToLogin": "Back to Login"
   }
 }

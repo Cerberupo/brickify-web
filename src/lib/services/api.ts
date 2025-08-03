@@ -27,10 +27,16 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
     } = options;
 
     // Prepare headers with default content type if not provided
-    const requestHeaders = {
+    const requestHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
         ...headers,
     };
+
+    // Add authorization token if available in localStorage
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        requestHeaders.Authorization = `Bearer ${token}`;
+    }
 
     // Prepare axios request config
     const requestConfig: AxiosRequestConfig = {

@@ -1,8 +1,11 @@
 ---
 import {PROJECT_NAME} from "../../config";
-import {TermsOfServicePage} from "../../components/pages/TermsOfService";
+import {TermsOfServicePage} from "../../components";
 import MainLayout from "../../layouts/main.astro";
+import {AppWrapper} from "../../layouts";
 ---
-<MainLayout content={{title: `${PROJECT_NAME} - Terminos de Servicio`}}>
-    <TermsOfServicePage client:only="react"/>
+<MainLayout content={{title: `${PROJECT_NAME} - Términos de servicio`}}>
+    <AppWrapper client:only="react">
+        <TermsOfServicePage client:only="react"/>
+    </AppWrapper>
 </MainLayout>

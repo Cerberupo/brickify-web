@@ -1,4 +1,5 @@
-import {fetchApi} from './api';
+import {fetchApi} from '.';
+import {setUser} from '../stores/authStore';
 
 /**
  * Interface for Google login request credential
@@ -29,14 +30,27 @@ interface LoginResponse {
 /**
  * Handles Google login by sending the credential to the server
  * @param googleLoginRequest - The request data from Google OAuth
+ * @param language - The user's current language
  * @returns A promise that resolves to the login response from the server
  */
-export async function googleLoginRequest(googleLoginRequest: GoogleLoginRequestCredential): Promise<LoginResponse> {
+export async function googleLoginRequest(googleLoginRequest: GoogleLoginRequestCredential, language: string): Promise<LoginResponse> {
     try {
-        return await fetchApi<LoginResponse>('/auth/google-login', {
+        const response = await fetchApi<LoginResponse>('/auth/google-login', {
             method: 'POST',
-            body: googleLoginRequest,
+            body: {...googleLoginRequest, language},
         });
+
+        // Store token in localStorage if available
+        if (response.token) {
+            localStorage.setItem('authToken', response.token);
+        }
+
+        // Update user state in the store
+        if (response.user) {
+            setUser(response.user);
+        }
+
+        return response;
     } catch (error) {
         console.error('Google login error:', error);
         throw error;
@@ -44,16 +58,121 @@ export async function googleLoginRequest(googleLoginRequest: GoogleLoginRequestC
 }
 
 /**
- * Logs out the current user
- * @returns A promise that resolves when the logout is complete
+ * Handles email/password login
+ * @param email - The user's email
+ * @param password - The user's password
+ * @param language - The user's current language
+ * @returns A promise that resolves to the login response from the server
  */
-export async function logout(): Promise<void> {
+export async function login(email: string, password: string): Promise<LoginResponse> {
     try {
-        await fetchApi('/logout', {
+        const response = await fetchApi<LoginResponse>('/auth/login', {
             method: 'POST',
+            body: {email, password},
+            withCredentials: true,
         });
+
+        // Store token in localStorage if available
+        if (response.token) {
+            localStorage.setItem('authToken', response.token);
+        }
+
+        // Update user state in the store
+        if (response.user) {
+            setUser(response.user);
+        }
+
+        return response;
     } catch (error) {
-        console.error('Logout error:', error);
+        console.error('Login error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Registers a new user with email and password
+ * @param name - The user's name
+ * @param email - The user's email
+ * @param password - The user's password
+ * @param language - The user's current language
+ * @returns A promise that resolves to the login response from the server
+ */
+export async function register(name: string, email: string, password: string, language: string): Promise<LoginResponse> {
+    try {
+        const response = await fetchApi<LoginResponse>('/auth/register', {
+            method: 'POST',
+            body: {name, email, password, language},
+            withCredentials: true,
+        });
+
+        // Store token in localStorage if available
+        if (response.token) {
+            localStorage.setItem('authToken', response.token);
+        }
+
+        // Update user state in the store
+        if (response.user) {
+            setUser(response.user);
+        }
+
+        return response;
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Gets the current user profile using the stored token
+ * @returns A promise that resolves to the user profile
+ */
+export async function getProfile(): Promise<LoginResponse> {
+    try {
+        const response = await fetchApi<LoginResponse>('/auth/profile', {
+            method: 'GET',
+        });
+
+        // Update user state in the store
+        if (response.user) {
+            setUser(response.user);
+        }
+
+        return response;
+    } catch (error) {
+        console.error('Get profile error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Verifies a user's account with the verification code
+ * @param email - The user's email
+ * @param code - The verification code
+ * @returns A promise that resolves to the login response from the server
+ */
+export async function verifyAccount(email: string, code: string): Promise<LoginResponse> {
+    try {
+        const response = await fetchApi<LoginResponse>('/auth/verify', {
+            method: 'POST',
+            body: {email, code},
+            withCredentials: true,
+        });
+
+        console.log('Verify account response:', response);
+
+        // Store token in localStorage if available
+        if (response.token) {
+            localStorage.setItem('authToken', response.token);
+        }
+
+        // Update user state in the store
+        if (response.user) {
+            setUser(response.user);
+        }
+
+        return response;
+    } catch (error) {
+        console.error('Account verification error:', error);
         throw error;
     }
 }

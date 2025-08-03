@@ -51,9 +51,13 @@ export function I18nProvider({children}: { children: React.ReactNode }) {
     const {i18n, ready} = useTranslation();
 
     useEffect(() => {
-        const pathLang = window.location.pathname.split("/")[1]
-        const lang = supportedLngs.includes(pathLang) ? pathLang : "en";
-        i18n.changeLanguage(lang)
+        // Only change language based on URL if no language is already set
+        // This allows user's stored language preference to take precedence
+        if (!i18n.language || i18n.language === 'en') {
+            const pathLang = window.location.pathname.split("/")[1]
+            const lang = supportedLngs.includes(pathLang) ? pathLang : "en";
+            i18n.changeLanguage(lang)
+        }
     }, [])
 
     if (!ready) return null;

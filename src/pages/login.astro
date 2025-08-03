@@ -1,8 +1,11 @@
 ---
 import MainLayout from "../layouts/main.astro";
-import {LoginPage} from "../components/pages/Login";
+import {LoginPage} from "../components/pages";
 import {PROJECT_NAME} from "../config";
+import {AppWrapper} from "../layouts";
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Login`}}>
-    <LoginPage client:only="react"/>
+    <AppWrapper client:only="react">
+        <LoginPage client:only="react"/>
+    </AppWrapper>
 </MainLayout>
