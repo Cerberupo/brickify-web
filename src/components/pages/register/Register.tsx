@@ -1,7 +1,9 @@
 import {useTranslation} from 'react-i18next';
 import {RegisterForm} from "@/components/pages/register/components";
 import {useEffect} from 'react';
-import {AppRoutes, useAuth} from '@/lib';
+import {useAuth} from '@/lib';
+import {APP_ROUTES} from '@/constants/routes';
+import {navigate} from '@/lib/utils';
 
 export function RegisterPage() {
     const {t} = useTranslation();
@@ -10,7 +12,7 @@ export function RegisterPage() {
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
         if (user && !authLoading) {
-            window.location.href = AppRoutes.DASHBOARD;
+            navigate(APP_ROUTES.DASHBOARD);
         }
     }, [user, authLoading]);
 

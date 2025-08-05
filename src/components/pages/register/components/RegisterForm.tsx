@@ -5,7 +5,8 @@ import {useTranslation} from 'react-i18next';
 import {EmailField, NameField, PasswordField} from "@/components/inputFields";
 import {register as registerUser} from '@/lib/services/auth';
 import {toast} from 'sonner';
-import {AppRoutes} from '@/lib';
+import {APP_ROUTES} from '@/constants/routes';
+import {navigate} from '@/lib/utils';
 
 export function RegisterForm() {
     const {t, i18n} = useTranslation();
@@ -24,7 +25,7 @@ export function RegisterForm() {
             await registerUser(data.name, data.email, data.password, i18n.language);
             toast.success(t('register.successMessage', 'Registration successful! You can now log in.'));
             // Navigate to login after successful registration
-            window.location.href = AppRoutes.LOGIN;
+            navigate(APP_ROUTES.LOGIN);
         } catch (error) {
             console.error('Registration error:', error);
             toast.error(
@@ -59,7 +60,7 @@ export function RegisterForm() {
             </CardContent>
             <CardFooter className="flex justify-center">
                 <p className="text-sm text-muted-foreground">
-                    {t('register.alreadyHaveAccount')} <a href={AppRoutes.LOGIN}
+                    {t('register.alreadyHaveAccount')} <a href={APP_ROUTES.LOGIN}
                                                           className="text-blue-500 hover:underline">{t('register.login')}</a>
                 </p>
             </CardFooter>

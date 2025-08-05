@@ -1,8 +1,10 @@
 import {Button} from "@/components/ui";
 import {useTranslation} from "react-i18next";
 import {Toaster} from "@/components/ui/sonner";
-import {AppRoutes, clearUser} from "@/lib";
+import {clearUser} from "@/lib";
+import {APP_ROUTES} from '@/constants/routes';
 import {useAuth} from "@/lib/hooks/useAuth";
+import {navigate} from "@/lib/utils";
 
 export function Header() {
     const {t} = useTranslation();
@@ -12,7 +14,7 @@ export function Header() {
         try {
             await clearUser();
             // Redirect to home page after logout
-            window.location.href = AppRoutes.HOME;
+            navigate(APP_ROUTES.HOME);
         } catch (error) {
             console.error('Logout error:', error);
         }
@@ -24,16 +26,16 @@ export function Header() {
             <header className="bg-background border-b border-border">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div className="flex items-center">
-                        <a href={AppRoutes.HOME} className="text-xl font-bold">Brickify</a>
+                        <a href={APP_ROUTES.HOME} className="text-xl font-bold">Brickify</a>
                     </div>
                     <nav>
                         <ul className="flex space-x-4 items-center">
                             <li>
-                                <a href={AppRoutes.HOME}
+                                <a href={APP_ROUTES.HOME}
                                    className="hover:text-primary transition-colors">{t('header.home')}</a>
                             </li>
                             <li>
-                                <a href={AppRoutes.DASHBOARD}
+                                <a href={APP_ROUTES.DASHBOARD}
                                    className="hover:text-primary transition-colors">{t('header.dashboard')}</a>
                             </li>
                             {user ? (

@@ -1,6 +1,8 @@
 {
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "create": "Create"
   },
   "header": {
     "home": "Home",
@@ -23,7 +25,49 @@
     "quickActions": "Quick Actions",
     "createNewProject": "Create New Project",
     "viewSettings": "View Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "myGroups": "My Groups",
+    "usersCompleted": "{{completed}} / {{total}} users completed",
+    "usersRemaining": "{{remaining}} / {{min}} users remaining to place order",
+    "groupMembers": "Group Members",
+    "groupPrice": "Group Price",
+    "noGroups": "No groups yet",
+    "createFirstGroup": "Create your first group to start a new order, add the minimum number of people and place the order.",
+    "createGroup": "Create Group",
+    "groupName": "Group Name",
+    "groupNamePlaceholder": "Enter group name",
+    "groupDescription": "Description",
+    "groupDescriptionPlaceholder": "Enter group description",
+    "groupCreated": "Group created successfully",
+    "errorCreatingGroup": "Error creating group. Please try again.",
+    "errorFetchingGroups": "Error fetching groups. Please try again.",
+    "emptyGroup": "EG",
+    "tooManyPendingGroups": "You cannot create more groups. Please complete or delete some of your existing groups that need attention.",
+    "deleteGroup": "Delete Group",
+    "deleteConfirmation": {
+      "title": "Delete Group",
+      "description": "Are you sure you want to delete this group? You will lose all the information filled in.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "deleteSuccess": "Group deleted successfully",
+    "deleteError": "Failed to delete group. Please try again.",
+    "groupStatus": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "needsMoreUsers": "Need More Users",
+      "needsCompletedUsers": "Profiles Incomplete",
+      "readyForPayment": "Ready for Payment",
+      "inProcess": "Selecting Pieces",
+      "waitingForApproval": "Awaiting Approval",
+      "orderPlaced": "Order Placed",
+      "orderIncomplete": "Order Incomplete",
+      "inReview": "Checking Pieces",
+      "inAssembly": "Assembly",
+      "readyForShipment": "Ready to Ship",
+      "shipped": "Shipped"
+    }
   },
   "login": {
     "title": "Login - Brickify",

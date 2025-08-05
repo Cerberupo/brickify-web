@@ -3,7 +3,8 @@ import {useTranslation} from 'react-i18next';
 import {Button, Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui";
 import {verifyAccount} from '@/lib/services/auth';
 import {toast} from 'sonner';
-import {AppRoutes} from '@/lib';
+import {APP_ROUTES} from '@/constants/routes';
+import {navigate} from '@/lib/utils';
 
 export function VerifyPage() {
     const {t} = useTranslation();
@@ -38,7 +39,7 @@ export function VerifyPage() {
 
                 // Redirect to login page after 3 seconds
                 setTimeout(() => {
-                    window.location.href = AppRoutes.LOGIN;
+                    navigate(APP_ROUTES.LOGIN);
                 }, 5000);
             } catch (error) {
                 console.error('Verification error:', error);
@@ -76,7 +77,7 @@ export function VerifyPage() {
                     ) : isVerified ? (
                         <div className="text-center">
                             <p className="mb-4">{t('verify.successMessage', 'Your account has been successfully verified. You will be redirected to the login page shortly.')}</p>
-                            <Button onClick={() => window.location.href = AppRoutes.LOGIN}>
+                            <Button onClick={() => navigate(APP_ROUTES.LOGIN)}>
                                 {t('verify.login', 'Go to Login')}
                             </Button>
                         </div>
@@ -88,7 +89,7 @@ export function VerifyPage() {
                                     {t('verify.tryAgain', 'Please try again or contact support if the problem persists.')}
                                 </p>
                             )}
-                            <Button onClick={() => window.location.href = AppRoutes.LOGIN}>
+                            <Button onClick={() => navigate(APP_ROUTES.LOGIN)}>
                                 {t('verify.backToLogin', 'Back to Login')}
                             </Button>
                         </div>

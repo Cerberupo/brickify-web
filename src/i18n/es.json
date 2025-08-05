@@ -1,6 +1,8 @@
 {
   "common": {
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "create": "Crear"
   },
   "header": {
     "home": "Inicio",
@@ -23,7 +25,49 @@
     "quickActions": "Acciones rápidas",
     "createNewProject": "Crear nuevo proyecto",
     "viewSettings": "Ver configuración",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "myGroups": "Mis Grupos",
+    "usersCompleted": "{{completed}} / {{total}} usuarios completados",
+    "usersRemaining": "{{remaining}} / {{min}} usuarios restantes para realizar el pedido",
+    "groupMembers": "Miembros del Grupo",
+    "groupPrice": "Precio del Grupo",
+    "noGroups": "Aún no hay grupos",
+    "createFirstGroup": "Crea tu primer grupo para comenzar un nuevo pedido, añade el mínimo de personas y realiza el pedido.",
+    "createGroup": "Crear Grupo",
+    "groupName": "Nombre del Grupo",
+    "groupNamePlaceholder": "Ingrese nombre del grupo",
+    "groupDescription": "Descripción",
+    "groupDescriptionPlaceholder": "Ingrese descripción del grupo",
+    "groupCreated": "Grupo creado exitosamente",
+    "errorCreatingGroup": "Error al crear el grupo. Por favor, inténtelo de nuevo.",
+    "errorFetchingGroups": "Error al obtener los grupos. Por favor, inténtelo de nuevo.",
+    "emptyGroup": "GV",
+    "tooManyPendingGroups": "No puedes crear más grupos. Por favor, completa o elimina algunos de tus grupos existentes que necesitan atención.",
+    "deleteGroup": "Eliminar Grupo",
+    "deleteConfirmation": {
+      "title": "Eliminar Grupo",
+      "description": "¿Está seguro de que desea eliminar este grupo? Perderá toda la información rellenada.",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "deleteSuccess": "Grupo eliminado exitosamente",
+    "deleteError": "Error al eliminar el grupo. Por favor, inténtelo de nuevo.",
+    "groupStatus": {
+      "pending": "Pendiente",
+      "inProgress": "En Progreso",
+      "completed": "Completado",
+      "needsMoreUsers": "Faltan Usuarios",
+      "needsCompletedUsers": "Perfiles Incompletos",
+      "readyForPayment": "Listo para Pago",
+      "inProcess": "Seleccionando Piezas",
+      "waitingForApproval": "Esperando Aprobación",
+      "orderPlaced": "Pedido Realizado",
+      "orderIncomplete": "Pedido Incompleto",
+      "inReview": "Verificando Piezas",
+      "inAssembly": "En Montaje",
+      "readyForShipment": "Listo para Envío",
+      "shipped": "Enviado"
+    }
   },
   "login": {
     "title": "Iniciar sesión - Brickify",

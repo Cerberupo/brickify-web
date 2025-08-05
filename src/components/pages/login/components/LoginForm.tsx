@@ -3,9 +3,11 @@ import {useForm} from 'react-hook-form';
 import {Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui";
 import {useTranslation} from 'react-i18next';
 import {GoogleLogin} from '@react-oauth/google';
-import {googleLoginRequest, login, AppRoutes} from '@/lib';
+import {googleLoginRequest, login} from '@/lib';
+import {APP_ROUTES} from '@/constants/routes';
 import {EmailField, PasswordField} from "@/components/inputFields";
 import {toast} from 'sonner';
+import {navigate} from '@/lib/utils';
 
 
 export function LoginForm() {
@@ -27,7 +29,7 @@ export function LoginForm() {
 
             toast.success(t('login.successMessage', 'Login successful!'));
             // Navigate to dashboard after successful login
-            window.location.href = AppRoutes.DASHBOARD;
+            navigate(APP_ROUTES.DASHBOARD);
         } catch (error) {
             console.error('Error during login:', error);
             toast.error(
@@ -51,7 +53,7 @@ export function LoginForm() {
 
             toast.success(t('login.successMessage', 'Login successful!'));
             // Navigate to dashboard after successful login
-            window.location.href = AppRoutes.DASHBOARD;
+            navigate(APP_ROUTES.DASHBOARD);
         } catch (error) {
             console.error('Error during Google login:', error);
             toast.error(
@@ -102,7 +104,7 @@ export function LoginForm() {
             </CardContent>
             <CardFooter className="flex justify-center">
                 <p className="text-sm text-muted-foreground">
-                    {t('login.noAccount')} <a href={AppRoutes.REGISTER}
+                    {t('login.noAccount')} <a href={APP_ROUTES.REGISTER}
                                               className="text-blue-500 hover:underline">{t('login.register')}</a>
                 </p>
             </CardFooter>

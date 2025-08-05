@@ -1,7 +1,9 @@
 import {useTranslation} from 'react-i18next';
 import {LoginForm} from "@/components/pages/login/components";
-import {GoogleAuthProvider, AppRoutes, useAuth} from "@/lib";
+import {GoogleAuthProvider, useAuth} from "@/lib";
+import {APP_ROUTES} from '@/constants/routes';
 import {useEffect} from 'react';
+import {navigate} from '@/lib/utils';
 
 export function LoginPage() {
     const {t} = useTranslation();
@@ -10,7 +12,7 @@ export function LoginPage() {
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
         if (user && !authLoading) {
-            window.location.href = AppRoutes.DASHBOARD;
+            navigate(APP_ROUTES.DASHBOARD);
         }
     }, [user, authLoading]);
 
