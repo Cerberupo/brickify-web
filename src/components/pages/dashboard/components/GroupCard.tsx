@@ -18,12 +18,12 @@ import {cn, hasGroupAlreadyPaidStatus, navigate} from "@/lib/utils";
 import type {GroupCardProps} from '../types';
 import {GROUP_STATUS, MIN_USERS} from '@/constants/uiConfig';
 import {APP_ROUTES} from '@/constants/routes';
-import {Trash2} from 'lucide-react';
+import {Trash2, Edit2} from 'lucide-react';
 import {deleteGroup} from '@/lib/services/groups';
 import {toast} from 'sonner';
 
 
-export function GroupCard({group}: GroupCardProps) {
+export function GroupCard({group, onEdit}: GroupCardProps) {
     const {t} = useTranslation();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -103,15 +103,26 @@ export function GroupCard({group}: GroupCardProps) {
                             <CardDescription>{group.description}</CardDescription>
                         </div>
                         {!hasGroupAlreadyPaidStatus(group) && (
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                onClick={handleDelete}
-                            >
-                                <Trash2 className="h-4 w-4"/>
-                                <span className="sr-only">{t('dashboard.deleteGroup')}</span>
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                                    onClick={(e) => { e.stopPropagation(); onEdit?.(group); }}
+                                >
+                                    <Edit2 className="h-4 w-4"/>
+                                    <span className="sr-only">{t('dashboard.editGroup', 'Edit Group')}</span>
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                    onClick={handleDelete}
+                                >
+                                    <Trash2 className="h-4 w-4"/>
+                                    <span className="sr-only">{t('dashboard.deleteGroup')}</span>
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </CardHeader>

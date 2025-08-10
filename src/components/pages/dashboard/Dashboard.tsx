@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {CreateGroupModal, GroupCard} from '@/components';
 import {Button, Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui';
 import {Plus, UsersRound} from 'lucide-react';
-import {createGroup, getGroups} from '@/lib/services';
+import {createGroup, getGroups, updateGroup} from '@/lib/services';
 import {toast} from 'sonner';
 import type {Group} from '@/lib/types/group';
 import {MAX_PENDING_GROUPS} from '@/constants/uiConfig';
@@ -15,6 +15,8 @@ export function DashboardPage() {
 
     // State for controlling the modal visibility
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // State for editing selected group
+    const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
     // State for storing groups
     const [groups, setGroups] = useState<Group[]>([]);
@@ -52,21 +54,28 @@ export function DashboardPage() {
 
     // Handler for opening the modal
     const handleOpenModal = () => {
+        setSelectedGroup(null);
+        setIsModalOpen(true);
+    };
+
+    const handleOpenEditModal = (group: Group) => {
+        setSelectedGroup(group);
         setIsModalOpen(true);
     };
 
     // Handler for closing the modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
+        setSelectedGroup(null);
     };
 
     // Handler for form submission
-    const handleSubmit = async (name: string, description: string) => {
+    const handleSubmit = async (name: string, description: string, groupType: string) => {
         try {
             setIsLoading(true);
 
             // Call the API to create the group
-            const response = await createGroup({name, description});
+            const response = await createGroup({name, description, groupType});
 
             // Show success message
             toast.success(t('dashboard.groupCreated'));
@@ -84,6 +93,21 @@ export function DashboardPage() {
         }
     };
 
+    const handleEditSubmit = async (id: string, name: string, description: string) => {
+        try {
+            setIsLoading(true);
+            await updateGroup(id, { name, description });
+            toast.success(t('dashboard.groupUpdated', 'Group updated successfully'));
+            await fetchGroups();
+            handleCloseModal();
+        } catch (error) {
+            console.error('Error updating group:', error);
+            toast.error(t('dashboard.errorCreatingGroup'));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     console.log(groups);
 
     return (
@@ -92,7 +116,11 @@ export function DashboardPage() {
             <div className="mb-8">
 
 
-                {groups.length > 0 ? (
+                {isLoading ? (
+                    <div className="flex justify-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                    </div>
+                ) : groups.length > 0 ? (
                     <>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">{t('dashboard.myGroups')}</h2>
@@ -118,7 +146,7 @@ export function DashboardPage() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {groups.map(group => (
-                                <GroupCard key={group.id} group={group}/>
+                                <GroupCard key={group.id} group={group} onEdit={handleOpenEditModal}/>
                             ))}
                         </div>
                     </>
@@ -159,6 +187,9 @@ export function DashboardPage() {
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 onSubmit={handleSubmit}
+                mode={selectedGroup ? 'edit' : 'create'}
+                initialValues={selectedGroup ? { id: selectedGroup.id, name: selectedGroup.name, description: selectedGroup.description } : undefined}
+                onSubmitEdit={handleEditSubmit}
             />
         </div>
     );

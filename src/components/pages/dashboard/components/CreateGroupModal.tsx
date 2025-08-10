@@ -1,80 +1,145 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from 'react';
+import {useTranslation} from 'react-i18next';
+import {useForm} from 'react-hook-form';
 import {
     Button,
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
     Input,
-    Textarea,
-    Label
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Textarea
 } from '@/components/ui';
-import type { CreateGroupModalProps } from '../types';
+import type {CreateGroupModalProps} from '../types';
+import {GROUP_TYPE_LIST, type GroupType} from '@/constants/group';
 
-export function CreateGroupModal({ isOpen, onClose, onSubmit }: CreateGroupModalProps) {
-    const { t } = useTranslation();
+// Define form type
+type CreateGroupFormValues = {
+    name: string;
+    description: string;
+    groupType: GroupType;
+};
 
-    // State for form fields
-    const [groupName, setGroupName] = useState('');
-    const [groupDescription, setGroupDescription] = useState('');
+export function CreateGroupModal({isOpen, onClose, onSubmit, mode = 'create', initialValues, onSubmitEdit}: CreateGroupModalProps) {
+    const {t} = useTranslation();
+
+    // Set up form with react-hook-form
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: {errors},
+        setValue
+    } = useForm<CreateGroupFormValues>({
+        defaultValues: {
+            name: initialValues?.name ?? '',
+            description: initialValues?.description ?? '',
+            groupType: undefined
+        }
+    });
+
+    // Reset form when switching to edit mode with initial values
+    useEffect(() => {
+        if (isOpen && mode === 'edit' && initialValues) {
+            reset({ name: initialValues.name, description: initialValues.description, groupType: undefined });
+        }
+    }, [isOpen, mode, initialValues, reset]);
 
     // Handler for closing the modal
     const handleClose = () => {
         // Reset form fields
-        setGroupName('');
-        setGroupDescription('');
+        reset();
         onClose();
     };
 
     // Handler for form submission
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Call the onSubmit callback with the form values
-        onSubmit(groupName, groupDescription);
-
+    const onSubmitForm = (data: CreateGroupFormValues) => {
+        if (mode === 'edit' && onSubmitEdit && initialValues?.id) {
+            onSubmitEdit(initialValues.id, data.name, data.description);
+        } else {
+            // Create flow
+            onSubmit(data.name, data.description, data.groupType);
+        }
         // Reset form fields and close modal
-        setGroupName('');
-        setGroupDescription('');
+        reset();
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('dashboard.createGroup')}</DialogTitle>
+                    <DialogTitle>{mode === 'edit' ? t('dashboard.editGroup', 'Edit Group') : t('dashboard.createGroup')}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmitForm)}>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label htmlFor="name">{t('dashboard.groupName')}</Label>
                             <Input
                                 id="name"
-                                value={groupName}
-                                onChange={(e) => setGroupName(e.target.value)}
+                                {...register("name", {
+                                    required: "Group name is required"
+                                })}
                                 placeholder={t('dashboard.groupNamePlaceholder')}
-                                required
+                                aria-invalid={errors.name ? "true" : "false"}
                             />
+                            {errors.name && (
+                                <p className="text-sm text-red-500">{errors.name.message}</p>
+                            )}
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="description">{t('dashboard.groupDescription')}</Label>
                             <Textarea
                                 id="description"
-                                value={groupDescription}
-                                onChange={(e) => setGroupDescription(e.target.value)}
+                                {...register("description", {
+                                    required: "Group description is required"
+                                })}
                                 placeholder={t('dashboard.groupDescriptionPlaceholder')}
-                                required
+                                aria-invalid={errors.description ? "true" : "false"}
                             />
+                            {errors.description && (
+                                <p className="text-sm text-red-500">{errors.description.message}</p>
+                            )}
                         </div>
+                        {mode === 'create' && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="groupType">{t('dashboard.groupType')}</Label>
+                                {/* Hidden input to register with RHF for validation */}
+                                <input type="hidden"
+                                       id="groupType" {...register('groupType', {required: t('dashboard.groupTypeRequired') as string})} />
+                                <Select
+                                    onValueChange={(value) => setValue('groupType', value as GroupType, {shouldValidate: true})}>
+                                    <SelectTrigger aria-invalid={errors.groupType ? 'true' : 'false'} className="w-full">
+                                        <SelectValue placeholder={t('dashboard.groupTypePlaceholder')}/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {GROUP_TYPE_LIST.map((value) => {
+                                            return (
+                                                <SelectItem key={value} value={value}>
+                                                    {t(`dashboard.groupTypeOptions.${value}`)}
+                                                </SelectItem>
+                                            );
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                                {errors.groupType && (
+                                    <p className="text-sm text-red-500">{errors.groupType.message as string}</p>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={handleClose}>
                             {t('common.cancel')}
                         </Button>
                         <Button type="submit">
-                            {t('common.create')}
+                            {mode === 'edit' ? t('common.save', 'Save') : t('common.create')}
                         </Button>
                     </DialogFooter>
                 </form>

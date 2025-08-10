@@ -1,0 +1,14 @@
+---
+export const prerender = false;
+
+import MainLayout from "../../layouts/main.astro";
+import {GroupPage} from "../../components";
+import {PROJECT_NAME} from "../../config";
+import {AppWrapper} from "../../layouts";
+---
+
+<MainLayout content={{title: `${PROJECT_NAME} - Group Details`}}>
+    <AppWrapper client:only="react">
+        <GroupPage client:only="react"/>
+    </AppWrapper>
+</MainLayout>
