@@ -21,7 +21,7 @@ import {type AddUserRequest} from '@/lib/types';
 type AddMemberFormValues = {
     name: string;
     description?: string;
-    avatar?: string;
+    avatarFile?: File;
     noImage: boolean;
     hairDescription?: string;
     faceDescription?: string;
@@ -51,7 +51,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
         defaultValues: {
             name: '',
             description: '',
-            avatar: '',
+            avatarFile: undefined,
             noImage: false,
             hairDescription: '',
             faceDescription: ''
@@ -62,13 +62,9 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const result = reader.result as string;
-                setAvatarPreview(result);
-                setValue('avatar', result);
-            };
-            reader.readAsDataURL(file);
+            const previewUrl = URL.createObjectURL(file);
+            setAvatarPreview(previewUrl);
+            setValue('avatarFile', file, { shouldValidate: true });
         }
     };
 
@@ -80,13 +76,9 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];
             if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const result = reader.result as string;
-                    setAvatarPreview(result);
-                    setValue('avatar', result);
-                };
-                reader.readAsDataURL(file);
+                const previewUrl = URL.createObjectURL(file);
+                setAvatarPreview(previewUrl);
+                setValue('avatarFile', file, { shouldValidate: true });
             }
         }
     };
@@ -97,7 +89,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
         try {
             await onAdd({
                 name: data.name.trim(),
-                avatar: data.noImage ? undefined : data.avatar,
+                avatarFile: data.noImage ? undefined : data.avatarFile,
                 noImage: data.noImage || undefined,
                 hairDescription: data.noImage ? data.hairDescription?.trim() : undefined,
                 faceDescription: data.noImage ? data.faceDescription?.trim() : undefined,
@@ -121,7 +113,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
     // Clear avatar when user selects no image
     useEffect(() => {
         if (watchNoImage) {
-            setValue('avatar', '');
+            setValue('avatarFile', undefined as unknown as File, { shouldValidate: true });
             setAvatarPreview(null);
         }
     }, [watchNoImage, setValue]);
@@ -159,24 +151,24 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                     {t('group.memberAvatar')}
                                 </Label>
                                 <Controller
-                                    name="avatar"
+                                    name="avatarFile"
                                     control={control}
                                     rules={{
                                         validate: (val) => {
-                                            // Require avatar only if noImage is false
+                                            // Require image file only if noImage is false
                                             if (!watchNoImage && !val) {
                                                 return t('group.memberAvatarRequired');
                                             }
                                             return true;
                                         }
                                     }}
-                                    render={({ field }) => (
+                                    render={() => (
                                         <>
                                             <div 
                                                 className={`
                                                     border-2 border-dashed rounded-md p-4 flex flex-col items-center justify-center
                                                     w-full min-h-40 cursor-pointer hover:border-primary transition-colors
-                                                    ${(errors.avatar && !watchNoImage) ? 'border-red-500' : 'border-gray-300'}
+                                                    ${(errors.avatarFile && !watchNoImage) ? 'border-red-500' : 'border-gray-300'}
                                                 `}
                                                 onClick={() => document.getElementById('avatar-upload')?.click()}
                                                 onDragOver={(e) => {
@@ -208,11 +200,10 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                                     onChange={handleFileChange}
                                                     className="hidden"
                                                 />
-                                                <input type="hidden" {...field} />
                                             </div>
-                                            {errors.avatar && (
+                                            {errors.avatarFile && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errors.avatar.message}
+                                                    {errors.avatarFile.message as string}
                                                 </p>
                                             )}
                                         </>
@@ -243,75 +234,115 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                             </Label>
                         </div>
 
-                        {/* Hair and face descriptions when no image */}
+                        {/* Hair/Face on right and Name/Description on left when no image */}
                         {watchNoImage && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor="hairDescription" className="block mb-2">
-                                        {t('group.hairDescription', 'Hair description')}
-                                    </Label>
-                                    <Textarea
-                                        id="hairDescription"
-                                        {...register('hairDescription', {
-                                            validate: (val) => watchNoImage ? (!!val && val.trim().length > 0) || t('group.hairDescriptionRequired', 'Hair description is required when no image is provided') : true
-                                        })}
-                                        placeholder={t('group.hairDescriptionPlaceholder', 'e.g., curly brown hair, shoulder length, usually in a ponytail')}
-                                        className="w-full min-h-[120px]"
-                                    />
-                                    {errors.hairDescription && (
-                                        <p className="text-sm text-red-500">{errors.hairDescription.message as string}</p>
-                                    )}
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                {/* Left: Name + Description */}
+                                <div className="md:col-span-6">
+                                    <div className="mb-4">
+                                        <Label htmlFor="name" className="block mb-2">
+                                            {t('group.memberName')}
+                                        </Label>
+                                        <Input
+                                            id="name"
+                                            {...register("name", { 
+                                                required: t('form.name.required') as string 
+                                            })}
+                                            placeholder={t('group.namePlaceholder')}
+                                            className="w-full"
+                                            aria-invalid={errors.name ? "true" : "false"}
+                                        />
+                                        {errors.name && (
+                                            <p className="text-sm text-red-500">{errors.name.message}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="description" className="block mb-2">
+                                            {t('group.memberDescription')}
+                                        </Label>
+                                        <Textarea
+                                            id="description"
+                                            {...register("description")}
+                                            placeholder={t('group.memberDescriptionPlaceholder')}
+                                            className="w-full min-h-[150px]"
+                                        />
+                                    </div>
                                 </div>
-                                <div>
-                                    <Label htmlFor="faceDescription" className="block mb-2">
-                                        {t('group.faceDescription', 'Face description')}
-                                    </Label>
-                                    <Textarea
-                                        id="faceDescription"
-                                        {...register('faceDescription', {
-                                            validate: (val) => watchNoImage ? (!!val && val.trim().length > 0) || t('group.faceDescriptionRequired', 'Face description is required when no image is provided') : true
-                                        })}
-                                        placeholder={t('group.faceDescriptionPlaceholder', 'e.g., wears glasses, has freckles, often looks serious, beard')}
-                                        className="w-full min-h-[120px]"
-                                    />
-                                    {errors.faceDescription && (
-                                        <p className="text-sm text-red-500">{errors.faceDescription.message as string}</p>
-                                    )}
+
+                                {/* Right: Hair + Face (stacked) */}
+                                <div className="md:col-span-6">
+                                    <div className="mb-4">
+                                        <Label htmlFor="hairDescription" className="block mb-2">
+                                            {t('group.hairDescription', 'Hair description')}
+                                        </Label>
+                                        <Textarea
+                                            id="hairDescription"
+                                            {...register('hairDescription', {
+                                                validate: (val) => watchNoImage ? (!!val && val.trim().length > 0) || t('group.hairDescriptionRequired', 'Hair description is required when no image is provided') : true
+                                            })}
+                                            placeholder={t('group.hairDescriptionPlaceholder', 'e.g., curly brown hair, shoulder length, usually in a ponytail')}
+                                            className="w-full min-h-[120px]"
+                                        />
+                                        {errors.hairDescription && (
+                                            <p className="text-sm text-red-500">{errors.hairDescription.message as string}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="faceDescription" className="block mb-2">
+                                            {t('group.faceDescription', 'Face description')}
+                                        </Label>
+                                        <Textarea
+                                            id="faceDescription"
+                                            {...register('faceDescription', {
+                                                validate: (val) => watchNoImage ? (!!val && val.trim().length > 0) || t('group.faceDescriptionRequired', 'Face description is required when no image is provided') : true
+                                            })}
+                                            placeholder={t('group.faceDescriptionPlaceholder', 'e.g., wears glasses, has freckles, often looks serious, beard')}
+                                            className="w-full min-h-[120px]"
+                                        />
+                                        {errors.faceDescription && (
+                                            <p className="text-sm text-red-500">{errors.faceDescription.message as string}</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Name field */}
-                        <div>
-                            <Label htmlFor="name" className="block mb-2">
-                                {t('group.memberName')}
-                            </Label>
-                            <Input
-                                id="name"
-                                {...register("name", { 
-                                    required: "Name is required" 
-                                })}
-                                placeholder={t('group.namePlaceholder')}
-                                className="w-full"
-                                aria-invalid={errors.name ? "true" : "false"}
-                            />
-                            {errors.name && (
-                                <p className="text-sm text-red-500">{errors.name.message}</p>
-                            )}
-                        </div>
+                        {/* Name and Description fields when image mode */}
+                        {!watchNoImage && (
+                            <>
+                                {/* Name field */}
+                                <div>
+                                    <Label htmlFor="name" className="block mb-2">
+                                        {t('group.memberName')}
+                                    </Label>
+                                    <Input
+                                        id="name"
+                                        {...register("name", { 
+                                            required: t('form.name.required') as string 
+                                        })}
+                                        placeholder={t('group.namePlaceholder')}
+                                        className="w-full"
+                                        aria-invalid={errors.name ? "true" : "false"}
+                                    />
+                                    {errors.name && (
+                                        <p className="text-sm text-red-500">{errors.name.message}</p>
+                                    )}
+                                </div>
 
-                        {/* Description field */}
-                        <div>
-                            <Label htmlFor="description" className="block mb-2">
-                                {t('group.memberDescription')}
-                            </Label>
-                            <Textarea
-                                id="description"
-                                {...register("description")}
-                                placeholder={t('group.memberDescriptionPlaceholder')}
-                                className="w-full min-h-[150px]"
-                            />
-                        </div>
+                                {/* Description field */}
+                                <div>
+                                    <Label htmlFor="description" className="block mb-2">
+                                        {t('group.memberDescription')}
+                                    </Label>
+                                    <Textarea
+                                        id="description"
+                                        {...register("description")}
+                                        placeholder={t('group.memberDescriptionPlaceholder')}
+                                        className="w-full min-h-[150px]"
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>

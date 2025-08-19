@@ -21,6 +21,8 @@ interface EditMemberDialogProps {
         id: string;
         name: string;
         avatar?: string;
+        imageSignedUrl?: string;
+        imagePath?: string;
         description?: string;
     } | null;
     onUpdate: (userData: UpdateUserRequest) => Promise<void>;
@@ -39,7 +41,7 @@ export function EditMemberDialog({open, onOpenChange, member, onUpdate}: EditMem
         if (member) {
             setName(member.name || '');
             setDescription(member.description || '');
-            setAvatar(member.avatar || null);
+            setAvatar(member.imageSignedUrl || member.imagePath || member.avatar || null);
             setNewAvatar(null);
         }
     }, [member]);

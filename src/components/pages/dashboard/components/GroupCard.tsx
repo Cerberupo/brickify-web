@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
     Avatar,
-    AvatarFallback,
     AvatarImage,
     Button,
     Card,
@@ -10,17 +9,19 @@ import {
     CardDescription,
     CardFooter,
     CardHeader,
-    CardTitle,
-    Progress
+    CardTitle
 } from "@/components/ui";
 import {DeleteGroupDialog} from './DeleteGroupDialog';
 import {cn, hasGroupAlreadyPaidStatus, navigate} from "@/lib/utils";
 import type {GroupCardProps} from '../types';
-import {GROUP_STATUS, MIN_USERS} from '@/constants/uiConfig';
+import {GROUP_STATUS} from '@/constants/uiConfig';
 import {APP_ROUTES} from '@/constants/routes';
-import {Trash2, Edit2} from 'lucide-react';
+import {Edit2, Trash2} from 'lucide-react';
 import {deleteGroup} from '@/lib/services/groups';
 import {toast} from 'sonner';
+import favicon from '@/images/favicon.png';
+
+const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
 
 export function GroupCard({group, onEdit}: GroupCardProps) {
@@ -31,8 +32,6 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
     // Get status configuration
     const statusConf = GROUP_STATUS[group.status];
 
-    // Determine if we need to show remaining users or completed users
-    const needsMoreUsers = group.totalUsers < MIN_USERS;
 
     // Handle delete button click
     const handleDelete = (e: React.MouseEvent) => {
@@ -81,15 +80,6 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
         }
     };
 
-    // Calculate completion percentage
-    let completionPercentage;
-    if (needsMoreUsers) {
-        // If we need more users, calculate percentage based on how many users we have out of the minimum
-        completionPercentage = group.totalUsers === 0 ? 0 : Math.round((group.totalUsers / MIN_USERS) * 100);
-    } else {
-        // If we have enough users, calculate percentage based on how many users are completed
-        completionPercentage = group.totalUsers === 0 ? 0 : Math.round((group.usersCompleted / group.totalUsers) * 100);
-    }
 
     return (
         <>
@@ -97,7 +87,7 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
                 className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.01] hover:-translate-y-1"
                 onClick={() => navigate(APP_ROUTES.GROUP, {id: group.id})}>
                 <CardHeader>
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-center">
                         <div>
                             <CardTitle>{group.name}</CardTitle>
                             <CardDescription>{group.description}</CardDescription>
@@ -108,7 +98,10 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
                                     variant="outline"
                                     size="icon"
                                     className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                                    onClick={(e) => { e.stopPropagation(); onEdit?.(group); }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit?.(group);
+                                    }}
                                 >
                                     <Edit2 className="h-4 w-4"/>
                                     <span className="sr-only">{t('dashboard.editGroup', 'Edit Group')}</span>
@@ -127,49 +120,29 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {/* User completion status */}
-                    <div>
-                        <div className="flex justify-between mb-1">
-                            <span className="text-sm font-medium">
-                                {needsMoreUsers
-                                    ? t('dashboard.usersRemaining', {remaining: group.totalUsers, min: MIN_USERS})
-                                    : t('dashboard.usersCompleted', {
-                                        completed: group.usersCompleted,
-                                        total: group.totalUsers
-                                    })}
-                            </span>
-                        </div>
-                        <Progress value={completionPercentage} className="w-full"/>
-                    </div>
-
                     {/* User avatars */}
                     <div>
-                        <p className="text-sm font-medium mb-2">{t('dashboard.groupMembers')}</p>
+                        <p className="text-sm font-medium mb-2">{t('dashboard.groupMembers')} ({group.totalUsers})</p>
                         <div className="flex -space-x-2 overflow-hidden">
                             {group.referencePeople.length > 0 ? (
                                 group.referencePeople.map((user) => (
-                                    <Avatar key={user.id} className="border-2 border-background">
-                                        {user.avatar ? (
-                                            <AvatarImage src={user.avatar} alt={user.name}/>
-                                        ) : (
-                                            <AvatarFallback>
-                                                {user.name.substring(0, 2).toUpperCase()}
-                                            </AvatarFallback>
-                                        )}
+                                    <Avatar key={user.id} className="h-7 w-7 border-2 border-background">
+                                        <AvatarImage className="object-cover"
+                                                     src={user.imageSignedUrl || user.imagePath || user.avatar || faviconUrl}
+                                                     alt={user.name}/>
                                     </Avatar>
                                 ))
                             ) : (
-                                <Avatar className="border-2 border-background">
-                                    <AvatarFallback>
-                                        {t('dashboard.emptyGroup', 'EG')}
-                                    </AvatarFallback>
+                                <Avatar className="h-7 w-7 border-2 border-background">
+                                    <AvatarImage src={faviconUrl} alt={t('dashboard.emptyGroup', 'EG') as string}/>
                                 </Avatar>
                             )}
                         </div>
                     </div>
 
                     {/* Group status */}
-                    <div className={cn("px-2.5 py-0.5 rounded-full text-xs font-medium inline-block", statusConf.color)}>
+                    <div
+                        className={cn("px-2.5 py-0.5 rounded-full text-xs font-medium inline-block", statusConf.color)}>
                         {t(statusConf.message)}
                     </div>
                 </CardContent>
@@ -186,9 +159,9 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
             </Card>
 
             {/* Delete confirmation dialog */}
-            <DeleteGroupDialog 
-                open={showDeleteDialog} 
-                onOpenChange={setShowDeleteDialog} 
+            <DeleteGroupDialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
                 onConfirm={handleDeleteConfirm}
                 isDeleting={isDeleting}
             />

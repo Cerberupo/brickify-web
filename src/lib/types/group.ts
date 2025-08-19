@@ -11,6 +11,12 @@ export interface Group {
         id: string;
         name: string;
         avatar?: string;
+        imageSignedUrl?: string;
+        imagePath?: string;
+        description?: string;
+        hasImage?: boolean;
+        hairDescription?: string;
+        faceDescription?: string;
     }[];
     status:
         | 'needsMoreUsers'       // Needs more users to reach minimum of 25

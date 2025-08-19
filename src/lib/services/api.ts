@@ -32,6 +32,12 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
         ...headers,
     };
 
+    // If body is FormData, let the browser/axios set the correct Content-Type with boundary
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+    if (isFormData) {
+        delete requestHeaders['Content-Type'];
+    }
+
     // Add authorization token if available in localStorage
     const token = localStorage.getItem('authToken');
     if (token) {

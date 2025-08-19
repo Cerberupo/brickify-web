@@ -36,11 +36,16 @@ export interface UpdateGroupResponse {
 export interface AddUserRequest {
     name: string;
     email?: string;
-    avatar?: string;  // Image (optional if noImage is true)
-    noImage?: boolean; // User indicates no image available
-    hairDescription?: string; // Required if noImage is true
-    faceDescription?: string; // Required if noImage is true
-    description?: string;  // Additional information about the person (optional)
+    // File selected by the user (sent as multipart field 'image')
+    avatarFile?: File;
+    // Flags and descriptions when no image is provided
+    noImage?: boolean;
+    hairDescription?: string;
+    faceDescription?: string;
+    // Additional information about the person (optional)
+    description?: string;
+    // Future-proof: extra fields to send alongside if needed
+    additionalFields?: Record<string, unknown>;
 }
 
 /**
@@ -52,6 +57,10 @@ export interface UpdateUserRequest {
     email?: string;
     avatar?: string;
     description?: string;  // Additional information about the person
+    // When no image is provided in edit mode
+    noImage?: boolean;
+    hairDescription?: string;
+    faceDescription?: string;
 }
 
 /**
@@ -62,6 +71,11 @@ export interface UserResponse {
     name: string;
     email?: string;
     avatar?: string;
+    imageSignedUrl?: string;
+    imagePath?: string;
     description?: string;  // Additional information about the person
+    hasImage?: boolean;
+    hairDescription?: string;
+    faceDescription?: string;
     message?: string;
 }

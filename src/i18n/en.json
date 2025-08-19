@@ -34,7 +34,7 @@
     "groupMembers": "Group Members",
     "groupPrice": "Group Price",
     "noGroups": "No groups yet",
-    "createFirstGroup": "Create your first group to start a new order, add the minimum number of people and place the order.",
+    "createFirstGroup": "Create your first group to start a new order, add people and place the order.",
     "createGroup": "Create Group",
     "editGroup": "Edit Group",
     "groupName": "Group Name",
@@ -44,6 +44,8 @@
     "groupType": "Group Type",
     "groupTypePlaceholder": "Select a group type",
     "groupTypeRequired": "Group type is required",
+    "groupNameRequired": "Group name is required",
+    "groupDescriptionRequired": "Group description is required",
     "groupTypeOptions": {
       "weddingFamily": "Wedding gift for family",
       "companyEmployees": "Company gift for employees",
@@ -289,6 +291,13 @@
     "cancel": "Cancel",
     "dragImageHere": "Click or drag image here",
     "imageRequirements": "Upload a photo of the person to help us choose their hair and face.",
-    "changeImageOptional": "Changing the image is optional."
+    "changeImageOptional": "Changing the image is optional.",
+    "addTwoMembers": "Add two at once",
+    "addTwoMembersTitle": "Add two members",
+    "addTwoMembersDescription": "Add two people at once (for example, siblings, friends, classmates).",
+    "firstPerson": "Member 1",
+    "secondPerson": "Member 2",
+    "subgroupName": "Subgroup name",
+    "imageTooLarge": "The selected image is too large. Maximum allowed is 2MB."
   }
 }

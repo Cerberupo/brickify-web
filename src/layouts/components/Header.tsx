@@ -5,6 +5,8 @@ import {clearUser} from "@/lib";
 import {APP_ROUTES} from '@/constants/routes';
 import {useAuth} from "@/lib/hooks/useAuth";
 import {navigate} from "@/lib/utils";
+import logo from '@/images/logo.png';
+import {PROJECT_NAME} from '@/config';
 
 export function Header() {
     const {t} = useTranslation();
@@ -26,7 +28,10 @@ export function Header() {
             <header className="bg-background border-b border-border">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div className="flex items-center">
-                        <a href={APP_ROUTES.HOME} className="text-xl font-bold">Brickify</a>
+                        <a href={APP_ROUTES.HOME} className="flex items-center gap-2">
+                            <img src={logo.src} alt={PROJECT_NAME} className="h-5 w-auto"/>
+                            <span className="sr-only">{PROJECT_NAME}</span>
+                        </a>
                     </div>
                     <nav>
                         <ul className="flex space-x-4 items-center">

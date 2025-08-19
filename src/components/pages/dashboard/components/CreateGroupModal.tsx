@@ -84,7 +84,7 @@ export function CreateGroupModal({isOpen, onClose, onSubmit, mode = 'create', in
                             <Input
                                 id="name"
                                 {...register("name", {
-                                    required: "Group name is required"
+                                    required: t('dashboard.groupNameRequired') as string
                                 })}
                                 placeholder={t('dashboard.groupNamePlaceholder')}
                                 aria-invalid={errors.name ? "true" : "false"}
@@ -98,7 +98,7 @@ export function CreateGroupModal({isOpen, onClose, onSubmit, mode = 'create', in
                             <Textarea
                                 id="description"
                                 {...register("description", {
-                                    required: "Group description is required"
+                                    required: t('dashboard.groupDescriptionRequired') as string
                                 })}
                                 placeholder={t('dashboard.groupDescriptionPlaceholder')}
                                 aria-invalid={errors.description ? "true" : "false"}

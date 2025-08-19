@@ -34,7 +34,7 @@
     "groupMembers": "Miembros del Grupo",
     "groupPrice": "Precio del Grupo",
     "noGroups": "Aún no hay grupos",
-    "createFirstGroup": "Crea tu primer grupo para comenzar un nuevo pedido, añade el mínimo de personas y realiza el pedido.",
+    "createFirstGroup": "Crea tu primer grupo para comenzar un nuevo pedido, añade personas y realiza el pedido.",
     "createGroup": "Crear Grupo",
     "editGroup": "Editar Grupo",
     "groupName": "Nombre del Grupo",
@@ -44,6 +44,8 @@
     "groupType": "Tipo de grupo",
     "groupTypePlaceholder": "Seleccione un tipo de grupo",
     "groupTypeRequired": "El tipo de grupo es obligatorio",
+    "groupNameRequired": "El nombre del grupo es obligatorio",
+    "groupDescriptionRequired": "La descripción del grupo es obligatoria",
     "groupTypeOptions": {
       "weddingFamily": "Regalo de bodas a familiares",
       "companyEmployees": "Regalo de empresa a empleados",
@@ -289,6 +291,12 @@
     "cancel": "Cancelar",
     "dragImageHere": "Haga clic o arrastre la imagen aquí",
     "imageRequirements": "Sube una foto de la persona para ayudarnos a elegir su pelo y cara.",
-    "changeImageOptional": "Cambiar la imagen es opcional."
-  }
-}
+    "changeImageOptional": "Cambiar la imagen es opcional.",
+    "addTwoMembers": "Añadir dos a la vez",
+    "addTwoMembersTitle": "Añadir dos miembros",
+    "addTwoMembersDescription": "Agrega dos personas de una sola vez (por ejemplo, hermanos, amigos, compañeros).",
+    "firstPerson": "Miembro 1",
+    "secondPerson": "Miembro 2",
+    "subgroupName": "Nombre del subgrupo"
+   }
+ }
