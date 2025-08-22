@@ -23,5 +23,5 @@ export function navigate(route: string, params?: Record<string, string>) {
 // Export a utility function to check if a group has already paid
 export const hasGroupAlreadyPaidStatus = (group: Group): boolean => {
     // If the status is NOT one of these, it means the order has been paid
-    return ![GROUP_STATUS_ENUM.needsMoreUsers, GROUP_STATUS_ENUM.needsCompletedUsers, GROUP_STATUS_ENUM.readyForPayment].includes(group.status);
+    return ![GROUP_STATUS_ENUM.needsMoreUsers, GROUP_STATUS_ENUM.readyForPayment].includes(group.status);
 };

@@ -93,6 +93,8 @@
     "successMessage": "Login successful!",
     "errorMessage": "Login failed. Please try again.",
     "googleErrorMessage": "Google login failed. Please try again.",
+    "useEmailPasswordError": "This account uses email/password login. Please sign in with your email and password.",
+    "useGoogleLoginError": "This account uses Google login. Please sign in with Google.",
     "loggingIn": "Logging in..."
   },
   "register": {
@@ -279,6 +281,13 @@
     "totalCost": "Order Summary",
     "orderTotal": "Total Cost",
     "priceNotAvailable": "Price not available yet",
+    "checkout": "Checkout",
+    "summary": {
+      "singleCount": "{{count}} single users",
+      "groupCount": "{{count}} user groups",
+      "subtotalExclVat": "Subtotal (excl. VAT)",
+      "vatNote": "VAT is calculated at checkout"
+    },
     "deleteConfirmation": {
       "title": "Delete Member",
       "description": "Are you sure you want to delete this member? This action cannot be undone.",
@@ -299,5 +308,16 @@
     "secondPerson": "Member 2",
     "subgroupName": "Subgroup name",
     "imageTooLarge": "The selected image is too large. Maximum allowed is 2MB."
+  },
+  "checkout": {
+    "title": "Checkout",
+    "successTitle": "Thank you!",
+    "successMessage": "We appreciate your business! A confirmation email will be sent to {{email}}.",
+    "yourEmail": "your email",
+    "questions": "If you have any questions, please email",
+    "errorOpenTitle": "Payment not completed",
+    "errorOpenMessage": "We couldn't process the order or the payment wasn't completed.",
+    "backToGroup": "Back to group",
+    "postOrderCopy": "Thanks for your order! We’re already getting everything ready. Our team will curate the perfect selection of pieces for your group and email you a summary to review and confirm. Once you approve, we’ll place the order and carefully prepare your package for delivery to your chosen address. Thanks for trusting Brickify!"
   }
 }

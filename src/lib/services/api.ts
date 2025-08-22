@@ -73,11 +73,14 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
 
         // Handle axios errors
         if (axios.isAxiosError(error) && error.response) {
-            const errorData = error.response.data || {};
-            throw new Error(
-                errorData.message || `API request failed with status ${error.response.status}`
-            );
-        }
+                const errorData = error.response.data || {};
+                const errObj: any = new Error(
+                    errorData.message || `API request failed with status ${error.response.status}`
+                );
+                if (errorData.code) errObj.code = errorData.code;
+                if (error.response.status) errObj.status = error.response.status;
+                throw errObj;
+            }
 
         throw error;
     }

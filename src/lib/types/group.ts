@@ -19,9 +19,8 @@ export interface Group {
         faceDescription?: string;
     }[];
     status:
-        | 'needsMoreUsers'       // Needs more users to reach minimum of 25
-        | 'needsCompletedUsers'  // Has 25+ users but some are incomplete
-        | 'readyForPayment'      // Has 25+ completed users, waiting for payment
+        | 'needsMoreUsers'       // Needs more users
+        | 'readyForPayment'      // Ready to place order
         | 'inProcess'            // After payment, selecting Lego pieces
         | 'waitingForApproval'   // Pieces selected, waiting for user approval
         | 'orderPlaced'          // Order placed with Lego

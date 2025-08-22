@@ -298,5 +298,16 @@
     "firstPerson": "Miembro 1",
     "secondPerson": "Miembro 2",
     "subgroupName": "Nombre del subgrupo"
-   }
+   },
+  "checkout": {
+    "title": "Finalizar compra",
+    "successTitle": "¡Gracias!",
+    "successMessage": "¡Agradecemos tu pedido! Enviaremos un email de confirmación a {{email}}.",
+    "yourEmail": "tu email",
+    "questions": "Si tienes alguna pregunta, escribe a",
+    "errorOpenTitle": "Pago no completado",
+    "errorOpenMessage": "No hemos podido procesar el pedido o el pago no se ha completado.",
+    "backToGroup": "Volver al grupo",
+    "postOrderCopy": "¡Gracias por tu compra! Ya estamos preparando tu pedido. Nuestro equipo seleccionará las piezas ideales para tu grupo y te enviaremos un resumen por email para que lo revises y confirmes. Tras tu aprobación, realizaremos el pedido y prepararemos tu paquete con mimo para el envío a la dirección indicada. ¡Gracias por confiar en Brickify!"
+  }
  }

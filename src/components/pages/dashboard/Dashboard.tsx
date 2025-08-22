@@ -96,7 +96,7 @@ export function DashboardPage() {
     const handleEditSubmit = async (id: string, name: string, description: string) => {
         try {
             setIsLoading(true);
-            await updateGroup(id, { name, description });
+            await updateGroup(id, {name, description});
             toast.success(t('dashboard.groupUpdated', 'Group updated successfully'));
             await fetchGroups();
             handleCloseModal();
@@ -107,8 +107,6 @@ export function DashboardPage() {
             setIsLoading(false);
         }
     };
-
-    console.log(groups);
 
     return (
         <div className="container mx-auto p-4 py-6">
@@ -188,7 +186,11 @@ export function DashboardPage() {
                 onClose={handleCloseModal}
                 onSubmit={handleSubmit}
                 mode={selectedGroup ? 'edit' : 'create'}
-                initialValues={selectedGroup ? { id: selectedGroup.id, name: selectedGroup.name, description: selectedGroup.description } : undefined}
+                initialValues={selectedGroup ? {
+                    id: selectedGroup.id,
+                    name: selectedGroup.name,
+                    description: selectedGroup.description
+                } : undefined}
                 onSubmitEdit={handleEditSubmit}
             />
         </div>

@@ -17,6 +17,7 @@ import favicon from '@/images/favicon.png';
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
 interface MemberListProps {
+    readOnly?: boolean;
     members: {
         id: string;
         name: string;
@@ -29,7 +30,7 @@ interface MemberListProps {
     onDelete: (memberId: string) => void;
 }
 
-export function MemberList({members, onEdit, onDelete}: MemberListProps) {
+export function MemberList({readOnly = false, members, onEdit, onDelete}: MemberListProps) {
     const {t} = useTranslation();
 
     return (

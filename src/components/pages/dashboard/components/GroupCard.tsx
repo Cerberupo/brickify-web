@@ -1,16 +1,6 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-    Avatar,
-    AvatarImage,
-    Button,
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle
-} from "@/components/ui";
+import {Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui";
 import {DeleteGroupDialog} from './DeleteGroupDialog';
 import {cn, hasGroupAlreadyPaidStatus, navigate} from "@/lib/utils";
 import type {GroupCardProps} from '../types';
@@ -19,9 +9,7 @@ import {APP_ROUTES} from '@/constants/routes';
 import {Edit2, Trash2} from 'lucide-react';
 import {deleteGroup} from '@/lib/services/groups';
 import {toast} from 'sonner';
-import favicon from '@/images/favicon.png';
-
-const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
+import ReferencePeopleAvatars from '@/components/common/ReferencePeopleAvatars';
 
 
 export function GroupCard({group, onEdit}: GroupCardProps) {
@@ -32,6 +20,21 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
     // Get status configuration
     const statusConf = GROUP_STATUS[group.status];
 
+    // Flatten referencePeople so subgroup members are included in the avatar list
+    const flatMembers = (group.referencePeople as any[]).flatMap((entry: any) => {
+        if (entry && entry.type === 'group' && Array.isArray(entry.people)) {
+            return entry.people.filter(Boolean);
+        }
+        return [entry];
+    });
+    // Order: first those who have an image, then those who don't
+    flatMembers.sort((a: any, b: any) => {
+        const aHas = Boolean(a?.imageSignedUrl || a?.imagePath || a?.avatar);
+        const bHas = Boolean(b?.imageSignedUrl || b?.imagePath || b?.avatar);
+        if (aHas === bHas) return 0;
+        return aHas ? -1 : 1;
+    });
+    const totalMembers = flatMembers.length;
 
     // Handle delete button click
     const handleDelete = (e: React.MouseEvent) => {
@@ -122,21 +125,9 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
                 <CardContent className="space-y-4">
                     {/* User avatars */}
                     <div>
-                        <p className="text-sm font-medium mb-2">{t('dashboard.groupMembers')} ({group.totalUsers})</p>
-                        <div className="flex -space-x-2 overflow-hidden">
-                            {group.referencePeople.length > 0 ? (
-                                group.referencePeople.map((user) => (
-                                    <Avatar key={user.id} className="h-7 w-7 border-2 border-background">
-                                        <AvatarImage className="object-cover"
-                                                     src={user.imageSignedUrl || user.imagePath || user.avatar || faviconUrl}
-                                                     alt={user.name}/>
-                                    </Avatar>
-                                ))
-                            ) : (
-                                <Avatar className="h-7 w-7 border-2 border-background">
-                                    <AvatarImage src={faviconUrl} alt={t('dashboard.emptyGroup', 'EG') as string}/>
-                                </Avatar>
-                            )}
+                        <p className="text-sm font-medium mb-2">{t('dashboard.groupMembers')} ({totalMembers})</p>
+                        <div>
+                            <ReferencePeopleAvatars entries={group.referencePeople as any[]} size={28} overlap/>
                         </div>
                     </div>
 

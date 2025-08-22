@@ -56,11 +56,18 @@ export function LoginForm() {
             navigate(APP_ROUTES.DASHBOARD);
         } catch (error) {
             console.error('Error during Google login:', error);
-            toast.error(
-                error instanceof Error
-                    ? error.message
-                    : t('login.googleErrorMessage', 'Google login failed. Please try again.')
-            );
+            const code = (error as any)?.code;
+            if (code === 'USE_EMAIL_PASSWORD_LOGIN') {
+                toast.error(t('login.useEmailPasswordError', 'Este usuario está registrado con email y contraseña. Inicia sesión con tu email y contraseña.'));
+            } else if (code === 'USE_GOOGLE_LOGIN') {
+                toast.error(t('login.useGoogleLoginError', 'Esta cuenta usa Google para iniciar sesión. Por favor, inicia sesión con Google.'));
+            } else {
+                toast.error(
+                    error instanceof Error
+                        ? error.message
+                        : t('login.googleErrorMessage', 'Google login failed. Please try again.')
+                );
+            }
         } finally {
             setIsLoading(false);
         }

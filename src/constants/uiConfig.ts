@@ -22,10 +22,6 @@ export const GROUP_STATUS = {
         color: 'bg-red-100 text-red-800',
         message: 'dashboard.groupStatus.needsMoreUsers'
     },
-    needsCompletedUsers: {
-        color: 'bg-orange-100 text-orange-800',
-        message: 'dashboard.groupStatus.needsCompletedUsers'
-    },
     readyForPayment: {
         color: 'bg-purple-100 text-purple-800',
         message: 'dashboard.groupStatus.readyForPayment'
@@ -67,7 +63,6 @@ export const GROUP_STATUS = {
 export const GROUP_STATUS_ENUM = {
     // New statuses based on user flow
     needsMoreUsers: 'needsMoreUsers',
-    needsCompletedUsers: 'needsCompletedUsers',
     readyForPayment: 'readyForPayment',
     inProcess: 'inProcess',
     waitingForApproval: 'waitingForApproval',
