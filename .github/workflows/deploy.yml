@@ -35,9 +35,6 @@ jobs:
       ENVIRONMENT: ${{ inputs.env || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }}
       WEB_BUCKET: ${{ (inputs.env || (github.ref == 'refs/heads/main' && 'prod' || 'dev')) == 'dev' && secrets.WEB_S3_BUCKET_DEV || secrets.WEB_S3_BUCKET }}
       CLOUDFRONT_DIST_ID_WEB: ${{ (inputs.env || (github.ref == 'refs/heads/main' && 'prod' || 'dev')) == 'dev' && secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB_DEV || secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB }}
-    defaults:
-      run:
-        working-directory: brickify-web
 
     steps:
       - name: Checkout
