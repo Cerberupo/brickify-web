@@ -18,7 +18,11 @@ on:
       invalidate:
         description: 'Invalidate CloudFront cache after upload'
         required: false
-        default: 'true'
+        default: 'yes'
+        type: choice
+        options:
+          - yes
+          - no
 
 concurrency:
   group: web-deploy-${{ github.ref }}
@@ -64,7 +68,7 @@ jobs:
           aws s3 sync ./dist s3://${WEB_BUCKET} --delete --only-show-errors
 
       - name: Invalidate CloudFront
-        if: ${{ inputs.invalidate != 'false' && env.CLOUDFRONT_DIST_ID_WEB != '' }}
+        if: ${{ inputs.invalidate == 'yes' && env.CLOUDFRONT_DIST_ID_WEB != '' }}
         run: |
           aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DIST_ID_WEB} --paths '/*'
 
