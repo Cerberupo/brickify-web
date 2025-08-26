@@ -1,9 +1,9 @@
 import { fetchApi } from './api';
 
-/** Get Stripe unit prices for single user and group entries */
-export async function getUnitPrices(): Promise<{ single: { id: string; unitAmount: number; currency: string } | null; group: { id: string; unitAmount: number; currency: string } | null }> {
+/** Get Stripe products with unit prices for single user and group entries */
+export async function getUnitPrices(): Promise<{ single: { id: string; name: string | null; unitAmount: number; currency: string; taxBehavior?: 'inclusive' | 'exclusive' | null } | null; group: { id: string; name: string | null; unitAmount: number; currency: string; taxBehavior?: 'inclusive' | 'exclusive' | null } | null }> {
   const payload = await fetchApi<{ status: string; data: { single: any; group: any } }>(
-    '/payments/prices',
+    '/payments/products',
     { method: 'GET' }
   );
   return payload?.data ?? { single: null, group: null };

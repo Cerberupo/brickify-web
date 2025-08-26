@@ -4,6 +4,7 @@ import {Avatar, AvatarImage, Button} from '@/components/ui';
 import {Pencil, Trash2} from 'lucide-react';
 import {InlineMemberEditor} from './InlineMemberEditor';
 import {InlineTwoMembersEditor} from './InlineTwoMembersEditor';
+import { StickyOverlay } from './StickyOverlay';
 import type {UpdateUserRequest} from '@/lib/types';
 import favicon from '@/images/favicon.png';
 
@@ -182,7 +183,7 @@ export function GroupedReferenceList({
                     // If this group is currently being edited, render the two-members inline editor in place
                     if (editingGroupId && entry.id === editingGroupId && onSaveEditGroup && onCancelEditGroup) {
                         return (
-                            <div key={entry.id} className="rounded-md border-l-4 border-primary/20 p-2">
+                            <StickyOverlay onClose={onCancelEditGroup}>
                                 <InlineTwoMembersEditor
                                     mode="edit"
                                     initialGroup={editingGroupInitial || {
@@ -193,7 +194,7 @@ export function GroupedReferenceList({
                                     onCancel={onCancelEditGroup}
                                     onUpdateGroup={onSaveEditGroup}
                                 />
-                            </div>
+                            </StickyOverlay>
                         );
                     }
                     return (
@@ -228,14 +229,14 @@ export function GroupedReferenceList({
                             <div className="flex flex-col gap-3">
                                 {entry.people.map((p: any) => (
                                     (editingMemberId && p.id === editingMemberId && onSaveEdit && onCancelEdit) ? (
-                                        <div key={p.id} className="rounded-md border-l-4 border-primary/20 p-2">
+                                        <StickyOverlay onClose={onCancelEdit}>
                                             <InlineMemberEditor
                                                 mode="edit"
                                                 initial={editingMemberInitial || p}
                                                 onCancel={onCancelEdit}
                                                 onSaveEdit={onSaveEdit}
                                             />
-                                        </div>
+                                        </StickyOverlay>
                                     ) : (
                                         <PersonRow key={p.id} person={p} onEdit={onEdit} onDelete={onDelete}
                                                    showActions={false}/>
@@ -248,14 +249,14 @@ export function GroupedReferenceList({
                 // Treat everything else as a single person entry
                 if (editingMemberId && entry?.id === editingMemberId && onSaveEdit && onCancelEdit) {
                     return (
-                        <div key={entry.id} className="rounded-md border-l-4 border-primary/20 p-2">
+                        <StickyOverlay onClose={onCancelEdit}>
                             <InlineMemberEditor
                                 mode="edit"
                                 initial={editingMemberInitial || entry}
                                 onCancel={onCancelEdit}
                                 onSaveEdit={onSaveEdit}
                             />
-                        </div>
+                        </StickyOverlay>
                     );
                 }
                 return <PersonRow key={entry.id} person={entry} onEdit={onEdit} onDelete={onDelete}/>;

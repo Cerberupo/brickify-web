@@ -3,10 +3,6 @@
  * This file contains UI-related configuration constants used throughout the application
  */
 
-/**
- * Minimum number of users required for a group to place an order
- */
-export const MIN_USERS = 25;
 
 /**
  * Maximum number of pending groups allowed before disabling the create button

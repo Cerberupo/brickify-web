@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Card, CardContent, CardHeader, CardTitle} from "@/components/ui";
+import {Button, CardContent} from "@/components/ui";
 import {
     addUserToGroup,
     createReferencePersonGroup,
@@ -15,8 +15,17 @@ import {APP_ROUTES} from '@/constants/routes';
 import {cn, navigate} from '@/lib/utils';
 import {type AddUserRequest, type Group, type UpdateUserRequest} from '@/lib/types';
 import {GROUP_STATUS} from '@/constants/uiConfig';
-import {ConfirmDeleteDialog, GroupedReferenceList, InlineMemberEditor, InlineTwoMembersEditor} from './components';
-import ReferencePeopleAvatars from '@/components/common/ReferencePeopleAvatars';
+import {
+    ConfirmDeleteDialog,
+    GroupedReferenceList,
+    GroupHeader,
+    GroupSummaryHeader,
+    InlineMemberEditor,
+    InlineTwoMembersEditor,
+    OrderSummaryCard,
+    ShippingAddressCard,
+    StickyOverlay
+} from './components';
 import {getUnitPrices} from '@/lib/services/stripe';
 
 export function GroupPage() {
@@ -25,8 +34,20 @@ export function GroupPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [groupId, setGroupId] = useState<string>('');
     const [unitPrices, setUnitPrices] = useState<{
-        single: { id: string; unitAmount: number; currency: string } | null;
-        group: { id: string; unitAmount: number; currency: string } | null
+        single: {
+            id: string;
+            name: string | null;
+            unitAmount: number;
+            currency: string;
+            taxBehavior?: 'inclusive' | 'exclusive' | null
+        } | null;
+        group: {
+            id: string;
+            name: string | null;
+            unitAmount: number;
+            currency: string;
+            taxBehavior?: 'inclusive' | 'exclusive' | null
+        } | null
     }>({single: null, group: null});
 
     // Inline add/edit state
@@ -172,63 +193,43 @@ export function GroupPage() {
 
     return (
         <div className={cn('container mx-auto p-4', (addingMode === 'none' && !memberToEdit) ? 'py-6' : 'pt-6 pb-2')}>
-            <div className="mb-6">
-                <Button
-                    variant="outline"
-                    onClick={() => navigate(APP_ROUTES.DASHBOARD)}
-                    className="mb-4"
-                >
-                    ← {t('group.backToDashboard')}
-                </Button>
-                <h1 className="text-2xl font-bold">{t('group.title')}</h1>
+            {/* Sticky top bar with header and (conditionally) add buttons */}
+            <div
+                className="sticky top-0 z-30 -mx-4 px-4 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b pt-4 pb-3 mb-6">
+                <GroupHeader
+                    onBack={() => navigate(APP_ROUTES.DASHBOARD)}
+                    backLabel={t('group.backToDashboard')}
+                    title={t('group.title')}
+                />
+
+                {/* Sticky Group summary (name/status/avatars) */}
+                <div className="py-2">
+                    <GroupSummaryHeader
+                        name={group.name}
+                        description={group.description}
+                        statusLabel={t(statusConf.message)}
+                        statusClassName={statusConf.color}
+                        groupMembersLabel={t('dashboard.groupMembers')}
+                        totalMembers={totalMembers}
+                        entries={group.referencePeople as any[]}
+                        actions={canEdit && addingMode === 'none' && !editingGroup && !memberToEdit && group.referencePeople.length > 0 ? (
+                            <>
+                                <Button variant="outline" onClick={() => setAddingMode('pair')}>{t('group.addTwoMembers')}</Button>
+                                <Button onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
+                            </>
+                        ) : null}
+                    />
+                </div>
             </div>
 
             <div className="flex flex-col gap-6">
-                {/* Top Section: Group Details */}
-                <Card>
-                    <CardContent className="py-3">
-                        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                            {/* Group name, status, and description */}
-                            <div className="min-w-0">
-                                <div className="flex items-center gap-2 min-w-0">
-                                    <h2 className="text-lg font-semibold truncate">{group.name}</h2>
-                                    <span
-                                        className={cn("px-2 py-0.5 rounded-full text-xs font-medium", statusConf.color)}>
-                                        {t(statusConf.message)}
-                                    </span>
-                                </div>
-                                {group.description ? (
-                                    <p className="mt-1 text-sm text-gray-600 line-clamp-2 break-words">{group.description}</p>
-                                ) : null}
-                            </div>
-
-                            {/* Right side: copy above avatars (compact) */}
-                            <div className="hidden md:flex flex-col items-end">
-                                <div className="text-xs text-gray-500 whitespace-nowrap">
-                                    {t('dashboard.groupMembers')} ({totalMembers})
-                                </div>
-                                <div className="mt-1">
-                                    <ReferencePeopleAvatars entries={group.referencePeople as any[]} size={28} overlap/>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                {/* Top Section: Group Details (moved to sticky bar) */}
 
                 {/* Middle Section: Group Members */}
-                <CardHeader className="flex flex-row items-center justify-end">
-                    {canEdit && addingMode === 'none' && !editingGroup && !memberToEdit && (
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline"
-                                    onClick={() => setAddingMode('pair')}>{t('group.addTwoMembers')}</Button>
-                            <Button onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
-                        </div>
-                    )}
-                </CardHeader>
                 <CardContent>
                     {/* Inline editors for add modes */}
                     {canEdit && addingMode === 'single' && !editingGroup && (
-                        <div className="mb-2">
+                        <StickyOverlay onClose={() => setAddingMode('none')}>
                             <InlineMemberEditor
                                 mode="add"
                                 onCancel={() => setAddingMode('none')}
@@ -237,10 +238,10 @@ export function GroupPage() {
                                     setAddingMode('none');
                                 }}
                             />
-                        </div>
+                        </StickyOverlay>
                     )}
                     {addingMode === 'pair' && !editingGroup && (
-                        <div className="mb-2">
+                        <StickyOverlay onClose={() => setAddingMode('none')}>
                             <InlineTwoMembersEditor
                                 onCancel={() => setAddingMode('none')}
                                 onAddGroup={async ({subgroupName, people}) => {
@@ -262,11 +263,11 @@ export function GroupPage() {
                                     }
                                 }}
                             />
-                        </div>
+                        </StickyOverlay>
                     )}
 
 
-                    {[...group.referencePeople].reverse().length > 0 ? (
+                    {group.referencePeople.length > 0 ? (
                         <div className="space-y-4">
                             <GroupedReferenceList
                                 entries={group.referencePeople as any}
@@ -337,54 +338,36 @@ export function GroupPage() {
                     )}
                 </CardContent>
 
+                {/* Shipping Address (if available) */}
+                <ShippingAddressCard
+                    title={t('checkout.shippingTo', 'Shipping to')}
+                    shipping={(group as any)?.purchaseDetails?.shipping_details}
+                />
+
                 {/* Bottom Section: Order Summary */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('group.totalCost')}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {(() => {
-                            // Count top-level singles and subgroups
-                            const entries: any[] = (group.referencePeople as any[]) || [];
-                            let singles = 0;
-                            let groupsCnt = 0;
-                            for (const e of entries) {
-                                if (!e) continue;
-                                if (e.type === 'person') singles += 1;
-                                else if (e.type === 'group') groupsCnt += 1;
-                            }
-                            const singlePrice = unitPrices.single?.unitAmount ?? 0; // cents
-                            const groupPrice = unitPrices.group?.unitAmount ?? 0; // cents
-                            const currency = (unitPrices.single?.currency || unitPrices.group?.currency || 'eur').toUpperCase();
-                            const subtotalCents = singles * singlePrice + groupsCnt * groupPrice;
-                            const fmt = (cents: number) => (cents / 100).toFixed(2);
-                            return (
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-sm">
-                                        <span>{t('group.summary.singleCount', '{{count}} single users', {count: singles})}</span>
-                                        <span>{unitPrices.single ? `${fmt(singlePrice)} € x ${singles} = ${fmt(singlePrice * singles)} €` : '—'}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span>{t('group.summary.groupCount', '{{count}} user groups', {count: groupsCnt})}</span>
-                                        <span>{unitPrices.group ? `${fmt(groupPrice)} € x ${groupsCnt} = ${fmt(groupPrice * groupsCnt)} €` : '—'}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center pt-2 border-t mt-2">
-                                        <span
-                                            className="text-base font-medium">{t('group.summary.subtotalExclVat', 'Subtotal (excl. VAT)')}</span>
-                                        <span className="text-lg font-bold">{`${fmt(subtotalCents)} €`}</span>
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        {t('group.summary.vatNote', 'VAT is calculated at checkout')}
-                                    </div>
-                                    <div className="flex justify-end mt-4">
-                                        <Button
-                                            onClick={() => navigate(`/checkout?groupId=${groupId}`)}>{t('group.checkout', 'Checkout')}</Button>
-                                    </div>
-                                </div>
-                            );
-                        })()}
-                    </CardContent>
-                </Card>
+                <OrderSummaryCard
+                    title={t('group.totalCost')}
+                    purchase={(group as any)?.purchaseDetails as any}
+                    unitPrices={unitPrices as any}
+                    entries={(group.referencePeople as any[]) || []}
+                    canEdit={canEdit}
+                    onCheckout={() => navigate(`/checkout?groupId=${groupId}`)}
+                    labels={{
+                        item: t('checkout.item', 'Item'),
+                        qty: t('checkout.qty', 'Qty'),
+                        unit: t('checkout.unitPrice', 'Unit'),
+                        subtotal: t('checkout.subtotal', 'Subtotal'),
+                        shipping: t('checkout.shipping', 'Shipping'),
+                        discount: t('checkout.discount', 'Discount'),
+                        tax: t('checkout.tax', 'Tax'),
+                        total: t('checkout.total', 'Total'),
+                        subtotalExclVat: t('group.summary.subtotalExclVat', 'Subtotal (excl. VAT)'),
+                        vatNote: t('group.summary.vatNote', 'VAT is calculated at checkout'),
+                        subtotalInclVat: t('group.summary.subtotalInclVat', 'Subtotal (incl. VAT)'),
+                        vatIncluded: t('group.summary.vatIncluded', 'VAT included in price'),
+                        checkout: t('group.checkout', 'Checkout')
+                    }}
+                />
 
             </div>
 

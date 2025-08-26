@@ -284,9 +284,11 @@
     "checkout": "Checkout",
     "summary": {
       "singleCount": "{{count}} single users",
-      "groupCount": "{{count}} user groups",
+      "groupCount": "{{count}} pairs",
       "subtotalExclVat": "Subtotal (excl. VAT)",
-      "vatNote": "VAT is calculated at checkout"
+      "subtotalInclVat": "Subtotal (incl. VAT)",
+      "vatNote": "VAT is calculated at checkout",
+      "vatIncluded": "VAT included in price"
     },
     "deleteConfirmation": {
       "title": "Delete Member",
@@ -301,9 +303,9 @@
     "dragImageHere": "Click or drag image here",
     "imageRequirements": "Upload a photo of the person to help us choose their hair and face.",
     "changeImageOptional": "Changing the image is optional.",
-    "addTwoMembers": "Add two at once",
-    "addTwoMembersTitle": "Add two members",
-    "addTwoMembersDescription": "Add two people at once (for example, siblings, friends, classmates).",
+    "addTwoMembers": "Add a pair",
+    "addTwoMembersTitle": "Add a pair",
+    "addTwoMembersDescription": "Add two people who go together (for example, a couple, siblings, friends, classmates).",
     "firstPerson": "Member 1",
     "secondPerson": "Member 2",
     "subgroupName": "Subgroup name",
@@ -318,6 +320,20 @@
     "errorOpenTitle": "Payment not completed",
     "errorOpenMessage": "We couldn't process the order or the payment wasn't completed.",
     "backToGroup": "Back to group",
-    "postOrderCopy": "Thanks for your order! We’re already getting everything ready. Our team will curate the perfect selection of pieces for your group and email you a summary to review and confirm. Once you approve, we’ll place the order and carefully prepare your package for delivery to your chosen address. Thanks for trusting Brickify!"
+    "postOrderCopy": "Thanks for your order! We’re already getting everything ready. Our team will curate the perfect selection of pieces for your group and email you a summary to review and confirm. Once you approve, we’ll place the order and carefully prepare your package for delivery to your chosen address. Thanks for trusting Brickify!",
+    "orderSummary": "Order Summary",
+    "item": "Item",
+    "qty": "Qty",
+    "unitPrice": "Unit",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "discount": "Discount",
+    "tax": "Tax",
+    "total": "Total",
+    "shippingTo": "Shipping to",
+    "noShipping": "No shipping address",
+    "paymentStatus": "Payment status",
+    "email": "Email",
+    "currency": "Currency"
   }
 }

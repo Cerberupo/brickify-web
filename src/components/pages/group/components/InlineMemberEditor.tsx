@@ -200,7 +200,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
     };
 
     return (
-        <div className="rounded-md p-3 md:p-4 bg-transparent border-l-4 border-primary/20">
+        <div className="rounded-md p-3 md:p-4 bg-transparent border">
             <div className="flex flex-col gap-4">
                 {/* Header: Title + No-image toggle inline to save space */}
                 <div className="flex flex-wrap items-center justify-between gap-3">

@@ -91,7 +91,7 @@ export const InlineTwoMembersEditor: React.FC<InlineTwoMembersEditorProps> = ({o
     };
 
     return (
-        <div className="rounded-md p-3 md:p-4 bg-transparent border-l-4 border-primary/20">
+        <div className="rounded-md p-3 md:p-4 bg-transparent border">
             <div className="flex flex-col gap-4">
                 <h3 className="text-lg font-semibold">{t('group.addTwoMembersTitle')}</h3>
 

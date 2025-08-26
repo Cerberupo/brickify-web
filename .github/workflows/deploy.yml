@@ -1,0 +1,76 @@
+name: Deploy Web (S3 + CloudFront)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'brickify-web/**'
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment to deploy to (prod|dev)'
+        required: false
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - dev
+      invalidate:
+        description: 'Invalidate CloudFront cache after upload'
+        required: false
+        default: 'true'
+
+concurrency:
+  group: web-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: ${{ inputs.env || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }}
+      WEB_BUCKET: ${{ (inputs.env || (github.ref == 'refs/heads/main' && 'prod' || 'dev')) == 'dev' && secrets.WEB_S3_BUCKET_DEV || secrets.WEB_S3_BUCKET }}
+      CLOUDFRONT_DIST_ID_WEB: ${{ (inputs.env || (github.ref == 'refs/heads/main' && 'prod' || 'dev')) == 'dev' && secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB_DEV || secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB }}
+    defaults:
+      run:
+        working-directory: brickify-web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: brickify-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: |
+          aws s3 sync ./dist s3://${WEB_BUCKET} --delete --only-show-errors
+
+      - name: Invalidate CloudFront
+        if: ${{ inputs.invalidate != 'false' && env.CLOUDFRONT_DIST_ID_WEB != '' }}
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DIST_ID_WEB} --paths '/*'
+
+# Required repository secrets:
+# - AWS_ACCESS_KEY_ID
+# - AWS_SECRET_ACCESS_KEY
+# - AWS_REGION (optional; defaults to us-east-1 if not set)
+# - WEB_S3_BUCKET (prod) and WEB_S3_BUCKET_DEV (dev)
+# - CLOUDFRONT_DISTRIBUTION_ID_WEB (prod) and CLOUDFRONT_DISTRIBUTION_ID_WEB_DEV (dev)

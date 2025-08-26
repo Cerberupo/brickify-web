@@ -279,6 +279,7 @@
     "totalCost": "Resumen del Pedido",
     "orderTotal": "Coste Total",
     "priceNotAvailable": "Precio no disponible aún",
+    "checkout": "Pagar",
     "deleteConfirmation": {
       "title": "Eliminar Miembro",
       "description": "¿Está seguro de que desea eliminar este miembro? Esta acción no se puede deshacer.",
@@ -292,12 +293,21 @@
     "dragImageHere": "Haga clic o arrastre la imagen aquí",
     "imageRequirements": "Sube una foto de la persona para ayudarnos a elegir su pelo y cara.",
     "changeImageOptional": "Cambiar la imagen es opcional.",
-    "addTwoMembers": "Añadir dos a la vez",
-    "addTwoMembersTitle": "Añadir dos miembros",
-    "addTwoMembersDescription": "Agrega dos personas de una sola vez (por ejemplo, hermanos, amigos, compañeros).",
+    "addTwoMembers": "Añadir pareja",
+    "addTwoMembersTitle": "Añadir pareja",
+    "addTwoMembersDescription": "Añade dos personas que van juntas (por ejemplo, pareja, hermanos, amigos, compañeros).",
     "firstPerson": "Miembro 1",
     "secondPerson": "Miembro 2",
-    "subgroupName": "Nombre del subgrupo"
+    "subgroupName": "Nombre del subgrupo",
+    "imageTooLarge": "La imagen seleccionada es demasiado grande. El tamaño máximo permitido es de 2MB.",
+    "summary": {
+      "singleCount": "{{count}} usuarios individuales",
+      "groupCount": "{{count}} parejas",
+      "subtotalExclVat": "Subtotal (sin IVA)",
+      "subtotalInclVat": "Subtotal (con IVA)",
+      "vatNote": "El IVA se calcula en el pago",
+      "vatIncluded": "El IVA está incluido en el precio"
+    }
    },
   "checkout": {
     "title": "Finalizar compra",
@@ -308,6 +318,20 @@
     "errorOpenTitle": "Pago no completado",
     "errorOpenMessage": "No hemos podido procesar el pedido o el pago no se ha completado.",
     "backToGroup": "Volver al grupo",
-    "postOrderCopy": "¡Gracias por tu compra! Ya estamos preparando tu pedido. Nuestro equipo seleccionará las piezas ideales para tu grupo y te enviaremos un resumen por email para que lo revises y confirmes. Tras tu aprobación, realizaremos el pedido y prepararemos tu paquete con mimo para el envío a la dirección indicada. ¡Gracias por confiar en Brickify!"
+    "postOrderCopy": "¡Gracias por tu compra! Ya estamos preparando tu pedido. Nuestro equipo seleccionará las piezas ideales para tu grupo y te enviaremos un resumen por email para que lo revises y confirmes. Tras tu aprobación, realizaremos el pedido y prepararemos tu paquete con mimo para el envío a la dirección indicada. ¡Gracias por confiar en Brickify!",
+    "orderSummary": "Resumen del Pedido",
+    "item": "Artículo",
+    "qty": "Cant",
+    "unitPrice": "Unidad",
+    "subtotal": "Subtotal",
+    "shipping": "Envío",
+    "discount": "Descuento",
+    "tax": "Impuestos",
+    "total": "Total",
+    "shippingTo": "Enviar a",
+    "noShipping": "Sin dirección de envío",
+    "paymentStatus": "Estado del pago",
+    "email": "Correo electrónico",
+    "currency": "Moneda"
   }
  }
