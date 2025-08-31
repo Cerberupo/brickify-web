@@ -5,7 +5,7 @@ import {PROJECT_NAME} from "../config";
 import {AppWrapper} from "../layouts";
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Login`}}>
-    <AppWrapper client:only="react">
+    <AppWrapper hideHeader={true} client:only="react">
         <LoginPage client:only="react"/>
     </AppWrapper>
 </MainLayout>

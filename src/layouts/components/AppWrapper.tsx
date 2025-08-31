@@ -6,14 +6,15 @@ import {LoadingProvider} from '@/components/providers';
 
 interface AppWrapperProps {
     children: ReactNode;
+    hideHeader?: boolean;
 }
 
-export const AppWrapper: React.FC<AppWrapperProps> = ({children}) => {
+export const AppWrapper: React.FC<AppWrapperProps> = ({children, hideHeader}) => {
     return (
         <AuthProvider>
             <I18nProvider>
                 <LoadingProvider>
-                    <Header/>
+                    {hideHeader ? null : <Header/>}
                     <main className="flex-1">
                         {children}
                     </main>
