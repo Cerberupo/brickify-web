@@ -10,7 +10,7 @@ on:
       env:
         description: 'Environment to deploy to (prod|dev)'
         required: false
-        default: 'prod'
+        default: 'dev'
         type: choice
         options:
           - prod
@@ -18,7 +18,7 @@ on:
       invalidate:
         description: 'Invalidate CloudFront cache after upload'
         required: false
-        default: 'yes'
+        default: 'no'
         type: choice
         options:
           - yes
