@@ -9,6 +9,7 @@ export const GROUP_TYPE_VALUES = {
     WEDDING_FAMILY: 'weddingFamily',
     COMPANY_EMPLOYEES: 'companyEmployees',
     FRIENDS_FAMILY: 'friendsFamily',
+    OTHER: 'other',
 } as const;
 
 /**
@@ -18,6 +19,7 @@ export const GROUP_TYPE_LIST = [
     GROUP_TYPE_VALUES.WEDDING_FAMILY,
     GROUP_TYPE_VALUES.COMPANY_EMPLOYEES,
     GROUP_TYPE_VALUES.FRIENDS_FAMILY,
+    GROUP_TYPE_VALUES.OTHER
 ] as const;
 
 /**

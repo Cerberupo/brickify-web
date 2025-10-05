@@ -23,7 +23,6 @@ import {
     InlineMemberEditor,
     InlineTwoMembersEditor,
     OrderSummaryCard,
-    ShippingAddressCard,
     StickyOverlay
 } from './components';
 import {getUnitPrices} from '@/lib/services/stripe';
@@ -137,7 +136,8 @@ export function GroupPage() {
                 setGroup({
                     ...group,
                     referencePeople: [...group.referencePeople, newUser],
-                    totalUsers: group.totalUsers + 1
+                    totalUsers: group.totalUsers + 1,
+                    status: 'readyForPayment'
                 });
             }
 
@@ -214,7 +214,7 @@ export function GroupPage() {
                         entries={group.referencePeople as any[]}
                         actions={canEdit && addingMode === 'none' && !editingGroup && !memberToEdit && group.referencePeople.length > 0 ? (
                             <>
-                                <Button variant="outline" onClick={() => setAddingMode('pair')}>{t('group.addTwoMembers')}</Button>
+                                {/**/}
                                 <Button onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
                             </>
                         ) : null}
@@ -229,7 +229,7 @@ export function GroupPage() {
                 <CardContent>
                     {/* Inline editors for add modes */}
                     {canEdit && addingMode === 'single' && !editingGroup && (
-                        <StickyOverlay onClose={() => setAddingMode('none')}>
+                        <StickyOverlay>
                             <InlineMemberEditor
                                 mode="add"
                                 onCancel={() => setAddingMode('none')}
@@ -241,7 +241,7 @@ export function GroupPage() {
                         </StickyOverlay>
                     )}
                     {addingMode === 'pair' && !editingGroup && (
-                        <StickyOverlay onClose={() => setAddingMode('none')}>
+                        <StickyOverlay>
                             <InlineTwoMembersEditor
                                 onCancel={() => setAddingMode('none')}
                                 onAddGroup={async ({subgroupName, people}) => {
@@ -327,8 +327,9 @@ export function GroupPage() {
                                 <div className="text-center py-12">
                                     <p className="text-gray-500 mb-4">{t('group.addFirstMember')}</p>
                                     <div className="flex justify-center gap-2">
-                                        <Button variant="outline"
+                                        {/*<Button variant="outline"
                                                 onClick={() => setAddingMode('pair')}>{t('group.addTwoMembers')}</Button>
+                                        */}
                                         <Button
                                             onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
                                     </div>
@@ -338,16 +339,10 @@ export function GroupPage() {
                     )}
                 </CardContent>
 
-                {/* Shipping Address (if available) */}
-                <ShippingAddressCard
-                    title={t('checkout.shippingTo', 'Shipping to')}
-                    shipping={(group as any)?.purchaseDetails?.shipping_details}
-                />
-
                 {/* Bottom Section: Order Summary */}
-                <OrderSummaryCard
+                {group.status === 'readyForPayment' && (<OrderSummaryCard
                     title={t('group.totalCost')}
-                    purchase={(group as any)?.purchaseDetails as any}
+
                     unitPrices={unitPrices as any}
                     entries={(group.referencePeople as any[]) || []}
                     canEdit={canEdit}
@@ -367,7 +362,8 @@ export function GroupPage() {
                         vatIncluded: t('group.summary.vatIncluded', 'VAT included in price'),
                         checkout: t('group.checkout', 'Checkout')
                     }}
-                />
+                />)}
+
 
             </div>
 

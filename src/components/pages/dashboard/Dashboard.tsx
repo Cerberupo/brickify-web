@@ -189,7 +189,8 @@ export function DashboardPage() {
                 initialValues={selectedGroup ? {
                     id: selectedGroup.id,
                     name: selectedGroup.name,
-                    description: selectedGroup.description
+                    description: selectedGroup.description,
+                    groupType: selectedGroup.groupType,
                 } : undefined}
                 onSubmitEdit={handleEditSubmit}
             />

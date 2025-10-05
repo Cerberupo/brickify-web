@@ -7,21 +7,47 @@ import {createGroupCheckoutSession} from '@/lib/services/stripe';
 
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
+function getGroupId() {
+    const params = new URLSearchParams(window.location.search);
+    const groupId = params.get('groupId');
+    if (!groupId) {
+        throw new Error('Missing groupId');
+    }
+    return groupId;
+}
+
 export default function CheckoutPage() {
     const {t} = useTranslation();
+
+
     const fetchClientSecret = useCallback(async () => {
-        const params = new URLSearchParams(window.location.search);
-        const groupId = params.get('groupId');
-        if (!groupId) {
-            throw new Error('Missing groupId');
-        }
-        const {clientSecret} = await createGroupCheckoutSession(groupId, `${window.location.origin}/checkout/return`);
+        const {clientSecret} = await createGroupCheckoutSession(getGroupId(), `${window.location.origin}/checkout/return`);
         return clientSecret;
     }, []);
 
+    /*
+    const onShippingDetailsChange = useCallback(async ({checkoutSessionId, shippingDetails}: any) => {
+        console.log('shippingDetails', shippingDetails);
+        const response = await calculateShippingOptions(getGroupId(), {
+            checkout_session_id: checkoutSessionId,
+            shipping_details: shippingDetails,
+        })
+        
+
+        console.log('response', response);
+
+        if (response.type === 'error') {
+            return Promise.resolve({type: "reject", errorMessage: response.message});
+        } else {
+            return Promise.resolve({type: "accept"});
+        }
+    }, []);
+
+     */
+
     const options = {
         fetchClientSecret,
-
+        // onShippingDetailsChange
     } as any;
 
     return (

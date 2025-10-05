@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useForm} from 'react-hook-form';
 import {
@@ -27,7 +27,14 @@ type CreateGroupFormValues = {
     groupType: GroupType;
 };
 
-export function CreateGroupModal({isOpen, onClose, onSubmit, mode = 'create', initialValues, onSubmitEdit}: CreateGroupModalProps) {
+export function CreateGroupModal({
+                                     isOpen,
+                                     onClose,
+                                     onSubmit,
+                                     mode = 'create',
+                                     initialValues,
+                                     onSubmitEdit
+                                 }: CreateGroupModalProps) {
     const {t} = useTranslation();
 
     // Set up form with react-hook-form
@@ -41,14 +48,14 @@ export function CreateGroupModal({isOpen, onClose, onSubmit, mode = 'create', in
         defaultValues: {
             name: initialValues?.name ?? '',
             description: initialValues?.description ?? '',
-            groupType: undefined
+            groupType: initialValues?.groupType
         }
     });
 
     // Reset form when switching to edit mode with initial values
     useEffect(() => {
         if (isOpen && mode === 'edit' && initialValues) {
-            reset({ name: initialValues.name, description: initialValues.description, groupType: undefined });
+            reset({name: initialValues.name, description: initialValues.description, groupType: undefined});
         }
     }, [isOpen, mode, initialValues, reset]);
 
@@ -115,7 +122,8 @@ export function CreateGroupModal({isOpen, onClose, onSubmit, mode = 'create', in
                                        id="groupType" {...register('groupType', {required: t('dashboard.groupTypeRequired') as string})} />
                                 <Select
                                     onValueChange={(value) => setValue('groupType', value as GroupType, {shouldValidate: true})}>
-                                    <SelectTrigger aria-invalid={errors.groupType ? 'true' : 'false'} className="w-full">
+                                    <SelectTrigger aria-invalid={errors.groupType ? 'true' : 'false'}
+                                                   className="w-full">
                                         <SelectValue placeholder={t('dashboard.groupTypePlaceholder')}/>
                                     </SelectTrigger>
                                     <SelectContent>

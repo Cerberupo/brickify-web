@@ -4,7 +4,7 @@ import {Avatar, AvatarImage, Button} from '@/components/ui';
 import {Pencil, Trash2} from 'lucide-react';
 import {InlineMemberEditor} from './InlineMemberEditor';
 import {InlineTwoMembersEditor} from './InlineTwoMembersEditor';
-import { StickyOverlay } from './StickyOverlay';
+import {StickyOverlay} from './StickyOverlay';
 import type {UpdateUserRequest} from '@/lib/types';
 import favicon from '@/images/favicon.png';
 
@@ -89,6 +89,15 @@ function PersonRow({person, onEdit, onDelete, showActions = true}: {
     }
     const mainDescription = __limited.join('\n\n');
 
+    const getStatusPillClasses = (s?: string) => {
+        const norm = String(s || '').toLowerCase();
+        const base = 'px-2 py-0.5 rounded-full ';
+        if (norm === 'in-process') return base + 'bg-yellow-100 text-yellow-800';
+        if (norm === 'error') return base + 'bg-red-100 text-red-700';
+        if (norm === 'done') return base + 'bg-green-100 text-green-700';
+        return base + 'bg-gray-100 text-gray-700';
+    };
+
     return (
         <div className="flex items-center justify-between gap-3 rounded-md border p-3">
             <div className="flex items-center gap-3">
@@ -124,8 +133,21 @@ function PersonRow({person, onEdit, onDelete, showActions = true}: {
                         )}
                     </div>
                 )}
+                {person?.status && person.status !== 'pending' && person?.matches && (
+                    <div className="ml-4 pl-4 border-l space-y-1 text-xs text-gray-600">
+                        {Object.entries(person.matches).map(([part, data]: any) => (
+                            <div key={String(part)} className="flex items-center justify-between gap-3">
+                                <span
+                                    className="font-medium text-gray-700">{t(`group.parts.${String(part)}`, String(part))}</span>
+                                <span className={getStatusPillClasses((data as any)?.status)}>
+                                    {t(`dashboard.groupStatus.${String((data as any)?.status)}`, (data as any)?.status || '-')}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
-            {showActions && (
+            {(showActions && person?.status === 'pending') && (
                 <div className="flex gap-2">
                     <Button
                         variant="outline"
@@ -176,6 +198,9 @@ export function GroupedReferenceList({
                                          onCancelEditGroup,
                                          onSaveEditGroup,
                                      }: GroupedReferenceListProps) {
+
+    console.log('entries', entries);
+
     return (
         <div className="flex flex-col gap-3">
             {entries.map((entry: any) => {
@@ -183,7 +208,7 @@ export function GroupedReferenceList({
                     // If this group is currently being edited, render the two-members inline editor in place
                     if (editingGroupId && entry.id === editingGroupId && onSaveEditGroup && onCancelEditGroup) {
                         return (
-                            <StickyOverlay onClose={onCancelEditGroup}>
+                            <StickyOverlay>
                                 <InlineTwoMembersEditor
                                     mode="edit"
                                     initialGroup={editingGroupInitial || {
@@ -202,7 +227,7 @@ export function GroupedReferenceList({
                             <div className="flex items-center justify-between mb-2">
                                 <div className="font-semibold">{entry.name}</div>
                                 <div className="flex items-center gap-2">
-                                    {typeof onEditGroup === 'function' && (
+                                    {(typeof onEditGroup === 'function' && entry?.status === 'pending') && (
                                         <Button
                                             variant="outline"
                                             size="icon"
@@ -213,7 +238,7 @@ export function GroupedReferenceList({
                                             <span className="sr-only">Editar grupo</span>
                                         </Button>
                                     )}
-                                    {typeof onDeleteGroup === 'function' && (
+                                    {(typeof onDeleteGroup === 'function' && entry?.status === 'pending') && (
                                         <Button
                                             variant="outline"
                                             size="icon"
@@ -229,7 +254,7 @@ export function GroupedReferenceList({
                             <div className="flex flex-col gap-3">
                                 {entry.people.map((p: any) => (
                                     (editingMemberId && p.id === editingMemberId && onSaveEdit && onCancelEdit) ? (
-                                        <StickyOverlay onClose={onCancelEdit}>
+                                        <StickyOverlay>
                                             <InlineMemberEditor
                                                 mode="edit"
                                                 initial={editingMemberInitial || p}
@@ -249,7 +274,7 @@ export function GroupedReferenceList({
                 // Treat everything else as a single person entry
                 if (editingMemberId && entry?.id === editingMemberId && onSaveEdit && onCancelEdit) {
                     return (
-                        <StickyOverlay onClose={onCancelEdit}>
+                        <StickyOverlay>
                             <InlineMemberEditor
                                 mode="edit"
                                 initial={editingMemberInitial || entry}

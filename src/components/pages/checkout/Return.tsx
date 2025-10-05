@@ -52,7 +52,7 @@ export default function CheckoutReturnPage() {
             <section className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-2">{t('checkout.successTitle', 'Thank you!')}</h1>
                 <p className="mb-6 text-sm text-gray-700">
-                    {t('checkout.postOrderCopy', "Thanks for your order! We’ll review your group and select the pieces to request. When everything is ready, we’ll email you the selection so you can confirm before we place the order and prepare it for shipping to the address you provided.")}
+                    {t('checkout.postOrderCopy', "¡Gracias por tu pedido! Nuestra IA seleccionará las piezas más parecidas posibles a las imágenes y descripciones que nos has proporcionado. Te avisaremos por email cuando esté finalizado para que puedas revisarlo y ver/descargar las instrucciones y la lista de piezas.")}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Order Summary */}
@@ -84,23 +84,9 @@ export default function CheckoutReturnPage() {
                             </div>
                         </div>
                     </div>
-                    {/* Shipping and Meta */}
+                    {/* Next steps and Meta */}
                     <div className="border rounded-md p-4">
-                        <h2 className="text-lg font-semibold mb-3">{t('checkout.shippingTo', 'Shipping to')}</h2>
-                        {details?.shipping_details?.address ? (
-                            <div className="text-sm">
-                                <div className="font-medium">{details?.shipping_details?.name || ''}</div>
-                                <div>{details.shipping_details.address.line1}</div>
-                                {details.shipping_details.address.line2 ?
-                                    <div>{details.shipping_details.address.line2}</div> : null}
-                                <div>{details.shipping_details.address.postal_code} {details.shipping_details.address.city}</div>
-                                <div>{details.shipping_details.address.state}</div>
-                                <div>{details.shipping_details.address.country}</div>
-                            </div>
-                        ) : (
-                            <div
-                                className="text-sm text-gray-500">{t('checkout.noShipping', 'No shipping address')}</div>
-                        )}
+                        <h2 className="text-lg font-semibold mb-3">{t('checkout.nextSteps', 'What happens next')}</h2>
 
                         <div className="mt-4 text-sm">
                             <div><span

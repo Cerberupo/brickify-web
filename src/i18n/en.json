@@ -49,7 +49,8 @@
     "groupTypeOptions": {
       "weddingFamily": "Wedding gift for family",
       "companyEmployees": "Company gift for employees",
-      "friendsFamily": "Gift for friends/family"
+      "friendsFamily": "Gift for friends/family",
+      "other": "Other"
     },
     "groupCreated": "Group created successfully",
     "groupUpdated": "Group updated successfully",
@@ -69,7 +70,10 @@
     "groupStatus": {
       "pending": "Pending",
       "inProgress": "In Progress",
+      "in-process": "In process",
       "completed": "Completed",
+      "done": "Done",
+      "error": "Error",
       "needsMoreUsers": "Need More Users",
       "needsCompletedUsers": "Profiles Incomplete",
       "readyForPayment": "Ready for Payment",
@@ -290,6 +294,14 @@
       "vatNote": "VAT is calculated at checkout",
       "vatIncluded": "VAT included in price"
     },
+    "parts": {
+      "matches": "Selected parts",
+      "status": "Status",
+      "wig": "Hair",
+      "head": "Head",
+      "upperPart": "Torso",
+      "lowerPart": "Legs"
+    },
     "deleteConfirmation": {
       "title": "Delete Member",
       "description": "Are you sure you want to delete this member? This action cannot be undone.",
@@ -320,7 +332,8 @@
     "errorOpenTitle": "Payment not completed",
     "errorOpenMessage": "We couldn't process the order or the payment wasn't completed.",
     "backToGroup": "Back to group",
-    "postOrderCopy": "Thanks for your order! We’re already getting everything ready. Our team will curate the perfect selection of pieces for your group and email you a summary to review and confirm. Once you approve, we’ll place the order and carefully prepare your package for delivery to your chosen address. Thanks for trusting Brickify!",
+    "postOrderCopy": "Thanks for your order! Our AI will select the closest matching pieces based on the images and descriptions you provided. We’ll email you when it’s finished so you can review it and view/download the instructions and parts list.",
+    "nextSteps": "Payment details",
     "orderSummary": "Order Summary",
     "item": "Item",
     "qty": "Qty",

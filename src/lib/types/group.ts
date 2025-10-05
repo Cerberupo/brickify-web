@@ -1,3 +1,5 @@
+import type {GroupType} from "@/constants/group.ts";
+
 /**
  * Interface for a group
  */
@@ -5,6 +7,7 @@ export interface Group {
     id: string;
     name: string;
     description: string;
+    groupType: GroupType;
     usersCompleted: number;
     totalUsers: number;
     referencePeople: {

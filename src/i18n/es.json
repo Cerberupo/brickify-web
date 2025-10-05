@@ -49,7 +49,8 @@
     "groupTypeOptions": {
       "weddingFamily": "Regalo de bodas a familiares",
       "companyEmployees": "Regalo de empresa a empleados",
-      "friendsFamily": "Regalo a amigos/familiares"
+      "friendsFamily": "Regalo a amigos/familiares",
+      "other": "Otro"
     },
     "groupCreated": "Grupo creado exitosamente",
     "groupUpdated": "Grupo actualizado exitosamente",
@@ -69,7 +70,10 @@
     "groupStatus": {
       "pending": "Pendiente",
       "inProgress": "En Progreso",
+      "in-process": "En proceso",
       "completed": "Completado",
+      "done": "Hecho",
+      "error": "Error",
       "needsMoreUsers": "Faltan Usuarios",
       "needsCompletedUsers": "Perfiles Incompletos",
       "readyForPayment": "Listo para Pago",
@@ -307,8 +311,16 @@
       "subtotalInclVat": "Subtotal (con IVA)",
       "vatNote": "El IVA se calcula en el pago",
       "vatIncluded": "El IVA está incluido en el precio"
+    },
+    "parts": {
+      "matches": "Piezas seleccionadas",
+      "status": "Estado",
+      "wig": "Pelo",
+      "head": "Cabeza",
+      "upperPart": "Torso",
+      "lowerPart": "Piernas"
     }
-   },
+  },
   "checkout": {
     "title": "Finalizar compra",
     "successTitle": "¡Gracias!",
@@ -318,7 +330,8 @@
     "errorOpenTitle": "Pago no completado",
     "errorOpenMessage": "No hemos podido procesar el pedido o el pago no se ha completado.",
     "backToGroup": "Volver al grupo",
-    "postOrderCopy": "¡Gracias por tu compra! Ya estamos preparando tu pedido. Nuestro equipo seleccionará las piezas ideales para tu grupo y te enviaremos un resumen por email para que lo revises y confirmes. Tras tu aprobación, realizaremos el pedido y prepararemos tu paquete con mimo para el envío a la dirección indicada. ¡Gracias por confiar en Brickify!",
+    "postOrderCopy": "¡Gracias por tu pedido! Nuestra IA seleccionará las piezas más parecidas posibles a las imágenes y descripciones que nos has proporcionado. Te avisaremos por email cuando esté finalizado para que puedas revisarlo y ver/descargar las instrucciones y la lista de piezas.",
+    "nextSteps": "Detalles del pago",
     "orderSummary": "Resumen del Pedido",
     "item": "Artículo",
     "qty": "Cant",
@@ -334,4 +347,4 @@
     "email": "Correo electrónico",
     "currency": "Moneda"
   }
- }
+}
