@@ -1,6 +1,6 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Avatar, AvatarImage, Button} from '@/components/ui';
+import {Button} from '@/components/ui';
 import {Pencil, Trash2} from 'lucide-react';
 import {InlineMemberEditor} from './InlineMemberEditor';
 import {InlineTwoMembersEditor} from './InlineTwoMembersEditor';
@@ -101,24 +101,27 @@ function PersonRow({person, onEdit, onDelete, showActions = true}: {
     return (
         <div className="flex items-center justify-between gap-3 rounded-md border p-3">
             <div className="flex items-center gap-3">
-                <Avatar className="h-8 w-8 ring-1 ring-gray-200">
-                    <AvatarImage className="object-cover" src={src || faviconUrl} alt={person?.name || ''}/>
-                </Avatar>
-                <div className="min-w-0">
-                    <div className="font-medium leading-tight">{person?.name}</div>
-                    {/* Main description (general notes) limited to 2 paragraphs */}
-                    <div className="text-sm text-gray-600 max-w-prose whitespace-pre-wrap break-words">
-                        {mainDescription ? (
-                            mainDescription
-                        ) : (
-                            <span
-                                className="text-gray-400 italic">{t('group.noDescription', 'No description provided')}</span>
-                        )}
+
+                <div className={`flex ${person.status === 'processed' ? 'flex-col' : 'flex-row'} items-center gap-3`}>
+                    <img className={`${person.status === 'processed' ? 'w-40' : 'w-8'} border rounded`}
+                         src={src || faviconUrl}
+                         alt={person?.name || ''}/>
+                    <div className="min-w-0">
+                        <div className="font-medium leading-tight">{person?.name}</div>
+                        {/* Main description (general notes) limited to 2 paragraphs */}
+                        <div className="text-sm text-gray-600 max-w-prose whitespace-pre-wrap break-words">
+                            {mainDescription ? (
+                                mainDescription
+                            ) : (
+                                <span
+                                    className="text-gray-400 italic">{t('group.noDescription', 'No description provided')}</span>
+                            )}
+                        </div>
                     </div>
                 </div>
                 {/* Hair/Face previews shown to the right of name/description */}
                 {noImageMarked && (hairPreview || facePreview) && (
-                    <div className="ml-4 pl-4 border-l space-y-0.5 text-xs text-gray-600">
+                    <div className="pl-4 border-l space-y-0.5 text-xs text-gray-600">
                         {hairPreview && (
                             <div>
                                 <span className="font-medium text-gray-700">{t('group.hairDescription')}:</span>{' '}
@@ -134,16 +137,52 @@ function PersonRow({person, onEdit, onDelete, showActions = true}: {
                     </div>
                 )}
                 {person?.status && person.status !== 'pending' && person?.matches && (
-                    <div className="ml-4 pl-4 border-l space-y-1 text-xs text-gray-600">
-                        {Object.entries(person.matches).map(([part, data]: any) => (
-                            <div key={String(part)} className="flex items-center justify-between gap-3">
-                                <span
-                                    className="font-medium text-gray-700">{t(`group.parts.${String(part)}`, String(part))}</span>
-                                <span className={getStatusPillClasses((data as any)?.status)}>
-                                    {t(`dashboard.groupStatus.${String((data as any)?.status)}`, (data as any)?.status || '-')}
-                                </span>
-                            </div>
-                        ))}
+                    <div className="pl-4 border-l space-y-1 text-xs text-gray-600">
+                        {Object.entries(person.matches).map(([part, data]: any) => {
+                            const status = (data as any)?.status;
+                            const pieces = (data as any)?.matchedPieceIds;
+                            return (
+                                <div key={String(part)} className="space-y-2">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <span
+                                            className="font-medium text-gray-700">{t(`group.parts.${String(part)}`, String(part))}</span>
+                                        <span className={getStatusPillClasses(status)}>
+                                            {t(`dashboard.groupStatus.${String(status)}`, status || '-')}
+                                        </span>
+                                    </div>
+                                    {String(status).toLowerCase() === 'done' && Array.isArray(pieces) && pieces.length > 0 && (
+                                        <div className="ml-2 flex flex-wrap gap-3">
+                                            {pieces.map((piece: any, idx: number) => {
+                                                const imgSrc = Array.isArray(piece?.storeImages) && piece.storeImages.length > 0 ? piece.storeImages[0] : faviconUrl;
+                                                const storeId = piece?.storePieceId || '-';
+                                                const pieceName = piece?.name || '';
+                                                return (
+                                                    <div key={piece?.id || idx} className="w-24">
+                                                        <div
+                                                            className="aspect-square w-24 h-24 overflow-hidden rounded border bg-white">
+                                                            <img
+                                                                src={imgSrc}
+                                                                alt={pieceName || String(part)}
+                                                                className="w-full h-full object-contain"
+                                                            />
+                                                        </div>
+                                                        <div
+                                                            className="mt-1 text-[10px] leading-tight text-gray-600 truncate"
+                                                            title={pieceName}>
+                                                            {pieceName}
+                                                        </div>
+                                                        <div className="text-[10px] text-gray-500 truncate"
+                                                             title={String(storeId)}>
+                                                            {storeId}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
