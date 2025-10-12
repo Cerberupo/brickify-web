@@ -48,6 +48,10 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
+        env:
+          # Force linux-x64 binaries for native modules like sharp
+          npm_config_platform: linux
+          npm_config_arch: x64
         run: npm ci
 
       - name: Build
