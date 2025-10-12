@@ -109,6 +109,47 @@ export function GroupPage() {
         });
     }, [t]);
 
+    // Poll group details every 15s while status is inProcess
+    useEffect(() => {
+
+        console.log('polling group details');
+        if (!groupId) return;
+        if (group?.status !== 'inAssembly') {
+            return; // no polling unless inProcess
+        }
+
+        let intervalId: number | null = null;
+        const isFetchingRef = {current: false} as { current: boolean };
+
+        const tick = async () => {
+            if (isFetchingRef.current) return;
+            isFetchingRef.current = true;
+            try {
+                console.log('polling group fetch details');
+                const fresh = await getGroupById(groupId);
+                setGroup(fresh);
+                // Stop polling automatically if status changed
+                if (fresh?.status !== 'inAssembly' && intervalId != null) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+            } catch (e) {
+                // swallow errors; next tick will retry
+            } finally {
+                isFetchingRef.current = false;
+            }
+        };
+
+        // initial wait until first tick; keep it simple and start after 15s
+        intervalId = window.setInterval(tick, 15000);
+
+        return () => {
+            if (intervalId != null) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [group?.status, groupId]);
+
     // Use backend-provided totalUsers for consistency with dashboard card and API
     const totalMembers = group?.totalUsers ?? 0;
 
