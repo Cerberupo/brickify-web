@@ -8,7 +8,7 @@ export enum APP_ROUTES {
     DASHBOARD = '/dashboard',
     LOGIN = '/login',
     REGISTER = '/register',
-    GROUP = '/group/{id}',
+    GROUP = '/group?id={id}',
 
     // Footer routes
     TERMS = '/terms',

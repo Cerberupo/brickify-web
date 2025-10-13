@@ -77,9 +77,9 @@ export function GroupPage() {
     useEffect(() => {
         const fetchGroup = async () => {
             try {
-                // Get group ID from URL
-                const urlParts = window.location.pathname.split('/');
-                const id = urlParts[urlParts.length - 1];
+                // Get group ID from query parameter ?id=...
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get('id') || '';
 
                 if (!id) {
                     toast.error(t('group.errorFetchingGroup'));
