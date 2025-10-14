@@ -17,6 +17,8 @@ export function navigate(route: string, params?: Record<string, string>) {
         });
     }
 
+    console.log('finalRoute', finalRoute);
+
     window.location.href = finalRoute;
 }
 
