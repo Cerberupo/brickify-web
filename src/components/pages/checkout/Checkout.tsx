@@ -21,7 +21,7 @@ export default function CheckoutPage() {
 
 
     const fetchClientSecret = useCallback(async () => {
-        const {clientSecret} = await createGroupCheckoutSession(getGroupId(), `${window.location.origin}/checkout/return`);
+        const {clientSecret} = await createGroupCheckoutSession(getGroupId(), `${window.location.origin}/checkout/return/`);
         return clientSecret;
     }, []);
 
