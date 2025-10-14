@@ -3,8 +3,6 @@ name: Deploy Web (S3 + CloudFront)
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'brickify-web/**'
   workflow_dispatch:
     inputs:
       env:
