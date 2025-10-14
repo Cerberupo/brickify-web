@@ -33,6 +33,9 @@ jobs:
       ENVIRONMENT: ${{ inputs.env || 'dev' }}
       WEB_BUCKET: ${{ (inputs.env || 'dev') == 'dev' && secrets.WEB_S3_BUCKET_DEV || secrets.WEB_S3_BUCKET }}
       CLOUDFRONT_DIST_ID_WEB: ${{ (inputs.env || 'dev') == 'dev' && secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB_DEV || secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB }}
+      # Normalize invalidate input for reliable step conditions across events
+      # For workflow_dispatch, github.event.inputs.invalidate carries the selection; for push it's empty
+      DO_INVALIDATE: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.invalidate) || 'no' }}
 
     steps:
       - name: Checkout
@@ -67,7 +70,7 @@ jobs:
           aws s3 sync ./dist s3://${WEB_BUCKET} --delete --only-show-errors
 
       - name: Invalidate CloudFront
-        if: ${{ inputs.invalidate == 'yes' }}
+        if: ${{ env.DO_INVALIDATE == 'yes' }}
         run: |
           aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DIST_ID_WEB} --paths '/*'
 
