@@ -23,7 +23,6 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
         method = 'GET',
         headers = {},
         body,
-        withCredentials = true,
     } = options;
 
     // Prepare headers with default content type if not provided
@@ -48,8 +47,7 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
     const requestConfig: AxiosRequestConfig = {
         method,
         url: `${API_URL}${endpoint}`,
-        headers: requestHeaders,
-        withCredentials,
+        headers: requestHeaders
     };
 
     // Add data if provided
@@ -73,14 +71,14 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
 
         // Handle axios errors
         if (axios.isAxiosError(error) && error.response) {
-                const errorData = error.response.data || {};
-                const errObj: any = new Error(
-                    errorData.message || `API request failed with status ${error.response.status}`
-                );
-                if (errorData.code) errObj.code = errorData.code;
-                if (error.response.status) errObj.status = error.response.status;
-                throw errObj;
-            }
+            const errorData = error.response.data || {};
+            const errObj: any = new Error(
+                errorData.message || `API request failed with status ${error.response.status}`
+            );
+            if (errorData.code) errObj.code = errorData.code;
+            if (error.response.status) errObj.status = error.response.status;
+            throw errObj;
+        }
 
         throw error;
     }
