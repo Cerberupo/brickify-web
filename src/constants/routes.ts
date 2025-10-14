@@ -5,15 +5,15 @@
 export enum APP_ROUTES {
     // Main routes
     HOME = '/',
-    DASHBOARD = '/dashboard',
-    LOGIN = '/login',
-    REGISTER = '/register',
-    GROUP = '/group?id={id}',
+    DASHBOARD = '/dashboard/',
+    LOGIN = '/login/',
+    REGISTER = '/register/',
+    GROUP = '/group/?id={id}',
 
     // Footer routes
-    TERMS = '/terms',
-    PRIVACY = '/privacy',
-    CONTACT = '/contact',
+    TERMS = '/terms/',
+    PRIVACY = '/privacy/',
+    CONTACT = '/contact/',
 
     // Language routes
     ENGLISH = '/en/',
