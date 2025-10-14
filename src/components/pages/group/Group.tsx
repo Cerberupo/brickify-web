@@ -387,7 +387,7 @@ export function GroupPage() {
                     unitPrices={unitPrices as any}
                     entries={(group.referencePeople as any[]) || []}
                     canEdit={canEdit}
-                    onCheckout={() => navigate(`/checkout?groupId=${groupId}`)}
+                    onCheckout={() => navigate(APP_ROUTES.CHECKOUT, {id: groupId})}
                     labels={{
                         item: t('checkout.item', 'Item'),
                         qty: t('checkout.qty', 'Qty'),
