@@ -25,6 +25,11 @@ jobs:
       ENVIRONMENT: ${{ inputs.env || 'dev' }}
       WEB_BUCKET: ${{ (inputs.env || 'dev') == 'dev' && secrets.WEB_S3_BUCKET_DEV || secrets.WEB_S3_BUCKET }}
       CLOUDFRONT_DIST_ID_WEB: ${{ (inputs.env || 'dev') == 'dev' && secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB_DEV || secrets.CLOUDFRONT_DISTRIBUTION_ID_WEB }}
+      # Inject client-exposed build-time variables (Astro/Vite exposes PUBLIC_* only)
+      PUBLIC_API_URL: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_API_URL || secrets.PROD_PUBLIC_API_URL }}
+      PUBLIC_PROJECT_NAME: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_PROJECT_NAME || secrets.PROD_PUBLIC_PROJECT_NAME }}
+      PUBLIC_GOOGLE_CLIENT_ID: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_GOOGLE_CLIENT_ID || secrets.PROD_PUBLIC_GOOGLE_CLIENT_ID }}
+      PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_STRIPE_PUBLISHABLE_KEY || secrets.PROD_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
 
     steps:
       - name: Checkout
@@ -68,3 +73,5 @@ jobs:
 # - AWS_REGION (optional; defaults to us-east-1 if not set)
 # - WEB_S3_BUCKET (prod) and WEB_S3_BUCKET_DEV (dev)
 # - CLOUDFRONT_DISTRIBUTION_ID_WEB (prod) and CLOUDFRONT_DISTRIBUTION_ID_WEB_DEV (dev)
+# - DEV_PUBLIC_API_URL, DEV_PUBLIC_PROJECT_NAME, DEV_PUBLIC_GOOGLE_CLIENT_ID, DEV_PUBLIC_STRIPE_PUBLISHABLE_KEY
+# - PROD_PUBLIC_API_URL, PROD_PUBLIC_PROJECT_NAME, PROD_PUBLIC_GOOGLE_CLIENT_ID, PROD_PUBLIC_STRIPE_PUBLISHABLE_KEY
