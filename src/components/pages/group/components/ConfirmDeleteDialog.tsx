@@ -36,7 +36,10 @@ export function ConfirmDeleteDialog({
   const { t } = useTranslation();
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={(nextOpen) => {
+      if (isDeleting) return; // prevent closing while deleting
+      onOpenChange(nextOpen);
+    }}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title || t('group.deleteConfirmation.title')}</AlertDialogTitle>
@@ -48,15 +51,13 @@ export function ConfirmDeleteDialog({
           <AlertDialogCancel disabled={isDeleting}>
             {cancelLabel || t('group.deleteConfirmation.cancel')}
           </AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button
-              onClick={onConfirm}
-              className="bg-red-500 hover:bg-red-600"
-              isLoading={isDeleting}
-            >
-              {confirmLabel || t('group.deleteConfirmation.confirm')}
-            </Button>
-          </AlertDialogAction>
+          <Button
+            onClick={onConfirm}
+            className="bg-red-500 hover:bg-red-600"
+            isLoading={isDeleting}
+          >
+            {confirmLabel || t('group.deleteConfirmation.confirm')}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

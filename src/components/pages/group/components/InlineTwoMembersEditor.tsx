@@ -127,7 +127,7 @@ export const InlineTwoMembersEditor: React.FC<InlineTwoMembersEditorProps> = ({o
 
                 <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={onCancel}>{t('group.cancel')}</Button>
-                    <Button onClick={handleSaveAll} disabled={!canSave || saving}>{t('group.save')}</Button>
+                    <Button onClick={handleSaveAll} disabled={!canSave || saving} isLoading={saving}>{t('group.save')}</Button>
                 </div>
             </div>
         </div>

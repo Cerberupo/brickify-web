@@ -38,7 +38,10 @@ export function DeleteGroupDialog({open, onOpenChange, onConfirm, isDeleting = f
     const {t} = useTranslation();
 
     return (
-        <AlertDialog open={open} onOpenChange={onOpenChange}>
+        <AlertDialog open={open} onOpenChange={(nextOpen) => {
+            if (isDeleting) return; // prevent closing while deleting
+            onOpenChange(nextOpen);
+        }}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('dashboard.deleteConfirmation.title')}</AlertDialogTitle>
@@ -50,15 +53,13 @@ export function DeleteGroupDialog({open, onOpenChange, onConfirm, isDeleting = f
                     <AlertDialogCancel disabled={isDeleting}>
                         {t('dashboard.deleteConfirmation.cancel')}
                     </AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                        <Button 
-                            onClick={onConfirm} 
-                            className="bg-red-500 hover:bg-red-600"
-                            isLoading={isDeleting}
-                        >
-                            {t('dashboard.deleteConfirmation.confirm')}
-                        </Button>
-                    </AlertDialogAction>
+                    <Button 
+                        onClick={onConfirm} 
+                        className="bg-red-500 hover:bg-red-600"
+                        isLoading={isDeleting}
+                    >
+                        {t('dashboard.deleteConfirmation.confirm')}
+                    </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

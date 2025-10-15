@@ -66,16 +66,25 @@ export function CreateGroupModal({
         onClose();
     };
 
+    // Local submitting flag to prevent double submissions
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
     // Handler for form submission
-    const onSubmitForm = (data: CreateGroupFormValues) => {
-        if (mode === 'edit' && onSubmitEdit && initialValues?.id) {
-            onSubmitEdit(initialValues.id, data.name, data.description);
-        } else {
-            // Create flow
-            onSubmit(data.name, data.description, data.groupType);
+    const onSubmitForm = async (data: CreateGroupFormValues) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+        try {
+            if (mode === 'edit' && onSubmitEdit && initialValues?.id) {
+                await onSubmitEdit(initialValues.id, data.name, data.description);
+            } else {
+                // Create flow
+                await onSubmit(data.name, data.description, data.groupType);
+            }
+            // Reset form fields and close modal
+            reset();
+        } finally {
+            setIsSubmitting(false);
         }
-        // Reset form fields and close modal
-        reset();
     };
 
     return (
@@ -143,10 +152,10 @@ export function CreateGroupModal({
                         )}
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={handleClose}>
+                        <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
                             {t('common.cancel')}
                         </Button>
-                        <Button type="submit">
+                        <Button type="submit" isLoading={isSubmitting}>
                             {mode === 'edit' ? t('common.save', 'Save') : t('common.create')}
                         </Button>
                     </DialogFooter>

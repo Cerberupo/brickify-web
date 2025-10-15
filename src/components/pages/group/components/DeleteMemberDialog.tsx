@@ -38,7 +38,10 @@ export function DeleteMemberDialog({ open, onOpenChange, memberName, onConfirm }
     };
 
     return (
-        <AlertDialog open={open} onOpenChange={onOpenChange}>
+        <AlertDialog open={open} onOpenChange={(nextOpen) => {
+            if (isDeleting) return; // prevent closing while deleting
+            onOpenChange(nextOpen);
+        }}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('group.deleteConfirmation.title')}</AlertDialogTitle>
@@ -50,15 +53,13 @@ export function DeleteMemberDialog({ open, onOpenChange, memberName, onConfirm }
                     <AlertDialogCancel disabled={isDeleting}>
                         {t('group.deleteConfirmation.cancel')}
                     </AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                        <Button 
-                            onClick={handleConfirm} 
-                            className="bg-red-500 hover:bg-red-600"
-                            isLoading={isDeleting}
-                        >
-                            {t('group.deleteConfirmation.confirm')}
-                        </Button>
-                    </AlertDialogAction>
+                    <Button 
+                        onClick={handleConfirm} 
+                        className="bg-red-500 hover:bg-red-600"
+                        isLoading={isDeleting}
+                    >
+                        {t('group.deleteConfirmation.confirm')}
+                    </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

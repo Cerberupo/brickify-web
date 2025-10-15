@@ -45,6 +45,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
 
     const [name, setName] = useState(initial?.name ?? '');
     const [description, setDescription] = useState(initial?.description ?? '');
+    const [saving, setSaving] = useState(false);
 
     // Image handling (add mode uses File, edit mode can keep existing image and optionally change)
     const [noImage, setNoImage] = useState<boolean>(() => {
@@ -144,8 +145,9 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
     };
 
     const onSubmit = async () => {
-        if (!canSubmit) return;
-
+        if (!canSubmit || saving) return;
+        setSaving(true);
+        try {
         if (mode === 'add' && onSaveAdd) {
             const payload: AddUserRequest = {
                 name: name.trim(),
@@ -196,6 +198,9 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
 
             await onSaveEdit(payload);
             return;
+        }
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -314,8 +319,8 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                 {/* Actions */}
                 {showActions && (
                     <div className="flex gap-2 justify-end">
-                        <Button variant="outline" onClick={onCancel}>{t('group.cancel')}</Button>
-                        <Button onClick={onSubmit} disabled={!canSubmit}>{t('group.save')}</Button>
+                        <Button variant="outline" onClick={onCancel} disabled={saving}>{t('group.cancel')}</Button>
+                        <Button onClick={onSubmit} disabled={!canSubmit || saving} isLoading={saving}>{t('group.save')}</Button>
                     </div>
                 )}
             </div>

@@ -39,10 +39,12 @@ export function Header() {
                                 <a href={APP_ROUTES.HOME}
                                    className="hover:text-primary transition-colors">{t('header.home')}</a>
                             </li>
-                            <li>
-                                <a href={APP_ROUTES.DASHBOARD}
-                                   className="hover:text-primary transition-colors">{t('header.dashboard')}</a>
-                            </li>
+                            {user ? (
+                                <li>
+                                    <a href={APP_ROUTES.DASHBOARD}
+                                       className="hover:text-primary transition-colors">{t('header.dashboard')}</a>
+                                </li>
+                            ) : null}
                             {user ? (
                                 <li>
                                     <Button variant="outline" size="sm"
