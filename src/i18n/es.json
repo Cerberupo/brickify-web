@@ -248,6 +248,12 @@
     "login": "Ir a Iniciar Sesión",
     "backToLogin": "Volver a Iniciar Sesión"
   },
+  "share": {
+    "twitter": "Compartir en X/Twitter",
+    "facebook": "Compartir en Facebook",
+    "whatsapp": "Compartir en WhatsApp",
+    "copyLink": "Copiar enlace"
+  },
   "group": {
     "title": "Detalles del Grupo",
     "backToDashboard": "Volver al Panel",
@@ -304,6 +310,10 @@
     "secondPerson": "Miembro 2",
     "subgroupName": "Nombre del subgrupo",
     "imageTooLarge": "La imagen seleccionada es demasiado grande. El tamaño máximo permitido es de 2MB.",
+    "downloadPieces": "Descargar piezas",
+    "downloadAllPieces": "Descargar todas las piezas",
+    "editGroup": "Editar grupo",
+    "deleteGroup": "Eliminar grupo",
     "summary": {
       "singleCount": "{{count}} usuarios individuales",
       "groupCount": "{{count}} parejas",

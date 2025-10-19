@@ -250,6 +250,12 @@
     "login": "Go to Login",
     "backToLogin": "Back to Login"
   },
+  "share": {
+    "twitter": "Share on X/Twitter",
+    "facebook": "Share on Facebook",
+    "whatsapp": "Share on WhatsApp",
+    "copyLink": "Copy link"
+  },
   "group": {
     "title": "Group Details",
     "backToDashboard": "Back to Dashboard",
@@ -321,7 +327,11 @@
     "firstPerson": "Member 1",
     "secondPerson": "Member 2",
     "subgroupName": "Subgroup name",
-    "imageTooLarge": "The selected image is too large. Maximum allowed is 2MB."
+    "imageTooLarge": "The selected image is too large. Maximum allowed is 2MB.",
+    "downloadPieces": "Download pieces",
+    "downloadAllPieces": "Download all pieces",
+    "editGroup": "Edit group",
+    "deleteGroup": "Delete group"
   },
   "checkout": {
     "title": "Checkout",

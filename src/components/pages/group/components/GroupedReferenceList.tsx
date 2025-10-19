@@ -1,11 +1,12 @@
 import React from 'react';
 import {Button} from '@/components/ui';
-import {Pencil, Trash2} from 'lucide-react';
+import {Download, Pencil, Trash2} from 'lucide-react';
 import {InlineMemberEditor} from './InlineMemberEditor';
 import {InlineTwoMembersEditor} from './InlineTwoMembersEditor';
 import {StickyOverlay} from './StickyOverlay';
 import {PersonRow as ImportedPersonRow} from './PersonRow';
 import type {UpdateUserRequest} from '@/lib/types';
+import {useTranslation} from 'react-i18next';
 
 interface GroupedReferenceListProps {
     groupId: string;
@@ -63,6 +64,117 @@ export function GroupedReferenceList({
                                          onSaveEditGroup,
                                      }: GroupedReferenceListProps) {
 
+    const {t} = useTranslation();
+
+    const [selectedByPerson, setSelectedByPerson] = React.useState<Record<string, Record<string, string | null>>>({});
+
+    const handlePartSelectedChange = React.useCallback((personId: string, part: string, pieceId: string | null) => {
+        setSelectedByPerson(prev => ({
+            ...prev,
+            [personId]: {
+                ...(prev[personId] || {}),
+                [part]: pieceId,
+            },
+        }));
+    }, []);
+
+    const normalizeId = (p: any): string | null => {
+        if (!p) return null;
+        if (typeof p === 'string') return p;
+        const id = p.id || p._id || p.pieceId;
+        return id ? String(id) : null;
+    };
+
+    const collectFromPerson = (person: any): string[] => {
+        const out: string[] = [];
+        const matches = person?.matches && typeof person.matches === 'object' ? person.matches : null;
+        if (!matches) return out;
+        for (const key of Object.keys(matches)) {
+            const m = (matches as any)[key];
+            const partStatus = String(m?.status || '').toLowerCase();
+            const arr = Array.isArray(m?.matchedPieceIds) ? m.matchedPieceIds : [];
+            if (partStatus !== 'done' || arr.length === 0) continue;
+            const localSelId = (selectedByPerson[person.id] && selectedByPerson[person.id][key]) || null;
+            const selId = localSelId || normalizeId(m?.selectedPiece) || normalizeId(arr[0]);
+            if (!selId) continue;
+            const found = arr.find((p: any) => normalizeId(p) === selId) || arr[0];
+            const elementId = found?.storePieceId || found?.elementId || selId;
+            if (elementId) out.push(String(elementId));
+        }
+        return out;
+    };
+
+    const flattenPeople = (all: any[]): any[] => {
+        const people: any[] = [];
+        for (const e of all) {
+            if (e?.type === 'group' && Array.isArray(e?.people)) {
+                people.push(...e.people);
+            } else if (e) {
+                people.push(e);
+            }
+        }
+        return people;
+    };
+
+    const hasAnyGeneratedPieces = (() => {
+        const people = flattenPeople(entries);
+        for (const p of people) {
+            if (String(p?.status || '').toLowerCase() !== 'processed') continue;
+            const matches = p?.matches && typeof p.matches === 'object' ? p.matches : null;
+            if (!matches) continue;
+            for (const key of Object.keys(matches)) {
+                const m = (matches as any)[key];
+                const partStatus = String(m?.status || '').toLowerCase();
+                const arr = Array.isArray(m?.matchedPieceIds) ? m.matchedPieceIds : [];
+                if (partStatus === 'done' && arr.length > 0) return true;
+            }
+        }
+        return false;
+    })();
+
+    const downloadJson = (data: any, filename: string) => {
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 0);
+    };
+
+    const handleDownloadAllClick = () => {
+        const people = flattenPeople(entries).filter(p => String(p?.status || '').toLowerCase() === 'processed');
+        const elementIds: string[] = [];
+        for (const p of people) {
+            elementIds.push(...collectFromPerson(p));
+        }
+
+        // Group elementIds by value and count quantities
+        const quantities: { [key: string]: number } = {};
+        elementIds.forEach(id => {
+            quantities[id] = (quantities[id] || 0) + 1;
+        });
+
+        console.log('quantities', quantities);
+
+        const payload = Object.entries(quantities).map(([elementId, quantity]) => ({
+            elementId,
+            quantity
+        }));
+
+        if (payload.length === 0) return;
+        const chunkSize = 199;
+        const totalChunks = Math.ceil(payload.length / chunkSize);
+        for (let i = 0; i < totalChunks; i++) {
+            const chunk = payload.slice(i * chunkSize, (i + 1) * chunkSize);
+            const fname = totalChunks > 1 ? `pieces-${i + 1}.json` : 'pieces.json';
+            downloadJson(chunk, fname);
+        }
+    };
+
     const handleEditGroupClick = (entry: any) => {
         if (typeof onEditGroup === 'function') {
             onEditGroup({id: entry.id, name: entry.name});
@@ -77,6 +189,14 @@ export function GroupedReferenceList({
 
     return (
         <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-end">
+                {hasAnyGeneratedPieces && (
+                    <Button variant="outline" size="sm" onClick={handleDownloadAllClick}>
+                        <Download
+                            className="h-4 w-4 mr-1"/> {t('group.downloadAllPieces', 'Descargar todas las piezas')}
+                    </Button>
+                )}
+            </div>
             {entries.map((entry: any) => {
                 if (entry?.type === 'group' && Array.isArray(entry?.people)) {
                     // If this group is currently being edited, render the two-members inline editor in place
@@ -109,7 +229,7 @@ export function GroupedReferenceList({
                                             onClick={() => handleEditGroupClick(entry)}
                                         >
                                             <Pencil className="h-4 w-4"/>
-                                            <span className="sr-only">Editar grupo</span>
+                                            <span className="sr-only">{t('group.editGroup', 'Editar grupo')}</span>
                                         </Button>
                                     )}
                                     {(typeof onDeleteGroup === 'function' && entry?.status === 'pending') && (
@@ -120,7 +240,7 @@ export function GroupedReferenceList({
                                             onClick={() => handleDeleteGroupClick(entry)}
                                         >
                                             <Trash2 className="h-4 w-4"/>
-                                            <span className="sr-only">Eliminar grupo</span>
+                                            <span className="sr-only">{t('group.deleteGroup', 'Eliminar grupo')}</span>
                                         </Button>
                                     )}
                                 </div>
@@ -139,7 +259,9 @@ export function GroupedReferenceList({
                                     ) : (
                                         <ImportedPersonRow key={p.id} person={p} onEdit={onEdit} onDelete={onDelete}
                                                            groupId={groupId}
-                                                           showActions={false}/>
+                                                           showActions={false}
+                                                           onPartSelectedChange={handlePartSelectedChange}
+                                        />
                                     )
                                 ))}
                             </div>
@@ -160,7 +282,9 @@ export function GroupedReferenceList({
                     );
                 }
                 return <ImportedPersonRow key={entry.id} person={entry} onEdit={onEdit} onDelete={onDelete}
-                                          groupId={groupId}/>;
+                                          groupId={groupId}
+                                          onPartSelectedChange={handlePartSelectedChange}
+                />;
             })}
         </div>
     );

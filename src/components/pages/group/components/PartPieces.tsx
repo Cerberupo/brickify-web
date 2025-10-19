@@ -10,9 +10,10 @@ export interface PartPiecesProps {
   personId: string;
   part: MatchPart;
   data: any;
+  onSelectedChange?: (part: MatchPart, pieceId: string | null) => void;
 }
 
-export function PartPieces({ groupId, personId, part, data }: PartPiecesProps) {
+export function PartPieces({ groupId, personId, part, data, onSelectedChange }: PartPiecesProps) {
   useTranslation();
   const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
   const initializedRef = useRef(false);
@@ -35,6 +36,7 @@ export function PartPieces({ groupId, personId, part, data }: PartPiecesProps) {
     if (serverSelectedId) {
       initializedRef.current = true;
       setSelectedPieceId(serverSelectedId);
+      if (onSelectedChange) onSelectedChange(part, serverSelectedId);
       return;
     }
 
@@ -44,6 +46,7 @@ export function PartPieces({ groupId, personId, part, data }: PartPiecesProps) {
       if (id) {
         initializedRef.current = true;
         setSelectedPieceId(id);
+        if (onSelectedChange) onSelectedChange(part, id);
         setSelectedPiece(groupId, personId, part, id).catch(() => {
           // ignore errors to avoid blocking UI
         });
@@ -53,10 +56,11 @@ export function PartPieces({ groupId, personId, part, data }: PartPiecesProps) {
 
   const handlePieceClick = useCallback((pid: string) => {
     setSelectedPieceId(pid);
+    if (onSelectedChange) onSelectedChange(part, pid);
     setSelectedPiece(groupId, personId, part, String(pid)).catch(() => {
       // optional error handling
     });
-  }, [groupId, personId, part]);
+  }, [groupId, personId, part, onSelectedChange]);
 
   if (status !== 'done' || pieces.length === 0) return null;
 
@@ -69,21 +73,22 @@ export function PartPieces({ groupId, personId, part, data }: PartPiecesProps) {
         const pid = normalizeId(piece) || String(idx);
         const isSelected = selectedPieceId === pid;
         return (
-          <button
-            key={pid}
-            type="button"
-            onClick={() => handlePieceClick(String(pid))}
-            className={`w-24 text-left cursor-pointer group focus:outline-none`}
-            title={pieceName}
-          >
-            <div className={`aspect-square w-24 h-24 overflow-hidden rounded border bg-white transition-colors duration-150 ${isSelected ? 'border-black' : 'border-gray-300 group-hover:border-gray-500'} group-hover:shadow-sm`}>
-              <img src={imgSrc} alt={pieceName || String(part)} className="w-full h-full object-contain"/>
-            </div>
+          <div key={pid} className="w-24 text-left">
+            <button
+              type="button"
+              onClick={() => handlePieceClick(String(pid))}
+              className="w-24 cursor-pointer focus:outline-none"
+              title={pieceName}
+            >
+              <div className={`aspect-square w-24 h-24 overflow-hidden rounded border bg-white transition-colors duration-150 ${isSelected ? 'border-black' : 'border-gray-300 hover:border-gray-500'} hover:shadow-sm`}>
+                <img src={imgSrc} alt={pieceName || String(part)} className="w-full h-full object-contain"/>
+              </div>
+            </button>
             <div className="mt-1 text-[10px] leading-tight text-gray-600 truncate">{pieceName}</div>
             <div className="text-[10px] text-gray-500 truncate" title={String(storeId)}>
               {storeId}
             </div>
-          </button>
+          </div>
         );
       })}
     </div>
