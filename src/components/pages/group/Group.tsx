@@ -311,6 +311,7 @@ export function GroupPage() {
                     {group.referencePeople.length > 0 ? (
                         <div className="space-y-4">
                             <GroupedReferenceList
+                                groupId={groupId}
                                 entries={group.referencePeople as any}
                                 onEdit={(member) => {
                                     setMemberToEdit(member);

@@ -283,3 +283,23 @@ export async function deleteReferencePersonGroup(
     );
 }
 
+
+// --- Matches: selected piece ---
+export type MatchPart = 'wig' | 'head' | 'upperPart' | 'lowerPart';
+
+/**
+ * Set the selected matched piece for a reference person and part
+ * PATCH /people/:id/matches/:part/selected-piece?groupId=...
+ */
+export async function setSelectedPiece(
+    groupId: string,
+    referencePersonId: string,
+    part: MatchPart,
+    pieceId: string
+): Promise<void> {
+    const url = `/people/${encodeURIComponent(referencePersonId)}/matches/${encodeURIComponent(part)}/selected-piece?groupId=${encodeURIComponent(groupId)}`;
+    await fetchApi(url, {
+        method: 'PATCH',
+        body: { pieceId },
+    });
+}
