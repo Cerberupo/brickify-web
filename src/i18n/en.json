@@ -254,7 +254,13 @@
     "twitter": "Share on X/Twitter",
     "facebook": "Share on Facebook",
     "whatsapp": "Share on WhatsApp",
-    "copyLink": "Copy link"
+    "copyLink": "Copy link",
+    "shareButton": "Share",
+    "enabling": "Enabling...",
+    "disableSharing": "Disable sharing",
+    "disabling": "Disabling...",
+    "enableError": "Could not enable sharing. Please try again.",
+    "disableError": "Could not disable sharing. Please try again."
   },
   "group": {
     "title": "Group Details",

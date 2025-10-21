@@ -252,7 +252,13 @@
     "twitter": "Compartir en X/Twitter",
     "facebook": "Compartir en Facebook",
     "whatsapp": "Compartir en WhatsApp",
-    "copyLink": "Copiar enlace"
+    "copyLink": "Copiar enlace",
+    "shareButton": "Compartir",
+    "enabling": "Activando...",
+    "disableSharing": "Desactivar compartir",
+    "disabling": "Desactivando...",
+    "enableError": "No se pudo activar el modo compartir. Inténtalo de nuevo.",
+    "disableError": "No se pudo desactivar el modo compartir. Inténtalo de nuevo."
   },
   "group": {
     "title": "Detalles del Grupo",

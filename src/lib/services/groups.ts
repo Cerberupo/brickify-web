@@ -303,3 +303,19 @@ export async function setSelectedPiece(
         body: { pieceId },
     });
 }
+
+/**
+ * Enable public sharing for a member of a group
+ */
+export async function enableMemberShare(groupId: string, personId: string): Promise<void> {
+    const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/enable`;
+    await fetchApi(url, { method: 'POST' });
+}
+
+/**
+ * Disable public sharing for a member of a group
+ */
+export async function disableMemberShare(groupId: string, personId: string): Promise<void> {
+    const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/disable`;
+    await fetchApi(url, { method: 'POST' });
+}
