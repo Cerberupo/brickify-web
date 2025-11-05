@@ -362,5 +362,15 @@
     "paymentStatus": "Estado del pago",
     "email": "Correo electrónico",
     "currency": "Moneda"
+  },
+  "publicShare": {
+    "title": "Perfil compartido",
+    "subtitle": "Vista pública para compartir",
+    "loading": "Cargando...",
+    "missingParams": "Faltan parámetros en la URL.",
+    "error": "No se pudo cargar el contenido compartido.",
+    "notFound": "No se encontró el contenido compartido.",
+    "unknownName": "Usuario",
+    "debugData": "Ver datos"
   }
 }

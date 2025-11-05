@@ -1,0 +1,47 @@
+---
+import {buttonVariants} from "@/components/ui/button";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+// Localized copies (EN prioritized)
+const {title: titleProp, locale: localeProp} = Astro.props as { title?: string; locale?: SupportedLocale };
+const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
+const copies = {
+    en: {
+        title: "Bring your photo to life in LEGO®",
+        description: "Our AI analyzes your image and <strong class='font-medium'>turns it into official LEGO® parts</strong> that best match you. You’ll also get <strong class='font-medium'>the part code for each piece</strong> so you can build it yourself. Only €2.99 per image!",
+        ctaPrimary: "Upload your photo",
+        ctaPrimaryAria: "Upload your image and get started",
+        ctaSecondary: "How it works",
+        ctaSecondaryAria: "How Brickify works"
+    },
+    es: {
+        title: "Dale vida a tu foto en versión LEGO®",
+        description: "Nuestra IA analiza tu imagen y la <strong class='font-medium'>transforma en piezas oficiales de LEGO®</strong> con las piezas que más se parecen a ti. Además, recibirás el <strong class='font-medium'>código de cada pieza</strong> para que puedas construirlo tú mismo. ¡Solo 2.99 € por imagen!",
+        ctaPrimary: "Sube tu imagen",
+        ctaPrimaryAria: "Sube tu imagen y comienza",
+        ctaSecondary: "Cómo funciona",
+        ctaSecondaryAria: "Cómo funciona Brickify"
+    }
+} as const;
+const t = copies[locale];
+const title = titleProp ?? t.title;
+---
+<section aria-labelledby="hero-title" class="py-14 md:py-24">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        <div class="md:col-span-10">
+            <h1 id="hero-title" class="text-4xl md:text-6xl font-medium tracking-tight mb-6">
+                {title}
+            </h1>
+            <p class="text-base md:text-lg font-light leading-relaxed max-w-prose mb-6" set:html={t.description}></p>
+            <div class="flex items-center gap-4">
+                <a href="/share" aria-label={t.ctaPrimaryAria} rel="nofollow" class={buttonVariants({size: "lg"})}>
+                    {t.ctaPrimary}
+                </a>
+                <a href="#como-funciona" class="text-sm underline underline-offset-4 hover:no-underline"
+                   aria-label={t.ctaSecondaryAria}>
+                    {t.ctaSecondary}
+                </a>
+            </div>
+        </div>
+        <div class="md:col-span-5 hidden md:block" aria-hidden="true"></div>
+    </div>
+</section>

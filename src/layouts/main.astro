@@ -2,13 +2,16 @@
 import '../styles/global.css';
 import {ClientRouter} from "astro:transitions";
 import {PROJECT_NAME} from "../config";
-let {content} = Astro.props;
+import { normalizeLocale } from "@/lib/locale";
+
+let {content, lang} = Astro.props as { content?: { title?: string }, lang?: 'en' | 'es' };
 if (!content || !content.title) {
     content = {title: PROJECT_NAME};
 }
+const htmlLang = lang ?? normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 
-<html lang={Astro.currentLocale || "en"}>
+<html lang={htmlLang}>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width"/>
@@ -22,6 +25,7 @@ if (!content || !content.title) {
     <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">
+
 
 <slot/>
 

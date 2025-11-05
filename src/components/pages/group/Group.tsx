@@ -313,6 +313,8 @@ export function GroupPage() {
                             <GroupedReferenceList
                                 groupId={groupId}
                                 entries={group.referencePeople as any}
+                                group={group}
+                                setGroup={setGroup}
                                 onEdit={(member) => {
                                     setMemberToEdit(member);
                                 }}

@@ -364,5 +364,15 @@
     "paymentStatus": "Payment status",
     "email": "Email",
     "currency": "Currency"
+  },
+  "publicShare": {
+    "title": "Shared profile",
+    "subtitle": "Public view to share",
+    "loading": "Loading...",
+    "missingParams": "Missing parameters in the URL.",
+    "error": "Failed to load the shared content.",
+    "notFound": "Shared content not found.",
+    "unknownName": "User",
+    "debugData": "View data"
   }
 }

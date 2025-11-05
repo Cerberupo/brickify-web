@@ -45,6 +45,9 @@ interface GroupedReferenceListProps {
     editingGroupInitial?: { entryId: string; name: string; people: any[] } | null;
     onCancelEditGroup?: () => void;
     onSaveEditGroup?: (data: { entryId: string; subgroupName: string; people: any[] }) => Promise<void>;
+    // Group state for share updates
+    group: any;
+    setGroup: (g: any) => void;
 }
 
 export function GroupedReferenceList({
@@ -62,6 +65,8 @@ export function GroupedReferenceList({
                                          editingGroupInitial,
                                          onCancelEditGroup,
                                          onSaveEditGroup,
+                                         group,
+                                         setGroup,
                                      }: GroupedReferenceListProps) {
 
     const {t} = useTranslation();
@@ -157,8 +162,6 @@ export function GroupedReferenceList({
         elementIds.forEach(id => {
             quantities[id] = (quantities[id] || 0) + 1;
         });
-
-        console.log('quantities', quantities);
 
         const payload = Object.entries(quantities).map(([elementId, quantity]) => ({
             elementId,
@@ -261,6 +264,8 @@ export function GroupedReferenceList({
                                                            groupId={groupId}
                                                            showActions={false}
                                                            onPartSelectedChange={handlePartSelectedChange}
+                                                           group={group}
+                                                           setGroup={setGroup}
                                         />
                                     )
                                 ))}
@@ -284,6 +289,8 @@ export function GroupedReferenceList({
                 return <ImportedPersonRow key={entry.id} person={entry} onEdit={onEdit} onDelete={onDelete}
                                           groupId={groupId}
                                           onPartSelectedChange={handlePartSelectedChange}
+                                          group={group}
+                                          setGroup={setGroup}
                 />;
             })}
         </div>

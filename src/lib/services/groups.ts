@@ -300,16 +300,24 @@ export async function setSelectedPiece(
     const url = `/people/${encodeURIComponent(referencePersonId)}/matches/${encodeURIComponent(part)}/selected-piece?groupId=${encodeURIComponent(groupId)}`;
     await fetchApi(url, {
         method: 'PATCH',
-        body: { pieceId },
+        body: {pieceId},
     });
 }
 
 /**
  * Enable public sharing for a member of a group
  */
-export async function enableMemberShare(groupId: string, personId: string): Promise<void> {
+export async function enableMemberShare(groupId: string, personId: string): Promise<{
+    groupShareId: string,
+    personShareId: string
+}> {
     const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/enable`;
-    await fetchApi(url, { method: 'POST' });
+    const res = await fetchApi<{
+        data: {
+            referencePerson: { groupShareId: string, personShareId: string }
+        }
+    }>(url, {method: 'POST'});
+    return res.data.referencePerson;
 }
 
 /**
@@ -317,5 +325,5 @@ export async function enableMemberShare(groupId: string, personId: string): Prom
  */
 export async function disableMemberShare(groupId: string, personId: string): Promise<void> {
     const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/disable`;
-    await fetchApi(url, { method: 'POST' });
+    await fetchApi(url, {method: 'POST'});
 }

@@ -6,7 +6,7 @@ import {toast} from 'sonner';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
 import type {MatchPart} from '@/lib/services/groups';
-import { enableMemberShare, disableMemberShare } from '@/lib/services/groups';
+import {disableMemberShare, enableMemberShare} from '@/lib/services/groups';
 
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
@@ -27,6 +27,9 @@ export interface PersonRowProps {
     onDelete: (member: { id: string; name: string }) => void;
     showActions?: boolean;
     onPartSelectedChange?: (personId: string, part: MatchPart, pieceId: string | null) => void;
+    // Group state (lifted) to allow in-place updates when sharing is enabled/disabled
+    group?: any;
+    setGroup?: (g: any) => void;
 }
 
 export function PersonRow({
@@ -35,7 +38,9 @@ export function PersonRow({
                               onDelete,
                               showActions = true,
                               groupId,
-                              onPartSelectedChange
+                              onPartSelectedChange,
+                              group,
+                              setGroup
                           }: PersonRowProps) {
     const {t} = useTranslation();
     const src = person?.imageSignedUrl || person?.imagePath || person?.avatar;
@@ -74,7 +79,6 @@ export function PersonRow({
     const facePreview = firstParagraph(person?.faceDescription);
 
     const __parts = splitParagraphs(person?.description);
-    console.log('__parts', __parts);
     const __limited = __parts.slice(0, 2).map(p => truncate(p));
     if (__parts.length > 2 && __limited.length > 0) {
         const lastIdx = __limited.length - 1;
@@ -151,10 +155,11 @@ export function PersonRow({
     }, [onDelete, person]);
 
     const buildShareData = useCallback(() => {
-        const url = typeof window !== 'undefined' ? window.location.href : '';
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        const url = `${origin}/share?g=${encodeURIComponent(group.share.id)}&m=${encodeURIComponent(person.share.id)}`;
         const text = person?.name ? `${person.name} - Brickify` : 'Brickify';
         return {url, text};
-    }, [person?.name]);
+    }, [groupId, person.id, person?.name]);
 
     const handleShareX = useCallback(() => {
         const {url, text} = buildShareData();
@@ -195,7 +200,48 @@ export function PersonRow({
         if (shareEnabled || shareLoading) return;
         setShareLoading(true);
         try {
-            await enableMemberShare(groupId, person.id);
+            const a = await enableMemberShare(groupId, person.id);
+            // a: { groupShareId, personShareId }
+            if (setGroup && group) {
+                setGroup((prev: any) => {
+                    const base = prev || group;
+                    const updatedRef = Array.isArray(base?.referencePeople) ? base.referencePeople.map((entry: any) => {
+                        if (entry?.type === 'group' && Array.isArray(entry.people)) {
+                            const updatedPeople = entry.people.map((p: any) => {
+                                if (String(p.id) === String(person.id)) {
+                                    const nextShare = {...(p.share || {}), enabled: true, id: a.personShareId};
+                                    return {...p, share: nextShare};
+                                }
+                                return p;
+                            });
+                            return {...entry, people: updatedPeople};
+                        }
+                        if (String(entry?.id) === String(person.id)) {
+                            const nextShare = {...(entry.share || {}), enabled: true, id: a.personShareId};
+                            return {...entry, share: nextShare};
+                        }
+                        return entry;
+                    }) : base?.referencePeople;
+                    const nextGroupShare = {...(base?.share || {}), id: a.groupShareId};
+                    return {...base, share: nextGroupShare, referencePeople: updatedRef};
+                });
+            }
+            // Also update the local person object if present
+            try {
+                if (person) {
+                    person.share = {...(person.share || {}), enabled: true, id: a.personShareId};
+                    if ((person as any).group) {
+                        (person as any).group.share = {...((person as any).group.share || {}), id: a.groupShareId};
+                    }
+                    if ((person as any).parentGroup) {
+                        (person as any).parentGroup.share = {
+                            ...((person as any).parentGroup.share || {}),
+                            id: a.groupShareId
+                        };
+                    }
+                }
+            } catch {
+            }
             setShareEnabled(true);
         } catch (e) {
             const msg = t('share.enableError', 'No se pudo activar el modo compartir. Inténtalo de nuevo.');
@@ -203,7 +249,7 @@ export function PersonRow({
         } finally {
             setShareLoading(false);
         }
-    }, [groupId, person.id, shareEnabled, shareLoading, t]);
+    }, [groupId, person, setGroup, group, shareEnabled, shareLoading, t]);
 
     const disableShare = useCallback(async () => {
         if (!shareEnabled || shareLoading) return;

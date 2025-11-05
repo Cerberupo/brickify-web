@@ -1,0 +1,68 @@
+---
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+
+interface Props {
+  locale?: SupportedLocale;
+}
+
+const { locale: localeProp } = Astro.props as Props;
+const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
+
+const copies = {
+  en: {
+    overline: "AN UNFORGETTABLE KEEPSAKE",
+    title: "Your photo, now a collectible piece.",
+    description:
+      "Imagine opening the box and finding your moment turned into LEGO®. A physical piece that stays with you forever.",
+    collageAria: "Photo collage preview in LEGO style"
+  },
+  es: {
+    overline: "UN RECUERDO INOLVIDABLE",
+    title: "Tu foto, ahora convertida en pieza de colección.",
+    description:
+      "Imagina que esa persona abre la caja… y dentro está vuestro momento convertido en LEGO®. Una pieza física que se guarda para siempre.",
+    collageAria: "Collage de fotos en estilo LEGO"
+  }
+} as const;
+
+const t = copies[locale];
+---
+<section class="py-14 md:py-24" aria-labelledby="memory-title">
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-stretch">
+    <!-- Left: vertical lateral collage with 3 images -->
+    <div class="md:col-span-5" aria-label={t.collageAria}>
+      <div class="relative h-[360px] md:h-[520px]">
+        <!-- Slanted backdrop to mimic lateral composition -->
+        <div class="absolute inset-0 -left-6 md:-left-10 bg-card border border-border rounded-2xl shadow-sm" style="clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);"></div>
+
+        <!-- Column of images (3 items) -->
+        <div class="absolute inset-3 md:inset-5 flex flex-col justify-between rotate-[-6deg]">
+          <figure class="rounded-xl overflow-hidden shadow-lg border border-border bg-card">
+            <img src="/people-1.png" alt="placeholder image 1" class="w-full h-32 md:h-40 object-cover" loading="lazy" />
+          </figure>
+          <figure class="rounded-xl overflow-hidden shadow-lg border border-border bg-card">
+            <img src="/people-2.png" alt="placeholder image 2" class="w-full h-32 md:h-40 object-cover" loading="lazy" />
+          </figure>
+          <figure class="rounded-xl overflow-hidden shadow-lg border border-border bg-card">
+            <img src="/people-1.png" alt="placeholder image 3" class="w-full h-32 md:h-40 object-cover" loading="lazy" />
+          </figure>
+        </div>
+
+        <!-- Decorative piece -->
+        <img src="/piece-1.svg" alt="" aria-hidden="true" class="absolute -bottom-6 -right-4 w-40 md:w-56 h-auto opacity-80" loading="lazy" />
+      </div>
+    </div>
+
+    <!-- Right: big rounded card with copy -->
+    <div class="md:col-span-7">
+      <div class="relative bg-secondary/40 rounded-2xl p-6 md:p-12 border border-border shadow-sm">
+        <!-- Subtle angled accent on the left edge -->
+        <div class="hidden md:block absolute inset-y-0 -left-6 w-10 bg-secondary/40 rounded-l-2xl" style="transform: skewX(-12deg);"></div>
+
+        <p class="text-xs md:text-sm tracking-widest text-muted-foreground mb-3 font-medium">{t.overline}</p>
+        <h2 id="memory-title" class="text-2xl md:text-4xl font-medium leading-tight mb-4">{t.title}</h2>
+        <p class="text-base md:text-lg font-light text-muted-foreground max-w-[65ch]">{t.description}</p>
+      </div>
+    </div>
+  </div>
+</section>

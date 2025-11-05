@@ -1,12 +1,12 @@
 ---
 import MainLayout from "../../layouts/main.astro";
-import { AppWrapper } from "../../layouts";
+import {AppWrapper} from "../../layouts";
 import CheckoutReturnPage from "../../components/pages/checkout/Return";
-import { PROJECT_NAME } from "../../config";
+import {PROJECT_NAME} from "../../config";
 ---
 
 <MainLayout content={{title: `${PROJECT_NAME} - Checkout Return`}}>
-  <AppWrapper client:only="react">
-    <CheckoutReturnPage client:only="react" />
-  </AppWrapper>
+    <AppWrapper client:only="react">
+        <CheckoutReturnPage client:only="react"/>
+    </AppWrapper>
 </MainLayout>

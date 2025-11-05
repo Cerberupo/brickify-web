@@ -1,0 +1,38 @@
+---
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+const {locale: localeProp} = Astro.props as { locale?: SupportedLocale };
+const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
+const copies = {
+    en: {
+        sectionAria: 'LEGO-style preview',
+        img1Alt: 'LEGO person figure holding a blue brick',
+        img2Alt: 'LEGO girl with colorful bricks',
+        piece1Alt: 'LEGO brick',
+    },
+    es: {
+        sectionAria: 'Vista previa en estilo LEGO',
+        img1Alt: 'Figura de persona convertida a LEGO sosteniendo un bloque azul',
+        img2Alt: 'Niña LEGO con bloques de colores',
+        piece1Alt: 'Bloque LEGO',
+    }
+} as const;
+const t = copies[locale];
+---
+<section aria-label={t.sectionAria} class="relative">
+    <div class={`relative h-[360px] md:h-[720px]`}
+         style="background-image: url('/banner-side-bg.svg'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
+        <div class="md:col-start-7 md:col-span-6 order-2 md:order-none w-full h-full">
+            <figure class="relative w-full h-full">
+                <img src="/piece-1.svg" width="398" height="135" alt={t.piece1Alt} loading="lazy"
+                     class="h-auto absolute top-0 left-0 origin-top-left scale-50 md:scale-100"
+                     style="transform: translateX(-20%) translateY(-20%);"/>
+                <img src="/people-1.png" width="253" height="380" alt={t.img2Alt} loading="lazy"
+                     class="h-auto absolute bottom-0 left-0 origin-bottom-left scale-50 md:scale-100"
+                     style="transform: translateX(-35%) translateY(20%);"/>
+                <img src="/people-2.png" width="294" height="441" alt={t.img1Alt} loading="lazy"
+                     class="h-auto absolute top-0 right-0 origin-top-right scale-50 md:scale-100"
+                     style="transform: translateX(30%) translateY(0%);"/>
+            </figure>
+        </div>
+    </div>
+</section>
