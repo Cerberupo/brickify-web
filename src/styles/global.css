@@ -124,3 +124,8 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Override default text color across the site */
+:root {
+    --foreground: #282828;
+}

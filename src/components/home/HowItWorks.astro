@@ -1,0 +1,98 @@
+---
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+import { Users, Image as ImageIcon, Sparkles, Package } from "lucide-react";
+
+interface Props {
+    locale?: SupportedLocale
+}
+const {locale: localeProp} = Astro.props as Props;
+const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
+
+const copies = {
+    en: {
+        sectionTitle: "How it works",
+        sectionSubtitle: "Upload your photo. We transform it.",
+        steps: [
+            {
+                number: "01",
+                title: "Create your groups",
+                desc: "Organize your memories into personalized groups. Perfect for events, trips or special collections.",
+            },
+            {
+                number: "02",
+                title: "Upload your photos",
+                desc: "Add your images. Our AI takes care of the rest to recommend official LEGO® parts.",
+            },
+            {
+                number: "03",
+                title: "The magic",
+                desc: "We analyze your photo and select the LEGO® parts that look the most like you.",
+            },
+            {
+                number: "04",
+                title: "Mini you",
+                desc: "Receive the parts list with codes so you can build your own mini version.",
+            },
+        ],
+    },
+    es: {
+        sectionTitle: "Cómo funciona",
+        sectionSubtitle: "Sube la foto. Nosotros la transformamos.",
+        steps: [
+            {
+                number: "01",
+                title: "Crea tus grupos",
+                desc: "Organiza tus recuerdos en grupos personalizados. Ideal para eventos, viajes o colecciones especiales.",
+            },
+            {
+                number: "02",
+                title: "Sube tus fotos",
+                desc: "Añade tus imágenes. Nuestra IA se encarga del resto para recomendar piezas oficiales de LEGO®.",
+            },
+            {
+                number: "03",
+                title: "La magia",
+                desc: "Analizamos tu foto y seleccionamos las piezas LEGO® que más se parecen a ti.",
+            },
+            {
+                number: "04",
+                title: "Mini tú",
+                desc: "Recibe el listado de piezas con códigos para construir tu propia mini versión.",
+            },
+        ],
+    },
+} as const;
+const t = copies[locale];
+---
+<section id="como-funciona" aria-labelledby="how-title" class="relative">
+    <div class="absolute inset-0 -z-10 bg-[#F1EEFF]" aria-hidden="true"></div>
+    <div class="container mx-auto px-4 md:px-6 py-16 md:py-24 relative">
+        <img src="/piece-2.svg" alt="LEGO piece" width="285" height="390"
+             class="md:block absolute -top-28 right-0 select-none pointer-events-none"
+             loading="lazy"/>
+
+        <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14">
+            <h2 id="how-title" class="text-3xl md:text-[32px] font-medium tracking-tight mb-3">{t.sectionTitle}</h2>
+            <p class="text-sm md:text-[16px] font-light">{t.sectionSubtitle}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {t.steps.map((step, i) => (
+                    <article
+                            class="rounded-2xl bg-white/90 backdrop-blur border border-[#E8C79E] shadow-sm p-6 min-h-44">
+                        <header class="flex items-start justify-between mb-3">
+                            <span class="text-primary font-semibold">{step.number}</span>
+                            <span aria-hidden="true" class="text-muted-foreground/60 flex items-center justify-center">
+                                {i === 0 ? <Users className="size-5" /> : null}
+                                {i === 1 ? <ImageIcon className="size-5" /> : null}
+                                {i === 2 ? <Sparkles className="size-5" /> : null}
+                                {i === 3 ? <Package className="size-5" /> : null}
+                            </span>
+                        </header>
+                        <h3 class="text-lg font-semibold mb-1">{step.title}</h3>
+                        <p class="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                    </article>
+            ))}
+        </div>
+    </div>
+</section>

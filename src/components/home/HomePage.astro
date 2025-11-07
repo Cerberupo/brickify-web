@@ -3,6 +3,7 @@ import Layout from "@/layouts/main.astro";
 import HeroSection from "@/components/home/HeroSection.astro";
 import VisualShowcase from "@/components/home/VisualShowcase.astro";
 import MemoryHighlight from "@/components/home/MemoryHighlight.astro";
+import HowItWorks from "@/components/home/HowItWorks.astro";
 import {Header} from "@/layouts/components/Header";
 import type {SupportedLocale} from "@/lib/locale";
 
@@ -32,7 +33,7 @@ const content = {title: t.title};
 ---
 <Layout content={content} lang={locale}>
     <Header client:load/>
-    <main id="inicio" class="container mx-auto px-4 md:px-6 relative">
+    <main id="inicio" class="relative overflow-x-hidden">
         <script define:vars={{enableRedirect}}>
             if (enableRedirect && typeof window !== 'undefined') {
                 const isRoot = location.pathname === '/' || location.pathname === '';
@@ -43,20 +44,19 @@ const content = {title: t.title};
             }
         </script>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-10 items-center">
-            <div class="md:col-span-7">
-                <HeroSection locale={locale}/>
-            </div>
-            <div class="md:col-span-5 pl-8 pr-8">
-                <VisualShowcase locale={locale}/>
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-10 items-center">
+                <div class="md:col-span-7">
+                    <HeroSection locale={locale}/>
+                </div>
+                <div class="md:col-span-5 pl-8 pr-8">
+                    <VisualShowcase locale={locale}/>
+                </div>
             </div>
         </div>
 
         <MemoryHighlight locale={locale}/>
 
-        <section id="como-funciona" aria-labelledby="como-title" class="sr-only">
-            <h2 id="como-title">{t.howTitle}</h2>
-            <p>{t.howDesc}</p>
-        </section>
+        <HowItWorks locale={locale} />
     </main>
 </Layout>

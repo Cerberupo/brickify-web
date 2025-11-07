@@ -6,16 +6,16 @@ const {title: titleProp, locale: localeProp} = Astro.props as { title?: string; 
 const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
 const copies = {
     en: {
-        title: "Bring your photo to life in LEGO®",
-        description: "Our AI analyzes your image and <strong class='font-medium'>turns it into official LEGO® parts</strong> that best match you. You’ll also get <strong class='font-medium'>the part code for each piece</strong> so you can build it yourself. Only €2.99 per image!",
+        title: "Use our AI to craft the perfect LEGO® gift",
+        description: "Whether it's a wedding, a unique surprise for friends, or a corporate present, our AI transforms your photo into <strong class='font-medium'>official LEGO® parts</strong> that look just like you. You’ll also get <strong class='font-medium'>the part code for each piece</strong> to build it yourself. Only €2.99 per image!",
         ctaPrimary: "Upload your photo",
         ctaPrimaryAria: "Upload your image and get started",
         ctaSecondary: "How it works",
         ctaSecondaryAria: "How Brickify works"
     },
     es: {
-        title: "Dale vida a tu foto en versión LEGO®",
-        description: "Nuestra IA analiza tu imagen y la <strong class='font-medium'>transforma en piezas oficiales de LEGO®</strong> con las piezas que más se parecen a ti. Además, recibirás el <strong class='font-medium'>código de cada pieza</strong> para que puedas construirlo tú mismo. ¡Solo 2.99 € por imagen!",
+        title: "Ayúdate de nuestra IA para crear el regalo perfecto en LEGO®",
+        description: "Ya sea para una boda, un detalle único para amigos o un regalo de empresa, nuestra IA transforma tu foto en <strong class='font-medium'>piezas oficiales de LEGO®</strong> que se parecen a ti. Además, recibirás <strong class='font-medium'>el código de cada pieza</strong> para construirlo tú mismo. ¡Solo 2,99 € por imagen!",
         ctaPrimary: "Sube tu imagen",
         ctaPrimaryAria: "Sube tu imagen y comienza",
         ctaSecondary: "Cómo funciona",
@@ -28,10 +28,11 @@ const title = titleProp ?? t.title;
 <section aria-labelledby="hero-title" class="py-14 md:py-24">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         <div class="md:col-span-10">
-            <h1 id="hero-title" class="text-4xl md:text-6xl font-medium tracking-tight mb-6">
+            <h1 id="hero-title" class="text-4xl md:text-[64px] font-medium tracking-tight mb-6">
                 {title}
             </h1>
-            <p class="text-base md:text-lg font-light leading-relaxed max-w-prose mb-6" set:html={t.description}></p>
+            <p class="text-base md:text-[20px] font-light leading-relaxed max-w-prose mb-6"
+               set:html={t.description}></p>
             <div class="flex items-center gap-4">
                 <a href="/share" aria-label={t.ctaPrimaryAria} rel="nofollow" class={buttonVariants({size: "lg"})}>
                     {t.ctaPrimary}
