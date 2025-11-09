@@ -1,6 +1,7 @@
 ---
 import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
-import { Users, Image as ImageIcon, Sparkles, Package } from "lucide-react";
+import {Users, Image as ImageIcon, Sparkles, Package} from "lucide-react";
+import LegoPreviewCard from "./LegoPreviewCard";
 
 interface Props {
     locale?: SupportedLocale
@@ -12,6 +13,8 @@ const copies = {
     en: {
         sectionTitle: "How it works",
         sectionSubtitle: "Upload your photo. We transform it.",
+        altLego: "LEGO preview of the person",
+        altPhoto: "Reference photo of the person",
         steps: [
             {
                 number: "01",
@@ -38,6 +41,8 @@ const copies = {
     es: {
         sectionTitle: "Cómo funciona",
         sectionSubtitle: "Sube la foto. Nosotros la transformamos.",
+        altLego: "Vista LEGO de la persona",
+        altPhoto: "Foto de referencia de la persona",
         steps: [
             {
                 number: "01",
@@ -67,8 +72,8 @@ const t = copies[locale];
 <section id="como-funciona" aria-labelledby="how-title" class="relative">
     <div class="absolute inset-0 -z-10 bg-[#F1EEFF]" aria-hidden="true"></div>
     <div class="container mx-auto px-4 md:px-6 py-16 md:py-24 relative">
-        <img src="/piece-2.svg" alt="LEGO piece" width="285" height="390"
-             class="md:block absolute -top-28 right-0 select-none pointer-events-none"
+        <img src="/piece-2.svg" alt="LEGO piece"
+             class="md:block absolute w-[142px] h-[195px] md:w-[285px] md:h-[390px] -top-15 md:-top-28 right-0 select-none pointer-events-none"
              loading="lazy"/>
 
         <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14">
@@ -83,16 +88,25 @@ const t = copies[locale];
                         <header class="flex items-start justify-between mb-3">
                             <span class="text-primary font-semibold">{step.number}</span>
                             <span aria-hidden="true" class="text-muted-foreground/60 flex items-center justify-center">
-                                {i === 0 ? <Users className="size-5" /> : null}
-                                {i === 1 ? <ImageIcon className="size-5" /> : null}
-                                {i === 2 ? <Sparkles className="size-5" /> : null}
-                                {i === 3 ? <Package className="size-5" /> : null}
+                                {i === 0 ?
+                                        <Users className="size-5"/> : null}
+                                {i === 1 ?
+                                        <ImageIcon className="size-5"/> : null}
+                                {i === 2 ?
+                                        <Sparkles className="size-5"/> : null}
+                                {i === 3 ?
+                                        <Package className="size-5"/> : null}
                             </span>
                         </header>
                         <h3 class="text-lg font-semibold mb-1">{step.title}</h3>
                         <p class="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
                     </article>
             ))}
+        </div>
+
+        <!-- Interactive preview card at the very bottom -->
+        <div class="mt-10 md:mt-14 flex justify-center">
+            <LegoPreviewCard client:load locale={locale} altLego={t.altLego} altPerson={t.altPhoto}/>
         </div>
     </div>
 </section>

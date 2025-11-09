@@ -129,3 +129,101 @@
 :root {
     --foreground: #282828;
 }
+
+@keyframes exitWaitingPreview {
+    0% {
+        transform: translateX(0%)
+    }
+    50% {
+        transform: translateX(-120%) rotate(-15deg);
+    }
+    100% {
+        transform: translateX(-35%) rotate(-8.5deg) scale(0.8);
+    }
+}
+
+@keyframes enterWaitingPreview {
+    0% {
+        transform: translateX(-35%) rotate(-8.5deg) scale(0.8);
+    }
+    50% {
+        transform: translateX(-120%) rotate(-15deg);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+/* Keep the final frame styles after animation ends */
+.exit-waiting-preview {
+    animation-name: exitWaitingPreview;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    z-index: 2; /* ensure outgoing is above incoming during transition */
+}
+
+.enter-waiting-preview {
+    animation-name: enterWaitingPreview;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    z-index: 1; /* incoming stays below until it becomes active */
+}
+
+/* Resting states matching the end of animations */
+.waiting-preview-inactive {
+    transform: translateX(-35%) rotate(-8.5deg) scale(0.8);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.waiting-preview-active {
+    transform: translateX(0%);
+    z-index: auto;
+    pointer-events: auto;
+}
+
+/* Right-side layer animations */
+@keyframes enterLayerRight {
+    0% {
+        transform: translateX(0%);
+        right: 10px;
+    }
+    100% {
+        transform: translateX(100%);
+        right: 10px;
+    }
+}
+
+@keyframes exitLayerRight {
+    0% {
+        transform: translateX(100%);
+        right: 10px;
+    }
+    100% {
+        transform: translateX(0%);
+        right: 10px;
+    }
+}
+
+.enter-layer-right {
+    animation: enterLayerRight 0.4s ease forwards;
+    position: absolute;
+    top: 0;
+    right: 10px;
+}
+
+.exit-layer-right {
+    animation: exitLayerRight 0.4s ease forwards;
+    right: 10px;
+}
+
+.layer-right-active {
+    transform: translateX(100%);
+    right: 10px;
+}
+
+.layer-right-inactive {
+    transform: translateX(0%);
+    pointer-events: none;
+    right: 10px;
+}
