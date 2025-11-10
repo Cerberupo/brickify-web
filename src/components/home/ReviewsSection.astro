@@ -1,0 +1,373 @@
+---
+import type {SupportedLocale} from "@/lib/locale";
+
+interface Review {
+    id: number;
+    name: string;
+    monthsAgo: number;
+    title: string;
+    text: string;
+    rating: number;
+}
+
+interface Props {
+    locale: SupportedLocale;
+    reviews?: Review[];
+}
+
+const {locale, reviews} = Astro.props as Props;
+
+const defaultReviews: Record<SupportedLocale, Review[]> = {
+    es: [
+        {
+            id: 1,
+            name: 'Lucía G.',
+            monthsAgo: 1,
+            title: 'Regalo de bodas perfecto',
+            text: 'Pedí una minifig para regalar en una boda y quedó increíble. Capturaron el peinado y la ropa tal cual. Llegó con todos los códigos de piezas.',
+            rating: 5
+        },
+        {
+            id: 2,
+            name: 'Carlos M.',
+            monthsAgo: 2,
+            title: 'Cumpleaños memorable',
+            text: 'Lo usé para el cumpleaños de mi sobrino. La IA acertó muchísimo con los colores y accesorios. Se divirtió montándola.',
+            rating: 4
+        },
+        {
+            id: 3,
+            name: 'Elena R.',
+            monthsAgo: 3,
+            title: 'Equipo de trabajo en LEGO',
+            text: 'Convertimos a todo el equipo en minifigs. Fue un éxito en la oficina y ahora están en nuestras mesas.',
+            rating: 5
+        },
+        {
+            id: 4,
+            name: 'Sergio P.',
+            monthsAgo: 4,
+            title: 'Detalle de aniversario',
+            text: 'La figura quedó clavadísima. Repetiré para otros regalos. El proceso fue súper sencillo.',
+            rating: 4
+        },
+        {
+            id: 5,
+            name: 'María L.',
+            monthsAgo: 5,
+            title: 'Rápido y divertido',
+            text: 'Subí una foto, elegí un par de opciones y listo. En minutos tenía las piezas recomendadas. ¡Muy top!',
+            rating: 5
+        },
+        {
+            id: 6,
+            name: 'Javi T.',
+            monthsAgo: 6,
+            title: 'Para coleccionistas',
+            text: 'Si te gusta LEGO, esto es obligatorio. Las referencias oficiales facilitan pedir las piezas exactas.',
+            rating: 5
+        },
+        {
+            id: 7,
+            name: 'Ana S.',
+            monthsAgo: 7,
+            title: 'Regalo original',
+            text: 'Nunca había hecho un regalo tan personalizado. Les pasé detalles y lo reflejaron perfecto.',
+            rating: 4
+        },
+        {
+            id: 8,
+            name: 'Raúl C.',
+            monthsAgo: 8,
+            title: 'Parecido sorprendente',
+            text: 'El resultado se parecía muchísimo a la foto. Incluso el peinado y la barba.',
+            rating: 5
+        },
+        {
+            id: 9,
+            name: 'Patricia V.',
+            monthsAgo: 9,
+            title: 'Para toda la familia',
+            text: 'Hicimos minifigs de los cuatro en casa. Los niños fliparon montándolos.',
+            rating: 5
+        },
+    ],
+    en: [
+        {
+            id: 1,
+            name: 'Lucy G.',
+            monthsAgo: 1,
+            title: 'Perfect wedding gift',
+            text: 'I ordered a minifig as a wedding present and it turned out amazing. Hairstyle and outfit were spot on. Got all the part codes.',
+            rating: 5
+        },
+        {
+            id: 2,
+            name: 'Charles M.',
+            monthsAgo: 2,
+            title: 'Memorable birthday',
+            text: 'Used it for my nephew’s birthday. The AI nailed the colors and accessories. He loved building it.',
+            rating: 4
+        },
+        {
+            id: 3,
+            name: 'Helen R.',
+            monthsAgo: 3,
+            title: 'Team in LEGO',
+            text: 'We turned our whole team into minifigs. Big hit at the office and now they sit on our desks.',
+            rating: 5
+        },
+        {
+            id: 4,
+            name: 'Sergio P.',
+            monthsAgo: 4,
+            title: 'Anniversary surprise',
+            text: 'The figure looked just like the photo. I’ll use it again for other gifts. Super easy process.',
+            rating: 4
+        },
+        {
+            id: 5,
+            name: 'Maria L.',
+            monthsAgo: 5,
+            title: 'Fast and fun',
+            text: 'Uploaded a photo, picked a couple options and done. In minutes I had the recommended parts. Loved it!',
+            rating: 5
+        },
+        {
+            id: 6,
+            name: 'Javier T.',
+            monthsAgo: 6,
+            title: 'For collectors',
+            text: 'If you like LEGO, this is a must. Official references make it easy to order the exact parts.',
+            rating: 5
+        },
+        {
+            id: 7,
+            name: 'Anna S.',
+            monthsAgo: 7,
+            title: 'Original gift',
+            text: 'Never made such a personalized present. I gave them some details and they matched them perfectly.',
+            rating: 4
+        },
+        {
+            id: 8,
+            name: 'Raul C.',
+            monthsAgo: 8,
+            title: 'Surprisingly accurate',
+            text: 'The result looked a lot like the photo, even the hairstyle and beard.',
+            rating: 5
+        },
+        {
+            id: 9,
+            name: 'Patty V.',
+            monthsAgo: 9,
+            title: 'For the whole family',
+            text: 'We made minifigs for the four of us. The kids loved building them.',
+            rating: 5
+        },
+    ],
+};
+
+const list: Review[] = reviews ?? defaultReviews[locale];
+
+
+const copies = {
+    es: {
+        title: 'Reseñas'
+    },
+    en: {
+        title: 'Reviews'
+    }
+} as const;
+const t = copies[locale];
+---
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-element-bundle.min.js"></script>
+
+<!-- Swiper Web Components registered via ESM so Vite bundles it correctly -->
+<script type="module">
+    import {register} from 'swiper/element/bundle';
+
+    register();
+</script>
+<style is:global>
+    /* Keep Swiper styles from CDN to avoid PostCSS ENOENT on local CSS imports */
+    @import url('https://unpkg.com/swiper@11/swiper-bundle.min.css');
+    /* Minimal fallbacks to avoid stacked slides flash before upgrade */
+    swiper-container {
+        display: block;
+        width: 100%;
+    }
+
+    swiper-slide {
+        display: block;
+    }
+
+    /* Black theme for navigation arrows and pagination ("stepper") */
+    swiper-container.reviews-swiper {
+        /* Pagination (bullets) */
+        --swiper-pagination-color: #000; /* active bullet */
+        --swiper-pagination-bullet-inactive-color: #000; /* base color for inactive */
+        --swiper-pagination-bullet-inactive-opacity: 0.25; /* faded inactive */
+        --swiper-pagination-bullet-size: 8px;
+        --swiper-pagination-bullet-horizontal-gap: 6px;
+    }
+
+
+    swiper-container::part(button-prev),
+    swiper-container::part(button-next) {
+        padding: 10px;
+        width: 20px;
+        height: 20px;
+        border-radius: 9999px;
+        background: #000;
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        display: grid;
+        place-items: center;
+        z-index: 20;
+    }
+
+    swiper-container::part(container)::after {
+        content: '';
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 100px;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+        z-index: 10;
+    }
+
+    swiper-container::part(container)::before {
+        content: '';
+        pointer-events: none;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100px;
+        height: 100%;
+        background: linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+        z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+        swiper-container::part(container)::before,
+        swiper-container::part(container)::after {
+            display: none;
+        }
+    }
+
+    swiper-container::part(container) {
+        padding-bottom: 50px;
+    }
+
+
+    /* Equal height for review cards */
+    .reviews-swiper {
+        --review-card-h: 280px;
+    }
+
+    @media (min-width: 768px) {
+        .reviews-swiper {
+            --review-card-h: 280px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .reviews-swiper {
+            --review-card-h: 300px;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .reviews-swiper {
+            --review-card-h: 320px;
+        }
+    }
+
+    .reviews-swiper swiper-slide {
+        height: auto;
+    }
+
+    .reviews-swiper swiper-slide > .review-card {
+        height: var(--review-card-h);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .review-card header {
+        flex: 0 0 auto;
+    }
+
+    .review-card h3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-top: 1rem;
+        font-weight: 600;
+    }
+
+    .review-card p {
+        flex: 1 1 auto;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-top: 0.5rem;
+        line-height: 1.5;
+        color: rgb(64 64 64);
+    }
+
+</style>
+
+<section class="relative w-full py-10 md:py-16 overflow-hidden">
+    <div class="container mx-auto px-4 md:px-6">
+        <div class="flex items-center gap-4 mb-6 md:mb-8">
+            <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy"/>
+            <h2 class="text-3xl md:text-4xl font-bold">{t.title}</h2>
+        </div>
+
+        <div class="md:-mx-6 relative">
+            <swiper-container
+                    class="reviews-swiper"
+                    slides-per-view="1"
+                    space-between="16"
+                    speed="500"
+                    navigation="true"
+                    pagination="true"
+                    breakpoints='{ "640": { "centeredSlides": true, "slidesPerView": 1, "spaceBetween": 16 }, "768": { "centeredSlides": true, "slidesPerView": 2, "spaceBetween": 20 }, "1024": { "centeredSlides": true, "slidesPerView": 3, "spaceBetween": 24 }, "1280": { "centeredSlides": true, "slidesPerView": 4, "spaceBetween": 28 } }'
+            >
+                {list.map((r) => (
+                        <swiper-slide>
+                            <article
+                                    class="review-card rounded-2xl bg-white/80 backdrop-blur-sm border shadow-sm p-5 md:p-6 select-none">
+                                <header class="flex items-center justify-between pb-4 border-b">
+                                    <div class="flex items-center gap-3">
+                                        <div>
+                                            <div class="font-semibold">{r.name}</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-lg"
+                                         aria-label={locale === 'es' ? `${r.rating} de 5` : `${r.rating} out of 5`}>
+                                        <span class="text-amber-400">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
+                                    </div>
+                                </header>
+
+                                <h3 class="mt-4 font-semibold">{r.title}</h3>
+                                <p class="mt-2 text-sm leading-6 text-neutral-700">{r.text}</p>
+
+                                <div class="flex gap-3 mt-4">
+                                    <div class="size-12 rounded-md bg-neutral-300"/>
+                                    <div class="size-12 rounded-md bg-neutral-300"/>
+                                </div>
+                            </article>
+                        </swiper-slide>
+                ))}
+            </swiper-container>
+        </div>
+    </div>
+</section>

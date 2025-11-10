@@ -154,6 +154,30 @@
     }
 }
 
+@keyframes exitWaitingPreviewMobile {
+    0% {
+        transform: translateX(0%)
+    }
+    50% {
+        transform: translateX(-120%) rotate(-15deg);
+    }
+    100% {
+        transform: translateY(-10%) translateX(-8%) rotate(8.5deg) scale(0.9);
+    }
+}
+
+@keyframes enterWaitingPreviewMobile {
+    0% {
+        transform: translateY(-10%) translateX(-8%) rotate(8.5deg) scale(0.9);
+    }
+    50% {
+        transform: translateX(-120%) rotate(-15deg);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
 /* Keep the final frame styles after animation ends */
 .exit-waiting-preview {
     animation-name: exitWaitingPreview;
@@ -177,7 +201,7 @@
 }
 
 .waiting-preview-active {
-    transform: translateX(0%);
+    transform: translateX(0%) translateY(0) rotate(0deg) scale(1);
     z-index: auto;
     pointer-events: auto;
 }
@@ -205,6 +229,28 @@
     }
 }
 
+@keyframes enterLayerRightMobile {
+    0% {
+        transform: translateX(100%);
+        right: 0;
+    }
+    100% {
+        transform: translateX(0%);
+        right: 0;
+    }
+}
+
+@keyframes exitLayerRightMobile {
+    0% {
+        transform: translateX(0%);
+        right: 0;
+    }
+    100% {
+        transform: translateX(100%);
+        right: 0;
+    }
+}
+
 .enter-layer-right {
     animation: enterLayerRight 0.4s ease forwards;
     position: absolute;
@@ -226,4 +272,45 @@
     transform: translateX(0%);
     pointer-events: none;
     right: 10px;
+}
+
+@media (max-width: 768px) {
+
+    .exit-waiting-preview {
+        animation-name: exitWaitingPreviewMobile;
+    }
+
+    .enter-waiting-preview {
+        animation-name: enterWaitingPreviewMobile;
+    }
+
+    .waiting-preview-inactive {
+        transform: translateY(-10%) translateX(-8%) rotate(8.5deg) scale(0.9);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .enter-layer-right {
+        animation: enterLayerRightMobile 0.4s ease forwards;
+        transform: translateX(100%);
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+    }
+
+    .exit-layer-right {
+        animation: exitLayerRightMobile 0.4s ease forwards;
+        right: 0;
+    }
+
+    .layer-right-active {
+        transform: translateX(0%);
+        right: 0;
+    }
+
+    .layer-right-inactive {
+        transform: translateX(100%);
+        right: 0;
+    }
 }

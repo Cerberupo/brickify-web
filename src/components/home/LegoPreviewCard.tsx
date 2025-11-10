@@ -168,40 +168,7 @@ export default function LegoPreviewCard({
         <div className="w-full h-auto md:w-[910px] md:h-[635px] relative">
 
             <div
-                className="pointer-events-none absolute right-0 top-10 -z-10 flex flex-col gap-2">
-                {orderedCats.map((cat, idx) => {
-                    const c = catAnim[cat as string];
-                    const current = getItem(cat, selectedItems[cat as string]);
-                    const prevId = c?.outgoing ?? null;
-                    const prevItem = prevId ? getItem(cat, prevId) : null;
-
-                    const Badge = ({item, className}: { item: LegoItem, className?: string }) => (
-                        <div
-                            className={cn("relative pointer-events-auto select-none rounded-r-[8px] p-[6px] bg-white", className)}>
-                            <div className="text-[12px] leading-tight bg-[#FAFAFA] rounded-r-[8px] pl-[24px] p-[14px]">
-                                <div className="text-[15px] whitespace-nowrap">{item.name}</div>
-                                <div className="text-[14px] whitespace-nowrap">ID: <span
-                                    className="font-light">{item.id}</span></div>
-                            </div>
-                        </div>
-                    );
-
-                    return (
-                        <div key={cat + '-' + idx} className="relative">
-                            {/* Outgoing */}
-                            {c?.animating && prevItem && (
-                                <Badge item={prevItem} className={getRightLayerClass(cat, 'outgoing')}/>
-                            )}
-                            {/* Incoming or resting */}
-                            <Badge item={current}
-                                   className={c?.animating ? getRightLayerClass(cat, 'incoming') : getRightLayerClass(cat, 'rest')}/>
-                        </div>
-                    );
-                })}
-            </div>
-
-            <div
-                className="relative rounded-[16px] bg-white backdrop-blur-sm border w-full h-full  shadow-md overflow-visible">
+                className="relative rounded-[16px] bg-white backdrop-blur-sm border w-full md:h-full  shadow-md overflow-visible z-20">
                 {/* Floating round toggle button */}
                 <button
                     type="button"
@@ -213,7 +180,7 @@ export default function LegoPreviewCard({
                     <RotateCcw className="size-4 text-muted-foreground"/>
                 </button>
 
-                <div className="flex flex-col md:flex-row items-stretch h-full">
+                <div className="flex flex-col md:flex-row items-stretch md:h-full">
                     <div className="flex items-stretch h-[635px] md:h-full w-full md:w-[44%] relative">
                         {/* Left: image area */}
                         {(() => {
@@ -268,38 +235,78 @@ export default function LegoPreviewCard({
 
                     {/* Right: options grid */}
                     <div
-                        className="w-full md:w-[56%] pl-0 pt-[6px] pb-[6px] pr-[6px]">
+                        className="w-full md:w-[56%] p-[6px] md:pl-0 md:pt-[6px] md:pb-[6px] md:pr-[6px]">
                         {/* Categories grid */}
-                        <div className="flex items-center justify-center h-full w-full bg-[#FAFAFA] rounded-r-[16px]">
-                            <div className=" grid [grid-template-columns:repeat(3,max-content)] gap-[6px]">
-                                {Object.entries(customizationOptions).map(([category, items]) =>
-                                    items.map((item) => {
-                                        const isSelected = selectedItems[category] === item.id;
-                                        return (
-                                            <button
-                                                key={`${category}-${item.id}`}
-                                                type="button"
-                                                onClick={() => handleSelect(category as keyof LegoCategories, item.id)}
-                                                aria-pressed={isSelected}
-                                                className={cn(
-                                                    "w-[88px] h-[88px] md:w-[121px] md:h-[121px] aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none",
-                                                    isSelected ? "bg-[#FFF3D6] border border-[#F9C14A]" : "bg-white/90 hover:bg-[#FFF3D6]"
-                                                )}
-                                            >
-                                                <img
-                                                    src={item.imageUrl}
-                                                    alt={item.name}
-                                                    className="h-6 w-10 md:h-8 md:w-14 rounded-md object-cover"
-                                                />
-                                            </button>
-                                        );
-                                    })
-                                )}
+                        <div
+                            className="flex items-center justify-center h-full w-full bg-[#FAFAFA] rounded-[16px] md:rounded-r-[16px]">
+                            <div className="w-full flex flex-col items-center justify-center p-[16px] md:p-0 gap-[6px]">
+                                {Object.entries(customizationOptions).map(([category, items], index) => {
+                                    return <div
+                                        key={index}
+                                        className="w-full flex gap-[6px] items-center justify-center">
+                                        {items.map((item) => {
+                                            const isSelected = selectedItems[category] === item.id;
+                                            return (
+                                                <button
+                                                    key={`${category}-${item.id}`}
+                                                    type="button"
+                                                    onClick={() => handleSelect(category as keyof LegoCategories, item.id)}
+                                                    aria-pressed={isSelected}
+                                                    className={cn(
+                                                        "w-1/3  md:w-[121px] aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none",
+                                                        isSelected ? "bg-[#FFF3D6] border border-[#F9C14A]" : "bg-white/90 hover:bg-[#FFF3D6]"
+                                                    )}
+                                                >
+                                                    <img
+                                                        src={item.imageUrl}
+                                                        alt={item.name}
+                                                        className="h-6 w-10 md:h-8 md:w-14 rounded-md object-cover"
+                                                    />
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                })}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div
+                className="pointer-events-none static w-11/12 m-0 mx-auto md:w-auto md:absolute md:right-0 md:top-10 -z-10 flex flex-col md:gap-2 rounded-[8px] md:rounded-none overflow-hidden md:overflow-visible -mt-2 md:mt-0">
+                {orderedCats.map((cat, idx) => {
+                    const c = catAnim[cat as string];
+                    const current = getItem(cat, selectedItems[cat as string]);
+                    const prevId = c?.outgoing ?? null;
+                    const prevItem = prevId ? getItem(cat, prevId) : null;
+
+                    const Badge = ({item, className}: { item: LegoItem, className?: string }) => (
+                        <div
+                            className={cn("relative pointer-events-auto select-none md:rounded-r-[8px] p-[6px] bg-white", className)}>
+                            <div className="text-[12px] leading-tight bg-[#FAFAFA] rounded-r-[8px] pl-[24px] p-[14px]">
+                                <div className="text-[15px] whitespace-nowrap">{item.name}</div>
+                                <div className="text-[14px] whitespace-nowrap">ID:
+                                    <span className="font-light">{item.id}</span>
+                                </div>
+                            </div>
+                        </div>
+                    );
+
+                    return (
+                        <div key={cat + '-' + idx} className="relative">
+                            {/* Outgoing */}
+                            {c?.animating && prevItem && (
+                                <Badge item={prevItem} className={getRightLayerClass(cat, 'outgoing')}/>
+                            )}
+                            {/* Incoming or resting */}
+                            <Badge item={current}
+                                   className={c?.animating ? getRightLayerClass(cat, 'incoming') : getRightLayerClass(cat, 'rest')}/>
+                        </div>
+                    );
+                })}
+            </div>
+
         </div>
     );
 }
