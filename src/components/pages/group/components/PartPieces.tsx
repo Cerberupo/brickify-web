@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import favicon from '@/images/favicon.png';
-import { type MatchPart, setSelectedPiece } from '@/lib/services/groups';
-
-const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
+const faviconUrl: string = '/favicon.png';
 
 export interface PartPiecesProps {
   groupId: string;

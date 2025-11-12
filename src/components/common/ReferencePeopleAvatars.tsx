@@ -1,8 +1,6 @@
 import React from 'react';
 import {Avatar, AvatarImage} from '@/components/ui';
-import favicon from '@/images/favicon.png';
-
-const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
+const faviconUrl: string = '/favicon.png';
 
 interface ReferencePeopleAvatarsProps {
     /** Top-level referencePeople array: person | group */

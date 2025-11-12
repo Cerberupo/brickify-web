@@ -1,4 +1,17 @@
 ---
-import Component from '../privacy.astro';
+import Layout from "@/layouts/main.astro";
+import { Header } from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import PrivacyContent from "@/components/legal/PrivacyContent.astro";
+import type { SupportedLocale } from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const content = { title: 'Brickify — Privacy policy' };
 ---
-<Component/>
+<Layout content={content} lang={locale}>
+  <Header client:load />
+  <main class="relative overflow-x-hidden">
+    <PrivacyContent locale={locale} />
+    <FooterSection locale={locale} />
+  </main>
+</Layout>

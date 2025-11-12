@@ -2,16 +2,16 @@
 import Layout from "@/layouts/main.astro";
 import { Header } from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
-import ContactContent from "@/components/contact/ContactContent.astro";
+import LegalContent from "@/components/legal/LegalContent.astro";
 import type { SupportedLocale } from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
-const content = { title: 'Brickify — Contact' };
+const content = { title: 'Brickify — Legal notice' };
 ---
 <Layout content={content} lang={locale}>
   <Header client:load />
   <main class="relative overflow-x-hidden">
-    <ContactContent locale={locale} />
+    <LegalContent locale={locale} />
     <FooterSection locale={locale} />
   </main>
 </Layout>

@@ -1,0 +1,99 @@
+---
+import type {SupportedLocale} from "@/lib/locale";
+
+interface Props {
+    locale: SupportedLocale;
+}
+const {locale} = Astro.props as Props;
+
+const copies = {
+    es: {
+        heroTitle: "Quiénes somos",
+        missionTitle: "Nuestra misión",
+        missionText:
+            "Hacer fácil, divertido y accesible transformar una foto en una minifig con piezas oficiales. Queremos que cualquiera pueda regalar o coleccionar una versión LEGO® de sí mismo o de alguien especial.",
+        productTitle: "Qué estamos construyendo",
+        productText:
+            "Una experiencia en la que subes tu foto, nuestra IA analiza rasgos como pelo, rostro y outfit, y te proponemos piezas oficiales con sus códigos para que puedas montarla. Sin líos, sin buscar durante horas.",
+        valuesTitle: "Nuestros valores",
+        values: [
+            {t: "Sencillez", d: "Cada paso debe sentirse claro, rápido y sin fricción."},
+            {t: "Calidad", d: "Cuidamos la selección de piezas y la presentación del resultado."},
+            {t: "Transparencia", d: "No somos oficiales de LEGO® y lo decimos siempre con claridad."},
+        ],
+        ctaTitle: "¿Te apetece transformar tu foto?",
+        ctaText:
+            "Empieza con una imagen y descubre cómo te verías en versión minifig. Tardarás muy poco.",
+        ctaButton: "Probar Brickify",
+    },
+    en: {
+        heroTitle: "About us",
+        missionTitle: "Our mission",
+        missionText:
+            "Make it easy, fun and accessible to turn a photo into a minifig using official parts. Perfect for gifts and collectors alike.",
+        productTitle: "What we’re building",
+        productText:
+            "An experience where you upload your photo, our AI analyses hair, face and outfit, and we suggest official LEGO® parts with codes so you can build it – no hassle, no endless searching.",
+        valuesTitle: "Our values",
+        values: [
+            {t: "Simplicity", d: "Every step should feel clear, fast and frictionless."},
+            {t: "Quality", d: "We care about the part selection and the final presentation."},
+            {t: "Transparency", d: "We are not affiliated with LEGO® and we state it clearly."},
+        ],
+        ctaTitle: "Ready to transform your photo?",
+        ctaText:
+            "Start with a picture and see yourself as a minifig. It only takes a moment.",
+        ctaButton: "Try Brickify",
+    },
+} as const;
+const t = copies[locale];
+---
+<section class="relative w-full">
+    <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div class="flex items-center gap-4 mb-8 md:mb-10">
+            <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy"/>
+            <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+        </div>
+
+        <div class="mb-8"/>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-start">
+            <!-- Mission + Product copy -->
+            <div class="md:col-span-12 space-y-6">
+                <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                    <h2 class="text-xl font-semibold mb-2">{t.missionTitle}</h2>
+                    <p class="text-neutral-700 leading-relaxed">{t.missionText}</p>
+                </article>
+                <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                    <h2 class="text-xl font-semibold mb-2">{t.productTitle}</h2>
+                    <p class="text-neutral-700 leading-relaxed">{t.productText}</p>
+                </article>
+            </div>
+        </div>
+
+        <!-- Values -->
+        <section class="mt-10 md:mt-14">
+            <h2 class="text-xl font-semibold mb-4">{t.valuesTitle}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {t.values.map(v => (
+                        <div class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-5">
+                            <div class="font-semibold">{v.t}</div>
+                            <p class="text-sm text-neutral-700 mt-1">{v.d}</p>
+                        </div>
+                ))}
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="mt-10 md:mt-14 flex items-center justify-between gap-6 rounded-2xl bg-[#F7F3EE] border p-6 flex-col md:flex-row">
+            <div>
+                <div class="text-lg md:text-xl font-semibold">{t.ctaTitle}</div>
+                <p class="text-neutral-700 mt-1 max-w-2xl">{t.ctaText}</p>
+            </div>
+            <a href={locale === 'es' ? '/es' : '/en'}
+               class="inline-flex items-center justify-center rounded-full bg-black text-white px-5 py-3 text-sm hover:opacity-90">
+                {t.ctaButton}
+            </a>
+        </div>
+    </div>
+</section>

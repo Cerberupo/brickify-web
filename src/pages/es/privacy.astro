@@ -1,11 +1,17 @@
 ---
-import {PROJECT_NAME} from "../../config";
-import MainLayout from "../../layouts/main.astro";
-import {PrivacyPolicyPage} from "../../components";
-import {AppWrapper} from "../../layouts";
+import Layout from "@/layouts/main.astro";
+import { Header } from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import PrivacyContent from "@/components/legal/PrivacyContent.astro";
+import type { SupportedLocale } from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const content = { title: 'Brickify — Política de privacidad' };
 ---
-<MainLayout content={{title: `${PROJECT_NAME} - Política de privacidad`}}>
-    <AppWrapper client:only="react">
-        <PrivacyPolicyPage client:only="react"/>
-    </AppWrapper>
-</MainLayout>
+<Layout content={content} lang={locale}>
+  <Header client:load />
+  <main class="relative overflow-x-hidden">
+    <PrivacyContent locale={locale} />
+    <FooterSection locale={locale} />
+  </main>
+</Layout>

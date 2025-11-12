@@ -1,0 +1,125 @@
+---
+import type { SupportedLocale } from "@/lib/locale";
+
+interface Props {
+  locale: SupportedLocale;
+}
+const { locale } = Astro.props as Props;
+
+const copies = {
+  es: {
+    follow: "Síguenos en:",
+    customer: "Servicio al cliente",
+    about: "Sobre nosotros",
+    more: "Más información",
+    links: {
+      shipping: "Envíos",
+      securePay: "Pago seguro",
+      aboutUs: "Quiénes somos",
+      contact: "Contacto",
+      legalNotice: "Aviso legal",
+      privacy: "Política de privacidad",
+    },
+    legalRow: ["Política de privacidad", "Política de privacidad", "Política de privacidad", "Política de privacidad"],
+    disclaimer:
+      "Brickify no es un producto oficial de LEGO®, ni está afiliado, patrocinado ni respaldado por The LEGO Group. LEGO® y la minifigura son marcas registradas del Grupo LEGO.",
+    copyright:
+      "©2025 Brickify. Todos los derechos reservados.",
+  },
+  en: {
+    follow: "Follow us:",
+    customer: "Customer service",
+    about: "About us",
+    more: "More information",
+    links: {
+      shipping: "Shipping",
+      securePay: "Secure payment",
+      aboutUs: "About us",
+      contact: "Contact",
+      legalNotice: "Legal notice",
+      privacy: "Privacy policy",
+    },
+    legalRow: ["Privacy policy", "Privacy policy", "Privacy policy", "Privacy policy"],
+    disclaimer:
+      "Brickify is not an official LEGO® product and is not affiliated with, sponsored by, or endorsed by The LEGO Group. LEGO® and the minifigure are trademarks of the LEGO Group.",
+    copyright:
+      "©2025 Brickify. All rights reserved.",
+  },
+} as const;
+const t = copies[locale];
+const aboutHref = locale === 'es' ? '/es/about' : '/en/about';
+const contactHref = locale === 'es' ? '/es/contact' : '/en/contact';
+const legalHref = locale === 'es' ? '/es/legal' : '/en/legal';
+const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
+---
+<style is:global>
+  @reference "../../styles/global.css";
+  .footer-logo {
+    letter-spacing: 0.5px;
+  }
+  .social-dot {
+    width: 56px;
+    height: 56px;
+    border-radius: 9999px;
+    background: #e6e7ea; /* light gray circles as in mock */
+  }
+</style>
+
+<footer class="w-full mt-10">
+  <!-- Top light area -->
+  <div class="bg-[#F7F3EE]">
+    <div class="container mx-auto px-4 md:px-6 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <!-- Brand -->
+        <div class="md:col-span-3">
+          <div class="footer-logo select-none">
+            <img src="/logo.svg" alt="Brickify" class="h-8 w-auto" />
+          </div>
+        </div>
+
+        <!-- Columns -->
+        <div class="md:col-span-2">
+          <h4 class="text-[18px] font-semibold mb-3">{t.about}</h4>
+          <ul class="space-y-3 text-sm text-neutral-700">
+            <li><a href={aboutHref} class="hover:underline">{t.links.aboutUs}</a></li>
+            <li><a href={contactHref} class="hover:underline">{t.links.contact}</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <h4 class="text-[18px] font-semibold mb-3">{t.more}</h4>
+          <ul class="space-y-3 text-sm text-neutral-700">
+            <li><a href={legalHref} class="hover:underline">{t.links.legalNotice}</a></li>
+            <li><a href={privacyHref} class="hover:underline">{t.links.privacy}</a></li>
+          </ul>
+        </div>
+
+        <!-- Social -->
+        <div class="md:col-span-3">
+          <h4 class="text-[18px] font-semibold mb-4">{t.follow}</h4>
+          <div class="flex items-center gap-6">
+            <a href="#" aria-label="Instagram" class="social-dot"></a>
+            <a href="#" aria-label="Twitter" class="social-dot"></a>
+            <a href="#" aria-label="TikTok" class="social-dot"></a>
+            <a href="#" aria-label="YouTube" class="social-dot"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row of small legal links -->
+      <div class="mt-10 flex flex-wrap gap-x-8 gap-y-2 text-[12px] text-neutral-600">
+        <a href={legalHref} class="hover:underline">{t.links.legalNotice}</a>
+        <a href={privacyHref} class="hover:underline">{t.links.privacy}</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom dark bar -->
+  <div class="bg-[#181818] text-white text-[12px]">
+    <div class="container mx-auto px-4 md:px-6 py-4 space-y-2">
+      <p class="opacity-90">
+        {t.disclaimer}
+      </p>
+      <p class="opacity-80">{t.copyright}</p>
+    </div>
+  </div>
+</footer>

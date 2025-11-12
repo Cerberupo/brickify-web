@@ -12,9 +12,7 @@ import {
     TableRow
 } from "@/components/ui";
 import {Pencil, Trash2} from 'lucide-react';
-import favicon from '@/images/favicon.png';
-
-const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
+const faviconUrl: string = '/favicon.png';
 
 interface MemberListProps {
     readOnly?: boolean;

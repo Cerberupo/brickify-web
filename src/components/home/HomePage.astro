@@ -5,6 +5,8 @@ import VisualShowcase from "@/components/home/VisualShowcase.astro";
 import MemoryHighlight from "@/components/home/MemoryHighlight.astro";
 import ReviewsSection from "@/components/home/ReviewsSection.astro";
 import HowItWorks from "@/components/home/HowItWorks.astro";
+import FAQSection from "@/components/home/FAQSection.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
 import {Header} from "@/layouts/components/Header";
 import type {SupportedLocale} from "@/lib/locale";
 
@@ -63,6 +65,10 @@ const content = {title: t.title};
         <HowItWorks locale={locale}/>
 
         <ReviewsSection locale={locale}/>
+
+        <FAQSection locale={locale}/>
+
+        <FooterSection locale={locale}/>
 
     </main>
 </Layout>

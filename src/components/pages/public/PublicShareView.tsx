@@ -1,10 +1,9 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {getPublicSharedMember, type PublicSharedMember} from '@/lib/services/public';
-import favicon from '@/images/favicon.png';
 import {PROJECT_NAME} from '@/config';
 
-const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
+const faviconUrl: string = '/favicon.png';
 
 export function PublicShareView() {
     const {t} = useTranslation();

@@ -1,0 +1,125 @@
+---
+import type {SupportedLocale} from "@/lib/locale";
+
+interface Props {
+    locale: SupportedLocale;
+}
+const {locale} = Astro.props as Props;
+
+const copies = {
+  es: {
+        title: "Preguntas frecuentes",
+        faqs: [
+            {
+                q: "¿Qué es Brickify?",
+                a: "Es una experiencia que transforma tu foto en una minifig de LEGO® con recomendaciones de piezas oficiales para que puedas montarla."
+            },
+            {
+                q: "¿Cómo funciona?",
+                a: "Subes una foto, nuestra IA analiza rasgos como pelo, cara y ropa, y te proponemos piezas oficiales con sus códigos."
+            },
+            {
+                q: "¿Dónde se guardan mis datos y cómo se procesan?",
+                a: "Las imágenes que subes se almacenan en AWS S3; el análisis para recomendar piezas lo hace OpenAI/ChatGPT; los datos de tu cuenta, del servicio y los grupos que creas se guardan en MongoDB Atlas; y los pagos se procesan de forma segura con Stripe."
+            },
+            {
+                q: "¿Necesito tener piezas en casa?",
+                a: "No. Te damos el listado con referencias oficiales para que las compres donde prefieras."
+            },
+            {
+                q: "¿Cuánto tarda?",
+                a: "El proceso suele tardar pocos minutos. En momentos de alta demanda puede tardar algo más."
+            },
+            {
+                q: "¿Qué fotos funcionan mejor?",
+                a: "Fotos bien iluminadas, de frente y con el rostro visible ayudan a obtener mejores coincidencias."
+            },
+            {
+                q: "¿Sois oficiales de LEGO®?",
+                a: "No. Brickify no es un producto oficial de LEGO®, ni está afiliado, patrocinado o respaldado por The LEGO Group. LEGO® y las minifiguras son marcas registradas de The LEGO Group."
+            },
+        ],
+    },
+    en: {
+        title: "Frequently asked questions",
+        faqs: [
+            {
+                q: "What is Brickify?",
+                a: "It turns your photo into a LEGO® minifig by recommending official parts so you can build it."
+            },
+            {
+                q: "How does it work?",
+                a: "Upload a photo, our AI analyzes hair, face and outfit, and suggests official LEGO® parts with codes."
+            },
+            {
+                q: "Where is my data stored and how is it processed?",
+                a: "Uploaded images are stored on AWS S3; the analysis to recommend parts is performed by OpenAI/ChatGPT; your account/service data is stored in MongoDB Atlas; and payments are securely processed by Stripe."
+            },
+            {
+                q: "Do I need to own the bricks?",
+                a: "No. We provide an official parts list so you can purchase them anywhere you like."
+            },
+            {
+                q: "How long does it take?",
+                a: "It usually takes a few minutes. During peak demand it might take a bit longer."
+            },
+            {
+                q: "What photos work best?",
+                a: "Well‑lit, frontal photos with the face clearly visible produce the best matches."
+            },
+            {
+                q: "Are you affiliated with LEGO®?",
+                a: "No. Brickify is not an official LEGO® product, nor is it affiliated with, sponsored by, or endorsed by The LEGO Group. LEGO® and the minifigure are trademarks of The LEGO Group."
+            },
+        ],
+    },
+} as const;
+const t = copies[locale];
+---
+<style is:global>
+    @reference "../../styles/global.css";
+    /* Simple accordion styling using <details>/<summary> */
+    .faq-card {
+        @apply rounded-2xl bg-white/80 backdrop-blur-sm border shadow-sm;
+    }
+
+    .faq-summary {
+        @apply w-full text-left px-5 py-4 md:px-6 md:py-5 font-medium flex items-center justify-between cursor-pointer select-none;
+    }
+
+    .faq-content {
+        @apply px-5 pb-4 md:px-6 text-sm text-neutral-700;
+    }
+
+    .faq-chevron {
+        transition: transform 200ms ease;
+    }
+
+    details[open] .faq-chevron {
+        transform: rotate(180deg);
+    }
+</style>
+
+<section id="faq" class="relative w-full py-12 md:py-16">
+    <div class="container mx-auto px-4 md:px-6">
+        <div class="flex items-center gap-4 mb-6 md:mb-8 justify-center">
+            <h2 class="text-3xl md:text-4xl font-bold">{t.title}</h2>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-3">
+            {t.faqs.map((item, idx) => (
+                    <details class="faq-card" open={idx === 0}>
+                        <summary class="faq-summary">
+                            <span>{item.q}</span>
+                            <svg class="faq-chevron size-5 text-neutral-500" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </summary>
+                        <div class="faq-content">{item.a}</div>
+                    </details>
+            ))}
+        </div>
+    </div>
+</section>

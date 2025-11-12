@@ -4,7 +4,6 @@ import {GoogleAuthProvider, useAuth} from "@/lib";
 import {APP_ROUTES} from '@/constants/routes';
 import {useEffect} from 'react';
 import {navigate} from '@/lib/utils';
-import logo from '@/images/logo.png';
 import {PROJECT_NAME} from '@/config';
 
 export function LoginPage() {
@@ -21,7 +20,7 @@ export function LoginPage() {
     return (
         <div className="grid place-items-center py-20 content-center">
             <a href={APP_ROUTES.HOME} className="mb-8 inline-flex items-center gap-2">
-                <img src={logo.src} alt={PROJECT_NAME} className="h-10 w-auto"/>
+                <img src="/logo.svg" alt={PROJECT_NAME} className="h-10 w-auto"/>
                 <span className="sr-only">{PROJECT_NAME}</span>
             </a>
             <GoogleAuthProvider>

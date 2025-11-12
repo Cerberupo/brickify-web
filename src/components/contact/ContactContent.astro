@@ -1,0 +1,171 @@
+---
+import type {SupportedLocale} from "@/lib/locale";
+
+interface Props {
+    locale: SupportedLocale;
+}
+const {locale} = Astro.props as Props;
+
+const copies = {
+    es: {
+        heroTitle: "Contacto",
+        subtitle: "¿Tienes dudas, ideas o quieres colaborar? ¡Escríbenos!",
+        infoTitle: "Información de contacto",
+        emailLabel: "Correo",
+        emailValue: "hello@brickify.me",
+        formTitle: "Envíanos un mensaje",
+        name: "Nombre",
+        email: "Email",
+        message: "Mensaje",
+        send: "Enviar",
+        altPiece: "pieza decorativa",
+        helper: "Respondemos normalmente en 24-48 h laborales.",
+        successTitle: "¡Mensaje enviado!",
+        successDesc: "Gracias por escribirnos. Te responderemos lo antes posible.",
+        errorTitle: "No se pudo enviar",
+        errorDesc: "Ha ocurrido un error al enviar tu mensaje. Inténtalo de nuevo en unos minutos.",
+        sending: "Enviando…"
+    },
+    en: {
+        heroTitle: "Contact",
+        subtitle: "Questions, ideas or partnership? Drop us a line!",
+        infoTitle: "Contact information",
+        emailLabel: "Email",
+        emailValue: "hello@brickify.me",
+        formTitle: "Send us a message",
+        name: "Name",
+        email: "Email",
+        message: "Message",
+        send: "Send",
+        altPiece: "decorative piece",
+        helper: "We usually reply within 24–48 business hours.",
+        successTitle: "Message sent!",
+        successDesc: "Thanks for reaching out. We’ll get back to you as soon as possible.",
+        errorTitle: "Couldn’t send",
+        errorDesc: "There was an error sending your message. Please try again in a few minutes.",
+        sending: "Sending…"
+    }
+} as const;
+const t = copies[locale];
+---
+<section class="relative w-full">
+    <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div class="flex items-center gap-4 mb-8 md:mb-10">
+            <img src="/piece-2.svg" alt={t.altPiece} class="w-10 md:w-16 -mb-4" loading="lazy"/>
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+                <p class="text-neutral-700 mt-1">{t.subtitle}</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-start">
+            <aside class="md:col-span-4 space-y-4">
+                <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                    <h2 class="text-lg font-semibold mb-2">{t.infoTitle}</h2>
+                    <div class="text-sm text-neutral-700">
+                        <div class="flex items-center justify-between py-2">
+                            <span class="font-medium">{t.emailLabel}</span>
+                            <a href="mailto:hello@brickify.fun" class="text-primary hover:underline">{t.emailValue}</a>
+                        </div>
+                    </div>
+                </article>
+                <article class="rounded-2xl bg-[#F7F3EE] border p-6">
+                    <p class="text-sm text-neutral-700">{t.helper}</p>
+                </article>
+            </aside>
+
+            <div class="md:col-span-8">
+                <!-- Success banner (hidden by default) -->
+                <div id="contact-success" class="hidden mb-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 p-4" role="status" aria-live="polite">
+                    <div class="font-semibold">{t.successTitle}</div>
+                    <div class="text-sm mt-1">{t.successDesc}</div>
+                </div>
+                <!-- Error banner (hidden by default) -->
+                <div id="contact-error" class="hidden mb-4 rounded-xl border border-red-300 bg-red-50 text-red-900 p-4" role="status" aria-live="assertive">
+                    <div class="font-semibold">{t.errorTitle}</div>
+                    <div class="text-sm mt-1">{t.errorDesc}</div>
+                </div>
+
+                <article id="contact-form-card" class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                    <h2 class="text-lg font-semibold mb-4">{t.formTitle}</h2>
+                    <form id="contact-form" class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium mb-1">{t.name}</label>
+                            <input id="name" name="name" type="text" required
+                                   class="w-full rounded-xl border px-3 py-2 bg-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-black/20"/>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-1">{t.email}</label>
+                            <input id="email" name="email" type="email" required
+                                   class="w-full rounded-xl border px-3 py-2 bg-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-black/20"/>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium mb-1">{t.message}</label>
+                            <textarea id="message" name="message" rows="6" required
+                                      class="w-full rounded-xl border px-3 py-2 bg-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-black/20"></textarea>
+                        </div>
+                        <div class="pt-2">
+                            <button id="contact-submit" type="submit"
+                                    class="inline-flex items-center justify-center rounded-full bg-black text-white px-5 py-3 text-sm hover:opacity-90">
+                                {t.send}
+                            </button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const form = document.getElementById('contact-form');
+        const card = document.getElementById('contact-form-card');
+        const success = document.getElementById('contact-success');
+        const errorBox = document.getElementById('contact-error');
+        const submitBtn = document.getElementById('contact-submit');
+        const lang = {locale: '{locale}'}?.locale === 'es' ? 'es' : 'en';
+
+        const setLoading = (loading) => {
+            if (!submitBtn) return;
+            submitBtn.toggleAttribute('disabled', !!loading);
+            submitBtn.style.opacity = loading ? '0.7' : '1';
+            const original = submitBtn.getAttribute('data-original');
+            if (!original) submitBtn.setAttribute('data-original', submitBtn.textContent || '');
+            submitBtn.textContent = loading ? {sending: t.sending}.sending : (submitBtn.getAttribute('data-original') || '');
+        };
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorBox?.classList.add('hidden');
+                setLoading(true);
+                try {
+                    const fd = new FormData(form);
+                    const payload = {
+                        name: String(fd.get('name') || ''),
+                        email: String(fd.get('email') || ''),
+                        message: String(fd.get('message') || ''),
+                        lang
+                    };
+                    const res = await fetch('/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        // Hide form and show success banner
+                        card?.classList.add('hidden');
+                        success?.classList.remove('hidden');
+                        // Optional: scroll into view
+                        success?.scrollIntoView({behavior: 'smooth', block: 'start'});
+                    } else {
+                        errorBox?.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    errorBox?.classList.remove('hidden');
+                } finally {
+                    setLoading(false);
+                }
+            });
+        }
+    </script>
+</section>

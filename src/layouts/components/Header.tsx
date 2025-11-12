@@ -5,7 +5,6 @@ import {clearUser} from "@/lib";
 import {APP_ROUTES} from '@/constants/routes';
 import {useAuth} from "@/lib/hooks/useAuth";
 import {navigate} from "@/lib/utils";
-import logo from '@/images/logo.png';
 import {PROJECT_NAME} from '@/config';
 import {buttonVariants} from "@/components/ui/button";
 import {useEffect, useState} from "react";
@@ -41,7 +40,7 @@ export function Header() {
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div className="flex items-center">
                         <a href={APP_ROUTES.HOME} className="flex items-center gap-2">
-                            <img src={logo.src} alt={PROJECT_NAME} className="h-5 w-auto"/>
+                            <img src="/logo.svg" alt={PROJECT_NAME} className="h-5 w-auto"/>
                             <span className="sr-only">{PROJECT_NAME}</span>
                         </a>
                     </div>
