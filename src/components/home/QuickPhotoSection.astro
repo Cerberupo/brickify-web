@@ -20,7 +20,6 @@ const copies = {
         foot: "El precio incluye: diseño generado por IA + IDs LEGO® originales",
         formName: "Nombre",
         formEmail: "Email",
-        formOpt1: "Quiero recibir el resultado por email",
         formOpt2: "Acepto la política de privacidad",
         btn: "Continuar"
     },
@@ -37,7 +36,6 @@ const copies = {
         foot: "Price includes: AI design + original LEGO® IDs",
         formName: "Name",
         formEmail: "Email",
-        formOpt1: "Send the result to my email",
         formOpt2: "I accept the privacy policy",
         btn: "Continue"
     }
@@ -165,12 +163,13 @@ const t = copies[locale];
                             <input id="qp-email" type="email" class="w-full rounded-xl border px-3 py-2 bg-white"/>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input id="qp-opt1" type="checkbox" class="size-4"/>
-                            <label for="qp-opt1" class="text-sm">{t.formOpt1}</label>
-                        </div>
-                        <div class="flex items-center gap-2">
                             <input id="qp-opt2" type="checkbox" class="size-4"/>
-                            <label for="qp-opt2" class="text-sm">{t.formOpt2}</label>
+                            <label for="qp-opt2" class="text-sm">
+                                <a href={(locale === 'es' ? '/es/privacy' : '/en/privacy')} target="_blank"
+                                   class="underline">
+                                    {t.formOpt2}
+                                </a>
+                            </label>
                         </div>
                         <button type="button"
                                 class="inline-flex items-center justify-center rounded-full bg-black text-white px-5 py-3 text-sm">{t.btn}</button>
@@ -198,7 +197,7 @@ const t = copies[locale];
         </div>
     </div>
 
-    <script type="module" define:vars={{ locale }}>
+    <script type="module" define:vars={{locale}}>
         function initQuickPhotoSection() {
             const drop = document.getElementById('qp-drop');
             if (!drop) return;
