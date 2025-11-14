@@ -2,10 +2,9 @@
 import MainLayout from "@/layouts/main.astro";
 import PublicShareView from "@/components/pages/public/PublicShareView";
 import FooterSection from "@/components/home/FooterSection.astro";
-import {normalizeLocale} from "@/lib/locale";
 import type {SupportedLocale} from "@/lib/locale";
 
-const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+const locale: SupportedLocale = 'en';
 ---
 
 <MainLayout>

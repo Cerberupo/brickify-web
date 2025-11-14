@@ -1,6 +1,5 @@
 import React, {type ReactNode} from 'react';
 import {Header} from './Header';
-import {Footer} from './Footer';
 import {AuthProvider, I18nProvider} from '@/lib';
 import {LoadingProvider} from '@/components/providers';
 
@@ -18,7 +17,6 @@ export const AppWrapper: React.FC<AppWrapperProps> = ({children, hideHeader}) =>
                     <main className="flex-1">
                         {children}
                     </main>
-                    <Footer/>
                 </LoadingProvider>
             </I18nProvider>
         </AuthProvider>

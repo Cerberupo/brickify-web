@@ -7,6 +7,7 @@ import {register as registerUser} from '@/lib/services/auth';
 import {toast} from 'sonner';
 import {APP_ROUTES} from '@/constants/routes';
 import {navigate} from '@/lib/utils';
+import { loginHref as makeLoginHref } from '@/lib/localeLinks';
 
 export function RegisterForm() {
     const {t, i18n} = useTranslation();
@@ -25,7 +26,7 @@ export function RegisterForm() {
             await registerUser(data.name, data.email, data.password, i18n.language);
             toast.success(t('register.successMessage', 'Registration successful! You can now log in.'));
             // Navigate to login after successful registration
-            navigate(APP_ROUTES.LOGIN);
+            navigate(makeLoginHref());
         } catch (error) {
             console.error('Registration error:', error);
             toast.error(

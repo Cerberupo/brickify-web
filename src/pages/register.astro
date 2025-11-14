@@ -1,11 +1,13 @@
 ---
 import MainLayout from "../layouts/main.astro";
-import {RegisterPage} from "../components/";
 import {PROJECT_NAME} from "../config";
-import {AppWrapper} from "../layouts";
+import RegisterShell from "../components/pages/register/RegisterShell";
+import FooterSection from "@/components/home/FooterSection.astro";
+import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Register`}}>
-    <AppWrapper hideHeader={true} client:only="react">
-        <RegisterPage client:only="react"/>
-    </AppWrapper>
+    <RegisterShell client:only="react" />
+    <FooterSection locale={locale} />
 </MainLayout>

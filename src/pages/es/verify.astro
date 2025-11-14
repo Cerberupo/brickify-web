@@ -3,9 +3,14 @@ import MainLayout from "../../layouts/main.astro";
 import {VerifyPage} from "../../components";
 import {PROJECT_NAME} from "../../config";
 import {AppWrapper} from "../../layouts";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type { SupportedLocale } from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Verificación de Cuenta`}}>
     <AppWrapper client:only="react">
         <VerifyPage client:only="react"/>
     </AppWrapper>
+    <FooterSection locale={locale} />
 </MainLayout>

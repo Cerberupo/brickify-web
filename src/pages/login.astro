@@ -1,11 +1,13 @@
 ---
 import MainLayout from "../layouts/main.astro";
-import {LoginPage} from "../components/pages";
 import {PROJECT_NAME} from "../config";
-import {AppWrapper} from "../layouts";
+import LoginShell from "../components/pages/login/LoginShell";
+import FooterSection from "@/components/home/FooterSection.astro";
+import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Login`}}>
-    <AppWrapper hideHeader={true} client:only="react">
-        <LoginPage client:only="react"/>
-    </AppWrapper>
+    <LoginShell client:only="react" />
+    <FooterSection locale={locale} />
 </MainLayout>

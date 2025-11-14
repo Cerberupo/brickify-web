@@ -1,0 +1,355 @@
+---
+import type {SupportedLocale} from "@/lib/locale";
+
+interface Props {
+    locale: SupportedLocale
+}
+const {locale} = Astro.props as Props;
+
+const copies = {
+    es: {
+        badge: "COMPRA RÁPIDA 1 FOTO",
+        titleStrong: "Sin registrarte",
+        titleRest: ", sube 1 foto, paga y listo.",
+        desc: "Para pedidos simples con una única imagen. Súbela, realiza el pago y nosotros nos encargamos del resto. Recibirás las IDs de tus piezas LEGO® oficiales.",
+        noteTitle: "Esta modalidad solo admite 1 foto.",
+        noteText: "Si quieres añadir más imágenes o proyectos más complejos crea tu cuenta.",
+        noteLogin: "Login",
+        dropText: "Haz clic o arrastra una imagen",
+        changeText: "Cambiar imagen",
+        foot: "El precio incluye: diseño generado por IA + IDs LEGO® originales",
+        formName: "Nombre",
+        formEmail: "Email",
+        formOpt1: "Quiero recibir el resultado por email",
+        formOpt2: "Acepto la política de privacidad",
+        btn: "Continuar"
+    },
+    en: {
+        badge: "FAST PURCHASE · 1 PHOTO",
+        titleStrong: "No sign‑up",
+        titleRest: ", upload 1 photo, pay and done.",
+        desc: "For simple orders with a single image. Upload it, complete payment and we’ll do the rest. You’ll receive the official LEGO® part IDs.",
+        noteTitle: "This mode only accepts 1 photo.",
+        noteText: "For more images or complex projects, create your account.",
+        noteLogin: "Login",
+        dropText: "Click or drop an image",
+        changeText: "Change image",
+        foot: "Price includes: AI design + original LEGO® IDs",
+        formName: "Name",
+        formEmail: "Email",
+        formOpt1: "Send the result to my email",
+        formOpt2: "I accept the privacy policy",
+        btn: "Continue"
+    }
+} as const;
+const t = copies[locale];
+---
+<style is:global>
+    @reference "../../styles/global.css";
+    .quick-photo-card {
+        background: #F7F3EE;
+    }
+
+    .dropzone {
+        position: relative;
+        border: 3px dashed #B9AFA3;
+        border-radius: 20px;
+        min-height: 340px;
+        display: grid;
+        place-items: center;
+        color: #2b2b2b;
+        background: #F7F3EE;
+        transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .dropzone:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
+    }
+
+    /* Striped hover overlay to signal clickability */
+    .dropzone::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        pointer-events: none;
+        background: repeating-linear-gradient(45deg,
+        rgba(0, 0, 0, 0.06) 0,
+        rgba(0, 0, 0, 0.06) 10px,
+        rgba(0, 0, 0, 0.02) 10px,
+        rgba(0, 0, 0, 0.02) 20px);
+        opacity: 0;
+        transition: opacity 180ms ease;
+    }
+
+    .dropzone:hover::after,
+    .dropzone:focus-within::after,
+    .dropzone.is-hovering::after {
+        opacity: 1;
+    }
+
+    .preview-img {
+        border-radius: 20px;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    .info-box {
+        background: #E6F1FF;
+        border: 1px solid #B5D6FF;
+        border-radius: 12px;
+    }
+
+    /* Change-image overlay (visible on hover/focus when there is a preview) */
+    #qp-drop.has-image:hover .change-overlay,
+    #qp-drop.has-image:focus-visible .change-overlay,
+    #qp-drop.has-image:focus-within .change-overlay {
+        opacity: 1;
+    }
+
+    .change-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6); /* darker transparent black */
+        color: #fff;
+        font-weight: 600;
+        transition: opacity 180ms ease; /* slightly smoother */
+        pointer-events: none; /* allow clicks to reach the drop zone */
+        opacity: 0;
+        border-radius: 20px;
+    }
+</style>
+
+<section class="relative w-full py-8 md:py-12">
+    <div class="container mx-auto px-4 md:px-6">
+        <div class="quick-photo-card rounded-2xl border border-[#E8C79E] p-6 md:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-stretch">
+                <!-- Copy + form column -->
+                <div class="md:col-span-5 flex flex-col">
+                    <div class="text-sm font-medium text-neutral-700 mb-2">{t.badge}</div>
+                    <h3 class="text-[28px] leading-tight font-semibold mb-2">
+                        <span>{t.titleStrong}</span><span class="font-normal">{t.titleRest}</span>
+                    </h3>
+                    <p class="text-neutral-700 text-sm mb-5">{t.desc}</p>
+
+                    <!-- Info note -->
+                    <div class="info-box p-4 mb-6 text-sm text-neutral-800">
+                        <div class="flex items-start gap-3">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg" class="mt-[2px]">
+                                <circle cx="12" cy="12" r="10" stroke="#2563eb" stroke-width="2"/>
+                                <path d="M12 8h.01M11 12h2v6h-2z" fill="#2563eb"/>
+                            </svg>
+                            <div>
+                                <div class="font-medium">{t.noteTitle}</div>
+                                <div class="text-neutral-700">{t.noteText} <a
+                                        href={locale === 'es' ? '/es/login' : '/en/login'}
+                                        class="underline">{t.noteLogin}</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload form (hidden until a file is selected on mobile; visible state toggled by script) -->
+                    <form id="qp-form" class="space-y-4 hidden">
+                        <div>
+                            <label for="qp-name" class="block text-sm font-medium mb-1">{t.formName}</label>
+                            <input id="qp-name" type="text" class="w-full rounded-xl border px-3 py-2 bg-white"/>
+                        </div>
+                        <div>
+                            <label for="qp-email" class="block text-sm font-medium mb-1">{t.formEmail}</label>
+                            <input id="qp-email" type="email" class="w-full rounded-xl border px-3 py-2 bg-white"/>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input id="qp-opt1" type="checkbox" class="size-4"/>
+                            <label for="qp-opt1" class="text-sm">{t.formOpt1}</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input id="qp-opt2" type="checkbox" class="size-4"/>
+                            <label for="qp-opt2" class="text-sm">{t.formOpt2}</label>
+                        </div>
+                        <button type="button"
+                                class="inline-flex items-center justify-center rounded-full bg-black text-white px-5 py-3 text-sm">{t.btn}</button>
+                    </form>
+                </div>
+
+                <!-- Dropzone / Preview column -->
+                <div class="md:col-span-7">
+                    <div id="qp-drop" class="dropzone relative overflow-hidden cursor-pointer" role="button"
+                         tabindex="0" aria-label={t.dropText}>
+                        <div id="qp-instructions" class="text-center px-4">
+                            <div class="text-xl md:text-2xl font-semibold">{t.dropText}</div>
+                            <div class="mt-3 text-sm text-neutral-600">{locale === 'es' ? 'PNG, JPG • máx. 1.5MB' : 'PNG, JPG • max 1.5MB'}</div>
+                        </div>
+                        <!-- Hidden file input always available (even after selecting an image) -->
+                        <input id="qp-file" type="file" accept="image/*" class="hidden"/>
+                        <!-- Preview container (hidden initially) -->
+                        <img id="qp-preview" alt="preview" class="preview-img hidden"/>
+                        <!-- Change image overlay -->
+                        <div id="qp-change" class="change-overlay" aria-hidden="true">{t.changeText}</div>
+                    </div>
+                    <div class="text-[12px] text-neutral-600 mt-2">{t.foot}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" define:vars={{ locale }}>
+        function initQuickPhotoSection() {
+            const drop = document.getElementById('qp-drop');
+            if (!drop) return;
+            // Avoid double initialization across Astro client transitions
+            if (drop.dataset && drop.dataset.inited === '1') return;
+            drop.dataset.inited = '1';
+
+            const fileInput = document.getElementById('qp-file');
+            const preview = document.getElementById('qp-preview');
+            const form = document.getElementById('qp-form');
+            const instructions = document.getElementById('qp-instructions');
+
+            // Error banner (created dynamically below)
+            let errorBanner = null;
+            // Limit applies to the base64-encoded payload size (max 2MB encoded)
+            const MAX_BASE64_ENCODED_BYTES = 2 * 1024 * 1024; // 2MB encoded
+            const localeStr = (locale === 'es') ? 'es' : 'en';
+
+            const hasImage = () => !!preview && !preview.classList.contains('hidden');
+            const setHasImageState = (on) => {
+                drop.classList.toggle('has-image', !!on);
+            };
+
+            const ensureErrorBanner = () => {
+                if (errorBanner) return errorBanner;
+                errorBanner = document.createElement('div');
+                errorBanner.id = 'qp-error';
+                errorBanner.role = 'alert';
+                errorBanner.setAttribute('aria-live', 'assertive');
+                errorBanner.className = 'mb-4 rounded-xl border border-red-300 bg-red-50 text-red-900 p-3 text-sm hidden';
+                // Insert before dropzone
+                const dropWrapper = drop.parentElement;
+                if (dropWrapper) dropWrapper.insertBefore(errorBanner, drop);
+                return errorBanner;
+            };
+            const showError = (msg) => {
+                const box = ensureErrorBanner();
+                if (!box) return;
+                box.textContent = msg;
+                box.classList.remove('hidden');
+                box.scrollIntoView({behavior: 'smooth', block: 'center'});
+            };
+            const hideError = () => {
+                if (errorBanner) errorBanner.classList.add('hidden');
+            };
+
+            const enter = (e) => {
+                e.preventDefault();
+                drop.classList.add('outline', 'outline-2', 'outline-black/30', 'is-hovering');
+            };
+            const over = (e) => {
+                e.preventDefault();
+            };
+            const leave = () => {
+                drop.classList.remove('outline', 'outline-2', 'outline-black/30', 'is-hovering');
+            };
+
+            // Estimate if base64 would exceed 2MB based on file size (x4/3)
+            const exceedsBase64Limit = (file) => {
+                // Estimate encoded size: 4 * ceil(n/3)
+                const estimatedEncoded = 4 * Math.ceil(file.size / 3);
+                return estimatedEncoded > MAX_BASE64_ENCODED_BYTES;
+            };
+
+            const applyPreviewStyles = () => {
+                drop.classList.remove('dropzone');
+                drop.style.border = 'none';
+                drop.style.padding = '0';
+                drop.style.minHeight = '340px';
+                // Hide the instruction copy once an image is selected
+                if (instructions) instructions.classList.add('hidden');
+                // Reveal the form on the left
+                if (form) form.classList.remove('hidden');
+                // Mark state for hover overlay
+                setHasImageState(true);
+            };
+
+            const handleFile = async (file) => {
+                hideError();
+                // Quick estimate pre-check
+                if (exceedsBase64Limit(file)) {
+                    showError(localeStr === 'es' ? 'La imagen seleccionada es demasiado grande. Máximo permitido: 1.5MB.' : 'The selected image is too large. Maximum allowed is 1.5MB.');
+                    // Reset input so same file can be selected again later
+                    if (fileInput) fileInput.value = '';
+                    return;
+                }
+                try {
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = () => reject(new Error('Failed to read image'));
+                        reader.readAsDataURL(file);
+                    });
+                    // Strict check on encoded base64 length (characters == bytes)
+                    const str = String(dataUrl);
+                    const commaIdx = str.indexOf(',');
+                    const base64 = commaIdx >= 0 ? str.substring(commaIdx + 1) : str;
+                    const encodedLen = base64.length;
+                    if (encodedLen > MAX_BASE64_ENCODED_BYTES) {
+                        showError(localeStr === 'es' ? 'La imagen seleccionada es demasiado grande. Máximo permitido: 1.5MB.' : 'The selected image is too large. Maximum allowed is 1.5MB.');
+                        if (fileInput) fileInput.value = '';
+                        return;
+                    }
+                    if (preview) {
+                        preview.src = String(dataUrl); // use base64 data URL so it’s ready to send
+                        preview.classList.remove('hidden');
+                    }
+                    applyPreviewStyles();
+                } catch (err) {
+                    showError(localeStr === 'es' ? 'No se pudo leer la imagen. Inténtalo de nuevo.' : 'Could not read the image. Please try again.');
+                }
+            };
+
+            drop.addEventListener('dragenter', enter);
+            drop.addEventListener('dragover', over);
+            drop.addEventListener('dragleave', leave);
+            drop.addEventListener('drop', (e) => {
+                e.preventDefault();
+                drop.classList.remove('outline', 'outline-2', 'outline-black/30', 'is-hovering');
+                const dt = e.dataTransfer;
+                const files = dt && dt.files ? dt.files : null;
+                if (files && files[0]) handleFile(files[0]);
+            });
+
+            // Click/keyboard to open file dialog
+            drop.addEventListener('click', () => {
+                if (fileInput) fileInput.click();
+            });
+            drop.addEventListener('keydown', (e) => {
+                const k = e && e.key ? e.key : '';
+                if (k === 'Enter' || k === ' ') {
+                    e.preventDefault();
+                    if (fileInput) fileInput.click();
+                }
+            });
+
+            if (fileInput) {
+                fileInput.addEventListener('change', () => {
+                    const f = fileInput && fileInput.files && fileInput.files[0];
+                    if (f) handleFile(f);
+                });
+            }
+        }
+
+        // Initialize on first load and on Astro client transitions
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initQuickPhotoSection();
+        } else {
+            document.addEventListener('DOMContentLoaded', () => initQuickPhotoSection(), {once: true});
+        }
+        window.addEventListener('astro:page-load', initQuickPhotoSection);
+        window.addEventListener('astro:after-swap', initQuickPhotoSection);
+    </script>
+</section>

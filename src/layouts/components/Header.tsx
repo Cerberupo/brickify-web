@@ -2,12 +2,19 @@ import {Button} from "@/components/ui";
 import {useTranslation} from "react-i18next";
 import {Toaster} from "@/components/ui/sonner";
 import {clearUser} from "@/lib";
-import {APP_ROUTES} from '@/constants/routes';
 import {useAuth} from "@/lib/hooks/useAuth";
 import {navigate} from "@/lib/utils";
 import {PROJECT_NAME} from '@/config';
 import {buttonVariants} from "@/components/ui/button";
 import {useEffect, useState} from "react";
+import {
+    getCurrentLocale,
+    homeHref as makeHomeHref,
+    localizePath,
+    loginHref as makeLoginHref,
+    registerHref as makeRegisterHref,
+    switchToLocale
+} from '@/lib/localeLinks';
 
 export function Header() {
     const {t} = useTranslation();
@@ -16,22 +23,41 @@ export function Header() {
     const handleLogout = async () => {
         try {
             await clearUser();
-            // Redirect to home page after logout
-            navigate(APP_ROUTES.HOME);
+            // Redirect to localized home page after logout
+            navigate(makeHomeHref());
         } catch (error) {
             console.error('Logout error:', error);
         }
     };
 
-    const [currentLang, setCurrentLang] = useState<'en' | 'es'>('en');
-    useEffect(() => {
+    const [currentLang, setCurrentLang] = useState<'en' | 'es'>(() => {
         if (typeof window !== 'undefined') {
             const path = window.location.pathname.toLowerCase();
-            if (path.startsWith('/es')) setCurrentLang('es');
-            else if (path.startsWith('/en')) setCurrentLang('en');
-            else setCurrentLang('en');
+            if (path.startsWith('/es')) return 'es';
+            if (path.startsWith('/en')) return 'en';
         }
+        return 'en';
+    });
+
+    // Keep language in sync on client navigations (Astro transitions)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const updateLang = () => {
+            const path = window.location.pathname.toLowerCase();
+            setCurrentLang(path.startsWith('/es') ? 'es' : 'en');
+        };
+        updateLang();
+        window.addEventListener('astro:after-swap', updateLang);
+        window.addEventListener('astro:page-load', updateLang);
+        return () => {
+            window.removeEventListener('astro:after-swap', updateLang);
+            window.removeEventListener('astro:page-load', updateLang);
+        };
     }, []);
+
+    const langNow = getCurrentLocale();
+    const loginHref = makeLoginHref(langNow);
+    const registerHref = makeRegisterHref(langNow);
 
     return (
         <>
@@ -39,7 +65,7 @@ export function Header() {
             <header className="bg-background border-b border-border relative z-10">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div className="flex items-center">
-                        <a href={APP_ROUTES.HOME} className="flex items-center gap-2">
+                        <a href={makeHomeHref(langNow)} className="flex items-center gap-2">
                             <img src="/logo.svg" alt={PROJECT_NAME} className="h-5 w-auto"/>
                             <span className="sr-only">{PROJECT_NAME}</span>
                         </a>
@@ -48,7 +74,7 @@ export function Header() {
                         <ul className="flex space-x-4 items-center">
                             {user ? (
                                 <li>
-                                    <a href={APP_ROUTES.DASHBOARD}
+                                    <a href={localizePath('/dashboard')}
                                        className="hover:text-primary transition-colors">{t('header.dashboard')}</a>
                                 </li>
                             ) : null}
@@ -56,7 +82,7 @@ export function Header() {
                             {/* Language selector */}
                             <li className="flex items-center gap-2">
                                 <a
-                                    href={APP_ROUTES.SPANISH}
+                                    href={switchToLocale('es')}
                                     className={`text-sm transition-colors ${currentLang === 'es' ? 'font-bold' : 'opacity-70 hover:opacity-100'}`}
                                     aria-current={currentLang === 'es' ? 'true' : undefined}
                                 >
@@ -64,7 +90,7 @@ export function Header() {
                                 </a>
                                 <span className="text-muted-foreground">/</span>
                                 <a
-                                    href={APP_ROUTES.ENGLISH}
+                                    href={switchToLocale('en')}
                                     className={`text-sm transition-colors ${currentLang === 'en' ? 'font-bold' : 'opacity-70 hover:opacity-100'}`}
                                     aria-current={currentLang === 'en' ? 'true' : undefined}
                                 >
@@ -77,7 +103,7 @@ export function Header() {
                                 <>
                                     <li>
                                         <a
-                                            href={APP_ROUTES.LOGIN}
+                                            href={loginHref}
                                             className={buttonVariants({variant: "outline", size: "sm"})}
                                         >
                                             {t('header.login', {defaultValue: 'Login'})}
@@ -85,7 +111,7 @@ export function Header() {
                                     </li>
                                     <li>
                                         <a
-                                            href={APP_ROUTES.REGISTER}
+                                            href={registerHref}
                                             className={buttonVariants({size: "sm"})}
                                         >
                                             {t('header.register', {defaultValue: 'Register'})}

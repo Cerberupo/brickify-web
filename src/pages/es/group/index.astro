@@ -3,9 +3,14 @@ import {PROJECT_NAME} from "../../../config";
 import MainLayout from "../../../layouts/main.astro";
 import {GroupPage} from "../../../components";
 import {AppWrapper} from "../../../layouts";
+import FooterSection from "../../../components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Detalle del grupo`}}>
     <AppWrapper client:only="react">
         <GroupPage client:only="react"/>
+        <FooterSection locale={locale}/>
     </AppWrapper>
 </MainLayout>

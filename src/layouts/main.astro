@@ -8,7 +8,10 @@ let {content, lang} = Astro.props as { content?: { title?: string }, lang?: 'en'
 if (!content || !content.title) {
     content = {title: PROJECT_NAME};
 }
-const htmlLang = lang ?? normalizeLocale(Astro.currentLocale as string | undefined);
+// Prefer explicit lang prop; otherwise derive from URL path; finally fall back to Astro.currentLocale
+const path = Astro.url?.pathname || '/';
+const pathLang = path.startsWith('/es') ? 'es' : (path.startsWith('/en') ? 'en' : undefined);
+const htmlLang = (lang ?? pathLang ?? normalizeLocale(Astro.currentLocale as string | undefined));
 ---
 
 <html lang={htmlLang}>

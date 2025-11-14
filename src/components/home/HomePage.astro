@@ -7,6 +7,7 @@ import ReviewsSection from "@/components/home/ReviewsSection.astro";
 import HowItWorks from "@/components/home/HowItWorks.astro";
 import FAQSection from "@/components/home/FAQSection.astro";
 import FooterSection from "@/components/home/FooterSection.astro";
+import QuickPhotoSection from "@/components/home/QuickPhotoSection.astro";
 import {Header} from "@/layouts/components/Header";
 import type {SupportedLocale} from "@/lib/locale";
 
@@ -35,7 +36,7 @@ const t = copies[locale];
 const content = {title: t.title};
 ---
 <Layout content={content} lang={locale}>
-    <Header client:load/>
+    <Header client:only="react" />
     <main id="inicio" class="relative overflow-x-hidden">
         <script define:vars={{enableRedirect}}>
             if (enableRedirect && typeof window !== 'undefined') {
@@ -61,10 +62,12 @@ const content = {title: t.title};
         <div class="container mx-auto px-4 md:px-6">
             <MemoryHighlight locale={locale}/>
         </div>
-        
+
         <HowItWorks locale={locale}/>
 
         <ReviewsSection locale={locale}/>
+
+        <QuickPhotoSection locale={locale}/>
 
         <FAQSection locale={locale}/>
 

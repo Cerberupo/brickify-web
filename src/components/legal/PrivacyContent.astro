@@ -1,125 +1,127 @@
 ---
-import type { SupportedLocale } from "@/lib/locale";
+import type {SupportedLocale} from "@/lib/locale";
 
-interface Props { locale: SupportedLocale }
-const { locale } = Astro.props as Props;
+interface Props {
+    locale: SupportedLocale
+}
+const {locale} = Astro.props as Props;
 
 const copies = {
-  es: {
-    heroTitle: "Política de privacidad",
-    intro:
-      "Tu privacidad es importante para nosotros. Esta política explica qué datos recopilamos, dónde se almacenan y cómo los usamos para prestar el servicio.",
-    sections: [
-      {
-        t: "Datos que recopilamos",
-        d:
-          "Si usas el formulario de contacto o el servicio, recopilamos tu nombre, correo y mensaje. Cuando subes una imagen para generar recomendaciones de piezas LEGO®, procesamos esa imagen. También podemos recoger datos técnicos básicos (IP, tipo de navegador, identificadores de dispositivo) con fines de seguridad y analítica básica.",
-      },
-      {
-        t: "Finalidad del tratamiento",
-        d:
-          "(i) Responder a tus consultas; (ii) prestar el servicio de recomendación de piezas (convertir tu foto en una minifig); (iii) gestionar pagos; (iv) mantener la seguridad y mejorar el sitio. No vendemos tus datos.",
-      },
-      {
-        t: "Proveedores y dónde se guardan los datos",
-        d:
-          "Usamos servicios de terceros para operar la plataforma: (a) AWS S3 para almacenar las imágenes que subes y otros archivos; (b) OpenAI/ChatGPT para analizar la imagen y obtener recomendaciones; (c) MongoDB Atlas para almacenar datos de cuenta, del servicio y los datos de los grupos creados por los usuarios; (d) Stripe para procesar pagos y almacenar de forma segura los datos de pago.",
-      },
-      {
-        t: "Base legal",
-        d:
-          "Tratamos los datos en base a tu consentimiento (por ejemplo, al subir una foto) y/o por la necesidad de ejecutar el contrato/servicio que solicitas (incluye el procesamiento técnico por nuestros proveedores).",
-      },
-      {
-        t: "Conservación",
-        d:
-          "No borramos datos de forma automática; solo los eliminamos si el usuario lo solicita. En cualquier caso, los pedidos permanecerán vinculados a tu cuenta. A petición, podemos borrar las imágenes almacenadas en S3 y los nombres y descripciones de los grupos que crees. Conservaremos aquella información que debamos mantener por ley.",
-      },
-      {
-        t: "Derechos",
-        d:
-          "Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiéndonos a hello@brickify.me. Si pides borrar tus datos, eliminaremos las copias en nuestros sistemas.",
-      },
-      {
-        t: "Pagos con Stripe",
-        d:
-          "El procesamiento de pagos lo realiza Stripe. No almacenamos en nuestros servidores los datos completos de tu tarjeta. Stripe trata esta información de forma segura conforme a sus certificaciones (por ejemplo, PCI DSS).",
-      },
-      {
-        t: "Contacto",
-        d:
-          "Para cualquier duda sobre privacidad, escríbenos a hello@brickify.me.",
-      },
-    ],
-  },
-  en: {
-    heroTitle: "Privacy policy",
-    intro:
-      "Your privacy matters to us. This policy explains what we collect, where it’s stored, and how we use it to deliver the service.",
-    sections: [
-      {
-        t: "Data we collect",
-        d:
-          "If you use the contact form or the service, we collect your name, email and message. When you upload an image to generate LEGO® part recommendations, we process that image. We may also collect basic technical data (IP, browser/device info) for security and basic analytics.",
-      },
-      {
-        t: "Purpose",
-        d:
-          "(i) Reply to your inquiries; (ii) deliver the recommendation service (turn your photo into a minifig); (iii) process payments; (iv) keep the site secure and improve it. We do not sell your data.",
-      },
-      {
-        t: "Processors and where data is stored",
-        d:
-          "We use third‑party services to run the platform: (a) AWS S3 to store uploaded images and files; (b) OpenAI/ChatGPT to analyze images and obtain recommendations; (c) MongoDB Atlas to store account and service data, including user‑created group data; (d) Stripe to process payments and securely store payment data.",
-      },
-      {
-        t: "Legal basis",
-        d:
-          "We process data based on your consent (e.g., when you upload a photo) and/or the necessity to perform the contract/service you request (including technical processing by our providers).",
-      },
-      {
-        t: "Retention",
-        d:
-          "We do not delete data automatically; we only delete it upon your request. In any case, orders will remain linked to your account. Upon request, we can delete images stored in S3 and the names and descriptions of user-created groups. We will retain any information we are legally required to keep.",
-      },
-      {
-        t: "Your rights",
-        d:
-          "You can exercise your rights to access, rectify, erase, object, restrict or port your data by emailing hello@brickify.me. If you request deletion, we will remove copies in our systems.",
-      },
-      {
-        t: "Payments via Stripe",
-        d:
-          "Payments are processed by Stripe. We do not store your full card details on our servers. Stripe processes this data securely in accordance with its certifications (e.g., PCI DSS).",
-      },
-      {
-        t: "Contact",
-        d:
-          "For any privacy question, contact hello@brickify.me.",
-      },
-    ],
-  },
+    es: {
+        heroTitle: "Política de privacidad",
+        intro:
+            "Tu privacidad es importante para nosotros. Esta política explica qué datos recopilamos, dónde se almacenan y cómo los usamos para prestar el servicio.",
+        sections: [
+            {
+                t: "Datos que recopilamos",
+                d:
+                    "Si usas el formulario de contacto o el servicio, recopilamos tu nombre, correo y mensaje. Cuando subes una imagen para generar recomendaciones de piezas LEGO®, procesamos esa imagen. También podemos recoger datos técnicos básicos (IP, tipo de navegador, identificadores de dispositivo) con fines de seguridad y analítica básica.",
+            },
+            {
+                t: "Finalidad del tratamiento",
+                d:
+                    "(i) Responder a tus consultas; (ii) prestar el servicio de recomendación de piezas (convertir tu foto en una minifig); (iii) gestionar pagos; (iv) mantener la seguridad y mejorar el sitio. No vendemos tus datos.",
+            },
+            {
+                t: "Proveedores y dónde se guardan los datos",
+                d:
+                    "Usamos servicios de terceros para operar la plataforma: (a) AWS S3 para almacenar las imágenes que subes y otros archivos; (b) OpenAI/ChatGPT para analizar la imagen y obtener recomendaciones; (c) MongoDB Atlas para almacenar datos de cuenta, del servicio y los datos de los grupos creados por los usuarios; (d) Stripe para procesar pagos y almacenar de forma segura los datos de pago.",
+            },
+            {
+                t: "Base legal",
+                d:
+                    "Tratamos los datos en base a tu consentimiento (por ejemplo, al subir una foto) y/o por la necesidad de ejecutar el contrato/servicio que solicitas (incluye el procesamiento técnico por nuestros proveedores).",
+            },
+            {
+                t: "Conservación",
+                d:
+                    "No borramos datos de forma automática; solo los eliminamos si el usuario lo solicita. En cualquier caso, los pedidos permanecerán vinculados a tu cuenta. A petición, podemos borrar las imágenes almacenadas en S3 y los nombres y descripciones de los grupos que crees. Conservaremos aquella información que debamos mantener por ley.",
+            },
+            {
+                t: "Derechos",
+                d:
+                    "Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiéndonos a hello@brickify.me. Si pides borrar tus datos, eliminaremos las copias en nuestros sistemas.",
+            },
+            {
+                t: "Pagos con Stripe",
+                d:
+                    "El procesamiento de pagos lo realiza Stripe. No almacenamos en nuestros servidores los datos completos de tu tarjeta. Stripe trata esta información de forma segura conforme a sus certificaciones (por ejemplo, PCI DSS).",
+            },
+            {
+                t: "Contacto",
+                d:
+                    "Para cualquier duda sobre privacidad, escríbenos a hello@brickify.fun.",
+            },
+        ],
+    },
+    en: {
+        heroTitle: "Privacy policy",
+        intro:
+            "Your privacy matters to us. This policy explains what we collect, where it’s stored, and how we use it to deliver the service.",
+        sections: [
+            {
+                t: "Data we collect",
+                d:
+                    "If you use the contact form or the service, we collect your name, email and message. When you upload an image to generate LEGO® part recommendations, we process that image. We may also collect basic technical data (IP, browser/device info) for security and basic analytics.",
+            },
+            {
+                t: "Purpose",
+                d:
+                    "(i) Reply to your inquiries; (ii) deliver the recommendation service (turn your photo into a minifig); (iii) process payments; (iv) keep the site secure and improve it. We do not sell your data.",
+            },
+            {
+                t: "Processors and where data is stored",
+                d:
+                    "We use third‑party services to run the platform: (a) AWS S3 to store uploaded images and files; (b) OpenAI/ChatGPT to analyze images and obtain recommendations; (c) MongoDB Atlas to store account and service data, including user‑created group data; (d) Stripe to process payments and securely store payment data.",
+            },
+            {
+                t: "Legal basis",
+                d:
+                    "We process data based on your consent (e.g., when you upload a photo) and/or the necessity to perform the contract/service you request (including technical processing by our providers).",
+            },
+            {
+                t: "Retention",
+                d:
+                    "We do not delete data automatically; we only delete it upon your request. In any case, orders will remain linked to your account. Upon request, we can delete images stored in S3 and the names and descriptions of user-created groups. We will retain any information we are legally required to keep.",
+            },
+            {
+                t: "Your rights",
+                d:
+                    "You can exercise your rights to access, rectify, erase, object, restrict or port your data by emailing hello@brickify.me. If you request deletion, we will remove copies in our systems.",
+            },
+            {
+                t: "Payments via Stripe",
+                d:
+                    "Payments are processed by Stripe. We do not store your full card details on our servers. Stripe processes this data securely in accordance with its certifications (e.g., PCI DSS).",
+            },
+            {
+                t: "Contact",
+                d:
+                    "For any privacy question, contact hello@brickify.fun.",
+            },
+        ],
+    },
 } as const;
 const t = copies[locale];
 ---
 <section class="relative w-full">
-  <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
-    <div class="flex items-center gap-4 mb-8 md:mb-10">
-      <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy" />
-      <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
-    </div>
+    <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div class="flex items-center gap-4 mb-8 md:mb-10">
+            <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy"/>
+            <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+        </div>
 
-    <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
-      <p class="text-neutral-700">{t.intro}</p>
-    </article>
-
-    <div class="grid grid-cols-1 gap-4 mt-6">
-      {t.sections.map((s) => (
         <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
-          <h2 class="text-lg font-semibold mb-2">{s.t}</h2>
-          <p class="text-neutral-700 leading-relaxed">{s.d}</p>
+            <p class="text-neutral-700">{t.intro}</p>
         </article>
-      ))}
+
+        <div class="grid grid-cols-1 gap-4 mt-6">
+            {t.sections.map((s) => (
+                    <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-2">{s.t}</h2>
+                        <p class="text-neutral-700 leading-relaxed">{s.d}</p>
+                    </article>
+            ))}
+        </div>
     </div>
-  </div>
 </section>

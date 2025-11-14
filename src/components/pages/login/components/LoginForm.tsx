@@ -78,6 +78,8 @@ export function LoginForm() {
         toast.error(t('login.googleErrorMessage', 'Google login failed. Please try again.'));
     };
 
+    console.log('i18n.language:', i18n.language);
+
     return (
         <Card className="w-[350px] mx-auto">
             <CardHeader>

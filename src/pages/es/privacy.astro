@@ -9,7 +9,7 @@ const locale: SupportedLocale = 'es';
 const content = { title: 'Brickify — Política de privacidad' };
 ---
 <Layout content={content} lang={locale}>
-  <Header client:load />
+  <Header client:only="react" />
   <main class="relative overflow-x-hidden">
     <PrivacyContent locale={locale} />
     <FooterSection locale={locale} />

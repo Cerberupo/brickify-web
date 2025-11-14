@@ -3,9 +3,14 @@ import {PROJECT_NAME} from "../../config";
 import {TermsOfServicePage} from "../../components";
 import MainLayout from "../../layouts/main.astro";
 import {AppWrapper} from "../../layouts";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type { SupportedLocale } from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Términos de servicio`}}>
     <AppWrapper client:only="react">
         <TermsOfServicePage client:only="react"/>
     </AppWrapper>
+    <FooterSection locale={locale} />
 </MainLayout>

@@ -4,6 +4,8 @@ import {useEffect} from 'react';
 import {useAuth} from '@/lib';
 import {APP_ROUTES} from '@/constants/routes';
 import {navigate} from '@/lib/utils';
+import {PROJECT_NAME} from '@/config';
+import { homeHref as makeHomeHref } from '@/lib/localeLinks';
 
 export function RegisterPage() {
     const {t} = useTranslation();
@@ -16,7 +18,13 @@ export function RegisterPage() {
         }
     }, [user, authLoading]);
 
-    return (<div className="grid place-items-center py-20 content-center">
-        <RegisterForm/>
-    </div>)
+    return (
+        <div className="grid place-items-center py-20 content-center">
+            <a href={makeHomeHref()} className="mb-8 inline-flex items-center gap-2">
+                <img src="/logo.svg" alt={PROJECT_NAME} className="h-10 w-auto" />
+                <span className="sr-only">{PROJECT_NAME}</span>
+            </a>
+            <RegisterForm/>
+        </div>
+    )
 }

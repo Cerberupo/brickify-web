@@ -9,7 +9,7 @@ const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | 
 const content = { title: locale === 'es' ? 'Brickify — Contacto' : 'Brickify — Contact' };
 ---
 <Layout content={content} lang={locale}>
-  <Header client:load />
+  <Header client:only="react" />
   <main class="relative overflow-x-hidden">
     <ContactContent locale={locale} />
     <FooterSection locale={locale} />
