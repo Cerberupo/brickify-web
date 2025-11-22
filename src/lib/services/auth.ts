@@ -157,9 +157,7 @@ export async function verifyAccount(email: string, code: string): Promise<LoginR
             body: {email, code},
             withCredentials: true,
         });
-
-        console.log('Verify account response:', response);
-
+        
         // Store token in localStorage if available
         if (response.token) {
             localStorage.setItem('authToken', response.token);

@@ -6,7 +6,9 @@ import {toast} from 'sonner';
 import {APP_ROUTES} from '@/constants/routes';
 import {navigate} from '@/lib/utils';
 
-export function VerifyPage() {
+type VerifyPageProps = { initialSearch?: string };
+
+export function VerifyPage({initialSearch}: VerifyPageProps) {
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(true);
     const [isVerified, setIsVerified] = useState(false);
@@ -16,10 +18,37 @@ export function VerifyPage() {
     useEffect(() => {
         const verifyUserAccount = async () => {
             try {
-                // Get email and code from URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const emailParam = urlParams.get('email');
-                const codeParam = urlParams.get('code');
+                // Read email+code from a compact Base64 param `v` or fallback to legacy query params
+                const search = initialSearch ? initialSearch : (typeof window !== 'undefined' ? window.location.search : '');
+                const urlParams = new URLSearchParams(search || '');
+
+                let emailParam: string | null = null;
+                let codeParam: string | null = null;
+
+                const packed = urlParams.get('v');
+                if (packed) {
+                    // Decode Base64 (support URL-safe variant) and parse JSON { email, code }
+                    try {
+                        // Convert URL-safe base64 to standard base64
+                        const b64 = packed.replace(/-/g, '+').replace(/_/g, '/');
+                        // Pad if necessary
+                        const padded = b64 + '==='.slice((b64.length + 3) % 4);
+                        const json = typeof atob !== 'undefined' ? atob(padded) : Buffer.from(padded, 'base64').toString('binary');
+
+                        const obj = JSON.parse(json);
+                        emailParam = typeof obj?.email === 'string' ? obj.email : null;
+                        codeParam = typeof obj?.code === 'string' ? obj.code : null;
+                    } catch (e) {
+                        console.error('Failed to decode/parse v param', e);
+                        setError(t('verify.missingParams', 'Missing email or verification code in URL.'));
+                        setIsLoading(false);
+                        return;
+                    }
+                } else {
+                    // Legacy support: email & code as separate query params
+                    emailParam = urlParams.get('email');
+                    codeParam = urlParams.get('code');
+                }
 
                 // Check if both email and code are present
                 if (!emailParam || !codeParam) {
@@ -50,11 +79,22 @@ export function VerifyPage() {
                 );
             } finally {
                 setIsLoading(false);
+                // Clean verification params from URL to avoid re-processing on reload
+                if (typeof window !== 'undefined') {
+                    try {
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('v');
+                        url.searchParams.delete('email');
+                        url.searchParams.delete('code');
+                        window.history.replaceState({}, document.title, url.pathname + (url.search ? '?' + url.searchParams.toString() : '') + url.hash);
+                    } catch {
+                    }
+                }
             }
         };
 
         verifyUserAccount();
-    }, []);
+    }, [initialSearch, t]);
 
     return (
         <div className="grid place-items-center py-20 content-center">

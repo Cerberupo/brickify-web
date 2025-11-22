@@ -108,6 +108,7 @@
     "alreadyHaveAccount": "Already have an account?",
     "login": "Login",
     "successMessage": "Registration successful! You can now log in.",
+    "verifyEmailSent": "We've sent you an email to verify your account. Please check your inbox and follow the instructions.",
     "errorMessage": "Registration failed. Please try again.",
     "registering": "Registering..."
   },

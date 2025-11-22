@@ -106,6 +106,7 @@
     "alreadyHaveAccount": "¿Ya tiene una cuenta?",
     "login": "Iniciar sesión",
     "successMessage": "¡Registro exitoso! Ahora puede iniciar sesión.",
+    "verifyEmailSent": "Hemos enviado un email para verificar tu cuenta. Revisa tu bandeja de entrada y sigue las instrucciones.",
     "errorMessage": "Error al registrarse. Por favor, inténtelo de nuevo.",
     "registering": "Registrando..."
   },

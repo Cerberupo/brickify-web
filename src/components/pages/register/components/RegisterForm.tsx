@@ -24,9 +24,9 @@ export function RegisterForm() {
         setIsLoading(true);
         try {
             await registerUser(data.name, data.email, data.password, i18n.language);
-            toast.success(t('register.successMessage', 'Registration successful! You can now log in.'));
-            // Navigate to login after successful registration
-            navigate(makeLoginHref());
+            // Señalamos a la página de login que debe mostrar el aviso de verificación por email
+            const loginUrl = `${makeLoginHref()}?checkEmail=1`;
+            navigate(loginUrl);
         } catch (error) {
             console.error('Registration error:', error);
             toast.error(

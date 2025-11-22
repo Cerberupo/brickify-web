@@ -3,11 +3,11 @@ import MainLayout from "../../layouts/main.astro";
 import {PROJECT_NAME} from "../../config";
 import LoginShell from "../../components/pages/login/LoginShell";
 import FooterSection from "@/components/home/FooterSection.astro";
-import type { SupportedLocale } from "@/lib/locale";
+import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Iniciar sesión`}}>
-    <LoginShell client:only="react" />
-    <FooterSection locale={locale} />
+    <LoginShell client:only="react" initialSearch={Astro.url.search}/>
+    <FooterSection locale={locale}/>
 </MainLayout>

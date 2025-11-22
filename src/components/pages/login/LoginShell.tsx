@@ -6,10 +6,12 @@ import { LoginPage } from './Login';
  * Single React island that wraps LoginPage with AppWrapper providers.
  * Using this as client:only in Astro avoids SSR rendering of LoginPage with the wrong locale.
  */
-export function LoginShell() {
+type Props = { initialSearch?: string };
+
+export function LoginShell({ initialSearch }: Props) {
   return (
     <AppWrapper hideHeader={true}>
-      <LoginPage />
+      <LoginPage initialSearch={initialSearch} />
     </AppWrapper>
   );
 }
