@@ -67,7 +67,6 @@ export function ResetPasswordPage({initialSearch}: ResetPageProps) {
         setLoading(true);
         try {
             await resetPassword(email, code, data.password);
-            toast.success(t('reset.successMessage', 'Your password has been reset successfully. You can now sign in.'));
             // Clean query param to avoid leaking sensitive code on reload
             if (typeof window !== 'undefined') {
                 try {
@@ -77,7 +76,11 @@ export function ResetPasswordPage({initialSearch}: ResetPageProps) {
                 } catch {
                 }
             }
-            setTimeout(() => navigate(makeLoginHref()), 1200);
+            // Redirect to login indicating reset success so the toast is shown there
+            setTimeout(() => {
+                const loginUrl = `${makeLoginHref()}?resetSuccess=1`;
+                navigate(loginUrl);
+            }, 300);
         } catch (error) {
             console.error('Reset password error:', error);
             toast.error(

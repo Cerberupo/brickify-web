@@ -21,20 +21,25 @@ export function LoginPage({initialSearch}: LoginPageProps) {
         }
     }, [user, authLoading]);
 
-    // Mostrar toast si venimos de un registro y hay que avisar del email de verificación
+    // Mostrar toast si venimos de un registro (checkEmail=1) o tras reset de contraseña (resetSuccess=1)
     useEffect(() => {
         // Preferir la query inicial proporcionada por Astro (para evitar pérdidas por redirecciones previas)
         const search = initialSearch ? initialSearch : (typeof window !== 'undefined' ? window.location.search : '');
         const params = new URLSearchParams(search || '');
         const checkEmail = params.get('checkEmail');
+        const resetSuccess = params.get('resetSuccess');
         if (checkEmail) {
             toast.success(t('register.verifyEmailSent', "We've sent you an email to verify your account. Please check your inbox and follow the instructions."));
-            // Limpiar el query param para evitar mostrarlo de nuevo si el usuario recarga
-            if (typeof window !== 'undefined') {
-                const url = new URL(window.location.href);
-                url.searchParams.delete('checkEmail');
-                window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
-            }
+        }
+        if (resetSuccess) {
+            toast.success(t('reset.successMessage', 'Your password has been reset successfully. You can now sign in.'));
+        }
+        // Limpiar los query params para evitar mostrarlo de nuevo si el usuario recarga
+        if ((checkEmail || resetSuccess) && typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            if (checkEmail) url.searchParams.delete('checkEmail');
+            if (resetSuccess) url.searchParams.delete('resetSuccess');
+            window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
         }
     }, [initialSearch, t]);
 
