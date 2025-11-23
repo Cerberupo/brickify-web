@@ -4,14 +4,14 @@ import {DashboardPage} from "../components";
 import {PROJECT_NAME} from "../config";
 import {AppWrapper} from "../layouts";
 import FooterSection from "@/components/home/FooterSection.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 
 <MainLayout content={{title: `${PROJECT_NAME} - Dashboard`}}>
     <AppWrapper client:only="react">
-        <DashboardPage />
+        <DashboardPage client:only="react"/>
     </AppWrapper>
-    <FooterSection locale={locale} />
+    <FooterSection locale={locale}/>
 </MainLayout>
