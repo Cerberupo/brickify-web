@@ -11,7 +11,7 @@ const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | 
 
 <MainLayout content={{title: `${PROJECT_NAME} - Checkout`}}>
     <AppWrapper client:only="react">
-        <CheckoutPage client:only="react"/>
+        <CheckoutPage />
     </AppWrapper>
     <FooterSection locale={locale} />
 </MainLayout>

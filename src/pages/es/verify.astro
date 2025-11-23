@@ -10,7 +10,7 @@ const locale: SupportedLocale = 'es';
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Verificación de Cuenta`}}>
     <AppWrapper client:only="react">
-        <VerifyPage client:only="react" initialSearch={Astro.url.search}/>
+        <VerifyPage initialSearch={Astro.url.search}/>
     </AppWrapper>
     <FooterSection locale={locale} />
 </MainLayout>
