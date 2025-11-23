@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui";
+import {Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Toaster} from "@/components/ui";
 import {DeleteGroupDialog} from './DeleteGroupDialog';
 import {cn, hasGroupAlreadyPaidStatus, navigate} from "@/lib/utils";
 import type {GroupCardProps} from '../types';
@@ -86,6 +86,7 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
 
     return (
         <>
+            <Toaster position="top-right"/>
             <Card
                 className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.01] hover:-translate-y-1"
                 onClick={() => navigate(APP_ROUTES.GROUP, {id: group.id})}>

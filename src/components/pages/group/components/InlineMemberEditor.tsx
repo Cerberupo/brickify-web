@@ -1,7 +1,7 @@
-import React, {useEffect, useMemo, useState, useRef, useId} from 'react';
+import React, {useEffect, useId, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Input, Label, Textarea} from '@/components/ui';
-import { toast } from 'sonner';
+import {Button, Checkbox, Input, Label, Textarea, Toaster} from '@/components/ui';
+import {toast} from 'sonner';
 import type {AddUserRequest, UpdateUserRequest} from '@/lib/types';
 
 export type InlineMemberEditorMode = 'add' | 'edit';
@@ -148,57 +148,57 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
         if (!canSubmit || saving) return;
         setSaving(true);
         try {
-        if (mode === 'add' && onSaveAdd) {
-            const payload: AddUserRequest = {
-                name: name.trim(),
-                description: description?.trim() || undefined,
-                avatarFile: noImage ? undefined : avatarFile,
-                noImage: noImage || undefined,
-                hairDescription: noImage ? hairDescription.trim() : undefined,
-                faceDescription: noImage ? faceDescription.trim() : undefined,
-            };
-            await onSaveAdd(payload);
-            return;
-        }
-
-        if (mode === 'edit' && onSaveEdit && initial?.id) {
-            const payload: UpdateUserRequest = {
-                id: initial.id,
-                name: name.trim(),
-                description: description?.trim() || undefined,
-                noImage: noImage || undefined,
-                hairDescription: noImage ? hairDescription.trim() : undefined,
-                faceDescription: noImage ? faceDescription.trim() : undefined,
-            } as UpdateUserRequest;
-
-            // Only attach avatar when not in no-image mode
-            if (!noImage) {
-                if (avatarFile) {
-                    // read as base64 data URL
-                    const dataUrl = await new Promise<string>((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result as string);
-                        reader.onerror = () => reject(new Error('Failed to read image'));
-                        reader.readAsDataURL(avatarFile);
-                    });
-                    // Strict check on actual decoded base64 size (2MB)
-                    const commaIdx = dataUrl.indexOf(',');
-                    const base64 = commaIdx >= 0 ? dataUrl.substring(commaIdx + 1) : dataUrl;
-                    const padding = (base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0);
-                    const decodedBytes = Math.floor((base64.length * 3) / 4) - padding;
-                    if (decodedBytes > MAX_BASE64_BYTES) {
-                        toast.error(t('group.imageTooLarge', 'The selected image is too large. Maximum allowed is 2MB.'));
-                        return; // abort submit
-                    }
-                    payload.avatar = dataUrl;
-                } else if (initial?.imageSignedUrl || initial?.imagePath || initial?.avatar) {
-                    payload.avatar = initial.imageSignedUrl || initial.imagePath || initial.avatar || undefined;
-                }
+            if (mode === 'add' && onSaveAdd) {
+                const payload: AddUserRequest = {
+                    name: name.trim(),
+                    description: description?.trim() || undefined,
+                    avatarFile: noImage ? undefined : avatarFile,
+                    noImage: noImage || undefined,
+                    hairDescription: noImage ? hairDescription.trim() : undefined,
+                    faceDescription: noImage ? faceDescription.trim() : undefined,
+                };
+                await onSaveAdd(payload);
+                return;
             }
 
-            await onSaveEdit(payload);
-            return;
-        }
+            if (mode === 'edit' && onSaveEdit && initial?.id) {
+                const payload: UpdateUserRequest = {
+                    id: initial.id,
+                    name: name.trim(),
+                    description: description?.trim() || undefined,
+                    noImage: noImage || undefined,
+                    hairDescription: noImage ? hairDescription.trim() : undefined,
+                    faceDescription: noImage ? faceDescription.trim() : undefined,
+                } as UpdateUserRequest;
+
+                // Only attach avatar when not in no-image mode
+                if (!noImage) {
+                    if (avatarFile) {
+                        // read as base64 data URL
+                        const dataUrl = await new Promise<string>((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result as string);
+                            reader.onerror = () => reject(new Error('Failed to read image'));
+                            reader.readAsDataURL(avatarFile);
+                        });
+                        // Strict check on actual decoded base64 size (2MB)
+                        const commaIdx = dataUrl.indexOf(',');
+                        const base64 = commaIdx >= 0 ? dataUrl.substring(commaIdx + 1) : dataUrl;
+                        const padding = (base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0);
+                        const decodedBytes = Math.floor((base64.length * 3) / 4) - padding;
+                        if (decodedBytes > MAX_BASE64_BYTES) {
+                            toast.error(t('group.imageTooLarge', 'The selected image is too large. Maximum allowed is 2MB.'));
+                            return; // abort submit
+                        }
+                        payload.avatar = dataUrl;
+                    } else if (initial?.imageSignedUrl || initial?.imagePath || initial?.avatar) {
+                        payload.avatar = initial.imageSignedUrl || initial.imagePath || initial.avatar || undefined;
+                    }
+                }
+
+                await onSaveEdit(payload);
+                return;
+            }
         } finally {
             setSaving(false);
         }
@@ -206,6 +206,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
 
     return (
         <div className="rounded-md p-3 md:p-4 bg-transparent border">
+            <Toaster position="top-right"/>
             <div className="flex flex-col gap-4">
                 {/* Header: Title + No-image toggle inline to save space */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -223,7 +224,8 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                         {/* Left: Image dropzone */}
                         <div className="md:col-span-3">
-                            <Label htmlFor={`avatar-upload-${avatarInputId}`} className="block mb-2">{t('group.memberAvatar')}</Label>
+                            <Label htmlFor={`avatar-upload-${avatarInputId}`}
+                                   className="block mb-2">{t('group.memberAvatar')}</Label>
                             <div
                                 className={`border-2 border-dashed rounded-md p-3 flex flex-col items-center justify-center w-full min-h-32 cursor-pointer hover:border-primary transition-colors aspect-square`}
                                 onClick={() => fileInputRef.current?.click()}
@@ -261,13 +263,15 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                         <p className="text-xs text-gray-500 text-center">{t('group.dragImageHere')}</p>
                                     </>
                                 )}
-                                <input id={`avatar-upload-${avatarInputId}`} ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange}
+                                <input id={`avatar-upload-${avatarInputId}`} ref={fileInputRef} type="file"
+                                       accept="image/*" onChange={handleFileChange}
                                        className="hidden"/>
                             </div>
                         </div>
 
                         {/* Right: Name + Description stacked compactly */}
-                        <div className="md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 items-start self-start content-start">
+                        <div
+                            className="md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 items-start self-start content-start">
                             <div className="md:col-span-2">
                                 <Label htmlFor="name" className="block mb-1">{t('group.memberName')}</Label>
                                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)}
@@ -320,7 +324,8 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                 {showActions && (
                     <div className="flex gap-2 justify-end">
                         <Button variant="outline" onClick={onCancel} disabled={saving}>{t('group.cancel')}</Button>
-                        <Button onClick={onSubmit} disabled={!canSubmit || saving} isLoading={saving}>{t('group.save')}</Button>
+                        <Button onClick={onSubmit} disabled={!canSubmit || saving}
+                                isLoading={saving}>{t('group.save')}</Button>
                     </div>
                 )}
             </div>

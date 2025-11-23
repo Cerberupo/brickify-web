@@ -8,6 +8,7 @@ import {APP_ROUTES} from '@/constants/routes';
 import {EmailField, PasswordField} from "@/components/inputFields";
 import {toast} from 'sonner';
 import {navigate} from '@/lib/utils';
+import { localizePath } from '@/lib/localeLinks';
 
 
 export function LoginForm() {
@@ -112,10 +113,14 @@ export function LoginForm() {
                 </form>
             </CardContent>
             <CardFooter className="flex justify-center">
-                <p className="text-sm text-muted-foreground">
-                    {t('login.noAccount')} <a href={APP_ROUTES.REGISTER}
-                                              className="text-blue-500 hover:underline">{t('login.register')}</a>
-                </p>
+                <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                    <a href={localizePath('/recover/')}
+                       className="text-blue-500 hover:underline">{t('login.forgotPassword', 'Forgot your password?')}</a>
+                    <p>
+                        {t('login.noAccount')} <a href={APP_ROUTES.REGISTER}
+                                                  className="text-blue-500 hover:underline">{t('login.register')}</a>
+                    </p>
+                </div>
             </CardFooter>
         </Card>
     );

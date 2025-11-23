@@ -40,7 +40,7 @@ export function LoginPage({initialSearch}: LoginPageProps) {
 
     return (
         <div className="grid place-items-center py-20 content-center">
-            <Toaster duration={2000} position="top-right"/>
+            <Toaster position="top-right"/>
             <a href={makeHomeHref()} className="mb-8 inline-flex items-center gap-2">
                 <img src="/logo.svg" alt={PROJECT_NAME} className="h-10 w-auto"/>
                 <span className="sr-only">{PROJECT_NAME}</span>

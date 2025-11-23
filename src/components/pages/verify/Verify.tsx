@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui";
+import {Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Toaster} from "@/components/ui";
 import {verifyAccount} from '@/lib/services/auth';
 import {toast} from 'sonner';
 import {APP_ROUTES} from '@/constants/routes';
@@ -98,6 +98,7 @@ export function VerifyPage({initialSearch}: VerifyPageProps) {
 
     return (
         <div className="grid place-items-center py-20 content-center">
+            <Toaster position="top-right"/>
             <Card className="w-[350px] mx-auto">
                 <CardHeader>
                     <CardTitle>{t('verify.title', 'Account Verification')}</CardTitle>

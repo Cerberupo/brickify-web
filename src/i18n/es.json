@@ -97,7 +97,8 @@
     "successMessage": "¡Inicio de sesión exitoso!",
     "errorMessage": "Error al iniciar sesión. Por favor, inténtelo de nuevo.",
     "googleErrorMessage": "Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.",
-    "loggingIn": "Iniciando sesión..."
+    "loggingIn": "Iniciando sesión...",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
   },
   "register": {
     "title": "Registrarse - Brickify",
@@ -109,6 +110,29 @@
     "verifyEmailSent": "Hemos enviado un email para verificar tu cuenta. Revisa tu bandeja de entrada y sigue las instrucciones.",
     "errorMessage": "Error al registrarse. Por favor, inténtelo de nuevo.",
     "registering": "Registrando..."
+  },
+  "recover": {
+    "title": "Recuperar contraseña",
+    "description": "Introduce tu email y te enviaremos instrucciones para restablecer tu contraseña.",
+    "sending": "Enviando...",
+    "submit": "Enviar enlace de recuperación",
+    "successMessage": "Si existe una cuenta con ese email, hemos enviado un enlace para restablecer la contraseña.",
+    "errorMessage": "No pudimos procesar tu solicitud. Inténtalo de nuevo más tarde.",
+    "backToLogin": "Volver al inicio de sesión"
+  },
+  "reset": {
+    "title": "Crear nueva contraseña",
+    "description": "Elige una nueva contraseña para recuperar el acceso a tu cuenta.",
+    "submit": "Guardar nueva contraseña",
+    "saving": "Guardando...",
+    "successMessage": "Tu contraseña se ha restablecido correctamente. Ya puedes iniciar sesión.",
+    "errorMessage": "No pudimos restablecer tu contraseña. El código puede ser inválido o haber expirado.",
+    "missingParams": "Falta el email o el código de restablecimiento en la URL.",
+    "backToLogin": "Volver al inicio de sesión",
+    "confirmPasswordLabel": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Vuelve a introducir tu nueva contraseña",
+    "confirmPasswordRequired": "Por favor, confirma tu contraseña",
+    "passwordMismatch": "Las contraseñas no coinciden"
   },
   "form": {
     "email": {

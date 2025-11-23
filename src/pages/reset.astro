@@ -1,0 +1,13 @@
+---
+import MainLayout from "../layouts/main.astro";
+import {PROJECT_NAME} from "../config";
+import ResetShell from "../components/pages/reset/ResetShell";
+import FooterSection from "@/components/home/FooterSection.astro";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+---
+<MainLayout content={{title: `${PROJECT_NAME} - Reset Password`}}>
+    <ResetShell client:only="react" initialSearch={Astro.url.search} />
+    <FooterSection locale={locale}/>
+</MainLayout>

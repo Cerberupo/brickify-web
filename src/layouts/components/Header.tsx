@@ -1,6 +1,5 @@
 import {Button} from "@/components/ui";
 import {useTranslation} from "react-i18next";
-import {Toaster} from "@/components/ui/sonner";
 import {clearUser} from "@/lib";
 import {useAuth} from "@/lib/hooks/useAuth";
 import {navigate} from "@/lib/utils";
@@ -61,7 +60,6 @@ export function Header() {
 
     return (
         <>
-            <Toaster position="top-right"/>
             <header className="bg-background border-b border-border relative z-10">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div className="flex items-center">

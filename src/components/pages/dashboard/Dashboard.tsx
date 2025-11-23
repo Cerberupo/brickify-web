@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {CreateGroupModal, GroupCard} from '@/components';
+import {CreateGroupModal, GroupCard, Toaster} from '@/components';
 import {Button, Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui';
 import {Plus, UsersRound} from 'lucide-react';
 import {createGroup, getGroups, updateGroup} from '@/lib/services';
@@ -110,7 +110,7 @@ export function DashboardPage() {
 
     return (
         <div className="container mx-auto p-4 py-6">
-
+            <Toaster position="top-right"/>
             <div className="mb-8">
 
 

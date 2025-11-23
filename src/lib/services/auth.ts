@@ -174,3 +174,53 @@ export async function verifyAccount(email: string, code: string): Promise<LoginR
         throw error;
     }
 }
+
+/**
+ * Requests a password reset link for given email
+ * @param email - The user's email
+ * @param language - Current language for localized email copy
+ */
+export async function requestPasswordReset(
+    email: string,
+    language: string
+): Promise<{ message: string; messageKey?: string }> {
+    try {
+        const response = await fetchApi<{ message: string; messageKey?: string }>(
+            '/auth/password/forgot',
+            {
+                method: 'POST',
+                body: { email, language },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Password reset request error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Resets the password using email + code + new password
+ * @param email - The user's email
+ * @param code - The reset code received by email
+ * @param newPassword - The new password to set
+ */
+export async function resetPassword(
+    email: string,
+    code: string,
+    newPassword: string
+): Promise<{ message: string; messageKey?: string }> {
+    try {
+        const response = await fetchApi<{ message: string; messageKey?: string }>(
+            '/auth/password/reset',
+            {
+                method: 'POST',
+                body: { email, code, newPassword },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Password reset error:', error);
+        throw error;
+    }
+}

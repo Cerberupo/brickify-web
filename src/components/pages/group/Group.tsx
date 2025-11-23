@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, CardContent} from "@/components/ui";
+import {Button, CardContent, Toaster} from "@/components/ui";
 import {
     addUserToGroup,
     createReferencePersonGroup,
@@ -234,6 +234,7 @@ export function GroupPage() {
 
     return (
         <div className={cn('container mx-auto p-4', (addingMode === 'none' && !memberToEdit) ? 'py-6' : 'pt-6 pb-2')}>
+            <Toaster position="top-right"/>
             {/* Sticky top bar with header and (conditionally) add buttons */}
             <div
                 className="sticky top-0 z-30 -mx-4 px-4 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b pt-4 pb-3 mb-6">

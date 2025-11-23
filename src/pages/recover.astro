@@ -1,0 +1,13 @@
+---
+import MainLayout from "../layouts/main.astro";
+import {PROJECT_NAME} from "../config";
+import RecoverShell from "../components/pages/recover/RecoverShell";
+import FooterSection from "@/components/home/FooterSection.astro";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+---
+<MainLayout content={{title: `${PROJECT_NAME} - Recover Password`}}>
+    <RecoverShell client:only="react" />
+    <FooterSection locale={locale}/>
+ </MainLayout>

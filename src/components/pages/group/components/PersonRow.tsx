@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Switch} from '@/components/ui';
+import {Button, Switch, Toaster} from '@/components/ui';
 import {Download, Link as LinkIcon, Pencil, Share2, Trash2} from 'lucide-react';
 import {toast} from 'sonner';
 import favicon from '@/images/favicon.png';
@@ -267,6 +267,7 @@ export function PersonRow({
 
     return (
         <div className="flex items-center justify-between gap-3 rounded-md border p-3">
+            <Toaster position="top-right"/>
             <div className="flex flex-col gap-3 flex-1">
                 <div className="flex items-center gap-3">
                     <div
