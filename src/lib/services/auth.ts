@@ -106,12 +106,12 @@ export async function register(name: string, email: string, password: string, la
         });
 
         // Store token in localStorage if available
-        if (response.token) {
+        if (response?.token) {
             localStorage.setItem('authToken', response.token);
         }
 
         // Update user state in the store
-        if (response.user) {
+        if (response?.user) {
             setUser(response.user);
         }
 
@@ -157,7 +157,7 @@ export async function verifyAccount(email: string, code: string): Promise<LoginR
             body: {email, code},
             withCredentials: true,
         });
-        
+
         // Store token in localStorage if available
         if (response.token) {
             localStorage.setItem('authToken', response.token);
