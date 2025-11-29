@@ -10,6 +10,7 @@ import FooterSection from "@/components/home/FooterSection.astro";
 import QuickPhotoSection from "@/components/home/QuickPhotoSection.astro";
 import {Header} from "@/layouts/components/Header";
 import type {SupportedLocale} from "@/lib/locale";
+import {API_URL} from "@/config";
 
 interface Props {
     locale: SupportedLocale;
@@ -36,7 +37,7 @@ const t = copies[locale];
 const content = {title: t.title};
 ---
 <Layout content={content} lang={locale}>
-    <Header client:only="react" />
+    <Header client:only="react"/>
     <main id="inicio" class="relative overflow-x-hidden">
         <script define:vars={{enableRedirect}}>
             if (enableRedirect && typeof window !== 'undefined') {
@@ -74,4 +75,5 @@ const content = {title: t.title};
         <FooterSection locale={locale}/>
 
     </main>
+
 </Layout>

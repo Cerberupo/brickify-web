@@ -21,8 +21,32 @@ export default function CheckoutPage() {
 
 
     const fetchClientSecret = useCallback(async () => {
-        const {clientSecret} = await createGroupCheckoutSession(getGroupId(), `${window.location.origin}/checkout/return/`);
-        return clientSecret;
+        // 1) Priorizar flujo de grupo usando helper getGroupId (no duplicar lógica)
+        try {
+            const groupId = getGroupId();
+            const {clientSecret} = await createGroupCheckoutSession(groupId, `${window.location.origin}/checkout/return/`);
+            return clientSecret;
+        } catch {
+            // Si falta groupId, continuamos con flujo de invitado
+        }
+
+        // 2) Si no hay groupId, intentar flujo de invitado desde sessionStorage
+        try {
+            const raw = sessionStorage.getItem('guestCheckout');
+            if (raw) {
+                const parsed = JSON.parse(raw || '{}');
+                if (parsed && parsed.clientSecret) {
+                    // Consumir y limpiar para evitar reusos accidentales
+                    sessionStorage.removeItem('guestCheckout');
+                    return parsed.clientSecret as string;
+                }
+            }
+        } catch (_) {
+            // Ignorar errores de parseo y continuar
+        }
+
+        // 3) Si no hay ni groupId ni clientSecret de invitado, error claro
+        throw new Error('Missing checkout context');
     }, []);
 
     /*

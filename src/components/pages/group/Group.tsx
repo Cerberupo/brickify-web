@@ -109,13 +109,14 @@ export function GroupPage() {
         });
     }, [t]);
 
-    // Poll group details every 15s while status is inProcess
+    // Poll group details every 15s while status is inAssembly or inProcess
     useEffect(() => {
 
         console.log('polling group details');
         if (!groupId) return;
-        if (group?.status !== 'inAssembly') {
-            return; // no polling unless inProcess
+        const shouldPoll = (s?: string | null) => s === 'inAssembly' || s === 'inProcess';
+        if (!shouldPoll(group?.status)) {
+            return; // no polling unless inAssembly or inProcess
         }
 
         let intervalId: number | null = null;
@@ -128,8 +129,8 @@ export function GroupPage() {
                 console.log('polling group fetch details');
                 const fresh = await getGroupById(groupId);
                 setGroup(fresh);
-                // Stop polling automatically if status changed
-                if (fresh?.status !== 'inAssembly' && intervalId != null) {
+                // Stop polling automatically if status changed out of active states
+                if (!shouldPoll(fresh?.status) && intervalId != null) {
                     clearInterval(intervalId);
                     intervalId = null;
                 }

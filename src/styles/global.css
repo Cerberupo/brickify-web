@@ -5,7 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 * {
-    font-family: "Fredoka", sans-serif;
+    /* Fredoka con fallbacks similares si el cliente/navegador no soporta webfonts */
+    font-family: "Fredoka", "Trebuchet MS", Verdana, Arial, sans-serif;
+}
+
+/* Scroll suave para anclas internas (e.g., #quick-photo) */
+html {
+    scroll-behavior: smooth;
 }
 
 @theme inline {

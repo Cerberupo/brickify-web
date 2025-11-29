@@ -1,6 +1,15 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {cn} from "@/lib/utils";
 import {RotateCcw} from "lucide-react";
+import {getGroupById} from "@/lib";
+import {Button} from '@/components/ui/button';
+import {toast} from 'sonner';
+import {enableMemberShare} from '@/lib/services/groups';
+
+
+interface GuestGroupData {
+    [key: string]: any;
+}
 
 interface LegoItem {
     id: number;
@@ -23,6 +32,7 @@ export interface LegoPreviewCardProps {
     locale?: 'en' | 'es';
 }
 
+
 /**
  * Interactive card that lets the user toggle between a LEGO render and the original photo.
  * It uses a fancy cross‑fade + slight 3D flip animation and an accessible toggle button.
@@ -35,6 +45,63 @@ export default function LegoPreviewCard({
                                             locale = 'en'
                                         }: LegoPreviewCardProps) {
     const [mode, setMode] = useState<'lego' | 'photo'>('lego');
+    const [guestGroupDetails, setGuestGroupDetails] = useState<GuestGroupData | null>(null);
+    const [personOverrideSrc, setPersonOverrideSrc] = useState<string | null>(null);
+
+    useEffect(() => {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const groupId = params.get('groupId');
+            const guestKey = params.get('guest_key');
+            if (!groupId || !guestKey) return;
+
+            let intervalId: number | null = null;
+            const isFetchingRef = {current: false} as { current: boolean };
+
+            const shouldPoll = (s?: string | null) => s === 'inAssembly' || s === 'inProcess';
+
+            const tick = async () => {
+                if (isFetchingRef.current) return;
+                isFetchingRef.current = true;
+                try {
+                    const group = await getGroupById(groupId, {guestKey});
+                    console.log('Fetched guest group details:', group);
+                    setGuestGroupDetails(group as any);
+                    try {
+                        const rp = (group as any)?.referencePeople?.[0];
+                        const img = rp?.imageSignedUrl || rp?.imagePath;
+                        if (img && typeof img === 'string' && img.length > 8) {
+                            setPersonOverrideSrc(img);
+                        }
+                    } catch (_) {
+                        // ignore
+                    }
+                    // Stop polling if status is no longer in active states
+                    if (!shouldPoll((group as any)?.status) && intervalId != null) {
+                        window.clearInterval(intervalId);
+                        intervalId = null;
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch guest group details:', err);
+                } finally {
+                    isFetchingRef.current = false;
+                }
+            };
+
+            // Initial fetch
+            tick();
+            // Poll every 15 seconds
+            intervalId = window.setInterval(tick, 15000);
+
+            return () => {
+                if (intervalId != null) {
+                    window.clearInterval(intervalId);
+                }
+            };
+        } catch (_) {
+            // Ignore errors
+        }
+    }, []);
     const isLego = mode === 'lego';
 
     // Animation state to coordinate enter/exit transitions
@@ -74,35 +141,100 @@ export default function LegoPreviewCard({
         };
     }, []);
 
-    const customizationOptions: LegoCategories = {
-        hair: [
-            {id: 6527258, name: "MINI WIG, NO. 98", imageUrl: "/hair-1.png"},
-            {id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/hair-2.png"},
-            {id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/hair-3.png"}
-        ],
-        head: [
-            {id: 1, name: "Happy Face", imageUrl: "/head-1.png"},
-            {id: 2, name: "Serious Face", imageUrl: "/head-2.png"},
-            {id: 3, name: "Smiling Face", imageUrl: "/head-3.png"}
-        ],
-        body: [
-            {id: 1, name: "Casual Shirt", imageUrl: "/body-1.png"},
-            {id: 2, name: "Formal Suit", imageUrl: "/body-2.png"},
-            {id: 3, name: "T-Shirt", imageUrl: "/body-3.png"}
-        ],
-        pants: [
-            {id: 1, name: "Blue Jeans", imageUrl: "/pants-1.png"},
-            {id: 2, name: "Black Pants", imageUrl: "/pants-2.png"},
-            {id: 3, name: "Shorts", imageUrl: "/pants-3.png"}
-        ]
-    };
+    // Static defaults (used when no guest group context exists)
+    const defaultOptions: LegoCategories = useMemo(() => {
+        return {
+            hair: [
+                {id: 6527258, name: "MINI WIG, NO. 98", imageUrl: "/hair-1.png"},
+                {id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/hair-2.png"},
+                {id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/hair-3.png"}
+            ],
+            head: [
+                {id: 1, name: "Happy Face", imageUrl: "/head-1.png"},
+                {id: 2, name: "Serious Face", imageUrl: "/head-2.png"},
+                {id: 3, name: "Smiling Face", imageUrl: "/head-3.png"}
+            ],
+            body: [
+                {id: 1, name: "Casual Shirt", imageUrl: "/body-1.png"},
+                {id: 2, name: "Formal Suit", imageUrl: "/body-2.png"},
+                {id: 3, name: "T-Shirt", imageUrl: "/body-3.png"}
+            ],
+            pants: [
+                {id: 1, name: "Blue Jeans", imageUrl: "/pants-1.png"},
+                {id: 2, name: "Black Pants", imageUrl: "/pants-2.png"},
+                {id: 3, name: "Shorts", imageUrl: "/pants-3.png"}
+            ]
+        }
+    }, []);
+
+    // Build options from guestGroupDetails (first reference person) when available
+    const customizationOptions: LegoCategories = useMemo(() => {
+        const placeholderName = locale === 'es' ? 'Cargando…' : 'Loading…';
+        const placeholderUrl = '/piece-2.svg'; // generic shadow/placeholder already in public
+
+        const buildFromMatches = (matches: any | undefined | null) => {
+            const getItems = (arr: any[] | undefined | null) => {
+                if (!arr || !Array.isArray(arr) || arr.length === 0) return [{
+                    id: 0,
+                    name: placeholderName,
+                    imageUrl: placeholderUrl
+                }];
+                return arr.map((p: any, idx: number) => {
+                    const idNum = Number(p?.storePieceId) || Number(p?.id) || idx + 1;
+                    const image = p?.storeImage || (Array.isArray(p?.storeImages) && p.storeImages[0]) || placeholderUrl;
+                    return {
+                        id: idNum,
+                        name: String(p?.name || `Piece ${idx + 1}`),
+                        imageUrl: String(image)
+                    } as LegoItem;
+                });
+            };
+
+            // When status is not done or matches missing, use single placeholder
+            const byCat = (key: string) => {
+                const cat = matches?.[key];
+                if (!cat || cat.status !== 'done') return [{id: 0, name: placeholderName, imageUrl: placeholderUrl}];
+                return getItems(cat.matchedPieceIds);
+            };
+
+            return {
+                hair: byCat('wig'),
+                head: byCat('head'),
+                body: byCat('upperPart'),
+                pants: byCat('lowerPart')
+            } as LegoCategories;
+        };
+
+        try {
+            const rp = (guestGroupDetails?.referencePeople && guestGroupDetails.referencePeople[0]) || null;
+            if (rp && rp.matches) {
+                console.log('Building customization options from matches:', rp.matches);
+                return buildFromMatches(rp.matches);
+            }
+        } catch (_) {
+            // ignore
+        }
+        return defaultOptions;
+    }, [locale, guestGroupDetails?.referencePeople, defaultOptions]);
 
     const [selectedItems, setSelectedItems] = useState<{ [key: string]: number }>({
-        hair: 1,
-        head: 1,
-        body: 1,
-        pants: 1
+        hair: (defaultOptions.hair[0]?.id ?? 1),
+        head: (defaultOptions.head[0]?.id ?? 1),
+        body: (defaultOptions.body[0]?.id ?? 1),
+        pants: (defaultOptions.pants[0]?.id ?? 1)
     });
+
+    // When options list changes (e.g., after fetching guest group), ensure selected items exist
+    useEffect(() => {
+        if (customizationOptions) {
+            setSelectedItems({
+                hair: customizationOptions.hair[0]?.id ?? 1,
+                head: customizationOptions.head[0]?.id ?? 1,
+                body: customizationOptions.body[0]?.id ?? 1,
+                pants: customizationOptions.pants[0]?.id ?? 1,
+            });
+        }
+    }, [customizationOptions]);
 
     // Track per-category animations for option changes
     const [catAnim, setCatAnim] = useState<{
@@ -164,6 +296,128 @@ export default function LegoPreviewCard({
 
     const orderedCats: (keyof LegoCategories)[] = ['hair', 'head', 'body', 'pants'];
 
+    // Helpers for actions (download JSON, share)
+    const normalizeId = (p: any): string | null => {
+        if (!p) return null;
+        if (typeof p === 'string' || typeof p === 'number') return String(p);
+        const id = p.storePieceId || p.elementId || p.id || p._id || p.pieceId;
+        return id ? String(id) : null;
+    };
+
+    const handleDownloadJson = useCallback(() => {
+        try {
+            const rp = (guestGroupDetails as any)?.referencePeople?.[0];
+            const matches = rp?.matches || {};
+            const byKey: Array<{ ui: keyof LegoCategories; key: string }> = [
+                {ui: 'hair', key: 'wig'},
+                {ui: 'head', key: 'head'},
+                {ui: 'body', key: 'upperPart'},
+                {ui: 'pants', key: 'lowerPart'}
+            ];
+            const elementIds: string[] = [];
+            byKey.forEach(({ui, key}) => {
+                const m = matches?.[key];
+                const arr = Array.isArray(m?.matchedPieceIds) ? m.matchedPieceIds : [];
+                const selId = selectedItems[ui] != null ? String(selectedItems[ui]) : null;
+                if (selId) {
+                    const found = arr.find((p: any) => normalizeId(p) === selId);
+                    const elementId = found?.storePieceId || found?.elementId || selId;
+                    if (elementId) elementIds.push(String(elementId));
+                }
+            });
+            if (elementIds.length === 0) {
+                toast.info(locale === 'es' ? 'No hay piezas seleccionadas para descargar.' : 'No pieces selected to download.');
+                return;
+            }
+            const payload = elementIds.map(eid => ({elementId: eid, quantity: 1}));
+            const json = JSON.stringify(payload, null, 2);
+            const blob = new Blob([json], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeName = (rp?.name || 'pieces').toString().trim().replace(/\s+/g, '-');
+            a.href = url;
+            a.download = `${safeName}-pieces.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 0);
+        } catch (e) {
+            toast.error(locale === 'es' ? 'No se pudo generar el JSON de piezas.' : 'Failed to generate pieces JSON.');
+        }
+    }, [guestGroupDetails, selectedItems, locale]);
+
+    const [shareLoading, setShareLoading] = useState(false);
+    const handleShare = useCallback(async () => {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const groupId = params.get('groupId');
+            const rp = (guestGroupDetails as any)?.referencePeople?.[0];
+            if (!groupId || !rp) {
+                toast.error(locale === 'es' ? 'Falta información del grupo o persona.' : 'Missing group or person info.');
+                return;
+            }
+
+            // If share already present, just copy link
+            const currentGroupShareId = (guestGroupDetails as any)?.share?.id;
+            const currentPersonShareId = (rp?.share && rp.share.id) || null;
+            let groupShareId = currentGroupShareId;
+            let personShareId = currentPersonShareId;
+
+            if (!groupShareId || !personShareId) {
+                if (shareLoading) return;
+                setShareLoading(true);
+                try {
+                    const res = await enableMemberShare(groupId, rp.id);
+                    groupShareId = res.groupShareId;
+                    personShareId = res.personShareId;
+                    // Mutate local state to reflect sharing enabled
+                    setGuestGroupDetails((prev: any) => {
+                        const base = prev || {};
+                        const next = {...base};
+                        next.share = {...(next.share || {}), id: groupShareId};
+                        if (Array.isArray(next.referencePeople)) {
+                            next.referencePeople = next.referencePeople.map((p: any, idx: number) => {
+                                if (idx === 0 && String(p.id) === String(rp.id)) {
+                                    return {
+                                        ...p,
+                                        share: {...(p.share || {}), enabled: true, id: personShareId}
+                                    };
+                                }
+                                return p;
+                            });
+                        }
+                        return next;
+                    });
+                } catch (e) {
+                    toast.error(locale === 'es' ? 'No se pudo activar el enlace para compartir.' : 'Failed to enable share link.');
+                    setShareLoading(false);
+                    return;
+                }
+                setShareLoading(false);
+            }
+
+            const origin = window.location.origin;
+            const shareUrl = `${origin}/share?g=${encodeURIComponent(groupShareId!)}&m=${encodeURIComponent(personShareId!)}`;
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                toast.success(locale === 'es' ? 'Enlace copiado al portapapeles' : 'Link copied to clipboard');
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = shareUrl;
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    toast.success(locale === 'es' ? 'Enlace copiado al portapapeles' : 'Link copied to clipboard');
+                } finally {
+                    document.body.removeChild(ta);
+                }
+            }
+        } catch (e) {
+            toast.error(locale === 'es' ? 'No se pudo compartir.' : 'Failed to share.');
+        }
+    }, [guestGroupDetails, locale, shareLoading]);
+
     return (
         <div className="w-full h-auto md:w-[910px] md:h-[635px] relative">
 
@@ -220,7 +474,7 @@ export default function LegoPreviewCard({
                                         <span
                                             className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#3C204E] text-white select-none">Foto</span>
                                             <img
-                                                src={personSrc}
+                                                src={personOverrideSrc || personSrc}
                                                 alt={altPerson}
                                                 className="absolute inset-0 size-full object-cover select-none"
                                                 loading="lazy"
@@ -244,7 +498,7 @@ export default function LegoPreviewCard({
                                     return <div
                                         key={index}
                                         className="w-full flex gap-[6px] items-center justify-center">
-                                        {items.map((item) => {
+                                        {items.map((item: any) => {
                                             const isSelected = selectedItems[category] === item.id;
                                             return (
                                                 <button
@@ -306,6 +560,31 @@ export default function LegoPreviewCard({
                     );
                 })}
             </div>
+
+            {/* Acciones (Descargar / Compartir) cuando hay piezas generadas para el primer miembro,
+                siguiendo la lógica de GroupedReferenceList (matches[part].status === 'done' y hay elementos). */}
+            {(() => {
+                const rp = (guestGroupDetails as any)?.referencePeople?.[0];
+                if (!rp || !rp.matches) return null;
+                const matches = rp.matches as Record<string, any>;
+                const hasGeneratedPieces = Object.keys(matches).some((k) => {
+                    const m = matches[k];
+                    const partStatus = String(m?.status || '').toLowerCase();
+                    const arr = Array.isArray(m?.matchedPieceIds) ? m.matchedPieceIds : [];
+                    return partStatus === 'done' && arr.length > 0;
+                });
+                if (!hasGeneratedPieces) return null;
+                return (
+                    <div className="mt-3 flex items-center gap-2 justify-end">
+                        <Button variant="secondary" onClick={handleDownloadJson}>
+                            {locale === 'es' ? 'Descargar JSON' : 'Download JSON'}
+                        </Button>
+                        <Button onClick={handleShare} disabled={shareLoading}>
+                            {shareLoading ? (locale === 'es' ? 'Activando…' : 'Enabling…') : (locale === 'es' ? 'Compartir' : 'Share')}
+                        </Button>
+                    </div>
+                );
+            })()}
 
         </div>
     );

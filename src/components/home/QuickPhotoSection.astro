@@ -1,5 +1,6 @@
 ---
 import type {SupportedLocale} from "@/lib/locale";
+import {API_URL} from "@/config";
 
 interface Props {
     locale: SupportedLocale
@@ -21,7 +22,7 @@ const copies = {
         formName: "Nombre",
         formEmail: "Email",
         formOpt2: "Acepto la política de privacidad",
-        btn: "Continuar"
+        btn: "Continuar al pago €2.99"
     },
     en: {
         badge: "FAST PURCHASE · 1 PHOTO",
@@ -37,7 +38,7 @@ const copies = {
         formName: "Name",
         formEmail: "Email",
         formOpt2: "I accept the privacy policy",
-        btn: "Continue"
+        btn: "Continue to payment €2.99"
     }
 } as const;
 const t = copies[locale];
@@ -123,7 +124,7 @@ const t = copies[locale];
     }
 </style>
 
-<section class="relative w-full py-8 md:py-12">
+<section id="quick-photo" class="relative w-full py-8 md:py-12">
     <div class="container mx-auto px-4 md:px-6">
         <div class="quick-photo-card rounded-2xl border border-[#E8C79E] p-6 md:p-8">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-stretch">
@@ -171,7 +172,7 @@ const t = copies[locale];
                                 </a>
                             </label>
                         </div>
-                        <button type="button"
+                        <button id="qp-btn" type="button"
                                 class="inline-flex items-center justify-center rounded-full bg-black text-white px-5 py-3 text-sm">{t.btn}</button>
                     </form>
                 </div>
@@ -197,7 +198,7 @@ const t = copies[locale];
         </div>
     </div>
 
-    <script type="module" define:vars={{locale}}>
+    <script type="module" define:vars={{locale, API_URL}}>
         function initQuickPhotoSection() {
             const drop = document.getElementById('qp-drop');
             if (!drop) return;
@@ -209,6 +210,10 @@ const t = copies[locale];
             const preview = document.getElementById('qp-preview');
             const form = document.getElementById('qp-form');
             const instructions = document.getElementById('qp-instructions');
+            const btn = document.getElementById('qp-btn');
+            const nameInput = document.getElementById('qp-name');
+            const emailInput = document.getElementById('qp-email');
+            const privacyCheck = document.getElementById('qp-opt2');
 
             // Error banner (created dynamically below)
             let errorBanner = null;
@@ -269,10 +274,37 @@ const t = copies[locale];
                 drop.style.minHeight = '340px';
                 // Hide the instruction copy once an image is selected
                 if (instructions) instructions.classList.add('hidden');
+                // Hide the info box when image is selected
+                const infoBox = document.querySelector('.info-box');
+                if (infoBox) infoBox.classList.add('hidden');
                 // Reveal the form on the left
                 if (form) form.classList.remove('hidden');
                 // Mark state for hover overlay
                 setHasImageState(true);
+            };
+
+            // Helpers
+            const isValidEmail = (email) => {
+                if (!email || typeof email !== 'string') return false;
+                if (email.length > 200) return false;
+                return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(email);
+            };
+
+            const isValidName = (name) => {
+                return typeof name === 'string' && name.trim().length >= 1 && name.trim().length <= 100;
+            };
+
+            const setBtnLoading = (loading) => {
+                if (!btn) return;
+                btn.disabled = !!loading;
+                btn.style.opacity = loading ? '0.7' : '1';
+                if (loading) {
+                    btn.dataset.prevText = btn.textContent || '';
+                    btn.textContent = localeStr === 'es' ? 'Cargando…' : 'Loading…';
+                } else if (btn.dataset.prevText) {
+                    btn.textContent = btn.dataset.prevText;
+                    delete btn.dataset.prevText;
+                }
             };
 
             const handleFile = async (file) => {
@@ -340,6 +372,90 @@ const t = copies[locale];
                     if (f) handleFile(f);
                 });
             }
+
+            // Submit handler: create guest order
+            if (btn) {
+                // Preserve original copy for later restores
+                if (!btn.dataset.baseLabel) btn.dataset.baseLabel = btn.textContent || '';
+
+                btn.addEventListener('click', async () => {
+                    hideError();
+                    const name = (nameInput && nameInput.value) ? nameInput.value : '';
+                    const email = (emailInput && emailInput.value) ? emailInput.value : '';
+                    const accepted = !!(privacyCheck && privacyCheck.checked);
+
+                    if (!hasImage() || !preview || !preview.src) {
+                        showError(localeStr === 'es' ? 'Primero sube una imagen válida.' : 'Please upload an image first.');
+                        return;
+                    }
+                    if (!isValidName(name)) {
+                        showError(localeStr === 'es' ? 'Introduce un nombre válido (1–100 caracteres).' : 'Enter a valid name (1–100 characters).');
+                        return;
+                    }
+                    if (!isValidEmail(email)) {
+                        showError(localeStr === 'es' ? 'Introduce un email válido (máx. 200 caracteres).' : 'Enter a valid email (max 200 chars).');
+                        return;
+                    }
+                    if (!accepted) {
+                        showError(localeStr === 'es' ? 'Debes aceptar la política de privacidad.' : 'You must accept the privacy policy.');
+                        return;
+                    }
+
+                    // Build body strictly with allowed props
+                    const body = {
+                        name: name.trim(),
+                        email: email.trim(),
+                        imageBase64: preview.src, // data URL acceptable by backend
+                        lang: localeStr
+                        // amount, currency: opcionales, omitimos para defaults del servidor
+                    };
+
+                    try {
+                        setBtnLoading(true);
+                        const resp = await fetch(`${API_URL}/public/guest-order`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(body)
+                        });
+                        if (!resp.ok) {
+                            // Try to parse error message
+                            let msg = localeStr === 'es' ? 'No se pudo crear el pedido. Revisa los datos e inténtalo de nuevo.' : 'Could not create order. Please check your data and try again.';
+                            try {
+                                const err = await resp.json();
+                                if (err && (err.message || err.error)) msg = String(err.message || err.error);
+                            } catch (_) {
+                            }
+                            throw new Error(msg);
+                        }
+                        const json = await resp.json();
+                        const data = json && (json.data || json);
+                        const clientSecret = data?.clientSecret;
+                        const sessionId = data?.sessionId;
+                        const groupId = data?.groupId;
+                        if (!clientSecret || !groupId) {
+                            throw new Error(localeStr === 'es' ? 'Respuesta inválida del servidor.' : 'Invalid server response.');
+                        }
+                        // Persist for checkout page consumption
+                        try {
+                            sessionStorage.setItem('guestCheckout', JSON.stringify({
+                                clientSecret,
+                                sessionId,
+                                groupId,
+                                ts: Date.now()
+                            }));
+                        } catch (_) {
+                        }
+                        // Redirect to localized checkout
+                        const target = `/${localeStr}/checkout?groupId=${encodeURIComponent(groupId)}`;
+                        window.location.href = target;
+                    } catch (err) {
+                        const msg = (err && err.message) ? err.message : (localeStr === 'es' ? 'Ha ocurrido un error inesperado.' : 'An unexpected error occurred.');
+                        showError(msg);
+                    } finally {
+                        setBtnLoading(false);
+                    }
+                });
+            }
         }
 
         // Initialize on first load and on Astro client transitions
@@ -350,5 +466,14 @@ const t = copies[locale];
         }
         window.addEventListener('astro:page-load', initQuickPhotoSection);
         window.addEventListener('astro:after-swap', initQuickPhotoSection);
+        // When Astro is about to swap the page, clear init flag so the new DOM can re-init cleanly
+        window.addEventListener('astro:before-swap', () => {
+            const drop = document.getElementById('qp-drop');
+            if (drop && drop.dataset) {
+                delete drop.dataset.inited;
+            }
+        });
+        // Ensure re-initialization when returning with browser back/forward
+        window.addEventListener('pageshow', () => initQuickPhotoSection());
     </script>
 </section>

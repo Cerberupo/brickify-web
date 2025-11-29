@@ -67,9 +67,9 @@ export type EmbeddedSessionDetails = {
     }>;
 };
 
-export async function getEmbeddedSessionStatus(sessionId: string): Promise<EmbeddedSessionDetails> {
+export async function getEmbeddedSessionStatus(sessionId: string, guestKey?: string | null): Promise<EmbeddedSessionDetails> {
     const payload = await fetchApi<{ status: string; data: EmbeddedSessionDetails }>(
-        `/payments/embedded/session-status?session_id=${encodeURIComponent(sessionId)}`,
+        `/payments/embedded/session-status?session_id=${encodeURIComponent(sessionId)}${guestKey ? `&guest_key=${encodeURIComponent(guestKey)}` : ''}`,
         {method: 'GET'}
     );
     const data = payload?.data as EmbeddedSessionDetails;

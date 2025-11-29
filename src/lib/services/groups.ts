@@ -59,11 +59,17 @@ export async function getGroups(): Promise<Group[]> {
 /**
  * Gets a group by ID
  * @param id - The ID of the group to get
+ * @param params
  * @returns A promise that resolves to the group
  */
-export async function getGroupById(id: string): Promise<Group> {
+export async function getGroupById(id: string, params?: { guestKey: string }): Promise<Group> {
     try {
-        const response = await fetchApi<{ group: Group }>(`/groups/${id}`, {
+        const urlParams = new URLSearchParams();
+        if (params?.guestKey) urlParams.append('guest_key', params.guestKey);
+
+        const url = `/groups/${id}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`;
+
+        const response = await fetchApi<{ group: Group }>(url, {
             method: 'GET',
         });
 
