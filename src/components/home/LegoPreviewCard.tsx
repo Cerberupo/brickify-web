@@ -3,8 +3,8 @@ import {cn} from "@/lib/utils";
 import {RotateCcw} from "lucide-react";
 import {getGroupById} from "@/lib";
 import {Button} from '@/components/ui/button';
+import ShareActions from '@/components/common/ShareActions';
 import {toast} from 'sonner';
-import {enableMemberShare} from '@/lib/services/groups';
 
 
 interface GuestGroupData {
@@ -346,77 +346,7 @@ export default function LegoPreviewCard({
         }
     }, [guestGroupDetails, selectedItems, locale]);
 
-    const [shareLoading, setShareLoading] = useState(false);
-    const handleShare = useCallback(async () => {
-        try {
-            const params = new URLSearchParams(window.location.search);
-            const groupId = params.get('groupId');
-            const rp = (guestGroupDetails as any)?.referencePeople?.[0];
-            if (!groupId || !rp) {
-                toast.error(locale === 'es' ? 'Falta información del grupo o persona.' : 'Missing group or person info.');
-                return;
-            }
-
-            // If share already present, just copy link
-            const currentGroupShareId = (guestGroupDetails as any)?.share?.id;
-            const currentPersonShareId = (rp?.share && rp.share.id) || null;
-            let groupShareId = currentGroupShareId;
-            let personShareId = currentPersonShareId;
-
-            if (!groupShareId || !personShareId) {
-                if (shareLoading) return;
-                setShareLoading(true);
-                try {
-                    const res = await enableMemberShare(groupId, rp.id);
-                    groupShareId = res.groupShareId;
-                    personShareId = res.personShareId;
-                    // Mutate local state to reflect sharing enabled
-                    setGuestGroupDetails((prev: any) => {
-                        const base = prev || {};
-                        const next = {...base};
-                        next.share = {...(next.share || {}), id: groupShareId};
-                        if (Array.isArray(next.referencePeople)) {
-                            next.referencePeople = next.referencePeople.map((p: any, idx: number) => {
-                                if (idx === 0 && String(p.id) === String(rp.id)) {
-                                    return {
-                                        ...p,
-                                        share: {...(p.share || {}), enabled: true, id: personShareId}
-                                    };
-                                }
-                                return p;
-                            });
-                        }
-                        return next;
-                    });
-                } catch (e) {
-                    toast.error(locale === 'es' ? 'No se pudo activar el enlace para compartir.' : 'Failed to enable share link.');
-                    setShareLoading(false);
-                    return;
-                }
-                setShareLoading(false);
-            }
-
-            const origin = window.location.origin;
-            const shareUrl = `${origin}/share?g=${encodeURIComponent(groupShareId!)}&m=${encodeURIComponent(personShareId!)}`;
-            try {
-                await navigator.clipboard.writeText(shareUrl);
-                toast.success(locale === 'es' ? 'Enlace copiado al portapapeles' : 'Link copied to clipboard');
-            } catch {
-                const ta = document.createElement('textarea');
-                ta.value = shareUrl;
-                document.body.appendChild(ta);
-                ta.select();
-                try {
-                    document.execCommand('copy');
-                    toast.success(locale === 'es' ? 'Enlace copiado al portapapeles' : 'Link copied to clipboard');
-                } finally {
-                    document.body.removeChild(ta);
-                }
-            }
-        } catch (e) {
-            toast.error(locale === 'es' ? 'No se pudo compartir.' : 'Failed to share.');
-        }
-    }, [guestGroupDetails, locale, shareLoading]);
+    // Share state and handlers have been extracted to ShareActions component
 
     return (
         <div className="w-full h-auto md:w-[910px] md:h-[635px] relative">
@@ -575,13 +505,30 @@ export default function LegoPreviewCard({
                 });
                 if (!hasGeneratedPieces) return null;
                 return (
-                    <div className="mt-3 flex items-center gap-2 justify-end">
+                    <div className="mt-3 flex items-center gap-3 justify-end">
                         <Button variant="secondary" onClick={handleDownloadJson}>
                             {locale === 'es' ? 'Descargar JSON' : 'Download JSON'}
                         </Button>
-                        <Button onClick={handleShare} disabled={shareLoading}>
-                            {shareLoading ? (locale === 'es' ? 'Activando…' : 'Enabling…') : (locale === 'es' ? 'Compartir' : 'Share')}
-                        </Button>
+                        {(() => {
+                            const params = new URLSearchParams(window.location.search);
+                            const groupId = params.get('groupId') || '';
+                            const guestKey = params.get('guest_key');
+                            const rpId = rp?.id as string | undefined;
+                            const groupShareId = (guestGroupDetails as any)?.share?.id as string | undefined;
+                            const personShareId = rp?.share?.id as string | undefined;
+                            if (!groupId || !rpId) return null;
+                            return (
+                                <ShareActions
+                                    groupId={groupId}
+                                    personId={rpId}
+                                    groupShareId={groupShareId}
+                                    personShareId={personShareId}
+                                    initialEnabled={Boolean(rp?.share?.enabled)}
+                                    locale={locale}
+                                    guestKey={guestKey}
+                                />
+                            );
+                        })()}
                     </div>
                 );
             })()}

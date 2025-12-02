@@ -46,18 +46,18 @@ const t = copies[locale];
 <style is:global>
     @reference "../../styles/global.css";
     .quick-photo-card {
-        background: #F7F3EE;
+        background: #FFEFCD;
     }
 
     .dropzone {
         position: relative;
-        border: 3px dashed #B9AFA3;
+        border: 3px dashed #cbbda2;
         border-radius: 20px;
         min-height: 340px;
         display: grid;
         place-items: center;
         color: #2b2b2b;
-        background: #F7F3EE;
+        background: #FFEFCD;
         transition: transform 150ms ease, box-shadow 150ms ease;
     }
 
@@ -126,15 +126,15 @@ const t = copies[locale];
 
 <section id="quick-photo" class="relative w-full py-8 md:py-12">
     <div class="container mx-auto px-4 md:px-6">
-        <div class="quick-photo-card rounded-2xl border border-[#E8C79E] p-6 md:p-8">
+        <div class="quick-photo-card rounded-2xl p-6 md:p-8">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-stretch">
                 <!-- Copy + form column -->
                 <div class="md:col-span-5 flex flex-col">
-                    <div class="text-sm font-medium text-neutral-700 mb-2">{t.badge}</div>
+                    <div class="text-sm font-medium mb-2">{t.badge}</div>
                     <h3 class="text-[28px] leading-tight font-semibold mb-2">
                         <span>{t.titleStrong}</span><span class="font-normal">{t.titleRest}</span>
                     </h3>
-                    <p class="text-neutral-700 text-sm mb-5">{t.desc}</p>
+                    <p class="text-sm mb-5">{t.desc}</p>
 
                     <!-- Info note -->
                     <div class="info-box p-4 mb-6 text-sm text-neutral-800">

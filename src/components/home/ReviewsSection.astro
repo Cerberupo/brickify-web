@@ -4,10 +4,10 @@ import type {SupportedLocale} from "@/lib/locale";
 interface Review {
     id: number;
     name: string;
-    monthsAgo: number;
     title: string;
     text: string;
     rating: number;
+    images?: string[];
 }
 
 interface Props {
@@ -20,151 +20,87 @@ const {locale, reviews} = Astro.props as Props;
 const defaultReviews: Record<SupportedLocale, Review[]> = {
     es: [
         {
-            id: 1,
-            name: 'Lucía G.',
-            monthsAgo: 1,
-            title: 'Regalo de bodas perfecto',
-            text: 'Pedí una minifig para regalar en una boda y quedó increíble. Capturaron el peinado y la ropa tal cual. Llegó con todos los códigos de piezas.',
-            rating: 5
-        },
-        {
             id: 2,
             name: 'Carlos M.',
-            monthsAgo: 2,
             title: 'Cumpleaños memorable',
-            text: 'Lo usé para el cumpleaños de mi sobrino. La IA acertó muchísimo con los colores y accesorios. Se divirtió montándola.',
-            rating: 4
+            text: 'Lo utilicé para hacerle un regalo a mi mujer por su cumpleaños. Es una gran fan de LEGO y fue un acierto absoluto. La IA lo clavó todo xD y a ella le encantó. Sin duda, es un detalle original y personal. Repetiré sin dudar.',
+            rating: 5,
+            images: ['/reviews/birthday/birthday1.png', '/reviews/birthday/birthday2.png']
         },
         {
             id: 3,
             name: 'Elena R.',
-            monthsAgo: 3,
-            title: 'Equipo de trabajo en LEGO',
-            text: 'Convertimos a todo el equipo en minifigs. Fue un éxito en la oficina y ahora están en nuestras mesas.',
-            rating: 5
+            title: 'Regalo de empresa',
+            text: 'Convertimos a un compañero de trabajo en minifig para felicitarlo por su ascenso. La sorpresa encantó a todo el equipo y a él le hizo muchísima ilusión. La verdad, fue todo un acierto.',
+            rating: 4,
+            images: ['/reviews/job/job1.png']
         },
         {
             id: 4,
             name: 'Sergio P.',
-            monthsAgo: 4,
             title: 'Detalle de aniversario',
             text: 'La figura quedó clavadísima. Repetiré para otros regalos. El proceso fue súper sencillo.',
-            rating: 4
+            rating: 4,
+            images: ['/reviews/aniversary/aniversary1.png']
+        },
+        {
+            id: 1,
+            name: 'Lucía G.',
+            title: 'Regalo de bodas perfecto',
+            text: 'Pedí 50 minifiguras para mi boda y quedaron espectaculares. A los invitados les encantaron y semanas después seguían comentándolo. Me fascinó lo bien que reprodujeron a cada persona y poder ver la figura terminada con sus referencias.',
+            rating: 5,
+            images: ['/reviews/wedding/wedding1.png', '/reviews/wedding/wedding2.png', '/reviews/wedding/wedding3.png']
         },
         {
             id: 5,
             name: 'María L.',
-            monthsAgo: 5,
             title: 'Rápido y divertido',
             text: 'Subí una foto, elegí un par de opciones y listo. En minutos tenía las piezas recomendadas. ¡Muy top!',
-            rating: 5
-        },
-        {
-            id: 6,
-            name: 'Javi T.',
-            monthsAgo: 6,
-            title: 'Para coleccionistas',
-            text: 'Si te gusta LEGO, esto es obligatorio. Las referencias oficiales facilitan pedir las piezas exactas.',
-            rating: 5
-        },
-        {
-            id: 7,
-            name: 'Ana S.',
-            monthsAgo: 7,
-            title: 'Regalo original',
-            text: 'Nunca había hecho un regalo tan personalizado. Les pasé detalles y lo reflejaron perfecto.',
-            rating: 4
-        },
-        {
-            id: 8,
-            name: 'Raúl C.',
-            monthsAgo: 8,
-            title: 'Parecido sorprendente',
-            text: 'El resultado se parecía muchísimo a la foto. Incluso el peinado y la barba.',
-            rating: 5
-        },
-        {
-            id: 9,
-            name: 'Patricia V.',
-            monthsAgo: 9,
-            title: 'Para toda la familia',
-            text: 'Hicimos minifigs de los cuatro en casa. Los niños fliparon montándolos.',
-            rating: 5
-        },
+            rating: 4,
+            images: ['/reviews/funny/funny1.png']
+        }
     ],
     en: [
         {
-            id: 1,
-            name: 'Lucy G.',
-            monthsAgo: 1,
-            title: 'Perfect wedding gift',
-            text: 'I ordered a minifig as a wedding present and it turned out amazing. Hairstyle and outfit were spot on. Got all the part codes.',
-            rating: 5
-        },
-        {
             id: 2,
             name: 'Charles M.',
-            monthsAgo: 2,
             title: 'Memorable birthday',
-            text: 'Used it for my nephew’s birthday. The AI nailed the colors and accessories. He loved building it.',
-            rating: 4
+            text: 'I used it to make a birthday gift for my wife. She\'s a huge LEGO fan, and it was a total hit. The AI got everything right, and she loved it. It\'s definitely an original and personal gift. I\'ll definitely use it again.',
+            rating: 5,
+            images: ['/reviews/birthday/birthday1.png', '/reviews/birthday/birthday2.png']
         },
         {
             id: 3,
             name: 'Helen R.',
-            monthsAgo: 3,
-            title: 'Team in LEGO',
-            text: 'We turned our whole team into minifigs. Big hit at the office and now they sit on our desks.',
-            rating: 5
+            title: 'Corporate gift',
+            text: 'Convertimos a un compañero de trabajo en minifig para felicitarlo por su ascenso. La sorpresa encantó a todo el equipo y a él le hizo muchísima ilusión. La verdad, fue todo un acierto.',
+            rating: 4,
+            images: ['/reviews/job/job1.png']
         },
         {
             id: 4,
             name: 'Sergio P.',
-            monthsAgo: 4,
             title: 'Anniversary surprise',
             text: 'The figure looked just like the photo. I’ll use it again for other gifts. Super easy process.',
-            rating: 4
+            rating: 4,
+            images: ['/reviews/aniversary/aniversary1.png']
+        },
+        {
+            id: 1,
+            name: 'Lucy G.',
+            title: 'Perfect wedding gift',
+            text: 'I ordered 50 minifigures for my wedding and they turned out spectacular. The guests loved them and weeks later they were still talking about them. I was fascinated by how well they reproduced each person and being able to see the finished figure with their references.',
+            rating: 5,
+            images: ['/reviews/wedding/wedding1.png', '/reviews/wedding/wedding2.png', '/reviews/wedding/wedding3.png']
         },
         {
             id: 5,
             name: 'Maria L.',
-            monthsAgo: 5,
             title: 'Fast and fun',
             text: 'Uploaded a photo, picked a couple options and done. In minutes I had the recommended parts. Loved it!',
-            rating: 5
-        },
-        {
-            id: 6,
-            name: 'Javier T.',
-            monthsAgo: 6,
-            title: 'For collectors',
-            text: 'If you like LEGO, this is a must. Official references make it easy to order the exact parts.',
-            rating: 5
-        },
-        {
-            id: 7,
-            name: 'Anna S.',
-            monthsAgo: 7,
-            title: 'Original gift',
-            text: 'Never made such a personalized present. I gave them some details and they matched them perfectly.',
-            rating: 4
-        },
-        {
-            id: 8,
-            name: 'Raul C.',
-            monthsAgo: 8,
-            title: 'Surprisingly accurate',
-            text: 'The result looked a lot like the photo, even the hairstyle and beard.',
-            rating: 5
-        },
-        {
-            id: 9,
-            name: 'Patty V.',
-            monthsAgo: 9,
-            title: 'For the whole family',
-            text: 'We made minifigs for the four of us. The kids loved building them.',
-            rating: 5
-        },
+            rating: 4,
+            images: ['/reviews/funny/funny1.png']
+        }
     ],
 };
 
@@ -286,16 +222,26 @@ const t = copies[locale];
         }
     }
 
+    /* Make slides flex-items and allow them to stretch to the same height */
     .reviews-swiper swiper-slide {
+        display: flex;
+        align-items: stretch;
         height: auto;
     }
 
+    /* Ensure the internal swiper container stretches its children (slides) */
+    swiper-container.reviews-swiper::part(container) {
+        align-items: stretch;
+    }
+
     .reviews-swiper swiper-slide > .review-card {
-        height: var(--review-card-h);
+        /* Make the card fill the available slide height */
+        flex: 1 1 auto;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         box-sizing: border-box;
+        height: auto;
     }
 
     .review-card header {
@@ -313,10 +259,9 @@ const t = copies[locale];
 
     .review-card p {
         flex: 1 1 auto;
-        display: -webkit-box;
-        -webkit-line-clamp: 5;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        /* Show full description; container height comes from flex layout */
+        display: block;
+        overflow: visible;
         margin-top: 0.5rem;
         line-height: 1.5;
         color: rgb(64 64 64);
@@ -360,10 +305,18 @@ const t = copies[locale];
                                 <h3 class="mt-4 font-semibold">{r.title}</h3>
                                 <p class="mt-2 text-sm leading-6 text-neutral-700">{r.text}</p>
 
-                                <div class="flex gap-3 mt-4">
-                                    <div class="size-12 rounded-md bg-neutral-300"/>
-                                    <div class="size-12 rounded-md bg-neutral-300"/>
-                                </div>
+                                {r.images && r.images.length > 0 ? (
+                                        <div class="flex gap-3 mt-4">
+                                            {r.images.map((img) => (
+                                                    <img
+                                                            src={img}
+                                                            alt={`Imagen reseña ${r.title}`}
+                                                            class="size-12 rounded-md bg-neutral-300 object-cover"
+                                                            loading="lazy"
+                                                    />
+                                            ))}
+                                        </div>
+                                ) : null}
                             </article>
                         </swiper-slide>
                 ))}
@@ -371,3 +324,90 @@ const t = copies[locale];
         </div>
     </div>
 </section>
+
+<script type="module">
+    // Equalize review cards height to the tallest card by setting --review-card-h on the container.
+    // Observa cambios (ResizeObserver, carga de imágenes, resize de ventana) y recalcula cuando sea necesario.
+    (function () {
+        const debounce = (fn, wait = 100) => {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), wait);
+            };
+        };
+
+        function init() {
+            const container = document.querySelector('.reviews-swiper');
+            if (!container) return;
+
+            const recalc = () => {
+                const cards = Array.from(container.querySelectorAll('.review-card'));
+                if (!cards.length) return;
+
+                // Reset explicit heights to measure natural height
+                cards.forEach((c) => {
+                    c.style.height = 'auto';
+                });
+
+                let max = 0;
+                cards.forEach((c) => {
+                    const rect = c.getBoundingClientRect();
+                    const h = Math.ceil(rect.height);
+                    if (h > max) max = h;
+                });
+
+                // Apply the max height as CSS variable and explicit height to cards
+                if (max > 0) {
+                    container.style.setProperty('--review-card-h', `${max}px`);
+                    cards.forEach((c) => {
+                        c.style.height = `${max}px`;
+                    });
+                }
+            };
+
+            const debouncedRecalc = debounce(recalc, 80);
+
+            // Observe size changes in cards
+            const cards = Array.from(container.querySelectorAll('.review-card'));
+            cards.forEach((c) => {
+                try {
+                    const ro = new ResizeObserver(debouncedRecalc);
+                    ro.observe(c);
+                } catch (e) {
+                    // ResizeObserver may not be available in some envs; fallback to window resize
+                }
+
+                // Recalc when images inside a card load
+                const imgs = Array.from(c.querySelectorAll('img'));
+                imgs.forEach((img) => {
+                    if (!img.complete) {
+                        img.addEventListener('load', debouncedRecalc, {once: true});
+                    }
+                });
+            });
+
+            // Listen for window resize
+            window.addEventListener('resize', debouncedRecalc);
+
+            // Some timings (fonts, web components) may change size after load:
+            // run a few recalculations with slight delays to stabilize layout.
+            setTimeout(recalc, 50);
+            setTimeout(recalc, 300);
+            setTimeout(recalc, 800);
+
+            // If using swiper web component events, listen for structure changes
+            const swiperEl = container.closest('swiper-container');
+            if (swiperEl) {
+                swiperEl.addEventListener('slideschanged', debouncedRecalc);
+                swiperEl.addEventListener('slidechange', debouncedRecalc);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>

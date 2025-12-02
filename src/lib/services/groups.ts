@@ -313,11 +313,11 @@ export async function setSelectedPiece(
 /**
  * Enable public sharing for a member of a group
  */
-export async function enableMemberShare(groupId: string, personId: string): Promise<{
+export async function enableMemberShare(groupId: string, personId: string, guestKey?: string): Promise<{
     groupShareId: string,
     personShareId: string
 }> {
-    const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/enable`;
+    const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/enable${guestKey ? `?guest_key=${encodeURIComponent(guestKey)}` : ''}`;
     const res = await fetchApi<{
         data: {
             referencePerson: { groupShareId: string, personShareId: string }
@@ -328,8 +328,9 @@ export async function enableMemberShare(groupId: string, personId: string): Prom
 
 /**
  * Disable public sharing for a member of a group
+ * Optionally forwards guestKey as query param when present (guest flow)
  */
-export async function disableMemberShare(groupId: string, personId: string): Promise<void> {
-    const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/disable`;
+export async function disableMemberShare(groupId: string, personId: string, guestKey?: string): Promise<void> {
+    const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/disable${guestKey ? `?guest_key=${encodeURIComponent(guestKey)}` : ''}`;
     await fetchApi(url, {method: 'POST'});
 }
