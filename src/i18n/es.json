@@ -283,7 +283,8 @@
     "disableSharing": "Desactivar compartir",
     "disabling": "Desactivando...",
     "enableError": "No se pudo activar el modo compartir. Inténtalo de nuevo.",
-    "disableError": "No se pudo desactivar el modo compartir. Inténtalo de nuevo."
+    "disableError": "No se pudo desactivar el modo compartir. Inténtalo de nuevo.",
+    "piecesOf": "Piezas de {{name}}"
   },
   "group": {
     "title": "Detalles del Grupo",

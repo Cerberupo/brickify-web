@@ -1,5 +1,6 @@
 ---
 import MainLayout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
 import PublicShareView from "@/components/pages/public/PublicShareView";
 import FooterSection from "@/components/home/FooterSection.astro";
 import type {SupportedLocale} from "@/lib/locale";
@@ -8,8 +9,9 @@ const locale: SupportedLocale = 'en';
 ---
 
 <MainLayout>
-    <div>
-        <PublicShareView client:load/>
+    <Header client:load/>
+    <PublicShareView client:load locale={locale} />
+    <div class="w-full -mt-10">
         <FooterSection locale={locale}/>
     </div>
 </MainLayout>

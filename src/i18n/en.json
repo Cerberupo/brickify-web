@@ -285,7 +285,8 @@
     "disableSharing": "Disable sharing",
     "disabling": "Disabling...",
     "enableError": "Could not enable sharing. Please try again.",
-    "disableError": "Could not disable sharing. Please try again."
+    "disableError": "Could not disable sharing. Please try again.",
+    "piecesOf": "Parts of {{name}}"
   },
   "group": {
     "title": "Group Details",

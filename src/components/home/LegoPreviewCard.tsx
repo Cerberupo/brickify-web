@@ -30,6 +30,20 @@ export interface LegoPreviewCardProps {
     altLego?: string;
     altPerson?: string;
     locale?: 'en' | 'es';
+    shared?: boolean;
+    /**
+     * Optional data for the person to render (equivalent to referencePeople[0]).
+     * If provided, the component will use this data (image) and will NOT perform
+     * the guest group polling/fetch. If not provided, the existing polling logic
+     * (based on URL params) will remain in place.
+     */
+    referencePerson?: {
+        imageSignedUrl?: string | null;
+        imagePath?: string | null;
+        avatar?: string | null;
+        name?: string | null;
+        [key: string]: any;
+    };
 }
 
 
@@ -42,13 +56,32 @@ export default function LegoPreviewCard({
                                             personSrc = "/user.png",
                                             altLego = "LEGO preview",
                                             altPerson = "Photo preview",
-                                            locale = 'en'
+                                            locale = 'en',
+                                            shared = false,
+                                            referencePerson
                                         }: LegoPreviewCardProps) {
     const [mode, setMode] = useState<'lego' | 'photo'>('lego');
     const [guestGroupDetails, setGuestGroupDetails] = useState<GuestGroupData | null>(null);
-    const [personOverrideSrc, setPersonOverrideSrc] = useState<string | null>(null);
+    const initialProvidedSrc = useMemo(() => {
+        const img = referencePerson?.imageSignedUrl || referencePerson?.imagePath || referencePerson?.avatar;
+        return (typeof img === 'string' && img.length > 0) ? img : null;
+    }, [referencePerson]);
+    const [personOverrideSrc, setPersonOverrideSrc] = useState<string | null>(initialProvidedSrc);
+
+    // Keep personOverrideSrc in sync with incoming referencePerson prop
+    useEffect(() => {
+        if (referencePerson) {
+            setPersonOverrideSrc(initialProvidedSrc);
+            setGuestGroupDetails({referencePeople: [referencePerson]})
+        } else {
+            // When referencePerson is removed, clear override so polling or default kicks in
+            setPersonOverrideSrc(null);
+        }
+    }, [referencePerson, initialProvidedSrc]);
 
     useEffect(() => {
+        // If a referencePerson is provided, we skip polling/fetching entirely
+        if (referencePerson) return;
         try {
             const params = new URLSearchParams(window.location.search);
             const groupId = params.get('groupId');
@@ -101,7 +134,7 @@ export default function LegoPreviewCard({
         } catch (_) {
             // Ignore errors
         }
-    }, []);
+    }, [referencePerson]);
     const isLego = mode === 'lego';
 
     // Animation state to coordinate enter/exit transitions
@@ -350,6 +383,12 @@ export default function LegoPreviewCard({
 
     return (
         <div className="w-full h-auto md:w-[910px] md:h-[635px] relative">
+            {!shared ? (
+                <img src="/piece-2.svg" alt="LEGO piece"
+                     className="md:block absolute w-[142px] h-[195px] md:w-[285px] md:h-[390px] -top-15 md:-top-28 right-0 select-none pointer-events-none"
+                     loading="lazy"/>
+            ) : null}
+
 
             <div
                 className="relative rounded-[16px] bg-white backdrop-blur-sm border w-full md:h-full  shadow-md overflow-visible z-20">
@@ -423,7 +462,8 @@ export default function LegoPreviewCard({
                         {/* Categories grid */}
                         <div
                             className="flex items-center justify-center h-full w-full bg-[#FAFAFA] rounded-[16px] md:rounded-r-[16px]">
-                            <div className="w-full flex flex-col items-center justify-center p-[16px] md:p-0 gap-[6px]">
+                            <div
+                                className="w-full flex flex-col items-center justify-center p-[16px] md:p-0 gap-[6px]">
                                 {Object.entries(customizationOptions).map(([category, items], index) => {
                                     return <div
                                         key={index}
@@ -468,7 +508,8 @@ export default function LegoPreviewCard({
                     const Badge = ({item, className}: { item: LegoItem, className?: string }) => (
                         <div
                             className={cn("relative pointer-events-auto select-none md:rounded-r-[8px] p-[6px] bg-white", className)}>
-                            <div className="text-[12px] leading-tight bg-[#FAFAFA] rounded-r-[8px] pl-[24px] p-[14px]">
+                            <div
+                                className="text-[12px] leading-tight bg-[#FAFAFA] rounded-r-[8px] pl-[24px] p-[14px]">
                                 <div className="text-[15px] whitespace-nowrap">{item.name}</div>
                                 <div className="text-[14px] whitespace-nowrap">ID:
                                     <span className="font-light">{item.id}</span>

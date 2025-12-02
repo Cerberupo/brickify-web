@@ -1,11 +1,13 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {getPublicSharedMember, type PublicSharedMember} from '@/lib/services/public';
-import {PROJECT_NAME} from '@/config';
+import LegoPreviewCard from '@/components/home/LegoPreviewCard';
+import {getPublicSharedMember, type PublicSharedMember} from "@/lib/services/public.ts";
+import {useTranslation} from "react-i18next";
 
-const faviconUrl: string = '/favicon.png';
+export type PublicShareViewProps = {
+    locale?: 'en' | 'es';
+};
 
-export function PublicShareView() {
+export function PublicShareView({locale = 'en'}: PublicShareViewProps) {
     const {t} = useTranslation();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -60,84 +62,22 @@ export function PublicShareView() {
         })();
     }, [params.groupShareId, params.memberShareId]);
 
-    const imageSrc = member?.imageSignedUrl || member?.imagePath || member?.avatar || faviconUrl;
-
     return (
-        <div className="container mx-auto max-w-3xl px-4 py-8">
-            <div className="rounded-lg border p-4 shadow-sm">
-                <div className="mb-4">
-                    <h1 className="text-2xl font-semibold">
-                        {t('publicShare.title', 'Perfil compartido')} · {PROJECT_NAME}
-                    </h1>
-                    <p className="text-sm text-gray-600">{t('publicShare.subtitle', 'Vista pública para compartir')}</p>
-                </div>
+        <section className="relative min-h-screen flex items-center justify-center">
+            <div className="absolute inset-0 -z-10 bg-[#F1EEFF]" aria-hidden="true"></div>
+            <div
+                className="container mx-auto px-4 md:px-6 pt-8 pb-16 md:pt-16 md:pb-24 relative flex flex-col items-center">
 
-                {loading && (
-                    <div className="text-gray-700">{t('publicShare.loading', 'Cargando...')}</div>
-                )}
+                {member ? <>
+                    <h2 id="how-title"
+                        className="text-3xl text-center md:text-[32px] font-medium tracking-tight mb-12 md:mb-8">
+                        {t('share.piecesOf', {name: member.name})}
+                    </h2>
+                    <LegoPreviewCard locale={locale} shared={true} referencePerson={member}/>
+                </> : null}
 
-                {!loading && error && (
-                    <div className="text-red-600">{error}</div>
-                )}
-
-                {!loading && !error && member && (
-                    <div className="flex flex-col gap-4">
-                        <div className="flex items-start gap-4">
-                            <img src={imageSrc as string} alt={member?.name || ''}
-                                 className="w-32 h-32 object-cover rounded border"/>
-                            <div className="min-w-0">
-                                <div
-                                    className="text-xl font-medium">{member?.name || t('publicShare.unknownName', 'Usuario')}</div>
-                                {member?.description && (
-                                    <p className="mt-1 whitespace-pre-wrap break-words text-gray-700">{member.description}</p>
-                                )}
-                                {(!member?.description && (member?.hairDescription || member?.faceDescription)) && (
-                                    <div className="mt-2 space-y-1 text-gray-700 text-sm">
-                                        {member?.hairDescription && (
-                                            <div><span
-                                                className="font-medium">{t('group.hairDescription')}:</span> {member.hairDescription}
-                                            </div>
-                                        )}
-                                        {member?.faceDescription && (
-                                            <div><span
-                                                className="font-medium">{t('group.faceDescription')}:</span> {member.faceDescription}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {member?.matches && typeof member.matches === 'object' && (
-                            <div className="mt-2">
-                                <div
-                                    className="font-semibold mb-2">{t('group.parts.matches', 'Piezas seleccionadas')}</div>
-                                <div className="grid grid-cols-1 gap-2 text-sm text-gray-700">
-                                    {Object.entries(member.matches).map(([part, data]) => (
-                                        <div key={part} className="rounded border p-2">
-                                            <div className="font-medium">{t(`group.parts.${part}`, part)}</div>
-                                            {typeof (data as any)?.selectedPiece === 'object' ? (
-                                                <div className="text-xs text-gray-600">
-                                                    {(data as any).selectedPiece?.name || (data as any).selectedPiece?.id || ''}
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Fallback: show raw data for debugging until backend shape is final */}
-                        <details className="mt-4">
-                            <summary
-                                className="cursor-pointer text-sm text-gray-500">{t('publicShare.debugData', 'Ver datos')}</summary>
-                            <pre
-                                className="mt-2 overflow-auto text-xs bg-gray-50 p-2 rounded border">{JSON.stringify(member, null, 2)}</pre>
-                        </details>
-                    </div>
-                )}
             </div>
-        </div>
+        </section>
     );
 }
 
