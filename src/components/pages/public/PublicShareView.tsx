@@ -68,13 +68,32 @@ export function PublicShareView({locale = 'en'}: PublicShareViewProps) {
             <div
                 className="container mx-auto px-4 md:px-6 pt-8 pb-16 md:pt-16 md:pb-24 relative flex flex-col items-center">
 
-                {member ? <>
-                    <h2 id="how-title"
-                        className="text-3xl text-center md:text-[32px] font-medium tracking-tight mb-12 md:mb-8">
-                        {t('share.piecesOf', {name: member.name})}
-                    </h2>
-                    <LegoPreviewCard locale={locale} shared={true} referencePerson={member}/>
-                </> : null}
+                {loading && (
+                    <div className="flex flex-col items-center gap-4 py-16" role="status" aria-live="polite">
+                        <div
+                            className="h-10 w-10 rounded-full border-4 border-[#7C6CFF]/30 border-t-[#7C6CFF] animate-spin"
+                            aria-label={t('publicShare.loading', 'Cargando...')}
+                        />
+                        <p className="text-gray-600">{t('publicShare.loading', 'Cargando...')}</p>
+                    </div>
+                )}
+
+                {!loading && error && (
+                    <div role="alert"
+                         className="w-full max-w-xl rounded-md border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+                        {error}
+                    </div>
+                )}
+
+                {!loading && !error && member ? (
+                    <>
+                        <h2 id="how-title"
+                            className="text-3xl text-center md:text-[32px] font-medium tracking-tight mb-12 md:mb-8">
+                            {t('share.piecesOf', {name: member.name})}
+                        </h2>
+                        <LegoPreviewCard locale={locale} shared={true} referencePerson={member}/>
+                    </>
+                ) : null}
 
             </div>
         </section>
