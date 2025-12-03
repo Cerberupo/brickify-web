@@ -383,13 +383,6 @@ export default function LegoPreviewCard({
 
     return (
         <div className="w-full h-auto md:w-[910px] md:h-[635px] relative">
-            {!shared ? (
-                <img src="/piece-2.svg" alt="LEGO piece"
-                     className="md:block absolute w-[142px] h-[195px] md:w-[285px] md:h-[390px] -top-15 md:-top-28 right-0 select-none pointer-events-none"
-                     loading="lazy"/>
-            ) : null}
-
-
             <div
                 className="relative rounded-[16px] bg-white backdrop-blur-sm border w-full md:h-full  shadow-md overflow-visible z-20">
                 {/* Floating round toggle button */}

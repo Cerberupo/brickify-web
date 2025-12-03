@@ -85,7 +85,7 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
 
 
     return (
-        <>
+        <div>
             <Toaster position="top-right"/>
             <Card
                 className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.01] hover:-translate-y-1"
@@ -157,6 +157,6 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
                 onConfirm={handleDeleteConfirm}
                 isDeleting={isDeleting}
             />
-        </>
+        </div>
     );
 }

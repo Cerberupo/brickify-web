@@ -1,85 +1,87 @@
 ---
-import type { SupportedLocale } from "@/lib/locale";
+import type {SupportedLocale} from "@/lib/locale";
 
-interface Props { locale: SupportedLocale }
-const { locale } = Astro.props as Props;
+interface Props {
+    locale: SupportedLocale
+}
+const {locale} = Astro.props as Props;
 
 const copies = {
-  es: {
-    heroTitle: "Aviso legal",
-    intro:
-      "Este sitio web es operado por Brickify. Al acceder y utilizar este sitio aceptas las presentes condiciones.",
-    sections: [
-      {
-        t: "Titular del sitio",
-        d:
-          "Brickify es un proyecto independiente. LEGO® y la minifigura son marcas registradas de The LEGO Group, con el que no tenemos relación de patrocinio, afiliación ni respaldo.",
-      },
-      {
-        t: "Propiedad intelectual",
-        d:
-          "Los contenidos, textos e imágenes propios publicados en este sitio pertenecen a sus respectivos titulares y no podrán reproducirse sin autorización. Las marcas de terceros mencionadas pertenecen a sus propietarios.",
-      },
-      {
-        t: "Uso del servicio",
-        d:
-          "No se permite utilizar el servicio para actividades ilícitas, difamatorias, que infrinjan derechos de terceros o vulneren la legislación vigente.",
-      },
-      {
-        t: "Contacto",
-        d:
-          "Para cualquier cuestión legal, puedes escribirnos a hello@brickify.me.",
-      },
-    ],
-  },
-  en: {
-    heroTitle: "Legal notice",
-    intro:
-      "This website is operated by Brickify. By accessing and using this site you agree to the following terms.",
-    sections: [
-      {
-        t: "Site owner",
-        d:
-          "Brickify is an independent project. LEGO® and the minifigure are trademarks of The LEGO Group, with whom we are not affiliated, sponsored or endorsed.",
-      },
-      {
-        t: "Intellectual property",
-        d:
-          "Content, texts and original images on this site belong to their respective owners and may not be reproduced without permission. Third‑party trademarks are the property of their respective owners.",
-      },
-      {
-        t: "Service use",
-        d:
-          "You must not use the service for unlawful, defamatory activities, to infringe third‑party rights or to violate any applicable law.",
-      },
-      {
-        t: "Contact",
-        d:
-          "For any legal inquiry, contact us at hello@brickify.me.",
-      },
-    ],
-  },
+    es: {
+        heroTitle: "Aviso legal",
+        intro:
+            "Este sitio web es operado por Brickify. Al acceder y utilizar este sitio aceptas las presentes condiciones.",
+        sections: [
+            {
+                t: "Titular del sitio",
+                d:
+                    "Brickify es un proyecto independiente. LEGO® y la minifigura son marcas registradas de The LEGO Group, con el que no tenemos relación de patrocinio, afiliación ni respaldo.",
+            },
+            {
+                t: "Propiedad intelectual",
+                d:
+                    "Los contenidos, textos e imágenes propios publicados en este sitio pertenecen a sus respectivos titulares y no podrán reproducirse sin autorización. Las marcas de terceros mencionadas pertenecen a sus propietarios.",
+            },
+            {
+                t: "Uso del servicio",
+                d:
+                    "No se permite utilizar el servicio para actividades ilícitas, difamatorias, que infrinjan derechos de terceros o vulneren la legislación vigente.",
+            },
+            {
+                t: "Contacto",
+                d:
+                    "Para cualquier cuestión legal, puedes escribirnos a contact@brickify.fun.",
+            },
+        ],
+    },
+    en: {
+        heroTitle: "Legal notice",
+        intro:
+            "This website is operated by Brickify. By accessing and using this site you agree to the following terms.",
+        sections: [
+            {
+                t: "Site owner",
+                d:
+                    "Brickify is an independent project. LEGO® and the minifigure are trademarks of The LEGO Group, with whom we are not affiliated, sponsored or endorsed.",
+            },
+            {
+                t: "Intellectual property",
+                d:
+                    "Content, texts and original images on this site belong to their respective owners and may not be reproduced without permission. Third‑party trademarks are the property of their respective owners.",
+            },
+            {
+                t: "Service use",
+                d:
+                    "You must not use the service for unlawful, defamatory activities, to infringe third‑party rights or to violate any applicable law.",
+            },
+            {
+                t: "Contact",
+                d:
+                    "For any legal inquiry, contact us at contact@brickify.fun.",
+            },
+        ],
+    },
 } as const;
 const t = copies[locale];
 ---
 <section class="relative w-full">
-  <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
-    <div class="flex items-center gap-4 mb-8 md:mb-10">
-      <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy" />
-      <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
-    </div>
+    <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div class="flex items-center gap-4 mb-8 md:mb-10">
+            <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy"/>
+            <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+        </div>
 
-    <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
-      <p class="text-neutral-700">{t.intro}</p>
-    </article>
-
-    <div class="grid grid-cols-1 gap-4 mt-6">
-      {t.sections.map((s) => (
         <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
-          <h2 class="text-lg font-semibold mb-2">{s.t}</h2>
-          <p class="text-neutral-700 leading-relaxed">{s.d}</p>
+            <p class="text-neutral-700">{t.intro}</p>
         </article>
-      ))}
+
+        <div class="grid grid-cols-1 gap-4 mt-6">
+            {t.sections.map((s) => (
+                    <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-2">{s.t}</h2>
+                        <p class="text-neutral-700 leading-relaxed">{s.d}</p>
+                    </article>
+            ))}
+        </div>
     </div>
-  </div>
 </section>

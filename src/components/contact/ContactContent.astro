@@ -12,7 +12,7 @@ const copies = {
         subtitle: "¿Tienes dudas, ideas o quieres colaborar? ¡Escríbenos!",
         infoTitle: "Información de contacto",
         emailLabel: "Correo",
-        emailValue: "hello@brickify.me",
+        emailValue: "contact@brickify.fun",
         formTitle: "Envíanos un mensaje",
         name: "Nombre",
         email: "Email",
@@ -31,7 +31,7 @@ const copies = {
         subtitle: "Questions, ideas or partnership? Drop us a line!",
         infoTitle: "Contact information",
         emailLabel: "Email",
-        emailValue: "hello@brickify.me",
+        emailValue: "contact@brickify.fun",
         formTitle: "Send us a message",
         name: "Name",
         email: "Email",
@@ -76,12 +76,15 @@ const t = copies[locale];
 
             <div class="md:col-span-8">
                 <!-- Success banner (hidden by default) -->
-                <div id="contact-success" class="hidden mb-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 p-4" role="status" aria-live="polite">
+                <div id="contact-success"
+                     class="hidden mb-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 p-4"
+                     role="status" aria-live="polite">
                     <div class="font-semibold">{t.successTitle}</div>
                     <div class="text-sm mt-1">{t.successDesc}</div>
                 </div>
                 <!-- Error banner (hidden by default) -->
-                <div id="contact-error" class="hidden mb-4 rounded-xl border border-red-300 bg-red-50 text-red-900 p-4" role="status" aria-live="assertive">
+                <div id="contact-error" class="hidden mb-4 rounded-xl border border-red-300 bg-red-50 text-red-900 p-4"
+                     role="status" aria-live="assertive">
                     <div class="font-semibold">{t.errorTitle}</div>
                     <div class="text-sm mt-1">{t.errorDesc}</div>
                 </div>
@@ -148,7 +151,7 @@ const t = copies[locale];
                     };
                     const res = await fetch('/contact', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(payload)
                     });
                     if (res.ok) {

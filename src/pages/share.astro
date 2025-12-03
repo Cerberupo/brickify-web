@@ -3,6 +3,7 @@ import MainLayout from "@/layouts/main.astro";
 import {Header} from "@/layouts/components/Header";
 import PublicShareView from "@/components/pages/public/PublicShareView";
 import FooterSection from "@/components/home/FooterSection.astro";
+import TryPieceCta from "@/components/common/TryPieceCta.astro";
 import {normalizeLocale} from "@/lib/locale";
 import type {SupportedLocale} from "@/lib/locale";
 
@@ -11,7 +12,10 @@ const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | 
 
 <MainLayout>
     <Header client:load/>
-    <PublicShareView client:load locale={locale} />
+    <PublicShareView client:load locale={locale}/>
+    <div class="container mx-auto px-4 md:px-6 mb-10 md:mb-14">
+        <TryPieceCta locale={locale}/>
+    </div>
     <div class="w-full -mt-10">
         <FooterSection locale={locale}/>
     </div>

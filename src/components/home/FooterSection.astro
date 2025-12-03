@@ -98,10 +98,30 @@ const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
                 <div class="md:col-span-3">
                     <h4 class="text-[18px] font-semibold mb-4">{t.follow}</h4>
                     <div class="flex items-center gap-6">
-                        <a href="#" aria-label="Instagram" class="social-dot"></a>
-                        <a href="#" aria-label="Twitter" class="social-dot"></a>
-                        <a href="#" aria-label="TikTok" class="social-dot"></a>
-                        <a href="#" aria-label="YouTube" class="social-dot"></a>
+                        <a href="#" aria-label="Instagram"
+                           class="social-dot flex items-center justify-center transition duration-200 ease-out will-change-transform hover:scale-105 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"></a>
+                        <a href="https://x.com/BrickifyFun"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label={locale === 'es' ? 'Perfil de X (Twitter)' : 'X (Twitter) profile'}
+                           class="social-dot flex items-center justify-center transition duration-200 ease-out will-change-transform hover:scale-105 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20">
+                            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                <title>X</title>
+                                <path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.tiktok.com/@brickify.fun"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label={locale === 'es' ? 'Perfil de TikTok' : 'TikTok profile'}
+                           class="social-dot flex items-center justify-center transition duration-200 ease-out will-change-transform hover:scale-105 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20">
+                            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                <title>TikTok</title>
+                                <path d="M12.525 0h3.168c.152 1.36.73 2.505 1.702 3.48.97.972 2.115 1.55 3.48 1.704v3.17a8.42 8.42 0 01-3.525-.9v5.99c0 5.05-3.587 8.556-8.39 8.556A8.896 8.896 0 010 13.69c0-4.803 3.73-8.39 8.78-8.39.313 0 .62.02.923.055v3.28a5.63 5.63 0 00-.923-.08c-2.93 0-5.035 2.21-5.035 5.135 0 2.927 2.105 5.137 5.035 5.137 2.667 0 4.61-1.52 4.91-4.137.03-.27.045-.548.045-.835V0z"/>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="YouTube"
+                           class="social-dot flex items-center justify-center transition duration-200 ease-out will-change-transform hover:scale-105 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"></a>
                     </div>
                 </div>
             </div>

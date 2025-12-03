@@ -45,7 +45,9 @@ export function ShareActions({
     const buildShareData = useCallback(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
         let url = `${origin}/share?g=${encodeURIComponent(ids.groupShareId || '')}&m=${encodeURIComponent(ids.personShareId || '')}`;
-        const text = 'Brickify';
+        const text = locale === 'es'
+            ? '¡Mira las piezas LEGO que coinciden con mi imagen en Brickify! @BrickifyFun'
+            : 'Check out these LEGO pieces that match my image on Brickify! @BrickifyFun';
         return {url, text};
     }, [ids.groupShareId, ids.personShareId]);
 
@@ -118,7 +120,8 @@ export function ShareActions({
     if (!enabled) {
         return (
             <Button onClick={doEnable} disabled={loading}
-                    title={locale === 'es' ? 'Activar compartir' : 'Enable sharing'}>
+                    title={locale === 'es' ? 'Activar compartir' : 'Enable sharing'}
+                    className="transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 active:translate-y-0 active:scale-95">
                 <Share2 className="h-4 w-4 mr-1"/>
                 {loading ? (locale === 'es' ? 'Activando…' : 'Enabling…') : (locale === 'es' ? 'Compartir' : 'Share')}
             </Button>
@@ -128,7 +131,9 @@ export function ShareActions({
     return (
         <>
             <div className="flex gap-2 items-center">
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShareX}
+                <Button variant="ghost" size="icon"
+                        className="h-8 w-8 rounded-full transition duration-200 ease-out hover:bg-neutral-100 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/10 active:translate-y-0 active:scale-95"
+                        onClick={handleShareX}
                         title={locale === 'es' ? 'Compartir en X/Twitter' : 'Share on X/Twitter'}>
                     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>X</title>
                         <path
@@ -136,7 +141,9 @@ export function ShareActions({
                     </svg>
                     <span className="sr-only">X</span>
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShareFacebook}
+                <Button variant="ghost" size="icon"
+                        className="h-8 w-8 rounded-full transition duration-200 ease-out hover:bg-neutral-100 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/10 active:translate-y-0 active:scale-95"
+                        onClick={handleShareFacebook}
                         title={locale === 'es' ? 'Compartir en Facebook' : 'Share on Facebook'}>
                     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Facebook</title>
                         <path
@@ -144,7 +151,9 @@ export function ShareActions({
                     </svg>
                     <span className="sr-only">Facebook</span>
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShareWhatsApp}
+                <Button variant="ghost" size="icon"
+                        className="h-8 w-8 rounded-full transition duration-200 ease-out hover:bg-neutral-100 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/10 active:translate-y-0 active:scale-95"
+                        onClick={handleShareWhatsApp}
                         title={locale === 'es' ? 'Compartir en WhatsApp' : 'Share on WhatsApp'}>
                     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>WhatsApp</title>
                         <path
@@ -152,7 +161,9 @@ export function ShareActions({
                     </svg>
                     <span className="sr-only">WhatsApp</span>
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCopyLink}
+                <Button variant="ghost" size="icon"
+                        className="h-8 w-8 rounded-full transition duration-200 ease-out hover:bg-neutral-100 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/10 active:translate-y-0 active:scale-95"
+                        onClick={handleCopyLink}
                         title={locale === 'es' ? 'Copiar enlace' : 'Copy link'}>
                     <LinkIcon className="h-4 w-4"/>
                     <span className="sr-only">{locale === 'es' ? 'Copiar enlace' : 'Copy link'}</span>
