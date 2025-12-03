@@ -44,7 +44,7 @@ export function ShareActions({
 
     const buildShareData = useCallback(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        let url = `${origin}/share?g=${encodeURIComponent(ids.groupShareId || '')}&m=${encodeURIComponent(ids.personShareId || '')}`;
+        let url = `${origin}/share/?g=${encodeURIComponent(ids.groupShareId || '')}&m=${encodeURIComponent(ids.personShareId || '')}`;
         const text = locale === 'es'
             ? '¡Mira las piezas LEGO que coinciden con mi imagen en Brickify! @BrickifyFun'
             : 'Check out these LEGO pieces that match my image on Brickify! @BrickifyFun';
