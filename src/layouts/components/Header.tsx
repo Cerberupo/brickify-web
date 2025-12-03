@@ -38,25 +38,39 @@ export function Header() {
         return 'en';
     });
 
+    // Track full path (pathname + search + hash) to build locale switch URLs on the client
+    const [fullPath, setFullPath] = useState<string>(() => {
+        if (typeof window !== 'undefined') {
+            return window.location.pathname + window.location.search + window.location.hash;
+        }
+        return '/';
+    });
+
     // Keep language in sync on client navigations (Astro transitions)
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const updateLang = () => {
             const path = window.location.pathname.toLowerCase();
             setCurrentLang(path.startsWith('/es') ? 'es' : 'en');
+            setFullPath(window.location.pathname + window.location.search + window.location.hash);
         };
         updateLang();
         window.addEventListener('astro:after-swap', updateLang);
         window.addEventListener('astro:page-load', updateLang);
+        window.addEventListener('popstate', updateLang);
         return () => {
             window.removeEventListener('astro:after-swap', updateLang);
             window.removeEventListener('astro:page-load', updateLang);
+            window.removeEventListener('popstate', updateLang);
         };
     }, []);
 
     const langNow = getCurrentLocale();
     const loginHref = makeLoginHref(langNow);
     const registerHref = makeRegisterHref(langNow);
+    // Build language switch hrefs on client to preserve current path and query
+    const hrefEs = switchToLocale('es', fullPath);
+    const hrefEn = switchToLocale('en', fullPath);
 
     return (
         <>
@@ -80,7 +94,7 @@ export function Header() {
                             {/* Language selector */}
                             <li className="flex items-center gap-2">
                                 <a
-                                    href={switchToLocale('es')}
+                                    href={hrefEs}
                                     className={`text-sm transition-colors ${currentLang === 'es' ? 'font-bold' : 'opacity-70 hover:opacity-100'}`}
                                     aria-current={currentLang === 'es' ? 'true' : undefined}
                                 >
@@ -88,7 +102,7 @@ export function Header() {
                                 </a>
                                 <span className="text-muted-foreground">/</span>
                                 <a
-                                    href={switchToLocale('en')}
+                                    href={hrefEn}
                                     className={`text-sm transition-colors ${currentLang === 'en' ? 'font-bold' : 'opacity-70 hover:opacity-100'}`}
                                     aria-current={currentLang === 'en' ? 'true' : undefined}
                                 >

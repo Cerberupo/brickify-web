@@ -10,7 +10,7 @@ const locale: SupportedLocale = 'es';
 ---
 
 <MainLayout>
-    <Header client:load/>
+    <Header client:only="react"/>
     <PublicShareView client:load locale={locale}/>
     <div class="container mx-auto px-4 md:px-6 mb-10 md:mb-14">
         <TryPieceCta locale={locale}/>

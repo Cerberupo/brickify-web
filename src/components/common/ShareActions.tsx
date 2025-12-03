@@ -23,7 +23,7 @@ export function ShareActions({
                                  groupShareId,
                                  personShareId,
                                  initialEnabled = false,
-                                 locale = 'es',
+                                 locale = 'en',
                                  guestKey,
                                  onEnabledChange,
                              }: ShareActionsProps) {
@@ -44,12 +44,12 @@ export function ShareActions({
 
     const buildShareData = useCallback(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        let url = `${origin}/share/?g=${encodeURIComponent(ids.groupShareId || '')}&m=${encodeURIComponent(ids.personShareId || '')}`;
+        let url = `${origin}/${locale}/share/?g=${encodeURIComponent(ids.groupShareId || '')}&m=${encodeURIComponent(ids.personShareId || '')}`;
         const text = locale === 'es'
             ? '¡Mira las piezas LEGO que coinciden con mi imagen en Brickify! @BrickifyFun'
             : 'Check out these LEGO pieces that match my image on Brickify! @BrickifyFun';
         return {url, text};
-    }, [ids.groupShareId, ids.personShareId]);
+    }, [ids.groupShareId, ids.personShareId, locale]);
 
     const doEnable = useCallback(async () => {
         if (enabled || loading) return;

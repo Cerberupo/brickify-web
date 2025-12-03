@@ -102,5 +102,6 @@ export function switchToLocale(target: SupportedLocale, currentPath?: string): s
 
     // Compose localized path and re-append search/hash
     const base = (rest === '/') ? (target === 'es' ? '/es' : '/en') : `/${target}${rest}`;
+
     return `${base}${search}${hash}`;
 }
