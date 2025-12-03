@@ -5,14 +5,47 @@ import {ClientRouter} from "astro:transitions";
 import {PROJECT_NAME} from "../config";
 import { normalizeLocale } from "@/lib/locale";
 
-let {content, lang} = Astro.props as { content?: { title?: string }, lang?: 'en' | 'es' };
-if (!content || !content.title) {
-    content = {title: PROJECT_NAME};
+type Lang = 'en' | 'es';
+
+interface SeoProps {
+  description?: string;
+  canonical?: string; // absolute or relative
+  alternates?: Array<{ href: string; hrefLang: string }>;
+  ogImage?: string; // path or absolute URL
+  ogAlt?: string;
+  robots?: string; // e.g., "index,follow"
+  noindex?: boolean;
+  structuredData?: {
+    organization?: boolean;
+    website?: boolean;
+  };
 }
+
+let {content, lang, seo} = Astro.props as {
+  content?: { title?: string };
+  lang?: Lang;
+  seo?: SeoProps;
+};
+
+if (!content || !content.title) {
+  content = {title: PROJECT_NAME};
+}
+
 // Prefer explicit lang prop; otherwise derive from URL path; finally fall back to Astro.currentLocale
 const path = Astro.url?.pathname || '/';
+const origin = Astro.url?.origin || '';
 const pathLang = path.startsWith('/es') ? 'es' : (path.startsWith('/en') ? 'en' : undefined);
 const htmlLang = (lang ?? pathLang ?? normalizeLocale(Astro.currentLocale as string | undefined));
+
+// Compute URLs
+const currentUrl = `${origin}${path}`;
+const canonicalUrl = seo?.canonical
+  ? (seo.canonical.startsWith('http') ? seo.canonical : `${origin}${seo.canonical}`)
+  : currentUrl;
+const ogImageUrl = seo?.ogImage
+  ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${origin}${seo.ogImage}`)
+  : `${origin}/logo.png`;
+const robotsContent = seo?.noindex ? 'noindex,nofollow' : (seo?.robots ?? 'index,follow');
 ---
 
 <html lang={htmlLang}>
@@ -26,6 +59,56 @@ const htmlLang = (lang ?? pathLang ?? normalizeLocale(Astro.currentLocale as str
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&display=swap"
           rel="stylesheet">
     <title>{content?.title}</title>
+    {seo?.description && (<meta name="description" content={seo.description} />)}
+    <meta name="robots" content={robotsContent} />
+    <link rel="canonical" href={canonicalUrl} />
+    {seo?.alternates && seo.alternates.map(a => (
+      <link rel="alternate" hrefLang={a.hrefLang} href={a.href.startsWith('http') ? a.href : `${origin}${a.href}`} />
+    ))}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={content?.title} />
+    {seo?.description && (<meta property="og:description" content={seo.description} />)}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content={PROJECT_NAME} />
+    <meta property="og:locale" content={htmlLang === 'es' ? 'es_ES' : 'en_US'} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={content?.title} />
+    {seo?.description && (<meta name="twitter:description" content={seo.description} />)}
+    <meta name="twitter:image" content={ogImageUrl} />
+    {seo?.ogAlt && (<meta name="twitter:image:alt" content={seo.ogAlt} />)}
+
+    {seo?.structuredData?.organization && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: PROJECT_NAME,
+        url: origin || "/",
+        logo: `${origin}/logo.png`,
+        sameAs: [
+          "https://x.com/BrickifyFun",
+          "https://www.tiktok.com/@brickify.fun"
+        ]
+      })} />
+    )}
+    {seo?.structuredData?.website && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: PROJECT_NAME,
+        url: origin || "/",
+        inLanguage: htmlLang,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${origin}/?q={search_term_string}`,
+          "query-input": "required name=search_term_string"
+        }
+      })} />
+    )}
     <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">

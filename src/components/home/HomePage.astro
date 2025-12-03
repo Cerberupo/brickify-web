@@ -35,8 +35,29 @@ const copies = {
 
 const t = copies[locale];
 const content = {title: t.title};
+
+// SEO
+const descriptions = {
+  en: "Turn your photo into a LEGO®-style minifig with AI-selected official parts. Upload a picture and get the exact pieces and codes.",
+  es: "Convierte tu foto en una minifig al estilo LEGO® con piezas oficiales seleccionadas por IA. Sube una imagen y recibe piezas y códigos exactos."
+} as const;
+
+const path = Astro.url?.pathname || '/';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es' : (path.startsWith('/en') ? '/en' : '/');
+const alternates = [
+  { href: '/', hrefLang: 'x-default' },
+  { href: '/es', hrefLang: 'es' },
+  { href: '/en', hrefLang: 'en' },
+];
+const seo = {
+  description: isEs ? descriptions.es : descriptions.en,
+  canonical,
+  alternates,
+  structuredData: { organization: true, website: true },
+} as const;
 ---
-<Layout content={content} lang={locale}>
+<Layout content={content} lang={locale} seo={seo}>
     <Header client:only="react"/>
     <main id="inicio" class="relative overflow-x-hidden">
         <script define:vars={{enableRedirect}}>
