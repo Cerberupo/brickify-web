@@ -173,7 +173,11 @@ const t = copies[locale];
                             </label>
                         </div>
                         <button id="qp-btn" type="button"
-                                class="inline-flex items-center justify-center rounded-md bg-black text-white px-5 py-3 text-sm">{t.btn}</button>
+                                class="inline-flex items-center justify-center rounded-md bg-black text-white px-5 py-3 text-sm
+                                       transition duration-200 ease-out will-change-transform
+                                       hover:opacity-95 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10
+                                       active:translate-y-0 active:scale-95
+                                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50">{t.btn}</button>
                     </form>
                 </div>
 
@@ -224,7 +228,7 @@ const t = copies[locale];
             const hasImage = () => !!preview && !preview.classList.contains('hidden');
             const setHasImageState = (on) => {
                 drop.classList.toggle('has-image', !!on);
-            };
+                };
 
             const ensureErrorBanner = () => {
                 if (errorBanner) return errorBanner;
@@ -237,35 +241,35 @@ const t = copies[locale];
                 const dropWrapper = drop.parentElement;
                 if (dropWrapper) dropWrapper.insertBefore(errorBanner, drop);
                 return errorBanner;
-            };
+                };
             const showError = (msg) => {
                 const box = ensureErrorBanner();
                 if (!box) return;
                 box.textContent = msg;
                 box.classList.remove('hidden');
                 box.scrollIntoView({behavior: 'smooth', block: 'center'});
-            };
+                };
             const hideError = () => {
                 if (errorBanner) errorBanner.classList.add('hidden');
-            };
+                };
 
             const enter = (e) => {
                 e.preventDefault();
                 drop.classList.add('outline', 'outline-2', 'outline-black/30', 'is-hovering');
-            };
+                };
             const over = (e) => {
                 e.preventDefault();
-            };
+                };
             const leave = () => {
                 drop.classList.remove('outline', 'outline-2', 'outline-black/30', 'is-hovering');
-            };
+                };
 
             // Estimate if base64 would exceed 2MB based on file size (x4/3)
             const exceedsBase64Limit = (file) => {
                 // Estimate encoded size: 4 * ceil(n/3)
                 const estimatedEncoded = 4 * Math.ceil(file.size / 3);
                 return estimatedEncoded > MAX_BASE64_ENCODED_BYTES;
-            };
+                };
 
             const applyPreviewStyles = () => {
                 drop.classList.remove('dropzone');
@@ -282,18 +286,18 @@ const t = copies[locale];
                 if (form) form.classList.remove('hidden');
                 // Mark state for hover overlay
                 setHasImageState(true);
-            };
+                };
 
             // Helpers
             const isValidEmail = (email) => {
                 if (!email || typeof email !== 'string') return false;
                 if (email.length > 200) return false;
                 return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(email);
-            };
+                };
 
             const isValidName = (name) => {
                 return typeof name === 'string' && name.trim().length >= 1 && name.trim().length <= 100;
-            };
+                };
 
             const setBtnLoading = (loading) => {
                 if (!btn) return;
@@ -302,11 +306,11 @@ const t = copies[locale];
                 if (loading) {
                     btn.dataset.prevText = btn.textContent || '';
                     btn.textContent = localeStr === 'es' ? 'Cargando…' : 'Loading…';
-                } else if (btn.dataset.prevText) {
+                    } else if (btn.dataset.prevText) {
                     btn.textContent = btn.dataset.prevText;
                     delete btn.dataset.prevText;
-                }
-            };
+                    }
+                };
 
             const handleFile = async (file) => {
                 hideError();
@@ -316,14 +320,14 @@ const t = copies[locale];
                     // Reset input so same file can be selected again later
                     if (fileInput) fileInput.value = '';
                     return;
-                }
+                    }
                 try {
                     const dataUrl = await new Promise((resolve, reject) => {
                         const reader = new FileReader();
                         reader.onloadend = () => resolve(reader.result);
                         reader.onerror = () => reject(new Error('Failed to read image'));
                         reader.readAsDataURL(file);
-                    });
+                        });
                     // Strict check on encoded base64 length (characters == bytes)
                     const str = String(dataUrl);
                     const commaIdx = str.indexOf(',');
@@ -333,16 +337,16 @@ const t = copies[locale];
                         showError(localeStr === 'es' ? 'La imagen seleccionada es demasiado grande. Máximo permitido: 1.5MB.' : 'The selected image is too large. Maximum allowed is 1.5MB.');
                         if (fileInput) fileInput.value = '';
                         return;
-                    }
+                        }
                     if (preview) {
                         preview.src = String(dataUrl); // use base64 data URL so it’s ready to send
                         preview.classList.remove('hidden');
-                    }
+                        }
                     applyPreviewStyles();
-                } catch (err) {
+                    } catch (err) {
                     showError(localeStr === 'es' ? 'No se pudo leer la imagen. Inténtalo de nuevo.' : 'Could not read the image. Please try again.');
-                }
-            };
+                    }
+                };
 
             drop.addEventListener('dragenter', enter);
             drop.addEventListener('dragover', over);
@@ -353,26 +357,26 @@ const t = copies[locale];
                 const dt = e.dataTransfer;
                 const files = dt && dt.files ? dt.files : null;
                 if (files && files[0]) handleFile(files[0]);
-            });
+                });
 
             // Click/keyboard to open file dialog
             drop.addEventListener('click', () => {
                 if (fileInput) fileInput.click();
-            });
+                });
             drop.addEventListener('keydown', (e) => {
                 const k = e && e.key ? e.key : '';
                 if (k === 'Enter' || k === ' ') {
                     e.preventDefault();
                     if (fileInput) fileInput.click();
-                }
-            });
+                    }
+                });
 
             if (fileInput) {
                 fileInput.addEventListener('change', () => {
                     const f = fileInput && fileInput.files && fileInput.files[0];
                     if (f) handleFile(f);
-                });
-            }
+                    });
+                }
 
             // Submit handler: create guest order
             if (btn) {
@@ -388,19 +392,19 @@ const t = copies[locale];
                     if (!hasImage() || !preview || !preview.src) {
                         showError(localeStr === 'es' ? 'Primero sube una imagen válida.' : 'Please upload an image first.');
                         return;
-                    }
+                        }
                     if (!isValidName(name)) {
                         showError(localeStr === 'es' ? 'Introduce un nombre válido (1–100 caracteres).' : 'Enter a valid name (1–100 characters).');
                         return;
-                    }
+                        }
                     if (!isValidEmail(email)) {
                         showError(localeStr === 'es' ? 'Introduce un email válido (máx. 200 caracteres).' : 'Enter a valid email (max 200 chars).');
                         return;
-                    }
+                        }
                     if (!accepted) {
                         showError(localeStr === 'es' ? 'Debes aceptar la política de privacidad.' : 'You must accept the privacy policy.');
                         return;
-                    }
+                        }
 
                     // Build body strictly with allowed props
                     const body = {
@@ -409,7 +413,7 @@ const t = copies[locale];
                         imageBase64: preview.src, // data URL acceptable by backend
                         lang: localeStr
                         // amount, currency: opcionales, omitimos para defaults del servidor
-                    };
+                        };
 
                     try {
                         setBtnLoading(true);
@@ -417,14 +421,33 @@ const t = copies[locale];
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify(body)
-                        });
+                            });
                         if (!resp.ok) {
-                            // Try to parse error message
-                            let msg = localeStr === 'es' ? 'No se pudo crear el pedido. Revisa los datos e inténtalo de nuevo.' : 'Could not create order. Please check your data and try again.';
+                            // Intentar traducir errores conocidos relacionados con email
+                            let msg = localeStr === 'es'
+                                ? 'No se pudo crear el pedido. Revisa los datos e inténtalo de nuevo.'
+                                : 'Could not create order. Please check your data and try again.';
                             try {
                                 const err = await resp.json();
-                                if (err && (err.message || err.error)) msg = String(err.message || err.error);
+                                const errorCode = String(err?.error || err?.code || '');
+                                const reason = String(err?.reason || '');
+                                if (errorCode === 'invalid_email') {
+                                    if (reason === 'suppressed') {
+                                        msg = localeStr === 'es'
+                                            ? 'No pudimos enviar el email porque esta dirección está suprimida debido a un rebote o queja previa.'
+                                            : "We couldn't send the email because this address is suppressed due to a previous bounce or complaint.";
+                                    } else if (reason === 'disposable-domain' || reason === 'disposable_domain') {
+                                        msg = localeStr === 'es'
+                                            ? 'No se permiten direcciones de correo desechables. Por favor, use otro email.'
+                                            : 'Disposable email addresses are not allowed. Please use a different email.';
+                                    } else if (err && (err.message || err.error)) {
+                                        msg = String(err.message || err.error);
+                                    }
+                                } else if (err && (err.message || err.error)) {
+                                    msg = String(err.message || err.error);
+                                }
                             } catch (_) {
+                                // Ignorar errores de parseo y mantener mensaje por defecto
                             }
                             throw new Error(msg);
                         }
@@ -435,7 +458,7 @@ const t = copies[locale];
                         const groupId = data?.groupId;
                         if (!clientSecret || !groupId) {
                             throw new Error(localeStr === 'es' ? 'Respuesta inválida del servidor.' : 'Invalid server response.');
-                        }
+                            }
                         // Persist for checkout page consumption
                         try {
                             sessionStorage.setItem('guestCheckout', JSON.stringify({
@@ -443,38 +466,39 @@ const t = copies[locale];
                                 sessionId,
                                 groupId,
                                 ts: Date.now()
-                            }));
-                        } catch (_) {
-                        }
+                                }));
+                            } catch (_) {
+                            }
                         // Redirect to localized checkout
                         const target = `/${localeStr}/checkout?groupId=${encodeURIComponent(groupId)}`;
                         window.location.href = target;
-                    } catch (err) {
+
+                        } catch (err) {
                         const msg = (err && err.message) ? err.message : (localeStr === 'es' ? 'Ha ocurrido un error inesperado.' : 'An unexpected error occurred.');
                         showError(msg);
-                    } finally {
+                        } finally {
                         setBtnLoading(false);
+                        }
+                    });
+                }
+            }
+
+            // Initialize on first load and on Astro client transitions
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                initQuickPhotoSection();
+                } else {
+                document.addEventListener('DOMContentLoaded', () => initQuickPhotoSection(), {once: true});
+                }
+            window.addEventListener('astro:page-load', initQuickPhotoSection);
+            window.addEventListener('astro:after-swap', initQuickPhotoSection);
+            // When Astro is about to swap the page, clear init flag so the new DOM can re-init cleanly
+            window.addEventListener('astro:before-swap', () => {
+                const drop = document.getElementById('qp-drop');
+                if (drop && drop.dataset) {
+                    delete drop.dataset.inited;
                     }
                 });
-            }
-        }
-
-        // Initialize on first load and on Astro client transitions
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            initQuickPhotoSection();
-        } else {
-            document.addEventListener('DOMContentLoaded', () => initQuickPhotoSection(), {once: true});
-        }
-        window.addEventListener('astro:page-load', initQuickPhotoSection);
-        window.addEventListener('astro:after-swap', initQuickPhotoSection);
-        // When Astro is about to swap the page, clear init flag so the new DOM can re-init cleanly
-        window.addEventListener('astro:before-swap', () => {
-            const drop = document.getElementById('qp-drop');
-            if (drop && drop.dataset) {
-                delete drop.dataset.inited;
-            }
-        });
-        // Ensure re-initialization when returning with browser back/forward
-        window.addEventListener('pageshow', () => initQuickPhotoSection());
+            // Ensure re-initialization when returning with browser back/forward
+            window.addEventListener('pageshow', () => initQuickPhotoSection());
     </script>
 </section>

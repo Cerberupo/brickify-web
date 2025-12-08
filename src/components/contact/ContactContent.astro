@@ -4,6 +4,8 @@ import type {SupportedLocale} from "@/lib/locale";
 interface Props {
     locale: SupportedLocale;
 }
+// Resolve API base URL from public env (no alias/imports needed)
+const API_URL = (import.meta as any).env?.PUBLIC_API_URL ?? 'http://localhost:3000/api';
 const {locale} = Astro.props as Props;
 
 const copies = {
@@ -86,7 +88,7 @@ const t = copies[locale];
                 <div id="contact-error" class="hidden mb-4 rounded-xl border border-red-300 bg-red-50 text-red-900 p-4"
                      role="status" aria-live="assertive">
                     <div class="font-semibold">{t.errorTitle}</div>
-                    <div class="text-sm mt-1">{t.errorDesc}</div>
+                    <div id="contact-error-msg" class="text-sm mt-1">{t.errorDesc}</div>
                 </div>
 
                 <article id="contact-form-card" class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
@@ -109,7 +111,11 @@ const t = copies[locale];
                         </div>
                         <div class="pt-2">
                             <button id="contact-submit" type="submit"
-                                    class="inline-flex items-center justify-center rounded-md bg-black text-white px-5 py-3 text-sm hover:opacity-90">
+                                    class="inline-flex items-center justify-center rounded-md bg-black text-white px-5 py-3 text-sm
+                                           transition duration-200 ease-out will-change-transform
+                                           hover:opacity-95 hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/10
+                                           active:translate-y-0 active:scale-95
+                                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50">
                                 {t.send}
                             </button>
                         </div>
@@ -119,13 +125,14 @@ const t = copies[locale];
         </div>
     </div>
 
-    <script type="module">
+    <script type="module" define:vars={{API_URL, SENDING: t.sending, LOCALE: locale}}>
         const form = document.getElementById('contact-form');
         const card = document.getElementById('contact-form-card');
         const success = document.getElementById('contact-success');
         const errorBox = document.getElementById('contact-error');
+        const errorMsgEl = document.getElementById('contact-error-msg');
         const submitBtn = document.getElementById('contact-submit');
-        const lang = {locale: '{locale}'}?.locale === 'es' ? 'es' : 'en';
+        const lang = LOCALE === 'es' ? 'es' : 'en';
 
         const setLoading = (loading) => {
             if (!submitBtn) return;
@@ -133,11 +140,12 @@ const t = copies[locale];
             submitBtn.style.opacity = loading ? '0.7' : '1';
             const original = submitBtn.getAttribute('data-original');
             if (!original) submitBtn.setAttribute('data-original', submitBtn.textContent || '');
-            submitBtn.textContent = loading ? {sending: t.sending}.sending : (submitBtn.getAttribute('data-original') || '');
+            submitBtn.textContent = loading ? SENDING : (submitBtn.getAttribute('data-original') || '');
         };
 
         if (form) {
             form.addEventListener('submit', async (e) => {
+                console.log('en el submt');
                 e.preventDefault();
                 errorBox?.classList.add('hidden');
                 setLoading(true);
@@ -149,7 +157,7 @@ const t = copies[locale];
                         message: String(fd.get('message') || ''),
                         lang
                     };
-                    const res = await fetch('/contact', {
+                    const res = await fetch(`${API_URL}/public/contact`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(payload)
@@ -161,6 +169,33 @@ const t = copies[locale];
                         // Optional: scroll into view
                         success?.scrollIntoView({behavior: 'smooth', block: 'start'});
                     } else {
+                        // Try to parse error and show a more specific, localized message when possible
+                        let userMsg = null;
+                        try {
+                            const err = await res.json();
+                            const errorCode = String(err?.error || err?.code || '');
+                            const reason = String(err?.reason || '');
+                            if (errorCode === 'invalid_email') {
+                                if (reason === 'suppressed') {
+                                    userMsg = lang === 'es'
+                                        ? 'No pudimos enviar el email porque esta dirección está suprimida debido a un rebote o queja previa.'
+                                        : "We couldn't send the email because this address is suppressed due to a previous bounce or complaint.";
+                                } else if (reason === 'disposable-domain' || reason === 'disposable_domain') {
+                                    userMsg = lang === 'es'
+                                        ? 'No se permiten direcciones de correo desechables. Por favor, use otro email.'
+                                        : 'Disposable email addresses are not allowed. Please use a different email.';
+                                } else if (err && (err.message || err.error)) {
+                                    userMsg = String(err.message || err.error);
+                                }
+                            } else if (err && (err.message || err.error)) {
+                                userMsg = String(err.message || err.error);
+                            }
+                        } catch (_) {
+                            // keep default
+                        }
+                        if (userMsg && errorMsgEl) {
+                            errorMsgEl.textContent = userMsg;
+                        }
                         errorBox?.classList.remove('hidden');
                     }
                 } catch (err) {

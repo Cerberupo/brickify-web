@@ -24,11 +24,9 @@ export function RecoverPasswordPage() {
             toast.success(t('recover.successMessage', 'If an account exists for this email, we have sent a password reset link.'));
         } catch (error) {
             console.error('Password reset request error:', error);
-            toast.error(
-                error instanceof Error
-                    ? error.message
-                    : t('recover.errorMessage', 'We could not process your request. Please try again later.')
-            );
+            const userMsg = (error as any)?.translatedMessage
+                || (error instanceof Error ? error.message : t('recover.errorMessage', 'We could not process your request. Please try again later.'));
+            toast.error(userMsg);
         } finally {
             setIsLoading(false);
         }

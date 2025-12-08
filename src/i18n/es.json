@@ -18,6 +18,12 @@
     "privacyPolicy": "Política de privacidad",
     "contactUs": "Contáctenos"
   },
+  "errors": {
+    "invalid_email": {
+      "suppressed": "No pudimos enviar el email porque esta dirección está suprimida debido a un rebote o queja previa.",
+      "disposable_domain": "No se permiten direcciones de correo desechables. Por favor, use otro email."
+    }
+  },
   "dashboard": {
     "title": "Panel",
     "welcome": "Bienvenido",

@@ -18,6 +18,12 @@
     "privacyPolicy": "Privacy Policy",
     "contactUs": "Contact Us"
   },
+  "errors": {
+    "invalid_email": {
+      "suppressed": "We couldn't send the email because this address is suppressed due to a previous bounce or complaint.",
+      "disposable_domain": "Disposable email addresses are not allowed. Please use a different email."
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome",

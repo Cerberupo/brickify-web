@@ -29,11 +29,9 @@ export function RegisterForm() {
             navigate(loginUrl);
         } catch (error) {
             console.error('Registration error:', error);
-            toast.error(
-                error instanceof Error
-                    ? error.message
-                    : t('register.errorMessage', 'Registration failed. Please try again.')
-            );
+            const userMsg = (error as any)?.translatedMessage
+                || (error instanceof Error ? error.message : t('register.errorMessage', 'Registration failed. Please try again.'));
+            toast.error(userMsg);
         } finally {
             setIsLoading(false);
         }

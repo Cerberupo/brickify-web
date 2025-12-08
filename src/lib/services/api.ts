@@ -1,6 +1,9 @@
 import {API_URL} from '@/config';
 import type {AxiosRequestConfig, AxiosResponse} from 'axios';
 import axios from 'axios';
+// Ensure i18n is initialized and import the singleton instance
+import '@/lib/i18n';
+import i18n from 'i18next';
 
 /**
  * Interface for the options to be passed to the fetchApi function
@@ -38,7 +41,7 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
     }
 
     // Add authorization token if available in localStorage
-    const token = localStorage.getItem('authToken');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
     if (token) {
         requestHeaders.Authorization = `Bearer ${token}`;
     }
@@ -72,11 +75,36 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
         // Handle axios errors
         if (axios.isAxiosError(error) && error.response) {
             const errorData = error.response.data || {};
+
+            // Detect specific email-related errors and attach a translated message to the thrown error
+            // so that callers can decide if/when to show a single toast.
+            let derivedUserMessage: string | undefined;
+            try {
+                const errCode = (errorData.error || errorData.code || '').toString();
+                const reason = (errorData.reason || '').toString();
+                if (errCode === 'invalid_email') {
+                    let translationKey: string | null = null;
+                    if (reason === 'suppressed') {
+                        translationKey = 'errors.invalid_email.suppressed';
+                    } else if (reason === 'disposable-domain' || reason === 'disposable_domain') {
+                        translationKey = 'errors.invalid_email.disposable_domain';
+                    }
+                    if (translationKey) {
+                        derivedUserMessage = i18n.t(translationKey);
+                    }
+                }
+            } catch (_) {
+                // no-op; do not block throwing of the original error
+            }
+
             const errObj: any = new Error(
                 errorData.message || `API request failed with status ${error.response.status}`
             );
             if (errorData.code) errObj.code = errorData.code;
             if (error.response.status) errObj.status = error.response.status;
+            if (errorData.error) errObj.error = errorData.error;
+            if (errorData.reason) errObj.reason = errorData.reason;
+            if (derivedUserMessage) errObj.translatedMessage = derivedUserMessage;
             throw errObj;
         }
 

@@ -83,9 +83,9 @@ export function ResetPasswordPage({initialSearch}: ResetPageProps) {
             }, 300);
         } catch (error) {
             console.error('Reset password error:', error);
-            toast.error(
-                error instanceof Error ? error.message : t('reset.errorMessage', 'We could not reset your password. The code might be invalid or expired.')
-            );
+            const userMsg = (error as any)?.translatedMessage
+                || (error instanceof Error ? error.message : t('reset.errorMessage', 'We could not reset your password. The code might be invalid or expired.'));
+            toast.error(userMsg);
         } finally {
             setLoading(false);
         }
