@@ -178,24 +178,24 @@ export default function LegoPreviewCard({
     const defaultOptions: LegoCategories = useMemo(() => {
         return {
             hair: [
-                {id: 6527258, name: "MINI WIG, NO. 98", imageUrl: "/hair-1.png"},
-                {id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/hair-2.png"},
-                {id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/hair-3.png"}
+                {id: 6527258, name: "MINI WIG, NO. 98", imageUrl: "/preview/hair-1.jpg"},
+                {id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/preview/hair-2.jpg"},
+                {id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/preview/hair-3.jpg"}
             ],
             head: [
-                {id: 1, name: "Happy Face", imageUrl: "/head-1.png"},
-                {id: 2, name: "Serious Face", imageUrl: "/head-2.png"},
-                {id: 3, name: "Smiling Face", imageUrl: "/head-3.png"}
+                {id: 1, name: "Happy Face", imageUrl: "/preview/head-1.jpg"},
+                {id: 2, name: "Serious Face", imageUrl: "/preview/head-2.jpg"},
+                {id: 3, name: "Smiling Face", imageUrl: "/preview/head-3.jpg"}
             ],
             body: [
-                {id: 1, name: "Casual Shirt", imageUrl: "/body-1.png"},
-                {id: 2, name: "Formal Suit", imageUrl: "/body-2.png"},
-                {id: 3, name: "T-Shirt", imageUrl: "/body-3.png"}
+                {id: 1, name: "Casual Shirt", imageUrl: "/preview/body-1.jpg"},
+                {id: 2, name: "Formal Suit", imageUrl: "/preview/body-2.jpg"},
+                {id: 3, name: "T-Shirt", imageUrl: "/preview/body-3.jpg"}
             ],
             pants: [
-                {id: 1, name: "Blue Jeans", imageUrl: "/pants-1.png"},
-                {id: 2, name: "Black Pants", imageUrl: "/pants-2.png"},
-                {id: 3, name: "Shorts", imageUrl: "/pants-3.png"}
+                {id: 1, name: "Blue Jeans", imageUrl: "/preview/pants-1.jpg"},
+                {id: 2, name: "Black Pants", imageUrl: "/preview/pants-2.jpg"},
+                {id: 3, name: "Shorts", imageUrl: "/preview/pants-3.jpg"}
             ]
         }
     }, []);
