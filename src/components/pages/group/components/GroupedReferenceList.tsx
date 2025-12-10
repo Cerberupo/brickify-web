@@ -232,7 +232,7 @@ export function GroupedReferenceList({
                                             onClick={() => handleEditGroupClick(entry)}
                                         >
                                             <Pencil className="h-4 w-4"/>
-                                            <span className="sr-only">{t('group.editGroup', 'Editar grupo')}</span>
+                                            <span className="sr-only">{t('group.editGroup', 'Editar colección')}</span>
                                         </Button>
                                     )}
                                     {(typeof onDeleteGroup === 'function' && entry?.status === 'pending') && (
@@ -243,7 +243,7 @@ export function GroupedReferenceList({
                                             onClick={() => handleDeleteGroupClick(entry)}
                                         >
                                             <Trash2 className="h-4 w-4"/>
-                                            <span className="sr-only">{t('group.deleteGroup', 'Eliminar grupo')}</span>
+                                            <span className="sr-only">{t('group.deleteGroup', 'Eliminar colección')}</span>
                                         </Button>
                                     )}
                                 </div>

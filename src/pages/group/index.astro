@@ -9,7 +9,7 @@ import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 
-<MainLayout content={{title: `${PROJECT_NAME} - Group Details`}}>
+<MainLayout content={{title: `${PROJECT_NAME} - Collection Details`}}>
     <AppWrapper client:only="react">
         <GroupPage client:only="react"/>
     </AppWrapper>

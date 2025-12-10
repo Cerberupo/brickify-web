@@ -82,6 +82,7 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
             try {
                 const errCode = (errorData.error || errorData.code || '').toString();
                 const reason = (errorData.reason || '').toString();
+                const messageKey = (errorData.messageKey || '').toString();
                 if (errCode === 'invalid_email') {
                     let translationKey: string | null = null;
                     if (reason === 'suppressed') {
@@ -92,6 +93,12 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
                     if (translationKey) {
                         derivedUserMessage = i18n.t(translationKey);
                     }
+                } else if (messageKey) {
+                    // Backend provided an explicit i18n key to translate
+                    derivedUserMessage = i18n.t(messageKey);
+                } else if (errCode === 'USER_EXISTS_PENDING') {
+                    // Fallback to a well-known key if backend didn't pass messageKey
+                    derivedUserMessage = i18n.t('auth.register.pendingPassword');
                 }
             } catch (_) {
                 // no-op; do not block throwing of the original error
@@ -104,6 +111,7 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
             if (error.response.status) errObj.status = error.response.status;
             if (errorData.error) errObj.error = errorData.error;
             if (errorData.reason) errObj.reason = errorData.reason;
+            if (errorData.messageKey) errObj.messageKey = errorData.messageKey;
             if (derivedUserMessage) errObj.translatedMessage = derivedUserMessage;
             throw errObj;
         }

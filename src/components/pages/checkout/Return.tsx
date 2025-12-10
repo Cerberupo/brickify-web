@@ -59,11 +59,11 @@ export default function CheckoutReturnPage() {
                     </Button>
                 ) : groupId ? (
                     <Button onClick={() => navigate(APP_ROUTES.GROUP, {id: groupId})}>
-                        {t('checkout.backToGroup', 'Back to group')}
+                        {t('checkout.backToGroup', 'Back to collection')}
                     </Button>
                 ) : (
                     <Button onClick={() => navigate(APP_ROUTES.DASHBOARD)}>
-                        {t('checkout.backToGroup', 'Back to group')}
+                        {t('checkout.backToGroup', 'Back to collection')}
                     </Button>
                 )}
             </section>
@@ -144,11 +144,11 @@ export default function CheckoutReturnPage() {
                         </Button>
                     ) : groupId ? (
                         <Button onClick={() => navigate(APP_ROUTES.GROUP, {id: groupId})}>
-                            {t('checkout.backToGroup', 'Back to group')}
+                            {t('checkout.backToGroup', 'Back to collection')}
                         </Button>
                     ) : (
                         <Button onClick={() => navigate(APP_ROUTES.DASHBOARD)}>
-                            {t('checkout.backToGroup', 'Back to group')}
+                            {t('checkout.backToGroup', 'Back to collection')}
                         </Button>
                     )}
                 </div>

@@ -97,9 +97,9 @@ export const InlineTwoMembersEditor: React.FC<InlineTwoMembersEditorProps> = ({o
 
                 <div>
                     <Label htmlFor="subgroup-name"
-                           className="block mb-2">{t('group.subgroupName', 'Nombre del subgrupo')}</Label>
+                           className="block mb-2">{t('group.subgroupName', 'Nombre de la subcolección')}</Label>
                     <Input id="subgroup-name" value={subgroupName} onChange={(e) => setSubgroupName(e.target.value)}
-                           placeholder={t('group.subgroupName', 'Nombre del subgrupo')}/>
+                           placeholder={t('group.subgroupName', 'Nombre de la subcolección')}/>
                 </div>
 
                 <div className="flex flex-col gap-4">

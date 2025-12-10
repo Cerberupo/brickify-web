@@ -4,7 +4,7 @@ import { Button } from '@/components/ui';
 export function GroupHeader({
   onBack,
   backLabel = 'Back to Dashboard',
-  title = 'Group Details'
+  title = 'Collection Details'
 }: {
   onBack: () => void;
   backLabel?: React.ReactNode;
