@@ -290,6 +290,14 @@ input[type="reset"],
     right: 10px;
 }
 
+#checkout-form {
+    background: #f7f3ee;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
 @media (max-width: 768px) {
 
     .exit-waiting-preview {
@@ -329,4 +337,13 @@ input[type="reset"],
         transform: translateX(100%);
         right: 0;
     }
+
+    #checkout-form {
+        background: #f7f3ee;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: 10px;
+    }
+
 }
+

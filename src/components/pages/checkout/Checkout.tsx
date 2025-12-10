@@ -79,7 +79,7 @@ export default function CheckoutPage() {
             <h1 className="text-2xl font-bold mb-4">{t('checkout.title', 'Checkout')}</h1>
             <div id="checkout" className="min-h-[600px]">
                 <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-                    <EmbeddedCheckout/>
+                    <EmbeddedCheckout id="checkout-form"/>
                 </EmbeddedCheckoutProvider>
             </div>
         </section>
