@@ -32,6 +32,8 @@ i18n
         debug: false,
         // Namespace
         ns: ['common'],
+        // Set default namespace so calls like t('header.login') resolve to the 'common' namespace
+        defaultNS: 'common',
         // Supported languages
         supportedLngs,
         // Static resources

@@ -1,0 +1,128 @@
+---
+import type { SupportedLocale } from "@/lib/locale";
+
+interface Props {
+  locale: SupportedLocale;
+}
+const { locale } = Astro.props as Props;
+
+const copies = {
+  es: {
+    heroTitle: "Términos de Servicio",
+    lastUpdated: "Última Actualización: 1 de junio de 2025",
+    intro:
+      "Bienvenido a Brickify. Al acceder o utilizar nuestro servicio, aceptas estar sujeto a estos Términos de Servicio.",
+    sections: [
+      {
+        t: "Aceptación de Términos",
+        d:
+          "Al acceder o utilizar nuestro servicio, aceptas estar sujeto a estos Términos de Servicio y a todas las leyes y regulaciones aplicables. Si no estás de acuerdo con alguno de estos términos, se te prohíbe usar o acceder a este sitio.",
+      },
+      {
+        t: "Cambios en los Términos",
+        d:
+          "Nos reservamos el derecho de modificar o reemplazar estos Términos de Servicio en cualquier momento. Es tu responsabilidad revisar estos Términos periódicamente para ver si hay cambios.",
+      },
+      {
+        t: "Términos de la Cuenta",
+        d:
+          "Eres responsable de mantener la seguridad de tu cuenta y contraseña. La empresa no puede y no será responsable de ninguna pérdida o daño por tu incumplimiento de esta obligación de seguridad.",
+      },
+      {
+        t: "Propiedad Intelectual",
+        d:
+          "El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de Brickify y sus licenciantes.",
+      },
+      {
+        t: "Terminación",
+        d:
+          "Podemos terminar o suspender tu cuenta y prohibir el acceso al Servicio inmediatamente, sin previo aviso o responsabilidad, a nuestra sola discreción y por cualquier motivo.",
+      },
+      {
+        t: "Limitación de Responsabilidad",
+        d:
+          "En ningún caso Brickify, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos.",
+      },
+      {
+        t: "Ley Aplicable",
+        d:
+          "Estos Términos se regirán e interpretarán de acuerdo con las leyes aplicables, sin tener en cuenta las disposiciones sobre conflictos de leyes.",
+      },
+      {
+        t: "Contacto",
+        d: "Si tienes alguna pregunta sobre estos Términos, contáctanos.",
+      },
+    ],
+  },
+  en: {
+    heroTitle: "Terms of Service",
+    lastUpdated: "Last Updated: June 1, 2025",
+    intro:
+      "Welcome to Brickify. By accessing or using our service, you agree to be bound by these Terms of Service.",
+    sections: [
+      {
+        t: "Acceptance of Terms",
+        d:
+          "By accessing or using our service, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site.",
+      },
+      {
+        t: "Changes to Terms",
+        d:
+          "We reserve the right to modify or replace these Terms of Service at any time. It is your responsibility to check these Terms periodically for changes.",
+      },
+      {
+        t: "Account Terms",
+        d:
+          "You are responsible for maintaining the security of your account and password. The company cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.",
+      },
+      {
+        t: "Intellectual Property",
+        d:
+          "The Service and its original content, features, and functionality are and will remain the exclusive property of Brickify and its licensors.",
+      },
+      {
+        t: "Termination",
+        d:
+          "We may terminate or suspend your account and bar access to the Service immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever.",
+      },
+      {
+        t: "Limitation of Liability",
+        d:
+          "In no event shall Brickify, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.",
+      },
+      {
+        t: "Governing Law",
+        d:
+          "These Terms shall be governed and construed in accordance with applicable laws, without regard to conflict of law provisions.",
+      },
+      {
+        t: "Contact",
+        d: "If you have any questions about these Terms, please contact us.",
+      },
+    ],
+  },
+} as const;
+const t = copies[locale];
+---
+<section class="relative w-full">
+  <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
+    <div class="flex items-center gap-4 mb-3 md:mb-4">
+      <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy" />
+      <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+    </div>
+    <p class="text-sm text-muted-foreground mb-6">{t.lastUpdated}</p>
+
+    <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+      <p class="text-neutral-700">{t.intro}</p>
+    </article>
+
+    <div class="grid grid-cols-1 gap-4 mt-6">
+      {t.sections.map((s) => (
+        <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+          <h2 class="text-lg font-semibold mb-2">{s.t}</h2>
+          <p class="text-neutral-700 leading-relaxed">{s.d}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+  </section>

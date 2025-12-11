@@ -10,6 +10,7 @@
     "home": "Home",
     "dashboard": "My Collections",
     "login": "Login",
+    "register": "Register",
     "logout": "Logout"
   },
   "footer": {

@@ -16,7 +16,7 @@ import {
 } from '@/lib/localeLinks';
 
 export function Header() {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const {user} = useAuth();
 
     const handleLogout = async () => {
@@ -51,8 +51,13 @@ export function Header() {
         if (typeof window === 'undefined') return;
         const updateLang = () => {
             const path = window.location.pathname.toLowerCase();
-            setCurrentLang(path.startsWith('/es') ? 'es' : 'en');
+            const next = path.startsWith('/es') ? 'es' : 'en';
+            setCurrentLang(next);
             setFullPath(window.location.pathname + window.location.search + window.location.hash);
+            // Ensure i18n language stays in sync even when Header is rendered without I18nProvider
+            if (i18n.language !== next) {
+                i18n.changeLanguage(next);
+            }
         };
         updateLang();
         window.addEventListener('astro:after-swap', updateLang);
@@ -63,7 +68,7 @@ export function Header() {
             window.removeEventListener('astro:page-load', updateLang);
             window.removeEventListener('popstate', updateLang);
         };
-    }, []);
+    }, [i18n]);
 
     const langNow = getCurrentLocale();
     const loginHref = makeLoginHref(langNow);

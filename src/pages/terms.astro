@@ -1,16 +1,18 @@
 ---
-import MainLayout from "../layouts/main.astro";
-import {TermsOfServicePage} from "../components";
-import {PROJECT_NAME} from "../config";
-import {AppWrapper} from "../layouts";
+import Layout from "@/layouts/main.astro";
+import { Header } from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import TermsContent from "@/components/legal/TermsContent.astro";
+import type { SupportedLocale } from "@/lib/locale";
 
-const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+const pathLang = Astro.url?.pathname?.startsWith('/es') ? 'es' : 'en';
+const locale: SupportedLocale = (pathLang === 'es' ? 'es' : 'en');
+const content = { title: pathLang === 'es' ? 'Brickify — Términos de servicio' : 'Brickify — Terms of Service' };
 ---
-<MainLayout content={{title: `${PROJECT_NAME} - Terms of Service`}}>
-    <AppWrapper client:only="react">
-        <TermsOfServicePage client:only="react"/>
-    </AppWrapper>
+<Layout content={content} lang={locale}>
+  <Header client:only="react" />
+  <main class="relative overflow-x-hidden">
+    <TermsContent locale={locale} />
     <FooterSection locale={locale} />
-</MainLayout>
+  </main>
+</Layout>

@@ -19,6 +19,7 @@ const copies = {
             contact: "Contacto",
             legalNotice: "Aviso legal",
             privacy: "Política de privacidad",
+            terms: "Términos de servicio",
         },
         legalRow: ["Política de privacidad", "Política de privacidad", "Política de privacidad", "Política de privacidad"],
         disclaimer:
@@ -38,6 +39,7 @@ const copies = {
             contact: "Contact",
             legalNotice: "Legal notice",
             privacy: "Privacy policy",
+            terms: "Terms of Service",
         },
         legalRow: ["Privacy policy", "Privacy policy", "Privacy policy", "Privacy policy"],
         disclaimer:
@@ -51,6 +53,7 @@ const aboutHref = locale === 'es' ? '/es/about' : '/en/about';
 const contactHref = locale === 'es' ? '/es/contact' : '/en/contact';
 const legalHref = locale === 'es' ? '/es/legal' : '/en/legal';
 const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
+const termsHref = locale === 'es' ? '/es/terms' : '/en/terms';
 ---
 <style is:global>
     @reference "../../styles/global.css";
@@ -91,6 +94,7 @@ const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
                     <ul class="space-y-3 text-sm text-neutral-700">
                         <li><a href={legalHref} class="hover:underline">{t.links.legalNotice}</a></li>
                         <li><a href={privacyHref} class="hover:underline">{t.links.privacy}</a></li>
+                        <li><a href={termsHref} class="hover:underline">{t.links.terms}</a></li>
                     </ul>
                 </div>
 
