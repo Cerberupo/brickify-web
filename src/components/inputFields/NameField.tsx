@@ -18,6 +18,7 @@ export function NameField({ register, errors }: NameFieldProps) {
         id="name"
         type="text"
         placeholder={t('form.name.placeholder')}
+        maxLength={50}
         aria-invalid={errors?.name ? true : undefined}
         {...register('name', {
           required: t('form.name.required')

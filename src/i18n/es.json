@@ -411,5 +411,12 @@
     "register": {
       "pendingPassword": "Este email ya existe y está pendiente. Restablece tu contraseña o inicia sesión con Google usando este email."
     }
+  },
+  "cropper": {
+    "title": "Ajusta tu foto",
+    "zoom": "Zoom",
+    "help": "Usa el gesto de pellizcar (móvil) o la rueda del ratón para hacer zoom. Arrastra para encuadrar. Se aplica un recorte vertical.",
+    "cancel": "Cancelar",
+    "apply": "Aplicar"
   }
 }

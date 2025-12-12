@@ -103,6 +103,7 @@ export function CreateGroupModal({
                                     required: t('dashboard.groupNameRequired') as string
                                 })}
                                 placeholder={t('dashboard.groupNamePlaceholder')}
+                                maxLength={50}
                                 aria-invalid={errors.name ? "true" : "false"}
                             />
                             {errors.name && (
@@ -117,6 +118,7 @@ export function CreateGroupModal({
                                     required: t('dashboard.groupDescriptionRequired') as string
                                 })}
                                 placeholder={t('dashboard.groupDescriptionPlaceholder')}
+                                maxLength={250}
                                 aria-invalid={errors.description ? "true" : "false"}
                             />
                             {errors.description && (

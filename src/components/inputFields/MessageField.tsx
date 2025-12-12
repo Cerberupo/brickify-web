@@ -18,6 +18,7 @@ export function MessageField({ register, errors }: MessageFieldProps) {
         id="message"
         placeholder={t('contactUs.form.messagePlaceholder')}
         className="min-h-[120px]"
+        maxLength={250}
         aria-invalid={errors?.message ? true : undefined}
         {...register('message', {
           required: t('contactUs.form.messageRequired')

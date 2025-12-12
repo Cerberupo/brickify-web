@@ -18,6 +18,7 @@ export function SubjectField({ register, errors }: SubjectFieldProps) {
         id="subject"
         type="text"
         placeholder={t('contactUs.form.subjectPlaceholder')}
+        maxLength={100}
         aria-invalid={errors?.subject ? true : undefined}
         {...register('subject', {
           required: t('contactUs.form.subjectRequired')

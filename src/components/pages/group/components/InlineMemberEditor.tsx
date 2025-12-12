@@ -1,8 +1,9 @@
-import React, {useEffect, useId, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useId, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Input, Label, Textarea, Toaster} from '@/components/ui';
+import {Button, Input, Label, Textarea, Toaster} from '@/components/ui';
 import {toast} from 'sonner';
 import type {AddUserRequest, UpdateUserRequest} from '@/lib/types';
+import { ImageCropperDialog } from '@/components/image/ImageCropperDialog';
 
 export type InlineMemberEditorMode = 'add' | 'edit';
 
@@ -63,6 +64,10 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
     const [avatarPreview, setAvatarPreview] = useState<string | null>(initial?.imageSignedUrl || initial?.imagePath || initial?.avatar || null);
     const [avatarFile, setAvatarFile] = useState<File | undefined>(undefined);
 
+    // Cropper dialog state
+    const [cropOpen, setCropOpen] = useState(false);
+    const [cropSrc, setCropSrc] = useState<string | null>(null);
+
     const MAX_BASE64_BYTES = 2 * 1024 * 1024; // 2MB
 
     // Helper: quick estimate whether base64 will exceed 2MB given file size
@@ -96,6 +101,11 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
         setFaceDescription(initial.faceDescription ?? '');
         setAvatarPreview(hasSrc ? (initial.imageSignedUrl || initial.imagePath || initial.avatar || null) : null);
         setAvatarFile(undefined);
+        // En modo "add" ya no permitimos la opción de "sin imagen".
+        // Forzamos noImage=false aunque llegue en initial, para requerir imagen al crear.
+        if (mode === 'add') {
+            setNoImage(false);
+        }
     }, [initial, mode]);
 
     const canSubmit = useMemo(() => {
@@ -129,18 +139,26 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
         onChangeAdd(valid ? payload : payload, valid);
     }, [mode, onChangeAdd, canSubmit, name, description, noImage, hairDescription, faceDescription, avatarFile]);
 
+    const openCropperWithFile = useCallback((file: File, resetInput?: HTMLInputElement | null) => {
+        // We do not immediately accept the original file; we crop first
+        try {
+            if (exceedsBase64Limit(file)) {
+                // Even if original exceeds, we still try to crop/compress; do not block here.
+            }
+            const objUrl = URL.createObjectURL(file);
+            // Revoke previous temp src to avoid leaks
+            if (cropSrc && cropSrc.startsWith('blob:')) URL.revokeObjectURL(cropSrc);
+            setCropSrc(objUrl);
+            setCropOpen(true);
+        } finally {
+            if (resetInput) resetInput.value = '';
+        }
+    }, [cropSrc]);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            if (exceedsBase64Limit(file)) {
-                toast.error(t('group.imageTooLarge', 'The selected image is too large. Maximum allowed is 2MB.'));
-                // reset input value to allow selecting same file again later
-                if (e.target) e.target.value = '';
-                return;
-            }
-            const previewUrl = URL.createObjectURL(file);
-            setAvatarPreview(previewUrl);
-            setAvatarFile(file);
+            openCropperWithFile(file, e.target);
         }
     };
 
@@ -213,10 +231,12 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                     <h3 className="text-lg font-semibold m-0">
                         {mode === 'add' ? t('group.addMember') : t('group.editMember')}
                     </h3>
+                    {/*
                     <div className="flex items-center gap-2">
-                        <Checkbox id={noImageId} checked={noImage} onCheckedChange={(c) => setNoImage(Boolean(c))}/>
-                        <Label htmlFor={noImageId} className="text-sm">{t('group.noImageOption')}</Label>
-                    </div>
+                            <Checkbox id={noImageId} checked={noImage} onCheckedChange={(c) => setNoImage(Boolean(c))}/>
+                            <Label htmlFor={noImageId} className="text-sm">{t('group.noImageOption')}</Label>
+                        </div>
+                    */}
                 </div>
 
                 {/* Main layout: compact two-column on md+ screens */}
@@ -239,13 +259,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                                         const file = e.dataTransfer.files[0];
                                         if (file.type.startsWith('image/')) {
-                                            if (exceedsBase64Limit(file)) {
-                                                toast.error(t('group.imageTooLarge', 'The selected image is too large. Maximum allowed is 2MB.'));
-                                                return;
-                                            }
-                                            const previewUrl = URL.createObjectURL(file);
-                                            setAvatarPreview(previewUrl);
-                                            setAvatarFile(file);
+                                            openCropperWithFile(file);
                                         }
                                     }
                                 }}
@@ -275,11 +289,13 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                             <div className="md:col-span-2">
                                 <Label htmlFor="name" className="block mb-1">{t('group.memberName')}</Label>
                                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)}
+                                       maxLength={50}
                                        placeholder={t('group.namePlaceholder')}/>
                             </div>
                             <div className="md:col-span-2">
                                 <Label htmlFor="desc" className="block mb-1">{t('group.memberDescription')}</Label>
                                 <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)}
+                                          maxLength={250}
                                           placeholder={t('group.memberDescriptionPlaceholder')}
                                           className="min-h-[96px]"/>
                             </div>
@@ -292,11 +308,13 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                             <div>
                                 <Label htmlFor="name" className="block mb-1">{t('group.memberName')}</Label>
                                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)}
+                                       maxLength={50}
                                        placeholder={t('group.namePlaceholder')}/>
                             </div>
                             <div>
                                 <Label htmlFor="desc" className="block mb-1">{t('group.memberDescription')}</Label>
                                 <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)}
+                                          maxLength={250}
                                           placeholder={t('group.memberDescriptionPlaceholder')}
                                           className="min-h-[96px]"/>
                             </div>
@@ -329,6 +347,33 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                     </div>
                 )}
             </div>
+
+            {/* Image Cropper Dialog */}
+            <ImageCropperDialog
+                open={cropOpen}
+                src={cropSrc}
+                aspect={3/4} // portrait ratio: width/height = 3:4
+                maxSize={1600}
+                onClose={() => setCropOpen(false)}
+                onConfirm={(file, previewUrl) => {
+                    // After cropping+compression, ensure base64 decoded bytes will be under 2MB once encoded
+                    const estimated = Math.ceil((file.size * 4) / 3);
+                    if (estimated > MAX_BASE64_BYTES) {
+                        toast.error(t('group.imageTooLarge', 'The selected image is too large. Maximum allowed is 2MB.'));
+                        setCropOpen(false);
+                        // Revoke created preview
+                        if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
+                        return;
+                    }
+                    // Cleanup previous preview URL if it was blob
+                    if (avatarPreview && avatarPreview.startsWith('blob:')) {
+                        try { URL.revokeObjectURL(avatarPreview); } catch {}
+                    }
+                    setAvatarFile(file);
+                    setAvatarPreview(previewUrl);
+                    setCropOpen(false);
+                }}
+            />
         </div>
     );
 };

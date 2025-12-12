@@ -1,6 +1,7 @@
 ---
 import type {SupportedLocale} from "@/lib/locale";
 import {API_URL} from "@/config";
+import QuickPhotoCropperBridge from "@/components/home/QuickPhotoCropperBridge";
 
 interface Props {
     locale: SupportedLocale
@@ -202,6 +203,9 @@ const t = copies[locale];
         </div>
     </div>
 
+    {/** Puente React que abre la modal de recorte al emitir "open-quick-cropper" */}
+    <QuickPhotoCropperBridge client:only="react"/>
+
     <script type="module" define:vars={{locale, API_URL}}>
         function initQuickPhotoSection() {
             const drop = document.getElementById('qp-drop');
@@ -224,6 +228,14 @@ const t = copies[locale];
             // Limit applies to the base64-encoded payload size (max 2MB encoded)
             const MAX_BASE64_ENCODED_BYTES = 2 * 1024 * 1024; // 2MB encoded
             const localeStr = (locale === 'es') ? 'es' : 'en';
+
+            // Estado para controlar reentradas y ciclo del cropper
+            let isSelectingFile = false;
+            let cropperOpen = false;
+            let currentToken = '';
+            let lastOpenedToken = '';
+            // Data URL resultante del recorte (para enviar al backend). El preview puede ser un object URL.
+            let croppedDataUrl = null;
 
             const hasImage = () => !!preview && !preview.classList.contains('hidden');
             const setHasImageState = (on) => {
@@ -264,12 +276,7 @@ const t = copies[locale];
                 drop.classList.remove('outline', 'outline-2', 'outline-black/30', 'is-hovering');
             };
 
-            // Estimate if base64 would exceed 2MB based on file size (x4/3)
-            const exceedsBase64Limit = (file) => {
-                // Estimate encoded size: 4 * ceil(n/3)
-                const estimatedEncoded = 4 * Math.ceil(file.size / 3);
-                return estimatedEncoded > MAX_BASE64_ENCODED_BYTES;
-            };
+            // Nota: no calculamos límite antes del recorte; el compresor del cropper lo reduce.
 
             const applyPreviewStyles = () => {
                 drop.classList.remove('dropzone');
@@ -314,37 +321,27 @@ const t = copies[locale];
 
             const handleFile = async (file) => {
                 hideError();
-                // Quick estimate pre-check
-                if (exceedsBase64Limit(file)) {
-                    showError(localeStr === 'es' ? 'La imagen seleccionada es demasiado grande. Máximo permitido: 1.5MB.' : 'The selected image is too large. Maximum allowed is 1.5MB.');
-                    // Reset input so same file can be selected again later
-                    if (fileInput) fileInput.value = '';
-                    return;
-                }
+                // Generar object URL y abrir cropper a través del bridge
                 try {
-                    const dataUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result);
-                        reader.onerror = () => reject(new Error('Failed to read image'));
-                        reader.readAsDataURL(file);
-                    });
-                    // Strict check on encoded base64 length (characters == bytes)
-                    const str = String(dataUrl);
-                    const commaIdx = str.indexOf(',');
-                    const base64 = commaIdx >= 0 ? str.substring(commaIdx + 1) : str;
-                    const encodedLen = base64.length;
-                    if (encodedLen > MAX_BASE64_ENCODED_BYTES) {
-                        showError(localeStr === 'es' ? 'La imagen seleccionada es demasiado grande. Máximo permitido: 1.5MB.' : 'The selected image is too large. Maximum allowed is 1.5MB.');
-                        if (fileInput) fileInput.value = '';
-                        return;
-                    }
-                    if (preview) {
-                        preview.src = String(dataUrl); // use base64 data URL so it’s ready to send
-                        preview.classList.remove('hidden');
-                    }
-                    applyPreviewStyles();
+                    const objectUrl = URL.createObjectURL(file);
+                    const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+                    currentToken = token;
+                    lastOpenedToken = '';
+
+                    const tryOpen = (attempt) => {
+                        window.dispatchEvent(new CustomEvent('open-quick-cropper', {
+                            detail: {src: objectUrl, token}
+                        }));
+                        // Si en ~200ms no se ha abierto para este token, reintentar hasta 3 veces
+                        setTimeout(() => {
+                            if (lastOpenedToken !== token && attempt < 3) {
+                                tryOpen(attempt + 1);
+                            }
+                        }, 200);
+                    };
+                    tryOpen(0);
                 } catch (err) {
-                    showError(localeStr === 'es' ? 'No se pudo leer la imagen. Inténtalo de nuevo.' : 'Could not read the image. Please try again.');
+                    showError(localeStr === 'es' ? 'No se pudo abrir el recortador. Inténtalo de nuevo.' : 'Could not open cropper. Please try again.');
                 }
             };
 
@@ -361,22 +358,80 @@ const t = copies[locale];
 
             // Click/keyboard to open file dialog
             drop.addEventListener('click', () => {
-                if (fileInput) fileInput.click();
+                if (cropperOpen || isSelectingFile) return;
+                if (!fileInput) return;
+                isSelectingFile = true;
+                // permitir volver a elegir el mismo archivo
+                fileInput.value = '';
+                setTimeout(() => fileInput.click(), 0);
             });
             drop.addEventListener('keydown', (e) => {
                 const k = e && e.key ? e.key : '';
                 if (k === 'Enter' || k === ' ') {
                     e.preventDefault();
-                    if (fileInput) fileInput.click();
+                    if (cropperOpen || isSelectingFile) return;
+                    if (!fileInput) return;
+                    isSelectingFile = true;
+                    fileInput.value = '';
+                    setTimeout(() => fileInput.click(), 0);
                 }
             });
 
             if (fileInput) {
                 fileInput.addEventListener('change', () => {
                     const f = fileInput && fileInput.files && fileInput.files[0];
+                    // salir del estado selección tanto si canceló como si eligió
+                    isSelectingFile = false;
                     if (f) handleFile(f);
                 });
             }
+
+            // Listeners del puente React
+            const onOpened = (ev) => {
+                const tk = ev && ev.detail ? ev.detail.token : '';
+                if (tk) lastOpenedToken = tk;
+                cropperOpen = true;
+            };
+            const onClosed = () => {
+                cropperOpen = false;
+                isSelectingFile = false;
+                currentToken = '';
+                lastOpenedToken = '';
+                if (fileInput) fileInput.value = '';
+                drop.classList.remove('is-hovering', 'outline', 'outline-2', 'outline-black/30');
+            };
+            const onConfirmed = (ev) => {
+                const detail = ev && ev.detail ? ev.detail : {};
+                const tk = detail.token || '';
+                if (tk && currentToken && tk !== currentToken) return; // mismatch, ignorar
+                const previewUrl = String(detail.previewUrl || '');
+                const dataUrl = String(detail.dataUrl || '');
+                croppedDataUrl = dataUrl || null;
+                if (preview && previewUrl) {
+                    preview.onload = () => {
+                        applyPreviewStyles();
+                    };
+                    preview.src = previewUrl;
+                    preview.classList.remove('hidden');
+                } else {
+                    applyPreviewStyles();
+                }
+            };
+            window.addEventListener('quick-cropper-opened', onOpened);
+            window.addEventListener('quick-cropper-closed', onClosed);
+            window.addEventListener('quick-cropper-confirmed', onConfirmed);
+
+            // Cleanup at page swap using captured handlers
+            const cleanup = () => {
+                window.removeEventListener('quick-cropper-opened', onOpened);
+                window.removeEventListener('quick-cropper-closed', onClosed);
+                window.removeEventListener('quick-cropper-confirmed', onConfirmed);
+                const dropEl = document.getElementById('qp-drop');
+                if (dropEl && dropEl.dataset) {
+                    delete dropEl.dataset.inited;
+                }
+            };
+            window.addEventListener('astro:before-swap', cleanup, {once: true});
 
             // Submit handler: create guest order
             if (btn) {
@@ -389,7 +444,7 @@ const t = copies[locale];
                     const email = (emailInput && emailInput.value) ? emailInput.value : '';
                     const accepted = !!(privacyCheck && privacyCheck.checked);
 
-                    if (!hasImage() || !preview || !preview.src) {
+                    if (!hasImage() || !croppedDataUrl) {
                         showError(localeStr === 'es' ? 'Primero sube una imagen válida.' : 'Please upload an image first.');
                         return;
                     }
@@ -410,7 +465,7 @@ const t = copies[locale];
                     const body = {
                         name: name.trim(),
                         email: email.trim(),
-                        imageBase64: preview.src, // data URL acceptable by backend
+                        imageBase64: croppedDataUrl, // data URL del recorte
                         lang: localeStr
                         // amount, currency: opcionales, omitimos para defaults del servidor
                     };
@@ -491,13 +546,7 @@ const t = copies[locale];
         }
         window.addEventListener('astro:page-load', initQuickPhotoSection);
         window.addEventListener('astro:after-swap', initQuickPhotoSection);
-        // When Astro is about to swap the page, clear init flag so the new DOM can re-init cleanly
-        window.addEventListener('astro:before-swap', () => {
-            const drop = document.getElementById('qp-drop');
-            if (drop && drop.dataset) {
-                delete drop.dataset.inited;
-            }
-        });
+        // When Astro is about to swap the page, a per-init cleanup is registered above to detach listeners
         // Ensure re-initialization when returning with browser back/forward
         window.addEventListener('pageshow', () => initQuickPhotoSection());
     </script>

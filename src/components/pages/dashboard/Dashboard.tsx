@@ -43,7 +43,17 @@ export function DashboardPage() {
             setIsLoading(true);
             const fetchedGroups = await getGroups();
             console.log('fetchedGroups', fetchedGroups);
-            setGroups(fetchedGroups);
+            // Sort collections by newest first (createdAt DESC), with safe fallbacks
+            const sorted = [...fetchedGroups].sort((a: any, b: any) => {
+                const aTime = a?.createdAt ? new Date(a.createdAt).getTime() : (a?.updatedAt ? new Date(a.updatedAt).getTime() : 0);
+                const bTime = b?.createdAt ? new Date(b.createdAt).getTime() : (b?.updatedAt ? new Date(b.updatedAt).getTime() : 0);
+                if (bTime !== aTime) return bTime - aTime;
+                // Fallback: try to use id ordering if timestamps are missing/equal
+                const aId = typeof a?.id === 'string' ? a.id : String(a?.id ?? '');
+                const bId = typeof b?.id === 'string' ? b.id : String(b?.id ?? '');
+                return bId.localeCompare(aId);
+            });
+            setGroups(sorted as any);
         } catch (error) {
             console.error('Error fetching groups:', error);
             toast.error(t('dashboard.errorFetchingGroups'));

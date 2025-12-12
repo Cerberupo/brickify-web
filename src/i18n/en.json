@@ -413,5 +413,12 @@
     "register": {
       "pendingPassword": "This email is already registered and pending. Reset your password or sign in with Google using this email."
     }
+  },
+  "cropper": {
+    "title": "Adjust your photo",
+    "zoom": "Zoom",
+    "help": "Use pinch (mobile) or mouse wheel to zoom. Drag to reframe. Portrait crop is enforced.",
+    "cancel": "Cancel",
+    "apply": "Apply"
   }
 }
