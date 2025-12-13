@@ -1,0 +1,176 @@
+---
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+
+interface Props {
+    locale?: SupportedLocale
+}
+
+const {locale: localeProp} = Astro.props as Props;
+const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
+
+const copies = {
+    es: {
+        badge: "AHORRA AL COMPRAR",
+        title: "Calcula tu precio por imagen",
+        description: "Desliza para ver cómo baja el precio por imagen al pedir más unidades."
+            + " Te mostramos el total y el tiempo que te ahorras buscando piezas por tu cuenta.",
+        unitLabel: "Unidades",
+        unit: "unidad",
+        perUnit: "Precio por unidad",
+        total: "Total",
+        savings: "Ahorro de tiempo",
+        savingsLegend: "30 min por figura buscando piezas en la web de LEGO®",
+        minutes: "min",
+        hours: "h",
+    },
+    en: {
+        badge: "SAVE AS YOU BUY",
+        title: "Calculate your price per image",
+        description: "Slide to see how the price per image drops when you order more units."
+            + " We also show the total and the time you save versus searching LEGO® parts yourself.",
+        unitLabel: "Units",
+        unit: "unit",
+        perUnit: "Price per unit",
+        total: "Total",
+        savings: "Time saved",
+        savingsLegend: "30 min per figure searching parts on the LEGO® website",
+        minutes: "min",
+        hours: "h",
+    }
+} as const;
+
+const priceByQty = [
+    2.99, // 1
+    2.89, // 2
+    2.79, // 3
+    2.69, // 4
+    2.59, // 5
+    2.49, // 6
+    2.39, // 7
+    2.29, // 8
+    2.19, // 9
+    1.99, // 10+
+];
+
+
+const t = copies[locale];
+---
+<section id="precio" class="py-16 md:py-24 bg-[#F8F5FF]">
+    <div class="container mx-auto px-4 md:px-6">
+        <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14">
+            <span class="inline-flex items-center rounded-full bg-white border border-[#E8C79E] text-xs font-semibold px-3 py-1 uppercase tracking-wide text-primary">
+                {t.badge}
+            </span>
+            <h2 class="text-3xl md:text-[32px] font-medium tracking-tight mt-4 mb-3">{t.title}</h2>
+            <p class="text-sm md:text-[16px] font-light text-muted-foreground">{t.description}</p>
+        </div>
+
+        <div class="flex justify-center">
+            <div class="w-full max-w-2xl rounded-2xl bg-white shadow-sm border border-[#E8C79E] p-6 md:p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-left">
+                        <p class="text-sm text-muted-foreground">{t.unitLabel}</p>
+                        <p class="text-2xl font-semibold"><span id="pc-qty">1</span> {t.unit}</p>
+                    </div>
+                    <p class="text-xs text-muted-foreground text-right max-w-[180px]">{t.savingsLegend}</p>
+                </div>
+
+                <!-- Slider no lineal: 0–80 controla 1–10; 80–100 controla 10–150 -->
+                <input id="pc-slider" type="range" min="0" max="100" value="0" step="1"
+                       class="w-full accent-primary h-2 bg-[#E8C79E]/40 rounded-lg appearance-none cursor-pointer"
+                       aria-label={t.unitLabel}/>
+                <div class="flex justify-between text-xs text-muted-foreground mt-2">
+                    <span>1</span>
+                    <span>10</span>
+                    <span>150</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                    <div class="rounded-xl bg-[#F1EEFF] p-4 border border-[#E8C79E]/60">
+                        <p class="text-sm text-muted-foreground">{t.perUnit}</p>
+                        <p class="text-2xl font-semibold" id="pc-unit-price">€2.99</p>
+                    </div>
+                    <div class="rounded-xl bg-[#FFF6E6] p-4 border border-[#E8C79E]/60">
+                        <p class="text-sm text-muted-foreground">{t.total}</p>
+                        <p class="text-2xl font-semibold" id="pc-total">€2.99</p>
+                    </div>
+                    <div class="rounded-xl bg-[#E6F1FF] p-4 border border-[#B5D6FF]">
+                        <p class="text-sm text-muted-foreground">{t.savings}</p>
+                        <p class="text-2xl font-semibold" id="pc-savings">30 {t.minutes}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script define:vars={{locale, tMinutes: t.minutes, tHours: t.hours}}>
+        const slider = document.getElementById('pc-slider');
+        const qtyEl = document.getElementById('pc-qty');
+        const unitEl = document.getElementById('pc-unit-price');
+        const totalEl = document.getElementById('pc-total');
+        const savingsEl = document.getElementById('pc-savings');
+
+        const priceByQty = [
+            2.99, // 1
+            2.89, // 2
+            2.79, // 3
+            2.69, // 4
+            2.59, // 5
+            2.49, // 6
+            2.39, // 7
+            2.29, // 8
+            2.19, // 9
+            1.99, // 10+
+        ];
+        const minutesPerUnit = 20;
+        const fmt = new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+            style: 'currency',
+            currency: 'EUR',
+            minimumFractionDigits: 2,
+        });
+
+        // Muestra solo minutos (<60) o solo horas (>=60)
+        const formatTime = (minutes) => {
+            if (minutes < 60) return `${minutes} ${tMinutes}`;
+            const hours = minutes / 60;
+            return `${hours.toFixed(1)} ${tHours}`;
+        };
+
+        // Mapeo no lineal del slider (0–100) a cantidad (1–150)
+        const sliderToQty = (s) => {
+            const sv = Math.max(0, Math.min(100, Number(s) || 0));
+            // Ajuste para alinear el thumb con el tick "10" centrado (50%)
+            if (sv <= 50) {
+                // tramo 0–50 → 1–10 (más precisión en las primeras 10 uds y 10 cae justo en el centro)
+                const q = 1 + (sv / 50) * (10 - 1);
+                return Math.round(q);
+            } else {
+                // tramo 50–100 → 10–150
+                const q = 10 + ((sv - 50) / 50) * (150 - 10);
+                return Math.round(q);
+            }
+        };
+
+        const update = (qty) => {
+            const safeQty = Math.max(1, Math.min(150, Math.round(qty)));
+            const unitPrice = priceByQty[Math.min(safeQty, 10) - 1];
+            const total = unitPrice * safeQty;
+            const savedMinutes = safeQty * minutesPerUnit;
+
+            qtyEl.textContent = String(safeQty);
+            unitEl.textContent = fmt.format(unitPrice);
+            totalEl.textContent = fmt.format(total);
+            savingsEl.textContent = formatTime(savedMinutes);
+        };
+
+        if (slider && qtyEl && unitEl && totalEl && savingsEl) {
+            slider.addEventListener('input', (event) => {
+                const target = event.target;
+                if (!(target instanceof HTMLInputElement)) return;
+                const qty = sliderToQty(target.value);
+                update(qty);
+            });
+            update(sliderToQty(slider.value));
+        }
+    </script>
+</section>
