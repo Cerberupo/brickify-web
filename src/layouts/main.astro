@@ -3,32 +3,39 @@ import '../styles/global.css';
 import 'sonner/dist/styles.css';
 import {ClientRouter} from "astro:transitions";
 import {PROJECT_NAME} from "../config";
-import { normalizeLocale } from "@/lib/locale";
+import {normalizeLocale} from "@/lib/locale";
 
 type Lang = 'en' | 'es';
 
 interface SeoProps {
-  description?: string;
-  canonical?: string; // absolute or relative
-  alternates?: Array<{ href: string; hrefLang: string }>;
-  ogImage?: string; // path or absolute URL
-  ogAlt?: string;
-  robots?: string; // e.g., "index,follow"
-  noindex?: boolean;
-  structuredData?: {
-    organization?: boolean;
-    website?: boolean;
-  };
+    title?: string;
+    description?: string;
+    canonical?: string; // absolute or relative
+    alternates?: Array<{ href: string; hrefLang: string }>;
+    ogImage?: string; // path or absolute URL
+    ogAlt?: string;
+    robots?: string; // e.g., "index,follow"
+    noindex?: boolean;
+    keywords?: string;
+    themeColor?: string;
+    manifest?: string;
+    localeAlternate?: string;
+    structuredData?: {
+        organization?: boolean;
+        website?: boolean;
+        webpage?: boolean;
+        breadcrumb?: Array<{ name: string; url: string }>;
+    };
 }
 
 let {content, lang, seo} = Astro.props as {
-  content?: { title?: string };
-  lang?: Lang;
-  seo?: SeoProps;
+    content?: { title?: string };
+    lang?: Lang;
+    seo?: SeoProps;
 };
 
 if (!content || !content.title) {
-  content = {title: PROJECT_NAME};
+    content = {title: PROJECT_NAME};
 }
 
 // Prefer explicit lang prop; otherwise derive from URL path; finally fall back to Astro.currentLocale
@@ -38,76 +45,122 @@ const pathLang = path.startsWith('/es') ? 'es' : (path.startsWith('/en') ? 'en' 
 const htmlLang = (lang ?? pathLang ?? normalizeLocale(Astro.currentLocale as string | undefined));
 
 // Compute URLs
+const pageTitle = seo?.title ?? content?.title ?? PROJECT_NAME;
 const currentUrl = `${origin}${path}`;
 const canonicalUrl = seo?.canonical
-  ? (seo.canonical.startsWith('http') ? seo.canonical : `${origin}${seo.canonical}`)
-  : currentUrl;
+    ? (seo.canonical.startsWith('http') ? seo.canonical : `${origin}${seo.canonical}`)
+    : currentUrl;
 const ogImageUrl = seo?.ogImage
-  ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${origin}${seo.ogImage}`)
-  : `${origin}/logo.png`;
+    ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${origin}${seo.ogImage}`)
+    : `${origin}/logo.png`;
 const robotsContent = seo?.noindex ? 'noindex,nofollow' : (seo?.robots ?? 'index,follow');
+const themeColor = seo?.themeColor ?? '#F3EFE6';
+const manifestHref = seo?.manifest ?? '/site.webmanifest';
+const localeAlternate = seo?.localeAlternate;
 ---
 
 <html lang={htmlLang}>
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content={themeColor}/>
     <link rel="icon" type="image/png" href="/favicon.png"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="manifest" href={manifestHref}/>
     <meta name="generator" content={Astro.generator}/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&display=swap"
           rel="stylesheet">
-    <title>{content?.title}</title>
-    {seo?.description && (<meta name="description" content={seo.description} />)}
-    <meta name="robots" content={robotsContent} />
-    <link rel="canonical" href={canonicalUrl} />
+    <title>{pageTitle}</title>
+    {seo?.description && (
+            <meta name="description" content={seo.description}/>)}
+    {seo?.keywords && (
+            <meta name="keywords" content={seo.keywords}/>)}
+    <meta name="robots" content={robotsContent}/>
+    <link rel="canonical" href={canonicalUrl}/>
     {seo?.alternates && seo.alternates.map(a => (
-      <link rel="alternate" hrefLang={a.hrefLang} href={a.href.startsWith('http') ? a.href : `${origin}${a.href}`} />
+            <link rel="alternate" hrefLang={a.hrefLang}
+                  href={a.href.startsWith('http') ? a.href : `${origin}${a.href}`}/>
     ))}
+    {localeAlternate && (
+            <link rel="alternate" hrefLang={htmlLang === 'es' ? 'en' : 'es'}
+                  href={localeAlternate.startsWith('http') ? localeAlternate : `${origin}${localeAlternate}`}/>
+    )}
 
     <!-- Open Graph -->
-    <meta property="og:title" content={content?.title} />
-    {seo?.description && (<meta property="og:description" content={seo.description} />)}
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:site_name" content={PROJECT_NAME} />
-    <meta property="og:locale" content={htmlLang === 'es' ? 'es_ES' : 'en_US'} />
+    <meta property="og:title" content={pageTitle}/>
+    {seo?.description && (
+            <meta property="og:description" content={seo.description}/>)}
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content={canonicalUrl}/>
+    <meta property="og:image" content={ogImageUrl}/>
+    <meta property="og:site_name" content={PROJECT_NAME}/>
+    <meta property="og:locale" content={htmlLang === 'es' ? 'es_ES' : 'en_US'}/>
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={content?.title} />
-    {seo?.description && (<meta name="twitter:description" content={seo.description} />)}
-    <meta name="twitter:image" content={ogImageUrl} />
-    {seo?.ogAlt && (<meta name="twitter:image:alt" content={seo.ogAlt} />)}
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content={pageTitle}/>
+    {seo?.description && (
+            <meta name="twitter:description" content={seo.description}/>)}
+    <meta name="twitter:image" content={ogImageUrl}/>
+    {seo?.ogAlt && (
+            <meta name="twitter:image:alt" content={seo.ogAlt}/>)}
 
     {seo?.structuredData?.organization && (
-      <script type="application/ld+json" set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        name: PROJECT_NAME,
-        url: origin || "/",
-        logo: `${origin}/logo.png`,
-        sameAs: [
-          "https://x.com/BrickifyFun",
-          "https://www.tiktok.com/@brickify.fun"
-        ]
-      })} />
+        <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: PROJECT_NAME,
+            url: origin || "/",
+            logo: `${origin}/logo.png`,
+            sameAs: [
+                "https://x.com/BrickifyFun",
+                "https://www.tiktok.com/@brickify.fun"
+            ]
+        })} />
     )}
     {seo?.structuredData?.website && (
-      <script type="application/ld+json" set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: PROJECT_NAME,
-        url: origin || "/",
-        inLanguage: htmlLang,
-        potentialAction: {
-          "@type": "SearchAction",
-          target: `${origin}/?q={search_term_string}`,
-          "query-input": "required name=search_term_string"
-        }
-      })} />
+        <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: PROJECT_NAME,
+            url: origin || "/",
+            inLanguage: htmlLang,
+            potentialAction: {
+                "@type": "SearchAction",
+                target: `${origin}/?q={search_term_string}`,
+                "query-input": "required name=search_term_string"
+            }
+        })} />
+    )}
+    {seo?.structuredData?.webpage && (
+        <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: pageTitle,
+            url: canonicalUrl,
+            inLanguage: htmlLang,
+            description: seo?.description,
+            isPartOf: {
+                "@type": "WebSite",
+                url: origin || "/",
+                name: PROJECT_NAME,
+                inLanguage: htmlLang
+            }
+        })} />
+    )}
+    {seo?.structuredData?.breadcrumb && seo.structuredData.breadcrumb.length > 0 && (
+        <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: seo.structuredData.breadcrumb.map((item, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                name: item.name,
+                item: item.url.startsWith('http') ? item.url : `${origin}${item.url}`
+            }))
+        })} />
     )}
     <ClientRouter/>
 </head>

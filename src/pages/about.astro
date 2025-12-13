@@ -1,17 +1,53 @@
 ---
 import Layout from "@/layouts/main.astro";
-import { Header } from "@/layouts/components/Header";
+import {Header} from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
 import AboutContent from "@/components/about/AboutContent.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
-const content = { title: locale === 'es' ? 'Brickify — Quiénes somos' : 'Brickify — About us' };
+const content = {title: locale === 'es' ? 'Brickify — Quiénes somos' : 'Brickify — About us'};
+
+const descriptions = {
+    es: "Conoce Brickify, el servicio que convierte tus fotos en ideas LEGO® con piezas oficiales seleccionadas por IA.",
+    en: "Learn about Brickify, the service that turns your photos into LEGO® ideas with AI-selected official parts."
+} as const;
+const keywords = {
+    es: "sobre brickify, quienes somos brickify, lego ia, minifig lego, piezas lego",
+    en: "about brickify, who is brickify, lego ai, lego minifig, lego parts"
+} as const;
+
+const path = Astro.url?.pathname || '/about';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es/about' : (path.startsWith('/en') ? '/en/about' : '/about');
+const alternates = [
+    {href: '/about', hrefLang: 'x-default'},
+    {href: '/es/about', hrefLang: 'es'},
+    {href: '/en/about', hrefLang: 'en'},
+];
+const seo = {
+    title: content.title,
+    description: isEs ? descriptions.es : descriptions.en,
+    keywords: isEs ? keywords.es : keywords.en,
+    canonical,
+    alternates,
+    ogImage: '/logo.png',
+    ogAlt: isEs ? 'Logo de Brickify' : 'Brickify logo',
+    structuredData: {
+        organization: true,
+        website: true,
+        webpage: true,
+        breadcrumb: [
+            {name: isEs ? 'Inicio' : 'Home', url: isEs ? '/es' : '/'},
+            {name: isEs ? 'Quiénes somos' : 'About us', url: canonical}
+        ]
+    },
+} as const;
 ---
-<Layout content={content} lang={locale}>
-  <Header client:only="react" />
-  <main class="relative overflow-x-hidden">
-    <AboutContent locale={locale} />
-    <FooterSection locale={locale} />
-  </main>
+<Layout content={content} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <AboutContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
 </Layout>

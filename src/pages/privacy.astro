@@ -1,17 +1,53 @@
 ---
 import Layout from "@/layouts/main.astro";
-import { Header } from "@/layouts/components/Header";
+import {Header} from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
 import PrivacyContent from "@/components/legal/PrivacyContent.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
-const content = { title: locale === 'es' ? 'Brickify — Política de privacidad' : 'Brickify — Privacy policy' };
+const content = {title: locale === 'es' ? 'Brickify — Política de privacidad' : 'Brickify — Privacy policy'};
+
+const descriptions = {
+    es: "Consulta la política de privacidad de Brickify y cómo protegemos tus datos al convertir tus fotos en ideas LEGO® con IA.",
+    en: "Read Brickify's privacy policy and how we protect your data while turning your photos into LEGO® ideas with AI."
+} as const;
+const keywords = {
+    es: "privacidad brickify, datos personales lego, política privacidad lego ia",
+    en: "brickify privacy, personal data lego, privacy policy lego ai"
+} as const;
+
+const path = Astro.url?.pathname || '/privacy';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es/privacy' : (path.startsWith('/en') ? '/en/privacy' : '/privacy');
+const alternates = [
+    {href: '/privacy', hrefLang: 'x-default'},
+    {href: '/es/privacy', hrefLang: 'es'},
+    {href: '/en/privacy', hrefLang: 'en'},
+];
+const seo = {
+    title: content.title,
+    description: isEs ? descriptions.es : descriptions.en,
+    keywords: isEs ? keywords.es : keywords.en,
+    canonical,
+    alternates,
+    ogImage: '/logo.png',
+    ogAlt: isEs ? 'Logo de Brickify' : 'Brickify logo',
+    structuredData: {
+        organization: true,
+        website: true,
+        webpage: true,
+        breadcrumb: [
+            {name: isEs ? 'Inicio' : 'Home', url: isEs ? '/es' : '/'},
+            {name: isEs ? 'Privacidad' : 'Privacy', url: canonical}
+        ]
+    },
+} as const;
 ---
-<Layout content={content} lang={locale}>
-  <Header client:only="react" />
-  <main class="relative overflow-x-hidden">
-    <PrivacyContent locale={locale} />
-    <FooterSection locale={locale} />
-  </main>
+<Layout content={content} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <PrivacyContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
 </Layout>

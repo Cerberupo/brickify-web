@@ -1,17 +1,53 @@
 ---
 import Layout from "@/layouts/main.astro";
-import { Header } from "@/layouts/components/Header";
+import {Header} from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
 import ContactContent from "@/components/contact/ContactContent.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
-const content = { title: locale === 'es' ? 'Brickify — Contacto' : 'Brickify — Contact' };
+const content = {title: locale === 'es' ? 'Brickify — Contacto' : 'Brickify — Contact'};
+
+const descriptions = {
+    es: "Contacta con Brickify y descubre cómo convertir tus fotos en ideas LEGO® con piezas oficiales seleccionadas por IA.",
+    en: "Contact Brickify and learn how to turn your photos into LEGO® ideas with AI-selected official parts."
+} as const;
+const keywords = {
+    es: "contacto brickify, soporte brickify, ayuda lego ia, minifig lego",
+    en: "contact brickify, support brickify, lego ai help, lego minifig"
+} as const;
+
+const path = Astro.url?.pathname || '/contact';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es/contact' : (path.startsWith('/en') ? '/en/contact' : '/contact');
+const alternates = [
+    {href: '/contact', hrefLang: 'x-default'},
+    {href: '/es/contact', hrefLang: 'es'},
+    {href: '/en/contact', hrefLang: 'en'},
+];
+const seo = {
+    title: content.title,
+    description: isEs ? descriptions.es : descriptions.en,
+    keywords: isEs ? keywords.es : keywords.en,
+    canonical,
+    alternates,
+    ogImage: '/logo.png',
+    ogAlt: isEs ? 'Logo de Brickify' : 'Brickify logo',
+    structuredData: {
+        organization: true,
+        website: true,
+        webpage: true,
+        breadcrumb: [
+            {name: isEs ? 'Inicio' : 'Home', url: isEs ? '/es' : '/'},
+            {name: isEs ? 'Contacto' : 'Contact', url: canonical}
+        ]
+    },
+} as const;
 ---
-<Layout content={content} lang={locale}>
-  <Header client:only="react" />
-  <main class="relative overflow-x-hidden">
-    <ContactContent locale={locale} />
-    <FooterSection locale={locale} />
-  </main>
+<Layout content={content} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <ContactContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
 </Layout>
