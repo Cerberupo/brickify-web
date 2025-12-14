@@ -125,9 +125,33 @@ const t = copies[locale];
 
     register();
 </script>
+<!-- Carga no bloqueante del CSS de Swiper (equivalente a "defer" para estilos) -->
+<script>
+    (function loadSwiperCSS() {
+        try {
+            if (document.getElementById('swiper-css')) return;
+            var l = document.createElement('link');
+            l.id = 'swiper-css';
+            l.rel = 'stylesheet';
+            l.href = 'https://unpkg.com/swiper@11/swiper-bundle.min.css';
+            // media swap para evitar bloquear el render inicial
+            l.media = 'print';
+            l.onload = function () {
+                try {
+                    l.media = 'all';
+                } catch (e) { /* noop */
+                }
+            };
+            document.head.appendChild(l);
+        } catch (e) { /* noop */
+        }
+    })();
+</script>
+<noscript>
+    <link rel="stylesheet" href="https://unpkg.com/swiper@11/swiper-bundle.min.css"/>
+</noscript>
 <style is:global>
-    /* Keep Swiper styles from CDN to avoid PostCSS ENOENT on local CSS imports */
-    @import url('https://unpkg.com/swiper@11/swiper-bundle.min.css');
+    /* Estilos mínimos locales y variables de tema */
     /* Minimal fallbacks to avoid stacked slides flash before upgrade */
     swiper-container {
         display: block;
