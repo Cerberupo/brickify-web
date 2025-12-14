@@ -41,18 +41,20 @@ if (!content || !content.title) {
 // Prefer explicit lang prop; otherwise derive from URL path; finally fall back to Astro.currentLocale
 const path = Astro.url?.pathname || '/';
 const origin = Astro.url?.origin || '';
+// Base absoluto para construir URLs en metatags (evita "localhost" en build estático)
+const baseOrigin = (import.meta.env.PUBLIC_SITE_URL as string | undefined) || origin || '';
 const pathLang = path.startsWith('/es') ? 'es' : (path.startsWith('/en') ? 'en' : undefined);
 const htmlLang = (lang ?? pathLang ?? normalizeLocale(Astro.currentLocale as string | undefined));
 
 // Compute URLs
 const pageTitle = seo?.title ?? content?.title ?? PROJECT_NAME;
-const currentUrl = `${origin}${path}`;
+const currentUrl = `${baseOrigin}${path}`;
 const canonicalUrl = seo?.canonical
-    ? (seo.canonical.startsWith('http') ? seo.canonical : `${origin}${seo.canonical}`)
+    ? (seo.canonical.startsWith('http') ? seo.canonical : `${baseOrigin}${seo.canonical}`)
     : currentUrl;
 const ogImageUrl = seo?.ogImage
-    ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${origin}${seo.ogImage}`)
-    : `${origin}/logo.png`;
+    ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${baseOrigin}${seo.ogImage}`)
+    : `${baseOrigin}/logo.png`;
 const robotsContent = seo?.noindex ? 'noindex,nofollow' : (seo?.robots ?? 'index,follow');
 const themeColor = seo?.themeColor ?? '#F3EFE6';
 const manifestHref = seo?.manifest ?? '/site.webmanifest';
@@ -89,11 +91,11 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
     <link rel="canonical" href={canonicalUrl}/>
     {seo?.alternates && seo.alternates.map(a => (
             <link rel="alternate" hrefLang={a.hrefLang}
-                  href={a.href.startsWith('http') ? a.href : `${origin}${a.href}`}/>
+                  href={a.href.startsWith('http') ? a.href : `${baseOrigin}${a.href}`}/>
     ))}
     {localeAlternate && (
             <link rel="alternate" hrefLang={htmlLang === 'es' ? 'en' : 'es'}
-                  href={localeAlternate.startsWith('http') ? localeAlternate : `${origin}${localeAlternate}`}/>
+                  href={localeAlternate.startsWith('http') ? localeAlternate : `${baseOrigin}${localeAlternate}`}/>
     )}
 
     <!-- Open Graph -->
@@ -120,8 +122,8 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
             "@context": "https://schema.org",
             "@type": "Organization",
             name: PROJECT_NAME,
-            url: origin || "/",
-            logo: `${origin}/logo.png`,
+            url: baseOrigin || "/",
+            logo: `${baseOrigin}/logo.png`,
             sameAs: [
                 "https://x.com/BrickifyFun",
                 "https://www.tiktok.com/@brickify.fun"
@@ -133,11 +135,11 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: PROJECT_NAME,
-            url: origin || "/",
+            url: baseOrigin || "/",
             inLanguage: htmlLang,
             potentialAction: {
                 "@type": "SearchAction",
-                target: `${origin}/?q={search_term_string}`,
+                target: `${baseOrigin}/?q={search_term_string}`,
                 "query-input": "required name=search_term_string"
             }
         })} />
@@ -152,7 +154,7 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
             description: seo?.description,
             isPartOf: {
                 "@type": "WebSite",
-                url: origin || "/",
+                url: baseOrigin || "/",
                 name: PROJECT_NAME,
                 inLanguage: htmlLang
             }
