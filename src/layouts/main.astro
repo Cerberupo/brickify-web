@@ -57,6 +57,14 @@ const robotsContent = seo?.noindex ? 'noindex,nofollow' : (seo?.robots ?? 'index
 const themeColor = seo?.themeColor ?? '#F3EFE6';
 const manifestHref = seo?.manifest ?? '/site.webmanifest';
 const localeAlternate = seo?.localeAlternate;
+
+// Google Analytics IDs por entorno
+// Nota: `import.meta.env.PROD` será true en builds de preview y prod.
+// Para distinguir despliegues "dev" y "prod" usamos PUBLIC_APP_ENV (inyectado por el workflow).
+const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
+const GA_ID_PROD = 'G-NMHZPGD0CP';
+const GA_ID_DEV = 'G-DPDNGB0EKZ';
+const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
 ---
 
 <html lang={htmlLang}>
@@ -162,6 +170,28 @@ const localeAlternate = seo?.localeAlternate;
             }))
         })} />
     )}
+
+    <!-- Google tag (gtag.js) según entorno -->
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+    <script set:html={`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);} 
+      gtag('consent','default', { ad_storage: 'denied', analytics_storage: 'granted', wait_for_update: 500 });
+      gtag('js', new Date());
+      gtag('config', '${GA_ID}', { anonymize_ip: true });
+    `}/>
+
+    <!-- Pageview en navegaciones con Astro Transitions -->
+    <script define:vars={{GA_ID}}>
+        window.addEventListener('astro:page-load', () => {
+            try {
+                if (typeof window.gtag === 'function') {
+                    window.gtag('config', GA_ID, {page_path: location.pathname, anonymize_ip: true});
+                }
+            } catch (e) { /* noop */
+            }
+        });
+    </script>
     <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">
