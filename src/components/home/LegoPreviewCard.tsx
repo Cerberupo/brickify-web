@@ -53,7 +53,7 @@ export interface LegoPreviewCardProps {
  */
 export default function LegoPreviewCard({
                                             legoSrc = "/people-2.png",
-                                            personSrc = "/user.png",
+                                            personSrc = "/user.jpg",
                                             altLego = "LEGO preview",
                                             altPerson = "Photo preview",
                                             locale = 'en',
