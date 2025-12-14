@@ -80,8 +80,16 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
     <meta name="generator" content={Astro.generator}/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&display=swap"
-          rel="stylesheet">
+    <link
+            rel="preload"
+            href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&display=swap"
+            as="style"
+            onload="this.onload=null;this.rel='stylesheet'"
+    >
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&display=swap"
+              rel="stylesheet">
+    </noscript>
     <title>{pageTitle}</title>
     {seo?.description && (
             <meta name="description" content={seo.description}/>)}
