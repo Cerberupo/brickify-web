@@ -7,9 +7,22 @@ import TryPieceCta from "@/components/common/TryPieceCta.astro";
 import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
+
+// SEO estático para tarjetas sociales (OG/Twitter) — los bots no ejecutan JS
+const seo = {
+    title: 'View the shared pieces',
+    description: 'Access to view the shared pieces for this Brickify group. Open the link to see the items and details.',
+    canonical: '/en/share', // sin query params
+    alternates: [
+        {href: '/es/share', hrefLang: 'es'},
+        {href: '/en/share', hrefLang: 'en'},
+    ],
+    ogImage: '/logo.png',
+    ogAlt: 'Brickify logo',
+};
 ---
 
-<MainLayout>
+<MainLayout seo={seo}>
     <Header client:only="react"/>
     <PublicShareView client:load locale={locale}/>
     <div class="container mx-auto px-4 md:px-6 mb-10 md:mb-14">

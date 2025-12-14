@@ -262,6 +262,7 @@ export function GroupPage() {
                             </>
                         ) : null}
                     />
+                    {/** Precio por persona ahora se calcula directamente en el resumen inferior (OrderSummaryCard) */}
                 </div>
             </div>
 
