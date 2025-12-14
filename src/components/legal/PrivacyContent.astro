@@ -28,6 +28,11 @@ const copies = {
                     "Usamos servicios de terceros para operar la plataforma: (a) AWS S3 para almacenar las imágenes que subes y otros archivos; (b) OpenAI/ChatGPT para analizar la imagen y obtener recomendaciones; (c) MongoDB Atlas para almacenar datos de cuenta, del servicio y los datos de los grupos creados por los usuarios; (d) Stripe para procesar pagos y almacenar de forma segura los datos de pago.",
             },
             {
+                t: "Cookies y analítica (Google Analytics)",
+                d:
+                    "Solo cargamos Google Analytics si aceptas el banner de cookies. En ese caso, usamos Google Analytics con IP anonimizada para medir el uso del sitio. Se pueden crear cookies como ‘_ga’ y ‘_ga_*’ (caducidad aproximada: 2 años), ‘_gid’ (24 h) y ‘_gat’ (1 min). Finalidad: analítica agregada del uso de la web; base legal: tu consentimiento. Si rechazas, no cargamos Analytics ni establecemos sus cookies. Puedes cambiar tu decisión en cualquier momento con el botón ‘Cambiar preferencias de cookies’ de esta página.",
+            },
+            {
                 t: "Base legal",
                 d:
                     "Tratamos los datos en base a tu consentimiento (por ejemplo, al subir una foto) y/o por la necesidad de ejecutar el contrato/servicio que solicitas (incluye el procesamiento técnico por nuestros proveedores).",
@@ -75,6 +80,11 @@ const copies = {
                     "We use third‑party services to run the platform: (a) AWS S3 to store uploaded images and files; (b) OpenAI/ChatGPT to analyze images and obtain recommendations; (c) MongoDB Atlas to store account and service data, including user‑created group data; (d) Stripe to process payments and securely store payment data.",
             },
             {
+                t: "Cookies and analytics (Google Analytics)",
+                d:
+                    "We only load Google Analytics if you accept the cookie banner. In that case, we use Google Analytics with IP anonymization to measure site usage. Cookies may include ‘_ga’ and ‘_ga_*’ (approx. expiry: 2 years), ‘_gid’ (24 h) and ‘_gat’ (1 min). Purpose: aggregated web analytics; legal basis: your consent. If you refuse, we do not load Analytics nor set its cookies. You can change your choice anytime using the ‘Change cookie preferences’ button on this page.",
+            },
+            {
                 t: "Legal basis",
                 d:
                     "We process data based on your consent (e.g., when you upload a photo) and/or the necessity to perform the contract/service you request (including technical processing by our providers).",
@@ -109,6 +119,16 @@ const t = copies[locale];
         <div class="flex items-center gap-4 mb-8 md:mb-10">
             <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy"/>
             <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+        </div>
+
+        <!-- Botón para reabrir el banner de cookies -->
+        <div class="mb-6">
+            <button
+                    class="text-sm px-3 py-2 rounded-lg border bg-white hover:bg-neutral-50"
+                    onclick="try{ window.Brickify && typeof window.Brickify.openCookieBanner==='function' && window.Brickify.openCookieBanner(); }catch(e){}"
+            >
+                {locale === 'es' ? 'Cambiar preferencias de cookies' : 'Change cookie preferences'}
+            </button>
         </div>
 
         <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
