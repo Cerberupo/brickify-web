@@ -238,6 +238,48 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
             }
         })();
     </script>
+
+    <!-- API global temprana para abrir el banner de cookies desde cualquier página/botón -->
+    <script>
+        (function () {
+            try {
+                // Espacio de nombres global
+                window.Brickify = window.Brickify || {};
+                // API idempotente: marca intención y emite evento para que el banner activo lo atienda
+                window.Brickify.openCookieBanner = window.Brickify.openCookieBanner || function () {
+                    try {
+                        window.__brickifyOpenCookieBannerRequested = true;
+                        window.dispatchEvent(new CustomEvent('brickify:open-cookie-banner'));
+                    } catch (e) { /* noop */
+                    }
+                };
+
+                // Delegado para data-atributo: cualquier elemento con [data-open-cookie-banner]
+                // abrirá el banner sin depender del orden de carga de scripts/componentes.
+                if (!window.__brickifyOpenCookieBannerClickBound) {
+                    window.__brickifyOpenCookieBannerClickBound = true;
+                    document.addEventListener('click', function (ev) {
+                        try {
+                            var el = ev.target as HTMLElement | null;
+                            if (!el) return;
+                            // Caminar el árbol hasta encontrar un elemento con el data-atributo
+                            while (el && el !== document.documentElement) {
+                                if (el.hasAttribute && el.hasAttribute('data-open-cookie-banner')) {
+                                    if (typeof window.Brickify.openCookieBanner === 'function') {
+                                        window.Brickify.openCookieBanner();
+                                    }
+                                    break;
+                                }
+                                el = el.parentElement as HTMLElement | null;
+                            }
+                        } catch (e) { /* noop */
+                        }
+                    }, true);
+                }
+            } catch (e) { /* noop */
+            }
+        })();
+    </script>
     <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">

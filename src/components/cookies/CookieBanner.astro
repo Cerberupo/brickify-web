@@ -30,7 +30,7 @@ const copies = {
 } as const;
 const t = copies[locale];
 ---
-<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-[100] px-3 pb-3 pointer-events-none">
+<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-[100] px-3 pb-3 pointer-events-none" style="display:none">
     <div
             class="mx-auto max-w-3xl rounded-2xl bg-white border shadow-xl p-4 md:p-5 pointer-events-auto flex flex-col md:flex-row md:items-center gap-3"
             role="dialog"
@@ -59,34 +59,25 @@ const t = copies[locale];
         (function () {
             try {
                 const KEY = 'brickify.cookies.analytics';
-                const banner = document.getElementById('cookie-banner');
-                const btnAccept = document.getElementById('cookie-accept');
-                const btnReject = document.getElementById('cookie-reject');
 
+                // Helpers que consultan el DOM actual (evita referencias obsoletas tras Transitions)
+                const getBannerEl = () => document.getElementById('cookie-banner') as HTMLElement | null;
                 const hide = () => {
-                    if (banner) banner.style.display = 'none';
+                    const el = getBannerEl();
+                    if (el) el.style.display = 'none';
                 };
                 const show = () => {
-                    if (banner) banner.style.display = '';
+                    const el = getBannerEl();
+                    if (el) el.style.display = '';
                 };
 
-                // Exponer API global para reabrir desde la página de privacidad
-                (window as any).Brickify = (window as any).Brickify || {};
-                (window as any).Brickify.openCookieBanner = function () {
-                    try {
-                        show();
-                    } catch (e) {
-                    }
-                };
-
-                const save = (value) => {
+                const save = (value: string) => {
                     try {
                         localStorage.setItem(KEY, value);
                     } catch (e) {
                     }
                 };
-
-                const load = () => {
+                const load = (): string | null => {
                     try {
                         return localStorage.getItem(KEY);
                     } catch (e) {
@@ -94,45 +85,88 @@ const t = copies[locale];
                     }
                 };
 
-                if (btnAccept) {
-                    btnAccept.addEventListener('click', () => {
-                        save('granted');
-                        hide();
+                // API global idempotente para abrir el banner en cualquier momento
+                (window as any).Brickify = (window as any).Brickify || {};
+                (window as any).Brickify.openCookieBanner = (window as any).Brickify.openCookieBanner || function () {
+                    try {
+                        (window as any).__brickifyOpenCookieBannerRequested = true;
+                        window.dispatchEvent(new CustomEvent('brickify:open-cookie-banner'));
+                        show();
+                    } catch (e) {
+                    }
+                };
+
+                // Un único listener global para peticiones de apertura
+                if (!(window as any).__brickifyOpenCookieBannerEventBound) {
+                    (window as any).__brickifyOpenCookieBannerEventBound = true;
+                    window.addEventListener('brickify:open-cookie-banner', function () {
                         try {
-                            // Actualizar consentimiento a concedido (Consent Mode básico)
-                            if (typeof (window as any).gtag === 'function') {
-                                (window as any).gtag('consent', 'update', {
-                                    ad_user_data: 'granted',
-                                    ad_personalization: 'granted',
-                                    ad_storage: 'granted',
-                                    analytics_storage: 'granted'
-                                });
-                            }
-                        } catch (e) { /* noop */
-                        }
-                    });
-                }
-                if (btnReject) {
-                    btnReject.addEventListener('click', () => {
-                        save('denied');
-                        hide();
-                        try {
-                            if (typeof (window as any).gtag === 'function') {
-                                (window as any).gtag('consent', 'update', {
-                                    analytics_storage: 'denied',
-                                    ad_storage: 'denied'
-                                });
-                            }
+                            show();
+                            (window as any).__brickifyOpenCookieBannerRequested = false;
                         } catch (e) {
                         }
                     });
                 }
 
-                // Ocultar si ya existe una preferencia
-                const pref = load();
-                if (pref === 'granted' || pref === 'denied') {
-                    hide();
+                // Delegación global para clicks en los botones (soporta reemplazo de DOM)
+                if (!(window as any).__brickifyCookieBannerClicksBound) {
+                    (window as any).__brickifyCookieBannerClicksBound = true;
+                    document.addEventListener('click', function (ev) {
+                        try {
+                            const t = ev.target as HTMLElement | null;
+                            if (!t) return;
+                            // Buscar botón acepto/rechazo en la jerarquía
+                            let el: HTMLElement | null = t;
+                            let accept = false, reject = false;
+                            while (el && el !== document.documentElement) {
+                                if (el.id === 'cookie-accept') {
+                                    accept = true;
+                                    break;
+                                }
+                                if (el.id === 'cookie-reject') {
+                                    reject = true;
+                                    break;
+                                }
+                                el = el.parentElement as HTMLElement | null;
+                            }
+                            if (!accept && !reject) return;
+
+                            if (accept) {
+                                save('granted');
+                                hide();
+                                if (typeof (window as any).gtag === 'function') {
+                                    (window as any).gtag('consent', 'update', {
+                                        ad_user_data: 'granted',
+                                        ad_personalization: 'granted',
+                                        ad_storage: 'granted',
+                                        analytics_storage: 'granted'
+                                    });
+                                }
+                            } else if (reject) {
+                                save('denied');
+                                hide();
+                                if (typeof (window as any).gtag === 'function') {
+                                    (window as any).gtag('consent', 'update', {
+                                        analytics_storage: 'denied',
+                                        ad_storage: 'denied'
+                                    });
+                                }
+                            }
+                        } catch (e) {
+                        }
+                    }, true);
                 }
+
+                // Sincronizar visibilidad en cada montaje (resiliente a Transitions)
+                const syncBannerVisibility = () => {
+                    const pref = load();
+                    if (pref === 'granted' || pref === 'denied') hide(); else show();
+                    if ((window as any).__brickifyOpenCookieBannerRequested) {
+                        show();
+                        (window as any).__brickifyOpenCookieBannerRequested = false;
+                    }
+                };
+                syncBannerVisibility();
             } catch (e) {
             }
         })();

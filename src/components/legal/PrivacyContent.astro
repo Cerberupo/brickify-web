@@ -125,7 +125,7 @@ const t = copies[locale];
         <div class="mb-6">
             <button
                     class="text-sm px-3 py-2 rounded-lg border bg-white hover:bg-neutral-50"
-                    onclick="try{ window.Brickify && typeof window.Brickify.openCookieBanner==='function' && window.Brickify.openCookieBanner(); }catch(e){}"
+                    data-open-cookie-banner
             >
                 {locale === 'es' ? 'Cambiar preferencias de cookies' : 'Change cookie preferences'}
             </button>
