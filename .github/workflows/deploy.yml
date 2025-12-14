@@ -64,7 +64,10 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 sync ./dist s3://${WEB_BUCKET} --delete --only-show-errors
+          aws s3 sync ./dist s3://${WEB_BUCKET} \
+            --delete \
+            --only-show-errors \
+            --cache-control "public, max-age=2592000, s-maxage=2592000"
 
       - name: Invalidate CloudFront
         run: |
