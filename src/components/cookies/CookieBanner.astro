@@ -8,6 +8,12 @@ interface Props {
 const {locale: localeProp} = Astro.props as Props;
 const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
 
+// Selección de GA por entorno (inyectado por workflow vía PUBLIC_APP_ENV)
+const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
+const GA_ID_PROD = 'G-NMHZPGD0CP';
+const GA_ID_DEV = 'G-DPDNGB0EKZ';
+const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
+
 const copies = {
     es: {
         title: "Tu privacidad",
@@ -30,7 +36,8 @@ const copies = {
 } as const;
 const t = copies[locale];
 ---
-<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-[100] px-3 pb-3 pointer-events-none" style="display:none">
+<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-[100] px-3 pb-3 pointer-events-none"
+     style="opacity:0;pointer-events: none">
     <div
             class="mx-auto max-w-3xl rounded-2xl bg-white border shadow-xl p-4 md:p-5 pointer-events-auto flex flex-col md:flex-row md:items-center gap-3"
             role="dialog"
@@ -55,120 +62,164 @@ const t = copies[locale];
             </button>
         </div>
     </div>
-    <script>
-        (function () {
+
+    <script define:vars={{GA_ID, appEnv}}>
+        const KEY = 'brickify.cookies.analytics';
+
+        // ================= Google Analytics (GTag) with Consent Mode =================
+        if (!window.__brickifyGAInit) {
+            window.__brickifyGAInit = true;
             try {
-                const KEY = 'brickify.cookies.analytics';
-
-                // Helpers que consultan el DOM actual (evita referencias obsoletas tras Transitions)
-                const getBannerEl = () => document.getElementById('cookie-banner') as HTMLElement | null;
-                const hide = () => {
-                    const el = getBannerEl();
-                    if (el) el.style.display = 'none';
+                // dataLayer y gtag tempranos
+                window.dataLayer = window.dataLayer || [];
+                window.gtag = window.gtag || function () {
+                    window.dataLayer.push(arguments);
                 };
-                const show = () => {
-                    const el = getBannerEl();
-                    if (el) el.style.display = '';
-                };
+                // Consentimiento por defecto: denegado
+                window.gtag('consent', 'default', {
+                    ad_user_data: 'denied',
+                    ad_personalization: 'denied',
+                    ad_storage: 'denied',
+                    analytics_storage: 'denied',
+                    wait_for_update: 500
+                });
 
-                const save = (value: string) => {
-                    try {
-                        localStorage.setItem(KEY, value);
-                    } catch (e) {
+                // Cargar gtag.js siempre (no crea cookies si analytics_storage está denied)
+                if (!document.getElementById('gtag-js')) {
+                    const s = document.createElement('script');
+                    s.id = 'gtag-js';
+                    s.async = true;
+                    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+                    document.head.appendChild(s);
+                }
+
+                // Inicialización básica
+                window.gtag('js', new Date());
+                window.gtag('config', GA_ID, {anonymize_ip: true});
+
+                // Aplicar preferencia previa si existe
+                try {
+                    const pref0 = localStorage.getItem(KEY);
+                    if (pref0 === 'granted') {
+                        window.gtag('consent', 'update', {
+                            ad_user_data: 'granted',
+                            ad_personalization: 'granted',
+                            ad_storage: 'granted',
+                            analytics_storage: 'granted'
+                        });
                     }
-                };
-                const load = (): string | null => {
-                    try {
-                        return localStorage.getItem(KEY);
-                    } catch (e) {
-                        return null;
-                    }
-                };
+                } catch (e) {
+                }
 
-                // API global idempotente para abrir el banner en cualquier momento
-                (window as any).Brickify = (window as any).Brickify || {};
-                (window as any).Brickify.openCookieBanner = (window as any).Brickify.openCookieBanner || function () {
-                    try {
-                        (window as any).__brickifyOpenCookieBannerRequested = true;
-                        window.dispatchEvent(new CustomEvent('brickify:open-cookie-banner'));
-                        show();
-                    } catch (e) {
-                    }
-                };
-
-                // Un único listener global para peticiones de apertura
-                if (!(window as any).__brickifyOpenCookieBannerEventBound) {
-                    (window as any).__brickifyOpenCookieBannerEventBound = true;
-                    window.addEventListener('brickify:open-cookie-banner', function () {
+                // Pageview en navegaciones
+                if (!window.__brickifyGAPageLoadBound) {
+                    window.__brickifyGAPageLoadBound = true;
+                    document.addEventListener('astro:page-load', function () {
                         try {
-                            show();
-                            (window as any).__brickifyOpenCookieBannerRequested = false;
+                            if (typeof window.gtag === 'function') {
+                                window.gtag('config', GA_ID, {
+                                    page_path: location.pathname,
+                                    anonymize_ip: true
+                                });
+                            }
                         } catch (e) {
                         }
                     });
                 }
-
-                // Delegación global para clicks en los botones (soporta reemplazo de DOM)
-                if (!(window as any).__brickifyCookieBannerClicksBound) {
-                    (window as any).__brickifyCookieBannerClicksBound = true;
-                    document.addEventListener('click', function (ev) {
-                        try {
-                            const t = ev.target as HTMLElement | null;
-                            if (!t) return;
-                            // Buscar botón acepto/rechazo en la jerarquía
-                            let el: HTMLElement | null = t;
-                            let accept = false, reject = false;
-                            while (el && el !== document.documentElement) {
-                                if (el.id === 'cookie-accept') {
-                                    accept = true;
-                                    break;
-                                }
-                                if (el.id === 'cookie-reject') {
-                                    reject = true;
-                                    break;
-                                }
-                                el = el.parentElement as HTMLElement | null;
-                            }
-                            if (!accept && !reject) return;
-
-                            if (accept) {
-                                save('granted');
-                                hide();
-                                if (typeof (window as any).gtag === 'function') {
-                                    (window as any).gtag('consent', 'update', {
-                                        ad_user_data: 'granted',
-                                        ad_personalization: 'granted',
-                                        ad_storage: 'granted',
-                                        analytics_storage: 'granted'
-                                    });
-                                }
-                            } else if (reject) {
-                                save('denied');
-                                hide();
-                                if (typeof (window as any).gtag === 'function') {
-                                    (window as any).gtag('consent', 'update', {
-                                        analytics_storage: 'denied',
-                                        ad_storage: 'denied'
-                                    });
-                                }
-                            }
-                        } catch (e) {
-                        }
-                    }, true);
-                }
-
-                // Sincronizar visibilidad en cada montaje (resiliente a Transitions)
-                const syncBannerVisibility = () => {
-                    const pref = load();
-                    if (pref === 'granted' || pref === 'denied') hide(); else show();
-                    if ((window as any).__brickifyOpenCookieBannerRequested) {
-                        show();
-                        (window as any).__brickifyOpenCookieBannerRequested = false;
-                    }
-                };
-                syncBannerVisibility();
             } catch (e) {
             }
-        })();
+        }
+
+        // Helpers que consultan el DOM actual (evita referencias obsoletas tras Transitions)
+        const getBannerEl = function () {
+            return document.getElementById('cookie-banner');
+        };
+        const hide = function () {
+            const el = getBannerEl();
+            if (el) {
+                el.style.opacity = '0';
+                el.style.pointerEvents = 'none';
+            }
+        };
+        const show = function () {
+            const el = getBannerEl();
+            if (el) {
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'all';
+            }
+        };
+
+        const save = function (value) {
+            localStorage.setItem(KEY, value);
+        };
+        const load = function () {
+            try {
+                return localStorage.getItem(KEY);
+            } catch (e) {
+                return null;
+            }
+        };
+
+        // API global idempotente para abrir el banner en cualquier momento (sin eventos custom)
+        window.Brickify = window.Brickify || {};
+        window.Brickify.openCookieBanner = window.Brickify.openCookieBanner || function () {
+            show();
+        };
+
+        // Listeners específicos en botones (sin delegación global)
+        const onAccept = function () {
+            save('granted');
+            hide();
+            if (typeof window.gtag === 'function') {
+                window.gtag('consent', 'update', {
+                    ad_user_data: 'granted',
+                    ad_personalization: 'granted',
+                    ad_storage: 'granted',
+                    analytics_storage: 'granted'
+                });
+            }
+        };
+        const onReject = function () {
+            save('denied');
+            hide();
+            if (typeof window.gtag === 'function') {
+                window.gtag('consent', 'update', {
+                    ad_user_data: 'denied',
+                    ad_personalization: 'denied',
+                    ad_storage: 'denied',
+                    analytics_storage: 'denied',
+                });
+            }
+        };
+
+        const acceptBtn = document.getElementById('cookie-accept');
+        if (acceptBtn && !acceptBtn['__brickifyBound']) {
+            acceptBtn['__brickifyBound'] = true;
+            acceptBtn.addEventListener('click', onAccept, false);
+        }
+        const rejectBtn = document.getElementById('cookie-reject');
+        if (rejectBtn && !rejectBtn['__brickifyBound']) {
+            rejectBtn['__brickifyBound'] = true;
+            rejectBtn.addEventListener('click', onReject, false);
+        }
+
+        // Sincronizar visibilidad en cada montaje (resiliente a Transitions)
+        const syncBannerVisibility = function () {
+            const pref = load();
+            if (pref === 'granted' || pref === 'denied') {
+                hide();
+            } else {
+                show();
+            }
+        };
+        syncBannerVisibility();
+
+        // Re-sincronizar en cada navegación de Astro Transitions
+        if (!window.__brickifyCookieBannerPageLoadBound) {
+            window.__brickifyCookieBannerPageLoadBound = true;
+            document.addEventListener('astro:page-load', function () {
+                syncBannerVisibility();
+            });
+        }
     </script>
 </div>

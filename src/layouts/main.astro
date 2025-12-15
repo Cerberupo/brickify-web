@@ -61,13 +61,9 @@ const themeColor = seo?.themeColor ?? '#F3EFE6';
 const manifestHref = seo?.manifest ?? '/site.webmanifest';
 const localeAlternate = seo?.localeAlternate;
 
-// Google Analytics IDs por entorno
-// Nota: `import.meta.env.PROD` será true en builds de preview y prod.
-// Para distinguir despliegues "dev" y "prod" usamos PUBLIC_APP_ENV (inyectado por el workflow).
+// Google Analytics: la lógica y carga del tag se ha movido a CookieBanner.astro
+// Mantenemos solo el cálculo de appEnv para el flag de debug
 const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
-const GA_ID_PROD = 'G-NMHZPGD0CP';
-const GA_ID_DEV = 'G-DPDNGB0EKZ';
-const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
 ---
 
 <html lang={htmlLang}>
@@ -182,142 +178,22 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
         })} />
     )}
 
-    <!-- Google Analytics con Consent Mode básico: cargar siempre con consentimiento denegado por defecto -->
-    <script define:vars={{GA_ID}}>
+    <!-- Flag de depuración para banner/cookies (solo dev) -->
+    <script define:vars={{appEnv}}>
         (function () {
             try {
-                var KEY = 'brickify.cookies.analytics';
-                // dataLayer y gtag disponibles de inmediato (antes de cargar la librería)
-                window.dataLayer = window.dataLayer || [];
-                window.gtag = window.gtag || function () {
-                    window.dataLayer.push(arguments);
-                };
-                // Estado de consentimiento por defecto: todo denegado
-                window.gtag('consent', 'default', {
-                    ad_user_data: 'denied',
-                    ad_personalization: 'denied',
-                    ad_storage: 'denied',
-                    analytics_storage: 'denied',
-                    wait_for_update: 500
-                });
-
-                // Cargar la librería de gtag siempre (no envía cookies si analytics_storage está "denied")
-                var s = document.createElement('script');
-                s.async = true;
-                s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-                document.head.appendChild(s);
-
-                // Inicialización base (sin cookies hasta que haya consentimiento)
-                window.gtag('js', new Date());
-                window.gtag('config', GA_ID, {anonymize_ip: true});
-
-                // Si ya existía consentimiento concedido, actualizar inmediatamente
-                try {
-                    var pref = localStorage.getItem(KEY);
-                    if (pref === 'granted') {
-                        window.gtag('consent', 'update', {
-                            ad_user_data: 'granted',
-                            ad_personalization: 'granted',
-                            ad_storage: 'granted',
-                            analytics_storage: 'granted'
-                        });
-                    }
-                } catch (e) { /* noop */
+                // Activa logs de debug en entornos no prod
+                window['__DBG_COOKIES'] = (appEnv !== 'prod');
+                if (window['__DBG_COOKIES']) {
+                    console.log('[cookies] Debug ENABLED', {appEnv});
                 }
-
-                // Pageview en navegaciones (funciona una vez concedido el consentimiento)
-                window.addEventListener('astro:page-load', function () {
-                    try {
-                        if (typeof window.gtag === 'function') {
-                            window.gtag('config', GA_ID, {page_path: location.pathname, anonymize_ip: true});
-                        }
-                    } catch (e) { /* noop */
-                    }
-                });
-            } catch (e) { /* noop */
+            } catch (e) {
             }
         })();
     </script>
 
-    <!-- API global temprana para abrir el banner de cookies desde cualquier página/botón -->
-    <script>
-        (function () {
-            try {
-                // Espacio de nombres global
-                window.Brickify = window.Brickify || {};
-                // API idempotente: marca intención y emite evento para que el banner activo lo atienda
-                window.Brickify.openCookieBanner = window.Brickify.openCookieBanner || function () {
-                    try {
-                        window.__brickifyOpenCookieBannerRequested = true;
-                        window.dispatchEvent(new CustomEvent('brickify:open-cookie-banner'));
-                    } catch (e) { /* noop */
-                    }
-                };
+    <!-- Google Analytics se carga/controla desde CookieBanner.astro -->
 
-                // Delegado para data-atributo: cualquier elemento con [data-open-cookie-banner]
-                // abrirá el banner sin depender del orden de carga de scripts/componentes.
-                if (!window.__brickifyOpenCookieBannerClickBound) {
-                    window.__brickifyOpenCookieBannerClickBound = true;
-                    document.addEventListener('click', function (ev) {
-                        try {
-                            var el = ev.target as HTMLElement | null;
-                            if (!el) return;
-                            // Caminar el árbol hasta encontrar un elemento con el data-atributo
-                            while (el && el !== document.documentElement) {
-                                if (el.hasAttribute && el.hasAttribute('data-open-cookie-banner')) {
-                                    if (typeof window.Brickify.openCookieBanner === 'function') {
-                                        window.Brickify.openCookieBanner();
-                                    }
-                                    break;
-                                }
-                                el = el.parentElement as HTMLElement | null;
-                            }
-                        } catch (e) { /* noop */
-                        }
-                    }, true);
-                }
-            } catch (e) { /* noop */
-            }
-        })();
-    </script>
-    <!-- Garantiza que el banner permanezca visible entre navegaciones si no hay preferencia (Astro Transitions) -->
-    <script>
-        (function () {
-            try {
-                var KEY = 'brickify.cookies.analytics';
-
-                function ensureBannerIfNeeded() {
-                    try {
-                        var pref = null;
-                        try {
-                            pref = localStorage.getItem(KEY);
-                        } catch (e) {
-                        }
-                        if (pref === 'granted' || pref === 'denied') return;
-                        // Si no hay preferencia, asegúrate de que el banner esté visible
-                        if (window.Brickify && typeof window.Brickify.openCookieBanner === 'function') {
-                            // Usamos la API global que además despacha el evento para que el banner activo responda
-                            window.Brickify.openCookieBanner();
-                        } else {
-                            // Fallback defensivo: mostrar el contenedor si existe
-                            var el = document.getElementById('cookie-banner');
-                            if (el) el.style.display = '';
-                        }
-                    } catch (e) { /* noop */
-                    }
-                }
-
-                // En la carga inicial y en cada navegación de Astro Transitions
-                if (!window.__brickifyCookieBannerPageLoadBound) {
-                    window.__brickifyCookieBannerPageLoadBound = true;
-                    window.addEventListener('astro:page-load', ensureBannerIfNeeded);
-                }
-                // Primera ejecución por si el componente fue reinyectado con display:none
-                ensureBannerIfNeeded();
-            } catch (e) { /* noop */
-            }
-        })();
-    </script>
     <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">
