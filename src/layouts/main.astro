@@ -280,6 +280,44 @@ const GA_ID = appEnv === 'prod' ? GA_ID_PROD : GA_ID_DEV;
             }
         })();
     </script>
+    <!-- Garantiza que el banner permanezca visible entre navegaciones si no hay preferencia (Astro Transitions) -->
+    <script>
+        (function () {
+            try {
+                var KEY = 'brickify.cookies.analytics';
+
+                function ensureBannerIfNeeded() {
+                    try {
+                        var pref = null;
+                        try {
+                            pref = localStorage.getItem(KEY);
+                        } catch (e) {
+                        }
+                        if (pref === 'granted' || pref === 'denied') return;
+                        // Si no hay preferencia, asegúrate de que el banner esté visible
+                        if (window.Brickify && typeof window.Brickify.openCookieBanner === 'function') {
+                            // Usamos la API global que además despacha el evento para que el banner activo responda
+                            window.Brickify.openCookieBanner();
+                        } else {
+                            // Fallback defensivo: mostrar el contenedor si existe
+                            var el = document.getElementById('cookie-banner');
+                            if (el) el.style.display = '';
+                        }
+                    } catch (e) { /* noop */
+                    }
+                }
+
+                // En la carga inicial y en cada navegación de Astro Transitions
+                if (!window.__brickifyCookieBannerPageLoadBound) {
+                    window.__brickifyCookieBannerPageLoadBound = true;
+                    window.addEventListener('astro:page-load', ensureBannerIfNeeded);
+                }
+                // Primera ejecución por si el componente fue reinyectado con display:none
+                ensureBannerIfNeeded();
+            } catch (e) { /* noop */
+            }
+        })();
+    </script>
     <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">
