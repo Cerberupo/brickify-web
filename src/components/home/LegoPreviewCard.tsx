@@ -367,7 +367,8 @@ export default function LegoPreviewCard({
             const blob = new Blob([json], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            const safeName = (rp?.name || 'pieces').toString().trim().replace(/\s+/g, '-');
+            const fallbackName = (locale === 'es' ? 'piezas' : 'pieces');
+            const safeName = (rp?.name || fallbackName).toString().trim().replace(/\s+/g, '-');
             a.href = url;
             a.download = `${safeName}-pieces.json`;
             document.body.appendChild(a);
@@ -397,7 +398,11 @@ export default function LegoPreviewCard({
                 </button>
 
                 <div className="flex flex-col md:flex-row items-stretch md:h-full">
-                    <div className="flex items-stretch h-[635px] md:h-full w-full md:w-[44%] relative">
+                    <div
+                        className={cn(
+                            "flex items-stretch h-[635px] md:h-full w-full md:w-[44%] relative"
+                        )}
+                    >
                         {/* Left: image area */}
                         {(() => {
                             const prev = prevModeRef.current;
@@ -417,7 +422,27 @@ export default function LegoPreviewCard({
                             return (
                                 <>
                                     <div
-                                        className={cn("rounded-[16px] absolute w-full h-full bg-white p-[26px]", getPanelClass('lego'))}>
+                                        className={cn(
+                                            "rounded-[16px] absolute w-full h-full bg-white p-[26px]",
+                                            // Solo la carta desactivada (la de detrás) debe reaccionar al hover
+                                            "transition-transform duration-200 will-change-transform",
+                                            (mode !== 'lego') ? "hover:-translate-x-2.5 cursor-pointer" : "",
+                                            getPanelClass('lego')
+                                        )}
+                                        // Solo permitir el toggle si ESTA carta está desactivada (detrás)
+                                        onClick={mode !== 'lego' ? startToggle : undefined}
+                                        role={mode !== 'lego' ? 'button' : undefined}
+                                        tabIndex={mode !== 'lego' ? 0 : -1}
+                                        aria-label={mode !== 'lego' ? toggleLabel : undefined}
+                                        onKeyDown={(e) => {
+                                            if (mode === 'lego') return;
+                                            const k = e.key;
+                                            if (k === 'Enter' || k === ' ') {
+                                                e.preventDefault();
+                                                startToggle();
+                                            }
+                                        }}
+                                    >
                                         <div className="relative h-full w-full">
                                         <span
                                             className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#6A3DF4]/15 text-[#6A3DF4] select-none">LEGO</span>
@@ -431,10 +456,30 @@ export default function LegoPreviewCard({
                                     </div>
 
                                     <div
-                                        className={cn("rounded-[16px] absolute w-full h-full bg-white p-[26px]", getPanelClass('photo'))}>
+                                        className={cn(
+                                            "rounded-[16px] absolute w-full h-full bg-white p-[26px]",
+                                            // Solo la carta desactivada (la de detrás) debe reaccionar al hover
+                                            "transition-transform duration-200 will-change-transform",
+                                            (mode !== 'photo') ? "hover:-translate-x-2.5 cursor-pointer" : "",
+                                            getPanelClass('photo')
+                                        )}
+                                        // Solo permitir el toggle si ESTA carta está desactivada (detrás)
+                                        onClick={mode !== 'photo' ? startToggle : undefined}
+                                        role={mode !== 'photo' ? 'button' : undefined}
+                                        tabIndex={mode !== 'photo' ? 0 : -1}
+                                        aria-label={mode !== 'photo' ? toggleLabel : undefined}
+                                        onKeyDown={(e) => {
+                                            if (mode === 'photo') return;
+                                            const k = e.key;
+                                            if (k === 'Enter' || k === ' ') {
+                                                e.preventDefault();
+                                                startToggle();
+                                            }
+                                        }}
+                                    >
                                         <div className="relative h-full w-full">
                                         <span
-                                            className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#3C204E] text-white select-none">Foto</span>
+                                            className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#3C204E] text-white select-none">{locale === 'es' ? 'Foto' : 'Photo'}</span>
                                             <img
                                                 src={personOverrideSrc || personSrc}
                                                 alt={altPerson}

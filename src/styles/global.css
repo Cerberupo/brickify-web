@@ -213,7 +213,6 @@ input[type="reset"],
 .waiting-preview-inactive {
     transform: translateX(-35%) rotate(-8.5deg) scale(0.8);
     z-index: -1;
-    pointer-events: none;
 }
 
 .waiting-preview-active {
@@ -311,7 +310,6 @@ input[type="reset"],
     .waiting-preview-inactive {
         transform: translateY(-10%) translateX(-8%) rotate(8.5deg) scale(0.9);
         z-index: -1;
-        pointer-events: none;
     }
 
     .enter-layer-right {
