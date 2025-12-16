@@ -55,7 +55,7 @@ const canonicalUrl = seo?.canonical
     : currentUrl;
 const ogImageUrl = seo?.ogImage
     ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${baseOrigin}${seo.ogImage}`)
-    : `${baseOrigin}/logo.png`;
+    : `${baseOrigin}/social-logo.jpg`;
 const robotsContent = seo?.noindex ? 'noindex,nofollow' : (seo?.robots ?? 'index,follow');
 const themeColor = seo?.themeColor ?? '#F3EFE6';
 const manifestHref = seo?.manifest ?? '/site.webmanifest';
