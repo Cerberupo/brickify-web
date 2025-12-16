@@ -54,10 +54,12 @@ const t = copies[locale];
             </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-            <button id="cookie-reject" class="text-sm px-3 py-2 rounded-lg border hover:bg-neutral-50">
+            <button id="cookie-reject" class="text-sm px-3 py-2 rounded-lg border hover:bg-neutral-50"
+                    onclick="try{window.__cookieReject&&window.__cookieReject()}catch(e){}">
                 {t.reject}
             </button>
-            <button id="cookie-accept" class="text-sm px-3 py-2 rounded-lg bg-black text-white hover:opacity-95">
+            <button id="cookie-accept" class="text-sm px-3 py-2 rounded-lg bg-black text-white hover:opacity-95"
+                    onclick="try{window.__cookieAccept&&window.__cookieAccept()}catch(e){}">
                 {t.accept}
             </button>
         </div>
@@ -166,7 +168,7 @@ const t = copies[locale];
             show();
         };
 
-        // Listeners específicos en botones (sin delegación global)
+        // Handlers de botones expuestos globalmente y llamados vía onclick
         const onAccept = function () {
             save('granted');
             hide();
@@ -191,17 +193,9 @@ const t = copies[locale];
                 });
             }
         };
-
-        const acceptBtn = document.getElementById('cookie-accept');
-        if (acceptBtn && !acceptBtn['__brickifyBound']) {
-            acceptBtn['__brickifyBound'] = true;
-            acceptBtn.addEventListener('click', onAccept, false);
-        }
-        const rejectBtn = document.getElementById('cookie-reject');
-        if (rejectBtn && !rejectBtn['__brickifyBound']) {
-            rejectBtn['__brickifyBound'] = true;
-            rejectBtn.addEventListener('click', onReject, false);
-        }
+        // Exponer funciones globales para ser llamadas directamente desde los botones
+        window.__cookieAccept = onAccept;
+        window.__cookieReject = onReject;
 
         // Sincronizar visibilidad en cada montaje (resiliente a Transitions)
         const syncBannerVisibility = function () {
