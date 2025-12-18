@@ -1,0 +1,12 @@
+# robots.txt para producción
+# Permitimos el rastreo global y referenciamos el sitemap de producción.
+
+User-agent: *
+Allow: /
+
+# Rutas internas que no deberían ser rastreadas (ajusta según necesidades)
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+
+Sitemap: https://brickify.fun/sitemap.xml

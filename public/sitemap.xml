@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Sitemap estático para producción (brickify.fun). -->
+    <!-- Si despliegas en dev, este archivo seguirá existiendo pero los bots no deberían acceder a dev. -->
+
+    <!-- Home ES -->
+    <url>
+        <loc>https://brickify.fun/es/</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/"/>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Home EN -->
+    <url>
+        <loc>https://brickify.fun/en/</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/"/>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Home sin prefijo (x-default en inglés) -->
+    <url>
+        <loc>https://brickify.fun/</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/"/>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- About ES -->
+    <url>
+        <loc>https://brickify.fun/es/about</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/about"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/about"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/about"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- About EN -->
+    <url>
+        <loc>https://brickify.fun/en/about</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/about"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/about"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/about"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- About sin prefijo (x-default en inglés) -->
+    <url>
+        <loc>https://brickify.fun/about</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/about"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/about"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/about"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- Contact ES -->
+    <url>
+        <loc>https://brickify.fun/es/contact</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/contact"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/contact"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/contact"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- Contact EN -->
+    <url>
+        <loc>https://brickify.fun/en/contact</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/contact"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/contact"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/contact"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- Contact sin prefijo (x-default en inglés) -->
+    <url>
+        <loc>https://brickify.fun/contact</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/contact"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/contact"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/contact"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- Privacidad ES -->
+    <url>
+        <loc>https://brickify.fun/es/privacy</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/privacy"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/privacy"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/privacy"/>
+        <changefreq>yearly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <!-- Privacy EN -->
+    <url>
+        <loc>https://brickify.fun/en/privacy</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/privacy"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/privacy"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/privacy"/>
+        <changefreq>yearly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <!-- Privacy sin prefijo (x-default en inglés) -->
+    <url>
+        <loc>https://brickify.fun/privacy</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/privacy"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/privacy"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/privacy"/>
+        <changefreq>yearly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <!-- Página de compartir (indexable) -->
+    <url>
+        <loc>https://brickify.fun/es/share</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/share"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/share"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/share"/>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/en/share</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/share"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/share"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/share"/>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <!-- Share (sin prefijo) canónica en inglés -->
+    <url>
+        <loc>https://brickify.fun/share</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/share"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/share"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/share"/>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <!-- Quick purchase anclaje no se lista (no es URL propia). Otras rutas públicas se pueden añadir aquí. -->
+
+</urlset>
