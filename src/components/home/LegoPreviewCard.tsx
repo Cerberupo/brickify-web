@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {cn} from "@/lib/utils";
-import {RotateCcw} from "lucide-react";
 import {getGroupById} from "@/lib";
 import {Button} from '@/components/ui/button';
 import ShareActions from '@/components/common/ShareActions';
 import {toast} from 'sonner';
+import {LegoComposite} from "@/components";
 
 
 interface GuestGroupData {
@@ -15,6 +15,7 @@ interface LegoItem {
     id: number;
     name: string;
     imageUrl: string;
+    imageUrlBack?: string; // opcional: algunas piezas pueden tener imagen trasera
 }
 
 interface LegoCategories {
@@ -61,6 +62,8 @@ export default function LegoPreviewCard({
                                             referencePerson
                                         }: LegoPreviewCardProps) {
     const [mode, setMode] = useState<'lego' | 'photo'>('lego');
+    // Estado compartido para frontal/trasera, controlará también LegoComposite
+    const [side, setSide] = useState<'front' | 'back'>('front');
     const [guestGroupDetails, setGuestGroupDetails] = useState<GuestGroupData | null>(null);
     const initialProvidedSrc = useMemo(() => {
         const img = referencePerson?.imageSignedUrl || referencePerson?.imagePath || referencePerson?.avatar;
@@ -160,6 +163,9 @@ export default function LegoPreviewCard({
         }, 1000);
     };
 
+    // Si el usuario está viendo LEGO y cambia el lado dentro del composite, queremos que las miniaturas se sincronicen.
+    // La lógica del botón dentro de LegoComposite llamará a setSide a través de onSideChange.
+
     useEffect(() => {
         return () => {
             if (animTimeoutRef.current) {
@@ -178,22 +184,37 @@ export default function LegoPreviewCard({
     const defaultOptions: LegoCategories = useMemo(() => {
         return {
             hair: [
-                {id: 6527258, name: "MINI WIG, NO. 98", imageUrl: "/preview/hair-1.jpg"},
+                {
+                    id: 6527258,
+                    name: "MINI WIG, NO. 98",
+                    imageUrl: "/preview/hair-1.png",
+                    imageUrlBack: "/preview/hair-1-back.png"
+                },
                 {id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/preview/hair-2.jpg"},
                 {id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/preview/hair-3.jpg"}
             ],
             head: [
-                {id: 1, name: "Happy Face", imageUrl: "/preview/head-1.jpg"},
+                {id: 1, name: "Happy Face", imageUrl: "/preview/head-1.png", imageUrlBack: "/preview/head-1-back.png"},
                 {id: 2, name: "Serious Face", imageUrl: "/preview/head-2.jpg"},
                 {id: 3, name: "Smiling Face", imageUrl: "/preview/head-3.jpg"}
             ],
             body: [
-                {id: 1, name: "Casual Shirt", imageUrl: "/preview/body-1.jpg"},
+                {
+                    id: 1,
+                    name: "Casual Shirt",
+                    imageUrl: "/preview/body-1.png",
+                    imageUrlBack: "/preview/body-1-back.png"
+                },
                 {id: 2, name: "Formal Suit", imageUrl: "/preview/body-2.jpg"},
                 {id: 3, name: "T-Shirt", imageUrl: "/preview/body-3.jpg"}
             ],
             pants: [
-                {id: 1, name: "Blue Jeans", imageUrl: "/preview/pants-1.jpg"},
+                {
+                    id: 1,
+                    name: "Blue Jeans",
+                    imageUrl: "/preview/pants-1.png",
+                    imageUrlBack: "/preview/pants-1-back.png"
+                },
                 {id: 2, name: "Black Pants", imageUrl: "/preview/pants-2.jpg"},
                 {id: 3, name: "Shorts", imageUrl: "/preview/pants-3.jpg"}
             ]
@@ -317,6 +338,14 @@ export default function LegoPreviewCard({
         return arr.find(i => i.id === id) || arr[0];
     };
 
+    // Helper para mapear un item a SideImages esperado por LegoComposite
+    const toSide = (item: any) => {
+        if (!item) return undefined;
+        const front = item.imageUrl;
+        const back = item.imageUrlBack || item.imageUrl;
+        return {front, back};
+    };
+
     // dynamic classes for right-side layers
     const getRightLayerClass = (category: keyof LegoCategories, which: 'outgoing' | 'incoming' | 'rest') => {
         const c = catAnim[category as string];
@@ -386,16 +415,7 @@ export default function LegoPreviewCard({
         <div className="w-full h-auto md:w-[910px] md:h-[635px] relative">
             <div
                 className="relative rounded-[16px] bg-white backdrop-blur-sm border w-full md:h-full  shadow-md overflow-visible z-20">
-                {/* Floating round toggle button */}
-                <button
-                    type="button"
-                    aria-label={toggleLabel}
-                    aria-pressed={!isLego}
-                    onClick={startToggle}
-                    className="absolute cursor-pointer border top-3 -translate-x-11 md:translate-0 left-full md:left-[355px] z-20 size-8 grid place-items-center rounded-full bg-[#FAFAFA] hover:bg-[#F2F2F2] transition-colors"
-                >
-                    <RotateCcw className="size-4 text-muted-foreground"/>
-                </button>
+
 
                 <div className="flex flex-col md:flex-row items-stretch md:h-full">
                     <div
@@ -446,11 +466,15 @@ export default function LegoPreviewCard({
                                         <div className="relative h-full w-full">
                                         <span
                                             className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#6A3DF4]/15 text-[#6A3DF4] select-none">LEGO</span>
-                                            <img
-                                                src={legoSrc}
-                                                alt={altLego}
-                                                className="absolute inset-0 size-full object-cover select-none"
-                                                loading="lazy"
+                                            <LegoComposite
+                                                className="w-full h-full"
+                                                locale={locale}
+                                                side={side}
+                                                onSideChange={setSide}
+                                                wig={toSide(getItem('hair', selectedItems.hair))}
+                                                head={toSide(getItem('head', selectedItems.head))}
+                                                upperPart={toSide(getItem('body', selectedItems.body))}
+                                                lowerPart={toSide(getItem('pants', selectedItems.pants))}
                                             />
                                         </div>
                                     </div>
@@ -508,6 +532,7 @@ export default function LegoPreviewCard({
                                         className="w-full flex gap-[6px] items-center justify-center">
                                         {items.map((item: any) => {
                                             const isSelected = selectedItems[category] === item.id;
+                                            const thumbSrc = side === 'back' ? (item.imageUrlBack || item.imageUrl) : item.imageUrl;
                                             return (
                                                 <button
                                                     key={`${category}-${item.id}`}
@@ -515,14 +540,15 @@ export default function LegoPreviewCard({
                                                     onClick={() => handleSelect(category as keyof LegoCategories, item.id)}
                                                     aria-pressed={isSelected}
                                                     className={cn(
-                                                        "w-1/3  md:w-[121px] aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none",
+                                                        "w-1/3  md:w-[121px] aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none p-[10px]",
                                                         isSelected ? "bg-[#FFF3D6] border border-[#F9C14A]" : "bg-white/90 hover:bg-[#FFF3D6]"
                                                     )}
                                                 >
                                                     <img
-                                                        src={item.imageUrl}
+                                                        src={thumbSrc}
                                                         alt={item.name}
-                                                        className="h-6 w-10 md:h-8 md:w-14 rounded-md object-cover"
+                                                        className="w-full h-full p-[2px] object-cover"
+                                                        style={category === 'hair' ? {objectPosition: 'center -12px'} : undefined}
                                                     />
                                                 </button>
                                             );
