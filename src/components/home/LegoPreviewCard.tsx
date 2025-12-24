@@ -467,7 +467,6 @@ export default function LegoPreviewCard({
                                         <span
                                             className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#6A3DF4]/15 text-[#6A3DF4] select-none">LEGO</span>
                                             <LegoComposite
-                                                className="w-full h-full"
                                                 locale={locale}
                                                 side={side}
                                                 onSideChange={setSide}

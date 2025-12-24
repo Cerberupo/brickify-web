@@ -95,7 +95,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
 
     const layout: Layout = {
         // Valores placeholder: ajusta a tu gusto más tarde
-        wig: {widthPct: 62, heightPct: 120, leftPct: 19, topPct: -17, zIndex: 40},
+        wig: {widthPct: 62, heightPct: 124, leftPct: 19, topPct: -19, zIndex: 40},
         head: {widthPct: 30, heightPct: 30, leftPct: 35, topPct: 12.5, zIndex: 30},
         upperPart: {widthPct: 70, heightPct: 70, leftPct: 15, topPct: 10, zIndex: 20},
         lowerPart: {widthPct: 60, heightPct: 60, leftPct: 20, topPct: 36, zIndex: 10},
@@ -103,7 +103,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
 
     return (
         <div
-            className={['relative select-none', className].filter(Boolean).join(' ')}
+            className={['relative select-none w-full pb-[167%]', className].filter(Boolean).join(' ')}
             style={style}
         >
             {pieces.map(({key, data}) => {
