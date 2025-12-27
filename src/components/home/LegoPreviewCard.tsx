@@ -190,12 +190,23 @@ export default function LegoPreviewCard({
                     imageUrl: "/preview/hair-1.png",
                     imageUrlBack: "/preview/hair-1-back.png"
                 },
-                {id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/preview/hair-2.jpg"},
-                {id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/preview/hair-3.jpg"}
+                {
+                    id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/preview/hair-2.png",
+                    imageUrlBack: "/preview/hair-2-back.png"
+                },
+                {
+                    id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/preview/hair-3.png",
+                    imageUrlBack: "/preview/hair-3-back.png"
+                }
             ],
             head: [
                 {id: 1, name: "Happy Face", imageUrl: "/preview/head-1.png", imageUrlBack: "/preview/head-1-back.png"},
-                {id: 2, name: "Serious Face", imageUrl: "/preview/head-2.jpg"},
+                {
+                    id: 2,
+                    name: "Serious Face",
+                    imageUrl: "/preview/head-2.png",
+                    imageUrlBack: "/preview/head-2-back.png"
+                },
                 {id: 3, name: "Smiling Face", imageUrl: "/preview/head-3.jpg"}
             ],
             body: [
