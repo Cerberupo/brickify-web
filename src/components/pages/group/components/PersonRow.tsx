@@ -1,13 +1,15 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Switch, Toaster} from '@/components/ui';
-import {Download, Link as LinkIcon, Pencil, Share2, Trash2} from 'lucide-react';
+import {Button, Toaster} from '@/components/ui';
+import {Download, Pencil, Trash2} from 'lucide-react';
 import {toast} from 'sonner';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
 import type {MatchPart} from '@/lib/services/groups';
 import {disableMemberShare, enableMemberShare} from '@/lib/services/groups';
 import ShareActions from '@/components/common/ShareActions';
+import {LegoComposite} from '@/components';
+import type {SideImages} from '@/components/lego/LegoComposite';
 
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
@@ -276,16 +278,57 @@ export function PersonRow({
         }
     }, []);
 
+    // Construir selección actual por parte y mapping a imágenes front/back
+    const selectedPieceByPart: Partial<Record<MatchPart, any>> = useMemo(() => {
+        const out: Partial<Record<MatchPart, any>> = {};
+        const matches = (person as any)?.matches || {};
+        (['wig', 'head', 'upperPart', 'lowerPart'] as MatchPart[]).forEach((part) => {
+            const data = matches?.[part];
+            if (!data) return;
+            const arr: any[] = Array.isArray(data?.matchedPieceIds) ? data.matchedPieceIds : [];
+            if (arr.length === 0) return;
+            const localSelId = selectedByPart[part] || null;
+            const serverSel = data?.selectedPiece;
+            const serverSelId = typeof serverSel === 'string' ? serverSel : normalizeId(serverSel);
+            const selId = localSelId || serverSelId || normalizeId(arr[0]);
+            const found = arr.find((p: any) => normalizeId(p) === selId) || arr[0];
+            if (found) out[part] = found;
+        });
+        return out;
+    }, [person, selectedByPart]);
+
+    const toSideImages = useCallback((piece: any | undefined | null): SideImages | undefined => {
+        if (!piece) return undefined;
+        const front = piece?.imageFrontUrl;
+        const back = piece?.imageBackUrl;
+        // Requisito: si falta imageFrontUrl o imageBackUrl, no se pinta nada
+        if (!front || !back) return undefined;
+        return {front, back};
+    }, []);
+
+    const compositeProps = useMemo(() => {
+        const wig = toSideImages(selectedPieceByPart.wig);
+        const head = toSideImages(selectedPieceByPart.head);
+        const upperPart = toSideImages(selectedPieceByPart.upperPart);
+        const lowerPart = toSideImages(selectedPieceByPart.lowerPart);
+        const hasAny = Boolean(wig || head || upperPart || lowerPart);
+        return {wig, head, upperPart, lowerPart, hasAny};
+    }, [selectedPieceByPart, toSideImages]);
+
+    // Control del lado (front/back) sincronizado entre composite y miniaturas
+    const [side, setSide] = useState<'front' | 'back'>('front');
+
     return (
-        <div className="flex items-center justify-between gap-3 rounded-md border p-3">
+        <div className="flex flex-col sm:flex-row gap-3 rounded-md border p-3">
             <Toaster position="top-right"/>
-            <div className="flex flex-col gap-3 flex-1">
-                <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-start gap-3">
                     <div
                         className={`flex ${person.status === 'processed' ? 'flex-col' : 'flex-row'} items-center gap-3`}>
-                        <img className={`${person.status === 'processed' ? 'w-40' : 'w-8'} border rounded`}
-                             src={src || faviconUrl}
-                             alt={person?.name || ''}/>
+                        <img
+                            className={`${person.status === 'processed' ? 'w-40' : 'w-12 sm:w-20 md:w-24 lg:w-28'} border rounded shrink-0`}
+                            src={src || faviconUrl}
+                            alt={person?.name || ''}/>
                         <div className="min-w-0">
                             <div className="font-medium leading-tight">{person?.name}</div>
                             <div className="text-sm text-gray-600 max-w-prose whitespace-pre-wrap break-words">
@@ -317,12 +360,12 @@ export function PersonRow({
                         </div>
                     )}
                     {person?.status && person.status !== 'pending' && person?.matches && (
-                        <div className="pl-4 border-l space-y-1 text-xs text-gray-600">
+                        <div className="pl-0 sm:pl-4 sm:border-l space-y-1 text-xs text-gray-600 flex-1 min-w-0">
                             {Object.entries(person.matches).map(([part, data]: any) => {
                                 const status = (data as any)?.status;
                                 return (
                                     <div key={String(part)} className="space-y-2">
-                                        <div className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3">
                                             <span
                                                 className="font-medium text-gray-700">{t(`group.parts.${String(part)}`, String(part))}</span>
                                             <span className={getStatusPillClasses(status)}>
@@ -335,10 +378,40 @@ export function PersonRow({
                                             part={part as MatchPart}
                                             data={data}
                                             onSelectedChange={handlePartSelectedChange}
+                                            side={side}
                                         />
                                     </div>
                                 );
                             })}
+                        </div>
+                    )}
+                    {/* Preview en móviles (debajo, ancho completo y centrado) */}
+                    {compositeProps.hasAny && (
+                        <div className="sm:hidden w-full max-w-xs mx-auto">
+                            <LegoComposite
+                                wig={compositeProps.wig}
+                                head={compositeProps.head}
+                                upperPart={compositeProps.upperPart}
+                                lowerPart={compositeProps.lowerPart}
+                                className="w-full"
+                                locale={window?.location?.pathname?.startsWith('/es') ? 'es' : 'en'}
+                                side={side}
+                                onSideChange={(next) => setSide(next)}
+                            />
+                        </div>
+                    )}
+                    {compositeProps.hasAny && (
+                        <div className="hidden sm:block w-48 md:w-56 lg:w-64 shrink-0 ml-auto">
+                            <LegoComposite
+                                wig={compositeProps.wig}
+                                head={compositeProps.head}
+                                upperPart={compositeProps.upperPart}
+                                lowerPart={compositeProps.lowerPart}
+                                className="w-full"
+                                locale={window?.location?.pathname?.startsWith('/es') ? 'es' : 'en'}
+                                side={side}
+                                onSideChange={(next) => setSide(next)}
+                            />
                         </div>
                     )}
                 </div>

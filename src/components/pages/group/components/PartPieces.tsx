@@ -10,9 +10,11 @@ export interface PartPiecesProps {
     part: MatchPart;
     data: any;
     onSelectedChange?: (part: MatchPart, pieceId: string | null) => void;
+    /** Lado a mostrar para las imágenes (frontal/trasera). Default: 'front' */
+    side?: 'front' | 'back';
 }
 
-export function PartPieces({groupId, personId, part, data, onSelectedChange}: PartPiecesProps) {
+export function PartPieces({groupId, personId, part, data, onSelectedChange, side = 'front'}: PartPiecesProps) {
     useTranslation();
     const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
     const initializedRef = useRef(false);
@@ -57,24 +59,31 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange}: Pa
 
     if (status !== 'done' || pieces.length === 0) return null;
 
+    // Filtrar piezas que no tengan ambas imágenes requeridas
+    const renderablePieces = pieces.filter((p: any) => p?.imageFrontUrl && p?.imageBackUrl);
+
+    if (renderablePieces.length === 0) return null;
+
     return (
-        <div className="ml-2 flex flex-wrap gap-3">
-            {pieces.map((piece: any, idx: number) => {
-                const imgSrc = Array.isArray(piece?.storeImages) && piece.storeImages.length > 0 ? piece.storeImages[0] : faviconUrl;
+        <div className="flex flex-wrap">
+            {renderablePieces.map((piece: any, idx: number) => {
+                const hasBoth = Boolean(piece?.imageFrontUrl && piece?.imageBackUrl);
+                if (!hasBoth) return null;
+                const imgSrc = side === 'back' ? piece.imageBackUrl : piece.imageFrontUrl;
                 const storeId = piece?.storePieceId || '-';
                 const pieceName = piece?.name || '';
                 const pid = normalizeId(piece) || String(idx);
                 const isSelected = selectedPieceId === pid;
                 return (
-                    <div key={pid} className="w-24 text-left">
+                    <div key={pid} className="text-left max-w-[100px] w-1/3 p-1">
                         <button
                             type="button"
                             onClick={() => handlePieceClick(String(pid))}
-                            className="w-24 cursor-pointer focus:outline-none"
+                            className="w-full cursor-pointer focus:outline-none"
                             title={pieceName}
                         >
                             <div
-                                className={`aspect-square w-24 h-24 overflow-hidden rounded border bg-white transition-colors duration-150 ${isSelected ? 'border-black' : 'border-gray-300 hover:border-gray-500'} hover:shadow-sm`}>
+                                className={`aspect-square w-full overflow-hidden rounded border bg-white p-2 transition-colors duration-150 ${isSelected ? 'border-black' : 'border-gray-300 hover:border-gray-500'} hover:shadow-sm`}>
                                 <img src={imgSrc} alt={pieceName || String(part)}
                                      className="w-full h-full object-contain"/>
                             </div>

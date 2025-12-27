@@ -244,13 +244,22 @@ export default function LegoPreviewCard({
                     name: placeholderName,
                     imageUrl: placeholderUrl
                 }];
-                return arr.map((p: any, idx: number) => {
+                // Solo aceptar piezas que tengan ambos lados: imageFrontUrl e imageBackUrl
+                const filtered = arr.filter((p: any) => p?.imageFrontUrl && p?.imageBackUrl);
+                if (filtered.length === 0) return [{
+                    id: 0,
+                    name: placeholderName,
+                    imageUrl: placeholderUrl
+                }];
+                return filtered.map((p: any, idx: number) => {
                     const idNum = Number(p?.storePieceId) || Number(p?.id) || idx + 1;
-                    const image = p?.storeImage || (Array.isArray(p?.storeImages) && p.storeImages[0]) || placeholderUrl;
+                    const front = String(p.imageFrontUrl);
+                    const back = String(p.imageBackUrl);
                     return {
                         id: idNum,
                         name: String(p?.name || `Piece ${idx + 1}`),
-                        imageUrl: String(image)
+                        imageUrl: front,
+                        imageUrlBack: back,
                     } as LegoItem;
                 });
             };
