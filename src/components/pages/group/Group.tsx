@@ -270,7 +270,7 @@ export function GroupPage() {
                 {/* Top Section: Group Details (moved to sticky bar) */}
 
                 {/* Middle Section: Group Members */}
-                <CardContent>
+                <CardContent className="px-0 sm:px-6">
                     {/* Inline editors for add modes */}
                     {canEdit && addingMode === 'single' && !editingGroup && (
                         <StickyOverlay>
