@@ -356,24 +356,51 @@ const t = copies[locale];
                 if (files && files[0]) handleFile(files[0]);
             });
 
-            // Click/keyboard to open file dialog
-            drop.addEventListener('click', () => {
+            // Helper to open the native file picker reliably and recover if user cancels
+            const openFilePicker = () => {
                 if (cropperOpen || isSelectingFile) return;
                 if (!fileInput) return;
                 isSelectingFile = true;
                 // permitir volver a elegir el mismo archivo
                 fileInput.value = '';
+
+                // Si el usuario cancela el diálogo, no se dispara 'change'.
+                // Usamos el evento 'focus' de ventana para detectar el retorno y resetear el flag.
+                const onWindowFocus = () => {
+                    // Pequeño delay para permitir que 'change' llegue primero si sí seleccionó
+                    setTimeout(() => {
+                        if (!cropperOpen) {
+                            const f = fileInput && fileInput.files && fileInput.files[0];
+                            if (!f) {
+                                isSelectingFile = false;
+                            }
+                        }
+                    }, 0);
+                    window.removeEventListener('focus', onWindowFocus);
+                };
+                window.addEventListener('focus', onWindowFocus, {once: true});
+
+                // Salvaguarda adicional por si el focus handler no dispara en algún navegador
+                setTimeout(() => {
+                    if (!cropperOpen) {
+                        const f = fileInput && fileInput.files && fileInput.files[0];
+                        if (!f) isSelectingFile = false;
+                    }
+                }, 2000);
+
+                // Abrir selector nativo
                 setTimeout(() => fileInput.click(), 0);
+            };
+
+            // Click/keyboard to open file dialog
+            drop.addEventListener('click', () => {
+                openFilePicker();
             });
             drop.addEventListener('keydown', (e) => {
                 const k = e && e.key ? e.key : '';
                 if (k === 'Enter' || k === ' ') {
                     e.preventDefault();
-                    if (cropperOpen || isSelectingFile) return;
-                    if (!fileInput) return;
-                    isSelectingFile = true;
-                    fileInput.value = '';
-                    setTimeout(() => fileInput.click(), 0);
+                    openFilePicker();
                 }
             });
 
@@ -383,6 +410,10 @@ const t = copies[locale];
                     // salir del estado selección tanto si canceló como si eligió
                     isSelectingFile = false;
                     if (f) handleFile(f);
+                });
+                // Algunos navegadores emiten 'cancel' en <input type="file"> al cerrar sin escoger
+                fileInput.addEventListener('cancel', () => {
+                    isSelectingFile = false;
                 });
             }
 
