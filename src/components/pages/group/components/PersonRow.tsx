@@ -9,7 +9,7 @@ import type {MatchPart} from '@/lib/services/groups';
 import {disableMemberShare, enableMemberShare} from '@/lib/services/groups';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
-import type {SideImages} from '@/components/lego/LegoComposite';
+import {toSideWithFallback} from '@/lib/lego/parts';
 
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
@@ -297,23 +297,35 @@ export function PersonRow({
         return out;
     }, [person, selectedByPart]);
 
-    const toSideImages = useCallback((piece: any | undefined | null): SideImages | undefined => {
-        if (!piece) return undefined;
-        const front = piece?.imageFrontUrl;
-        const back = piece?.imageBackUrl;
-        // Requisito: si falta imageFrontUrl o imageBackUrl, no se pinta nada
-        if (!front || !back) return undefined;
-        return {front, back};
-    }, []);
+    // Mapear MatchPart a categoría UI para aplicar fallbacks reutilizables
+    const partToCategory = (part: MatchPart): 'hair' | 'head' | 'body' | 'pants' => {
+        switch (part) {
+            case 'wig':
+                return 'hair';
+            case 'head':
+                return 'head';
+            case 'upperPart':
+                return 'body';
+            case 'lowerPart':
+                return 'pants';
+            default:
+                return 'head';
+        }
+    };
 
     const compositeProps = useMemo(() => {
-        const wig = toSideImages(selectedPieceByPart.wig);
-        const head = toSideImages(selectedPieceByPart.head);
-        const upperPart = toSideImages(selectedPieceByPart.upperPart);
-        const lowerPart = toSideImages(selectedPieceByPart.lowerPart);
-        const hasAny = Boolean(wig || head || upperPart || lowerPart);
+        const wig = toSideWithFallback(partToCategory('wig'), selectedPieceByPart.wig);
+        const head = toSideWithFallback(partToCategory('head'), selectedPieceByPart.head);
+        const upperPart = toSideWithFallback(partToCategory('upperPart'), selectedPieceByPart.upperPart);
+        const lowerPart = toSideWithFallback(partToCategory('lowerPart'), selectedPieceByPart.lowerPart);
+        const hasAny = Boolean(
+            selectedPieceByPart.wig ||
+            selectedPieceByPart.head ||
+            selectedPieceByPart.upperPart ||
+            selectedPieceByPart.lowerPart
+        );
         return {wig, head, upperPart, lowerPart, hasAny};
-    }, [selectedPieceByPart, toSideImages]);
+    }, [selectedPieceByPart]);
 
     // Control del lado (front/back) sincronizado entre composite y miniaturas
     const [side, setSide] = useState<'front' | 'back'>('front');

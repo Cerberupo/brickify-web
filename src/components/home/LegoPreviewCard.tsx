@@ -5,6 +5,7 @@ import {Button} from '@/components/ui/button';
 import ShareActions from '@/components/common/ShareActions';
 import {toast} from 'sonner';
 import {LegoComposite} from "@/components";
+import {deriveCategoryStatuses, mapMatchesToOptions, thumbSrcFor, toSideWithFallback} from '@/lib/lego/parts';
 
 
 interface GuestGroupData {
@@ -234,56 +235,11 @@ export default function LegoPreviewCard({
 
     // Build options from guestGroupDetails (first reference person) when available
     const customizationOptions: LegoCategories = useMemo(() => {
-        const placeholderName = locale === 'es' ? 'Cargando…' : 'Loading…';
-        const placeholderUrl = '/piece-2.svg'; // generic shadow/placeholder already in public
-
-        const buildFromMatches = (matches: any | undefined | null) => {
-            const getItems = (arr: any[] | undefined | null) => {
-                if (!arr || !Array.isArray(arr) || arr.length === 0) return [{
-                    id: 0,
-                    name: placeholderName,
-                    imageUrl: placeholderUrl
-                }];
-                // Solo aceptar piezas que tengan ambos lados: imageFrontUrl e imageBackUrl
-                const filtered = arr.filter((p: any) => p?.imageFrontUrl && p?.imageBackUrl);
-                if (filtered.length === 0) return [{
-                    id: 0,
-                    name: placeholderName,
-                    imageUrl: placeholderUrl
-                }];
-                return filtered.map((p: any, idx: number) => {
-                    const idNum = Number(p?.storePieceId) || Number(p?.id) || idx + 1;
-                    const front = String(p.imageFrontUrl);
-                    const back = String(p.imageBackUrl);
-                    return {
-                        id: idNum,
-                        name: String(p?.name || `Piece ${idx + 1}`),
-                        imageUrl: front,
-                        imageUrlBack: back,
-                    } as LegoItem;
-                });
-            };
-
-            // When status is not done or matches missing, use single placeholder
-            const byCat = (key: string) => {
-                const cat = matches?.[key];
-                if (!cat || cat.status !== 'done') return [{id: 0, name: placeholderName, imageUrl: placeholderUrl}];
-                return getItems(cat.matchedPieceIds);
-            };
-
-            return {
-                hair: byCat('wig'),
-                head: byCat('head'),
-                body: byCat('upperPart'),
-                pants: byCat('lowerPart')
-            } as LegoCategories;
-        };
-
         try {
             const rp = (guestGroupDetails?.referencePeople && guestGroupDetails.referencePeople[0]) || null;
             if (rp && rp.matches) {
                 console.log('Building customization options from matches:', rp.matches);
-                return buildFromMatches(rp.matches);
+                return mapMatchesToOptions(rp.matches, locale) as unknown as LegoCategories;
             }
         } catch (_) {
             // ignore
@@ -358,13 +314,7 @@ export default function LegoPreviewCard({
         return arr.find(i => i.id === id) || arr[0];
     };
 
-    // Helper para mapear un item a SideImages esperado por LegoComposite
-    const toSide = (item: any) => {
-        if (!item) return undefined;
-        const front = item.imageUrl;
-        const back = item.imageUrlBack || item.imageUrl;
-        return {front, back};
-    };
+    // Fallbacks y helpers reutilizables se importan desde src/lib/lego
 
     // dynamic classes for right-side layers
     const getRightLayerClass = (category: keyof LegoCategories, which: 'outgoing' | 'incoming' | 'rest') => {
@@ -377,6 +327,16 @@ export default function LegoPreviewCard({
     };
 
     const orderedCats: (keyof LegoCategories)[] = ['hair', 'head', 'body', 'pants'];
+
+    // Estado por categoría desde matches (para mostrar mensajes en la banda derecha)
+    const catStatusMap: Partial<Record<keyof LegoCategories, string | null>> = useMemo(() => {
+        try {
+            const rp = (guestGroupDetails as any)?.referencePeople?.[0];
+            return deriveCategoryStatuses(rp?.matches) as Partial<Record<keyof LegoCategories, string | null>>;
+        } catch {
+            return {};
+        }
+    }, [guestGroupDetails]);
 
     // Helpers for actions (download JSON, share)
     const normalizeId = (p: any): string | null => {
@@ -490,10 +450,10 @@ export default function LegoPreviewCard({
                                                 locale={locale}
                                                 side={side}
                                                 onSideChange={setSide}
-                                                wig={toSide(getItem('hair', selectedItems.hair))}
-                                                head={toSide(getItem('head', selectedItems.head))}
-                                                upperPart={toSide(getItem('body', selectedItems.body))}
-                                                lowerPart={toSide(getItem('pants', selectedItems.pants))}
+                                                wig={toSideWithFallback('hair', getItem('hair', selectedItems.hair))}
+                                                head={toSideWithFallback('head', getItem('head', selectedItems.head))}
+                                                upperPart={toSideWithFallback('body', getItem('body', selectedItems.body))}
+                                                lowerPart={toSideWithFallback('pants', getItem('pants', selectedItems.pants))}
                                             />
                                         </div>
                                     </div>
@@ -551,7 +511,8 @@ export default function LegoPreviewCard({
                                         className="w-full flex gap-[6px] items-center justify-center">
                                         {items.map((item: any) => {
                                             const isSelected = selectedItems[category] === item.id;
-                                            const thumbSrc = side === 'back' ? (item.imageUrlBack || item.imageUrl) : item.imageUrl;
+                                            const isErrorCat = (catStatusMap[category as keyof LegoCategories] || '').toString() === 'error';
+                                            const thumbSrc = thumbSrcFor(category as any, item, side);
                                             return (
                                                 <button
                                                     key={`${category}-${item.id}`}
@@ -560,7 +521,12 @@ export default function LegoPreviewCard({
                                                     aria-pressed={isSelected}
                                                     className={cn(
                                                         "w-1/3  md:w-[121px] aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none p-[10px]",
-                                                        isSelected ? "bg-[#FFF3D6] border border-[#F9C14A]" : "bg-white/90 hover:bg-[#FFF3D6]"
+                                                        // Estado de error tiene prioridad visual independientemente de selección
+                                                        isErrorCat
+                                                            ? "bg-red-50 border border-red-300"
+                                                            : (isSelected
+                                                                ? "bg-[#FFF3D6] border border-[#F9C14A]"
+                                                                : "bg-white/90 hover:bg-[#FFF3D6]")
                                                     )}
                                                 >
                                                     <img
@@ -588,18 +554,41 @@ export default function LegoPreviewCard({
                     const prevId = c?.outgoing ?? null;
                     const prevItem = prevId ? getItem(cat, prevId) : null;
 
-                    const Badge = ({item, className}: { item: LegoItem, className?: string }) => (
-                        <div
-                            className={cn("relative pointer-events-auto select-none md:rounded-r-[8px] p-[6px] bg-white", className)}>
+                    // Estado por categoría (precalculado) para mostrar "ha fallado" en la banda
+                    const catStatus = (catStatusMap[cat] || '').toString();
+
+                    const Badge = ({item, className}: { item: LegoItem, className?: string }) => {
+                        const isError = catStatus === 'error';
+                        return (
                             <div
-                                className="text-[12px] leading-tight bg-[#FAFAFA] rounded-r-[8px] pl-[24px] p-[14px]">
-                                <div className="text-[15px] whitespace-nowrap">{item.name}</div>
-                                <div className="text-[14px] whitespace-nowrap">ID:
-                                    <span className="font-light">{item.id}</span>
+                                className={cn("relative pointer-events-auto select-none md:rounded-r-[8px] p-[6px] bg-white", className)}>
+                                <div
+                                    className={cn(
+                                        "text-[12px] leading-tight rounded-r-[8px] pl-[24px] p-[14px]",
+                                        isError ? "bg-red-50 text-red-700" : "bg-[#FAFAFA]"
+                                    )}
+                                >
+                                    {isError ? (
+                                        <>
+                                            <div className="text-[15px] whitespace-nowrap font-medium">
+                                                {locale === 'es' ? 'Ha fallado esta pieza' : 'This piece failed'}
+                                            </div>
+                                            <div className="text-[12px] opacity-80 whitespace-nowrap">
+                                                {locale === 'es' ? 'Intenta otra opción' : 'Try another option'}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="text-[15px] whitespace-nowrap">{item.name}</div>
+                                            <div className="text-[14px] whitespace-nowrap">ID:
+                                                <span className="font-light">{item.id}</span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                        </div>
-                    );
+                        );
+                    };
 
                     return (
                         <div key={cat + '-' + idx} className="relative">
