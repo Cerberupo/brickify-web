@@ -6,7 +6,7 @@ import {toast} from 'sonner';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
 import type {MatchPart} from '@/lib/services/groups';
-import {disableMemberShare, enableMemberShare} from '@/lib/services/groups';
+import {disableMemberShare, enableMemberShare, setSelectedPiece} from '@/lib/services/groups';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
 import {toSideWithFallback} from '@/lib/lego/parts';
@@ -59,7 +59,20 @@ export function PersonRow({
     const handlePartSelectedChange = useCallback((part: MatchPart, pieceId: string | null) => {
         setSelectedByPart(prev => ({...prev, [part]: pieceId}));
         if (onPartSelectedChange) onPartSelectedChange(person.id, part, pieceId);
-    }, [onPartSelectedChange, person.id]);
+
+        // Llamar al backend para guardar la pieza seleccionada para este miembro y parte
+        // PATCH /people/:id/matches/:part/selected-piece?groupId=...
+        if (pieceId) {
+            (async () => {
+                try {
+                    await setSelectedPiece(groupId, person.id, part, pieceId);
+                } catch (e) {
+                    // Informar en caso de error, pero mantener la selección en UI
+                    toast.error('No se pudo guardar la pieza seleccionada');
+                }
+            })();
+        }
+    }, [onPartSelectedChange, person.id, groupId]);
 
     const splitParagraphs = (txt?: string) => {
         if (!txt) return [] as string[];
