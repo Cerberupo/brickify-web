@@ -652,7 +652,7 @@ export default function LegoPreviewCard({
                 });
                 if (!hasGeneratedPieces) return null;
                 return (
-                    <div className="mt-3 flex items-center gap-3 justify-end">
+                    <div className="mt-3 flex flex-wrap items-center gap-3 justify-end">
                         <Button variant="secondary" onClick={handleDownloadJson}>
                             {locale === 'es' ? 'Descargar JSON' : 'Download JSON'}
                         </Button>
@@ -665,15 +665,19 @@ export default function LegoPreviewCard({
                             const personShareId = rp?.share?.id as string | undefined;
                             if (!groupId || !rpId) return null;
                             return (
-                                <ShareActions
-                                    groupId={groupId}
-                                    personId={rpId}
-                                    groupShareId={groupShareId}
-                                    personShareId={personShareId}
-                                    initialEnabled={Boolean(rp?.share?.enabled)}
-                                    locale={locale}
-                                    guestKey={guestKey}
-                                />
+                                // En responsive, forzamos que el bloque de compartir salte a la siguiente línea
+                                // envolviéndolo y dándole ancho completo en pantallas pequeñas.
+                                <div className="basis-full sm:basis-auto w-full sm:w-auto flex justify-end">
+                                    <ShareActions
+                                        groupId={groupId}
+                                        personId={rpId}
+                                        groupShareId={groupShareId}
+                                        personShareId={personShareId}
+                                        initialEnabled={Boolean(rp?.share?.enabled)}
+                                        locale={locale}
+                                        guestKey={guestKey}
+                                    />
+                                </div>
                             );
                         })()}
                     </div>
