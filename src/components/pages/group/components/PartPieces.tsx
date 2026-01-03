@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import type {MatchPart} from "@/lib";
+import {setSelectedPiece} from '@/lib/services/groups';
 
 const faviconUrl: string = '/favicon.png';
 
@@ -18,6 +19,7 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
     useTranslation();
     const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
     const initializedRef = useRef(false);
+    const savingRef = useRef(false);
     const pieces = Array.isArray((data as any)?.matchedPieceIds) ? (data as any).matchedPieceIds : [];
     const status = String((data as any)?.status || '').toLowerCase();
 
@@ -53,9 +55,25 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
     }, [status, pieces, serverSelectedId, groupId, personId, part]);
 
     const handlePieceClick = useCallback((pid: string) => {
+        // Evitar llamadas innecesarias si se hace click sobre la misma pieza
+        if (pid === selectedPieceId) return;
         setSelectedPieceId(pid);
         if (onSelectedChange) onSelectedChange(part, pid);
-    }, [part, onSelectedChange]);
+        // Realizar la llamada al backend en el onClick, no en efectos/parent
+        (async () => {
+            if (savingRef.current) return;
+            savingRef.current = true;
+            try {
+                await setSelectedPiece(groupId, personId, part, pid);
+            } catch (e) {
+                // Silenciar error para no molestar; la UI mantiene la selección local.
+                // Puedes reemplazar por un toast si se desea notificar.
+                // console.error('No se pudo guardar la pieza seleccionada', e);
+            } finally {
+                savingRef.current = false;
+            }
+        })();
+    }, [groupId, personId, part, onSelectedChange, selectedPieceId]);
 
     if (status !== 'done' || pieces.length === 0) return null;
 

@@ -6,6 +6,8 @@ import {navigate} from "@/lib/utils";
 import {PROJECT_NAME} from '@/config';
 import {buttonVariants} from "@/components/ui/button";
 import {useEffect, useState} from "react";
+import {createBillingPortalSession} from '@/lib/services/stripe';
+import {toast} from 'sonner';
 import {
     getCurrentLocale,
     homeHref as makeHomeHref,
@@ -18,6 +20,7 @@ import {
 export function Header() {
     const {t, i18n} = useTranslation();
     const {user} = useAuth();
+    const [portalLoading, setPortalLoading] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -26,6 +29,71 @@ export function Header() {
             navigate(makeHomeHref());
         } catch (error) {
             console.error('Logout error:', error);
+        }
+    };
+
+    const handleOpenInvoices = async () => {
+        if (portalLoading) return;
+        try {
+            setPortalLoading(true);
+            // Heurística para extraer el customerId del usuario o del storage
+            const maybeFromUser = (user && (
+                (user as any).stripeCustomerId ||
+                (user as any).customerId ||
+                (user as any)?.stripe?.customerId ||
+                (user as any)?.billing?.stripeCustomerId
+            )) as string | undefined;
+            let customerId = maybeFromUser;
+            if (!customerId && typeof window !== 'undefined') {
+                try {
+                    const raw = sessionStorage.getItem('stripeCustomerId');
+                    if (raw) customerId = raw;
+                } catch {
+                }
+            }
+
+            if (!customerId) {
+                // Sin customerId no podemos abrir el portal
+                const msg = i18n.language === 'es'
+                    ? 'No encontramos tu cuenta de Stripe para mostrar las facturas.'
+                    : 'We could not find your Stripe account to show invoices.';
+                try {
+                    toast.error(msg);
+                } catch {
+                    alert(msg);
+                }
+                // Redirigir a la cuenta por si desde allí se puede resolver
+                navigate(localizePath('/account'));
+                return;
+            }
+
+            const origin = typeof window !== 'undefined' ? window.location.origin : '';
+            const returnUrl = `${origin.replace(/\/$/, '')}/account`;
+            const {url} = await createBillingPortalSession(customerId, returnUrl);
+            if (url) {
+                window.location.href = url;
+            } else {
+                const msg2 = i18n.language === 'es'
+                    ? 'No se pudo abrir el portal de facturación.'
+                    : 'Failed to open billing portal.';
+                try {
+                    toast.error(msg2);
+                } catch {
+                    alert(msg2);
+                }
+            }
+        } catch (e) {
+            console.error('Billing portal error:', e);
+            const msg = i18n.language === 'es'
+                ? 'No se pudo abrir el portal de facturación.'
+                : 'Failed to open billing portal.';
+            try {
+                toast.error(msg);
+            } catch {
+                alert(msg);
+            }
+        } finally {
+            setPortalLoading(false);
         }
     };
 
@@ -135,6 +203,22 @@ export function Header() {
                                         </a>
                                     </li>
                                 </>
+                            ) : null}
+
+                            {user ? (
+                                <li>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleOpenInvoices}
+                                        disabled={portalLoading}
+                                        title={t('header.invoices', {defaultValue: 'Invoices'})}
+                                    >
+                                        {portalLoading
+                                            ? (i18n.language === 'es' ? 'Abriendo…' : 'Opening…')
+                                            : t('header.invoices', {defaultValue: 'Invoices'})}
+                                    </Button>
+                                </li>
                             ) : null}
 
                             {user ? (

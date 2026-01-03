@@ -2,11 +2,9 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Toaster} from '@/components/ui';
 import {Download, Pencil, Trash2} from 'lucide-react';
-import {toast} from 'sonner';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
 import type {MatchPart} from '@/lib/services/groups';
-import {disableMemberShare, enableMemberShare, setSelectedPiece} from '@/lib/services/groups';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
 import {toSideWithFallback} from '@/lib/lego/parts';
@@ -52,27 +50,12 @@ export function PersonRow({
     const initialShareEnabled = useMemo(() => {
         return Boolean((person as any)?.shareEnabled || (person as any)?.sharingEnabled || (person as any)?.share?.enabled);
     }, [person]);
-    const [shareEnabled, setShareEnabled] = useState<boolean>(initialShareEnabled);
-    const [shareLoading, setShareLoading] = useState<boolean>(false);
 
     const [selectedByPart, setSelectedByPart] = useState<Record<string, string | null>>({});
     const handlePartSelectedChange = useCallback((part: MatchPart, pieceId: string | null) => {
         setSelectedByPart(prev => ({...prev, [part]: pieceId}));
         if (onPartSelectedChange) onPartSelectedChange(person.id, part, pieceId);
-
-        // Llamar al backend para guardar la pieza seleccionada para este miembro y parte
-        // PATCH /people/:id/matches/:part/selected-piece?groupId=...
-        if (pieceId) {
-            (async () => {
-                try {
-                    await setSelectedPiece(groupId, person.id, part, pieceId);
-                } catch (e) {
-                    // Informar en caso de error, pero mantener la selección en UI
-                    toast.error('No se pudo guardar la pieza seleccionada');
-                }
-            })();
-        }
-    }, [onPartSelectedChange, person.id, groupId]);
+    }, [onPartSelectedChange, person.id]);
 
     const splitParagraphs = (txt?: string) => {
         if (!txt) return [] as string[];
@@ -169,117 +152,6 @@ export function PersonRow({
     const handleDeleteClick = useCallback(() => {
         onDelete({id: person.id, name: person.name});
     }, [onDelete, person]);
-
-    const buildShareData = useCallback(() => {
-        const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const url = `${origin}/share?g=${encodeURIComponent(group.share.id)}&m=${encodeURIComponent(person.share.id)}`;
-        const text = person?.name ? `${person.name} - Brickify` : 'Brickify';
-        return {url, text};
-    }, [groupId, person.id, person?.name]);
-
-    const handleShareX = useCallback(() => {
-        const {url, text} = buildShareData();
-        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-        window.open(shareUrl, '_blank', 'noopener,noreferrer');
-    }, [buildShareData]);
-
-    const handleShareFacebook = useCallback(() => {
-        const {url} = buildShareData();
-        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-        window.open(shareUrl, '_blank', 'noopener,noreferrer');
-    }, [buildShareData]);
-
-    const handleShareWhatsApp = useCallback(() => {
-        const {url, text} = buildShareData();
-        const shareUrl = `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`;
-        window.open(shareUrl, '_blank', 'noopener,noreferrer');
-    }, [buildShareData]);
-
-    const handleCopyLink = useCallback(async () => {
-        const {url} = buildShareData();
-        try {
-            await navigator.clipboard.writeText(url);
-        } catch {
-            const ta = document.createElement('textarea');
-            ta.value = url;
-            document.body.appendChild(ta);
-            ta.select();
-            try {
-                document.execCommand('copy');
-            } finally {
-                document.body.removeChild(ta);
-            }
-        }
-    }, [buildShareData]);
-
-    const enableShare = useCallback(async () => {
-        if (shareEnabled || shareLoading) return;
-        setShareLoading(true);
-        try {
-            const a = await enableMemberShare(groupId, person.id);
-            // a: { groupShareId, personShareId }
-            if (setGroup && group) {
-                setGroup((prev: any) => {
-                    const base = prev || group;
-                    const updatedRef = Array.isArray(base?.referencePeople) ? base.referencePeople.map((entry: any) => {
-                        if (entry?.type === 'group' && Array.isArray(entry.people)) {
-                            const updatedPeople = entry.people.map((p: any) => {
-                                if (String(p.id) === String(person.id)) {
-                                    const nextShare = {...(p.share || {}), enabled: true, id: a.personShareId};
-                                    return {...p, share: nextShare};
-                                }
-                                return p;
-                            });
-                            return {...entry, people: updatedPeople};
-                        }
-                        if (String(entry?.id) === String(person.id)) {
-                            const nextShare = {...(entry.share || {}), enabled: true, id: a.personShareId};
-                            return {...entry, share: nextShare};
-                        }
-                        return entry;
-                    }) : base?.referencePeople;
-                    const nextGroupShare = {...(base?.share || {}), id: a.groupShareId};
-                    return {...base, share: nextGroupShare, referencePeople: updatedRef};
-                });
-            }
-            // Also update the local person object if present
-            try {
-                if (person) {
-                    person.share = {...(person.share || {}), enabled: true, id: a.personShareId};
-                    if ((person as any).group) {
-                        (person as any).group.share = {...((person as any).group.share || {}), id: a.groupShareId};
-                    }
-                    if ((person as any).parentGroup) {
-                        (person as any).parentGroup.share = {
-                            ...((person as any).parentGroup.share || {}),
-                            id: a.groupShareId
-                        };
-                    }
-                }
-            } catch {
-            }
-            setShareEnabled(true);
-        } catch (e) {
-            const msg = t('share.enableError', 'No se pudo activar el modo compartir. Inténtalo de nuevo.');
-            toast.error(msg);
-        } finally {
-            setShareLoading(false);
-        }
-    }, [groupId, person, setGroup, group, shareEnabled, shareLoading, t]);
-
-    const disableShare = useCallback(async () => {
-        if (!shareEnabled || shareLoading) return;
-        setShareLoading(true);
-        try {
-            await disableMemberShare(groupId, person.id);
-            setShareEnabled(false);
-        } catch (e) {
-            const msg = t('share.disableError', 'No se pudo desactivar el modo compartir. Inténtalo de nuevo.');
-            toast.error(msg);
-        } finally {
-            setShareLoading(false);
-        }
-    }, [groupId, person.id, shareEnabled, shareLoading, t]);
 
     // guest_key (si existe) para mantener compatibilidad con el flujo guest
     const guestKey: string | null = useMemo(() => {
