@@ -428,7 +428,8 @@ export function PersonRow({
                     )}
                 </div>
                 {person?.status === 'processed' && (
-                    <div className="mt-auto pt-2 border-t flex items-center justify-between">
+                    <div
+                        className="mt-auto pt-2 border-t flex flex-wrap items-center gap-3 justify-end sm:justify-between">
                         <Button
                             variant="outline"
                             size="sm"
@@ -436,45 +437,52 @@ export function PersonRow({
                         >
                             <Download className="h-4 w-4 mr-1"/> {t('group.downloadPieces', 'Descargar piezas')}
                         </Button>
-                        <div className="flex gap-3 items-center">
-                            <ShareActions
-                                groupId={groupId}
-                                personId={person.id}
-                                groupShareId={group?.share?.id}
-                                personShareId={person?.share?.id}
-                                initialEnabled={initialShareEnabled}
-                                locale={typeof window !== 'undefined' && window.location.pathname.startsWith('/es') ? 'es' : 'en'}
-                                guestKey={guestKey}
-                                onEnabledChange={(enabled, ids) => {
-                                    // Mantener sincronizado el estado del grupo local
-                                    if (!setGroup || !group) return;
-                                    setGroup((prev: any) => {
-                                        const base = prev || group;
-                                        const applyToPerson = (p: any) => {
-                                            if (String(p.id) !== String(person.id)) return p;
-                                            const newShare = {
-                                                ...(p.share || {}),
-                                                enabled,
-                                                ...(ids?.personShareId ? {id: ids.personShareId} : {})
+                        {/* En responsive, forzar que el bloque de compartir salte a la siguiente línea */}
+                        <div className="basis-full sm:basis-auto w-full sm:w-auto flex justify-end">
+                            <div className="flex gap-3 items-center">
+                                <ShareActions
+                                    groupId={groupId}
+                                    personId={person.id}
+                                    groupShareId={group?.share?.id}
+                                    personShareId={person?.share?.id}
+                                    initialEnabled={initialShareEnabled}
+                                    locale={typeof window !== 'undefined' && window.location.pathname.startsWith('/es') ? 'es' : 'en'}
+                                    guestKey={guestKey}
+                                    onEnabledChange={(enabled, ids) => {
+                                        // Mantener sincronizado el estado del grupo local
+                                        if (!setGroup || !group) return;
+                                        setGroup((prev: any) => {
+                                            const base = prev || group;
+                                            const applyToPerson = (p: any) => {
+                                                if (String(p.id) !== String(person.id)) return p;
+                                                const newShare = {
+                                                    ...(p.share || {}),
+                                                    enabled,
+                                                    ...(ids?.personShareId ? {id: ids.personShareId} : {})
+                                                };
+                                                return {...p, share: newShare};
                                             };
-                                            return {...p, share: newShare};
-                                        };
-                                        const updatedReferencePeople = Array.isArray(base?.referencePeople)
-                                            ? base.referencePeople.map((entry: any) => {
-                                                if (entry?.type === 'group' && Array.isArray(entry.people)) {
-                                                    return {...entry, people: entry.people.map(applyToPerson)};
-                                                }
-                                                return String(entry?.id) === String(person.id) ? applyToPerson(entry) : entry;
-                                            })
-                                            : base?.referencePeople;
-                                        const updatedShare = {
-                                            ...(base?.share || {}),
-                                            ...(ids?.groupShareId ? {id: ids.groupShareId} : {})
-                                        };
-                                        return {...base, referencePeople: updatedReferencePeople, share: updatedShare};
-                                    });
-                                }}
-                            />
+                                            const updatedReferencePeople = Array.isArray(base?.referencePeople)
+                                                ? base.referencePeople.map((entry: any) => {
+                                                    if (entry?.type === 'group' && Array.isArray(entry.people)) {
+                                                        return {...entry, people: entry.people.map(applyToPerson)};
+                                                    }
+                                                    return String(entry?.id) === String(person.id) ? applyToPerson(entry) : entry;
+                                                })
+                                                : base?.referencePeople;
+                                            const updatedShare = {
+                                                ...(base?.share || {}),
+                                                ...(ids?.groupShareId ? {id: ids.groupShareId} : {})
+                                            };
+                                            return {
+                                                ...base,
+                                                referencePeople: updatedReferencePeople,
+                                                share: updatedShare
+                                            };
+                                        });
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
