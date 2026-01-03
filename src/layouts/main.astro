@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import 'sonner/dist/styles.css';
-import {ClientRouter} from "astro:transitions";
 import {PROJECT_NAME} from "../config";
 import {normalizeLocale} from "@/lib/locale";
 import CookieBanner from "@/components/cookies/CookieBanner.astro";
@@ -193,8 +192,6 @@ const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import
     </script>
 
     <!-- Google Analytics se carga/controla desde CookieBanner.astro -->
-
-    <ClientRouter/>
 </head>
 <body class="min-h-screen flex flex-col">
 

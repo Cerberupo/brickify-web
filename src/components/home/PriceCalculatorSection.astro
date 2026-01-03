@@ -104,73 +104,93 @@ const t = copies[locale];
     </div>
 
     <script define:vars={{locale, tMinutes: t.minutes, tHours: t.hours}}>
-        const slider = document.getElementById('pc-slider');
-        const qtyEl = document.getElementById('pc-qty');
-        const unitEl = document.getElementById('pc-unit-price');
-        const totalEl = document.getElementById('pc-total');
-        const savingsEl = document.getElementById('pc-savings');
+        function initPriceCalculatorSection() {
+            console.log('initPriceCalculatorSection')
+            const root = document.getElementById('precio');
+            if (!root) return;
+            // Evitar doble inicialización en transiciones cliente de Astro
+            if (root.dataset && root.dataset.inited === '1') return;
+            root.dataset.inited = '1';
 
-        const priceByQty = [
-            2.99, // 1
-            2.89, // 2
-            2.79, // 3
-            2.69, // 4
-            2.59, // 5
-            2.49, // 6
-            2.39, // 7
-            2.29, // 8
-            2.19, // 9
-            1.99, // 10+
-        ];
-        const minutesPerUnit = 20;
-        const fmt = new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'en-US', {
-            style: 'currency',
-            currency: 'EUR',
-            minimumFractionDigits: 2,
-        });
+            const slider = document.getElementById('pc-slider');
+            const qtyEl = document.getElementById('pc-qty');
+            const unitEl = document.getElementById('pc-unit-price');
+            const totalEl = document.getElementById('pc-total');
+            const savingsEl = document.getElementById('pc-savings');
 
-        // Muestra solo minutos (<60) o solo horas (>=60)
-        const formatTime = (minutes) => {
-            if (minutes < 60) return `${minutes} ${tMinutes}`;
-            const hours = minutes / 60;
-            return `${hours.toFixed(1)} ${tHours}`;
-        };
-
-        // Mapeo no lineal del slider (0–100) a cantidad (1–150)
-        const sliderToQty = (s) => {
-            const sv = Math.max(0, Math.min(100, Number(s) || 0));
-            // Ajuste para alinear el thumb con el tick "10" centrado (50%)
-            if (sv <= 50) {
-                // tramo 0–50 → 1–10 (más precisión en las primeras 10 uds y 10 cae justo en el centro)
-                const q = 1 + (sv / 50) * (10 - 1);
-                return Math.round(q);
-            } else {
-                // tramo 50–100 → 10–150
-                const q = 10 + ((sv - 50) / 50) * (150 - 10);
-                return Math.round(q);
-            }
-        };
-
-        const update = (qty) => {
-            const safeQty = Math.max(1, Math.min(150, Math.round(qty)));
-            const unitPrice = priceByQty[Math.min(safeQty, 10) - 1];
-            const total = unitPrice * safeQty;
-            const savedMinutes = safeQty * minutesPerUnit;
-
-            qtyEl.textContent = String(safeQty);
-            unitEl.textContent = fmt.format(unitPrice);
-            totalEl.textContent = fmt.format(total);
-            savingsEl.textContent = formatTime(savedMinutes);
-        };
-
-        if (slider && qtyEl && unitEl && totalEl && savingsEl) {
-            slider.addEventListener('input', (event) => {
-                const target = event.target;
-                if (!(target instanceof HTMLInputElement)) return;
-                const qty = sliderToQty(target.value);
-                update(qty);
+            const priceByQty = [
+                2.99, // 1
+                2.89, // 2
+                2.79, // 3
+                2.69, // 4
+                2.59, // 5
+                2.49, // 6
+                2.39, // 7
+                2.29, // 8
+                2.19, // 9
+                1.99, // 10+
+            ];
+            const minutesPerUnit = 20;
+            // Crear el formatter con el locale actual de esta página
+            const fmt = new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2,
             });
-            update(sliderToQty(slider.value));
+
+            // Muestra solo minutos (<60) o horas (>=60)
+            const formatTime = (minutes) => {
+                if (minutes < 60) return `${minutes} ${tMinutes}`;
+                const hours = minutes / 60;
+                return `${hours.toFixed(1)} ${tHours}`;
+            };
+
+            // Mapeo no lineal del slider (0–100) a cantidad (1–150)
+            const sliderToQty = (s) => {
+                const sv = Math.max(0, Math.min(100, Number(s) || 0));
+                if (sv <= 50) {
+                    const q = 1 + (sv / 50) * (10 - 1);
+                    return Math.round(q);
+                } else {
+                    const q = 10 + ((sv - 50) / 50) * (150 - 10);
+                    return Math.round(q);
+                }
+            };
+
+            const update = (qty) => {
+                const safeQty = Math.max(1, Math.min(150, Math.round(qty)));
+                const unitPrice = priceByQty[Math.min(safeQty, 10) - 1];
+                const total = unitPrice * safeQty;
+                const savedMinutes = safeQty * minutesPerUnit;
+
+                if (qtyEl) qtyEl.textContent = String(safeQty);
+                if (unitEl) unitEl.textContent = fmt.format(unitPrice);
+                if (totalEl) totalEl.textContent = fmt.format(total);
+                if (savingsEl) savingsEl.textContent = formatTime(savedMinutes);
+            };
+
+            if (slider) {
+                slider.addEventListener('input', (event) => {
+                    const target = event.target;
+                    if (!(target instanceof HTMLInputElement)) return;
+                    const qty = sliderToQty(target.value);
+                    update(qty);
+                });
+                update(sliderToQty(slider.value));
+            }
+
+            // Limpieza por página al hacer swap (permite re-inicializar en la siguiente vista)
+            const cleanup = () => {
+                const r = document.getElementById('precio');
+                if (r && r.dataset) delete r.dataset.inited;
+            };
+            window.addEventListener('astro:before-swap', cleanup, {once: true});
         }
+        
+        document.addEventListener('DOMContentLoaded', () => initPriceCalculatorSection());
+        window.addEventListener('astro:page-load', initPriceCalculatorSection);
+        window.addEventListener('astro:after-swap', initPriceCalculatorSection);
+        window.addEventListener('pageshow', () => initPriceCalculatorSection());
+        window.addEventListener('popstate', initPriceCalculatorSection);
     </script>
 </section>

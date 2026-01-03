@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {Button, Input, Label, Textarea, Toaster} from '@/components/ui';
 import {toast} from 'sonner';
 import type {AddUserRequest, UpdateUserRequest} from '@/lib/types';
-import { ImageCropperDialog } from '@/components/image/ImageCropperDialog';
+import {ImageCropperDialog} from '@/components/image/ImageCropperDialog';
 
 export type InlineMemberEditorMode = 'add' | 'edit';
 
@@ -245,7 +245,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                         {/* Left: Image dropzone */}
                         <div className="md:col-span-3">
                             <Label htmlFor={`avatar-upload-${avatarInputId}`}
-                                   className="block mb-2">{t('group.memberAvatar')}</Label>
+                                   className="block mb-1">{t('group.memberAvatar')}</Label>
                             <div
                                 className={`border-2 border-dashed rounded-md p-3 flex flex-col items-center justify-center w-full min-h-32 cursor-pointer hover:border-primary transition-colors aspect-square`}
                                 onClick={() => fileInputRef.current?.click()}
@@ -352,7 +352,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
             <ImageCropperDialog
                 open={cropOpen}
                 src={cropSrc}
-                aspect={3/4} // portrait ratio: width/height = 3:4
+                aspect={3 / 4} // portrait ratio: width/height = 3:4
                 maxSize={1600}
                 onClose={() => setCropOpen(false)}
                 onConfirm={(file, previewUrl) => {
@@ -367,7 +367,10 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                     }
                     // Cleanup previous preview URL if it was blob
                     if (avatarPreview && avatarPreview.startsWith('blob:')) {
-                        try { URL.revokeObjectURL(avatarPreview); } catch {}
+                        try {
+                            URL.revokeObjectURL(avatarPreview);
+                        } catch {
+                        }
                     }
                     setAvatarFile(file);
                     setAvatarPreview(previewUrl);

@@ -96,7 +96,7 @@ export function CreateGroupModal({
                 <form onSubmit={handleSubmit(onSubmitForm)}>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">{t('dashboard.groupName')}</Label>
+                            <Label htmlFor="name">{t('dashboard.groupName')}*</Label>
                             <Input
                                 id="name"
                                 {...register("name", {
@@ -111,7 +111,7 @@ export function CreateGroupModal({
                             )}
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="description">{t('dashboard.groupDescription')}</Label>
+                            <Label htmlFor="description">{t('dashboard.groupDescription')}*</Label>
                             <Textarea
                                 id="description"
                                 {...register("description", {
@@ -127,7 +127,7 @@ export function CreateGroupModal({
                         </div>
                         {mode === 'create' && (
                             <div className="grid gap-2">
-                                <Label htmlFor="groupType">{t('dashboard.groupType')}</Label>
+                                <Label htmlFor="groupType">{t('dashboard.groupType')}*</Label>
                                 {/* Hidden input to register with RHF for validation */}
                                 <input type="hidden"
                                        id="groupType" {...register('groupType', {required: t('dashboard.groupTypeRequired') as string})} />

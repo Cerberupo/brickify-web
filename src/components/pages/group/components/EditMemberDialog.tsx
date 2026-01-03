@@ -105,7 +105,7 @@ export function EditMemberDialog({open, onOpenChange, member, onUpdate}: EditMem
                                 <Label htmlFor="edit-avatar" className="block mb-2">
                                     {t('group.memberAvatar')}
                                 </Label>
-                                <div 
+                                <div
                                     className={`
                                         border-2 border-dashed rounded-md p-4 flex flex-col items-center justify-center
                                         w-full min-h-40 cursor-pointer hover:border-primary transition-colors
@@ -133,15 +133,18 @@ export function EditMemberDialog({open, onOpenChange, member, onUpdate}: EditMem
                                     }}
                                 >
                                     {(newAvatar || avatar) ? (
-                                        <img 
-                                            src={newAvatar || avatar || ''} 
-                                            alt="Avatar" 
+                                        <img
+                                            src={newAvatar || avatar || ''}
+                                            alt="Avatar"
                                             className="max-w-full max-h-full object-contain rounded-md"
                                         />
                                     ) : (
                                         <>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 className="h-10 w-10 text-gray-400 mb-2" fill="none"
+                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                             </svg>
                                             <p className="text-sm text-gray-500 text-center">
                                                 {t('group.dragImageHere', 'Click or drag image here')}

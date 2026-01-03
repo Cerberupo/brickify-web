@@ -305,7 +305,7 @@
     "deleteMember": "Delete Member",
     "memberName": "Name",
     "memberEmail": "Email",
-    "memberAvatar": "Avatar",
+    "memberAvatar": "Image",
     "memberDescription": "Description",
     "memberDescriptionPlaceholder": "Enter information about this person that will help us choose their clothing style",
     "memberAvatarRequired": "Image is required",
@@ -407,8 +407,7 @@
     "notFound": "Shared content not found.",
     "unknownName": "User",
     "debugData": "View data"
-  }
-  ,
+  },
   "auth": {
     "register": {
       "pendingPassword": "This email is already registered and pending. Reset your password or sign in with Google using this email."

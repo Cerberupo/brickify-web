@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useForm, Controller} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
     Button,
+    Checkbox,
     Dialog,
     DialogContent,
     DialogDescription,
@@ -12,8 +13,7 @@ import {
     DialogTrigger,
     Input,
     Label,
-    Textarea,
-    Checkbox
+    Textarea
 } from "@/components/ui";
 import {type AddUserRequest} from '@/lib/types';
 
@@ -39,14 +39,14 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
     // Set up form with react-hook-form
-    const { 
-        register, 
-        handleSubmit, 
+    const {
+        register,
+        handleSubmit,
         control,
         reset,
         setValue,
         watch,
-        formState: { errors } 
+        formState: {errors}
     } = useForm<AddMemberFormValues>({
         defaultValues: {
             name: '',
@@ -64,7 +64,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
         if (file) {
             const previewUrl = URL.createObjectURL(file);
             setAvatarPreview(previewUrl);
-            setValue('avatarFile', file, { shouldValidate: true });
+            setValue('avatarFile', file, {shouldValidate: true});
         }
     };
 
@@ -78,7 +78,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
             if (file.type.startsWith('image/')) {
                 const previewUrl = URL.createObjectURL(file);
                 setAvatarPreview(previewUrl);
-                setValue('avatarFile', file, { shouldValidate: true });
+                setValue('avatarFile', file, {shouldValidate: true});
             }
         }
     };
@@ -113,7 +113,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
     // Clear avatar when user selects no image
     useEffect(() => {
         if (watchNoImage) {
-            setValue('avatarFile', undefined as unknown as File, { shouldValidate: true });
+            setValue('avatarFile', undefined as unknown as File, {shouldValidate: true});
             setAvatarPreview(null);
         }
     }, [watchNoImage, setValue]);
@@ -144,80 +144,84 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                     <div className="flex flex-col gap-6 py-4">
                         {/* Avatar upload section at the top (hidden when noImage is selected) */}
                         {!watchNoImage && (
-                        <div className="flex flex-row gap-4 items-start">
-                            {/* Avatar upload area */}
-                            <div className="flex-1">
-                                <Label htmlFor="avatar" className="block mb-2">
-                                    {t('group.memberAvatar')}
-                                </Label>
-                                <Controller
-                                    name="avatarFile"
-                                    control={control}
-                                    rules={{
-                                        validate: (val) => {
-                                            // Require image file only if noImage is false
-                                            if (!watchNoImage && !val) {
-                                                return t('group.memberAvatarRequired');
+                            <div className="flex flex-row gap-4 items-start">
+                                {/* Avatar upload area */}
+                                <div className="flex-1">
+                                    <Label htmlFor="avatar" className="block mb-2">
+                                        {t('group.memberAvatar')}
+                                    </Label>
+                                    <Controller
+                                        name="avatarFile"
+                                        control={control}
+                                        rules={{
+                                            validate: (val) => {
+                                                // Require image file only if noImage is false
+                                                if (!watchNoImage && !val) {
+                                                    return t('group.memberAvatarRequired');
+                                                }
+                                                return true;
                                             }
-                                            return true;
-                                        }
-                                    }}
-                                    render={() => (
-                                        <>
-                                            <div 
-                                                className={`
+                                        }}
+                                        render={() => (
+                                            <>
+                                                <div
+                                                    className={`
                                                     border-2 border-dashed rounded-md p-4 flex flex-col items-center justify-center
                                                     w-full min-h-40 cursor-pointer hover:border-primary transition-colors
                                                     ${(errors.avatarFile && !watchNoImage) ? 'border-red-500' : 'border-gray-300'}
                                                 `}
-                                                onClick={() => document.getElementById('avatar-upload')?.click()}
-                                                onDragOver={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                }}
-                                                onDrop={handleFileDrop}
-                                            >
-                                                {avatarPreview ? (
-                                                    <img 
-                                                        src={avatarPreview} 
-                                                        alt="Preview" 
-                                                        className="max-w-full max-h-full object-contain rounded-md"
+                                                    onClick={() => document.getElementById('avatar-upload')?.click()}
+                                                    onDragOver={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                    }}
+                                                    onDrop={handleFileDrop}
+                                                >
+                                                    {avatarPreview ? (
+                                                        <img
+                                                            src={avatarPreview}
+                                                            alt="Preview"
+                                                            className="max-w-full max-h-full object-contain rounded-md"
+                                                        />
+                                                    ) : (
+                                                        <>
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                 className="h-10 w-10 text-gray-400 mb-2" fill="none"
+                                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round"
+                                                                      strokeWidth={2}
+                                                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                            </svg>
+                                                            <p className="text-sm text-gray-500 text-center">
+                                                                {t('group.dragImageHere', 'Click or drag image here')}
+                                                            </p>
+                                                        </>
+                                                    )}
+                                                    <input
+                                                        id="avatar-upload"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleFileChange}
+                                                        className="hidden"
                                                     />
-                                                ) : (
-                                                    <>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                        </svg>
-                                                        <p className="text-sm text-gray-500 text-center">
-                                                            {t('group.dragImageHere', 'Click or drag image here')}
-                                                        </p>
-                                                    </>
+                                                </div>
+                                                {errors.avatarFile && (
+                                                    <p className="text-red-500 text-sm mt-1">
+                                                        {errors.avatarFile.message as string}
+                                                    </p>
                                                 )}
-                                                <input
-                                                    id="avatar-upload"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={handleFileChange}
-                                                    className="hidden"
-                                                />
-                                            </div>
-                                            {errors.avatarFile && (
-                                                <p className="text-red-500 text-sm mt-1">
-                                                    {errors.avatarFile.message as string}
-                                                </p>
-                                            )}
-                                        </>
-                                    )}
-                                />
-                            </div>
+                                            </>
+                                        )}
+                                    />
+                                </div>
 
-                            {/* Explanatory text on the right */}
-                            <div className="flex-1 flex items-center h-full pt-10">
-                                <p className="text-sm text-gray-500">
-                                    {t('group.imageRequirements', 'Upload a photo of the person to help us choose their hair and face.')}
-                                </p>
+                                {/* Explanatory text on the right */}
+                                <div className="flex-1 flex items-center h-full pt-10">
+                                    <p className="text-sm text-gray-500">
+                                        {t('group.imageRequirements', 'Upload a photo of the person to help us choose their hair and face.')}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
                         )}
 
                         {/* No image checkbox */}
@@ -225,8 +229,9 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                             <Controller
                                 name="noImage"
                                 control={control}
-                                render={({ field: { value, onChange } }) => (
-                                    <Checkbox id="noImage" checked={!!value} onCheckedChange={(checked) => onChange(Boolean(checked))} />
+                                render={({field: {value, onChange}}) => (
+                                    <Checkbox id="noImage" checked={!!value}
+                                              onCheckedChange={(checked) => onChange(Boolean(checked))}/>
                                 )}
                             />
                             <Label htmlFor="noImage" className="leading-none">
@@ -245,8 +250,8 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                         </Label>
                                         <Input
                                             id="name"
-                                            {...register("name", { 
-                                                required: t('form.name.required') as string 
+                                            {...register("name", {
+                                                required: t('form.name.required') as string
                                             })}
                                             placeholder={t('group.namePlaceholder')}
                                             className="w-full"
@@ -317,8 +322,8 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                     </Label>
                                     <Input
                                         id="name"
-                                        {...register("name", { 
-                                            required: t('form.name.required') as string 
+                                        {...register("name", {
+                                            required: t('form.name.required') as string
                                         })}
                                         placeholder={t('group.namePlaceholder')}
                                         className="w-full"

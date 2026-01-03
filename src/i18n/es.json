@@ -303,7 +303,7 @@
     "deleteMember": "Eliminar Miembro",
     "memberName": "Nombre",
     "memberEmail": "Correo Electrónico",
-    "memberAvatar": "Avatar",
+    "memberAvatar": "Imagen",
     "memberDescription": "Descripción",
     "memberDescriptionPlaceholder": "Ingrese información sobre esta persona que nos ayudará a elegir su estilo de ropa",
     "memberAvatarRequired": "La imagen es obligatoria",
@@ -405,8 +405,7 @@
     "notFound": "No se encontró el contenido compartido.",
     "unknownName": "Usuario",
     "debugData": "Ver datos"
-  }
-  ,
+  },
   "auth": {
     "register": {
       "pendingPassword": "Este email ya existe y está pendiente. Restablece tu contraseña o inicia sesión con Google usando este email."
