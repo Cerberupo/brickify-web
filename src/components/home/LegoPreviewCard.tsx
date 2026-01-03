@@ -186,49 +186,83 @@ export default function LegoPreviewCard({
         return {
             hair: [
                 {
-                    id: 6527258,
-                    name: "MINI WIG, NO. 98",
+                    id: 6370398,
+                    name: "MINI WIG, NO. 106",
                     imageUrl: "/preview/hair-1.png",
                     imageUrlBack: "/preview/hair-1-back.png"
                 },
                 {
-                    id: 6527259, name: "MINI WIG, NO. 99", imageUrl: "/preview/hair-2.png",
+                    id: 6004435,
+                    name: "MINI WIG NO. 4",
+                    imageUrl: "/preview/hair-2.png",
                     imageUrlBack: "/preview/hair-2-back.png"
                 },
                 {
-                    id: 6529258, name: "MINI WIG, NO. 101", imageUrl: "/preview/hair-3.png",
+                    id: 6409769,
+                    name: "MINI WIG, NO. 366",
+                    imageUrl: "/preview/hair-3.png",
                     imageUrlBack: "/preview/hair-3-back.png"
                 }
             ],
             head: [
-                {id: 1, name: "Happy Face", imageUrl: "/preview/head-1.png", imageUrlBack: "/preview/head-1-back.png"},
                 {
-                    id: 2,
-                    name: "Serious Face",
+                    id: 6100203,
+                    name: "MINI HEAD, NO. 1580",
+                    imageUrl: "/preview/head-1.png",
+                    imageUrlBack: "/preview/head-1-back.png"
+                },
+                {
+                    id: 6296328,
+                    name: "MINI HEAD, NO. 3188",
                     imageUrl: "/preview/head-2.png",
                     imageUrlBack: "/preview/head-2-back.png"
                 },
-                {id: 3, name: "Smiling Face", imageUrl: "/preview/head-3.jpg"}
+                {
+                    id: 6464497,
+                    name: "MINI HEAD, NO. 4222",
+                    imageUrl: "/preview/head-3.png",
+                    imageUrlBack: "/preview/head-3-back.png"
+                }
             ],
             body: [
                 {
-                    id: 1,
-                    name: "Casual Shirt",
+                    id: 6271205,
+                    name: "MINI UPPER PART, NO. 4813",
                     imageUrl: "/preview/body-1.png",
                     imageUrlBack: "/preview/body-1-back.png"
                 },
-                {id: 2, name: "Formal Suit", imageUrl: "/preview/body-2.jpg"},
-                {id: 3, name: "T-Shirt", imageUrl: "/preview/body-3.jpg"}
+                {
+                    id: 6521210,
+                    name: "MINI LOWER PART, NO. 2791",
+                    imageUrl: "/preview/body-2.png",
+                    imageUrlBack: "/preview/body-2-back.png"
+                },
+                {
+                    id: 6430843,
+                    name: "MINI UPPER PART, NO. 6422",
+                    imageUrl: "/preview/body-3.png",
+                    imageUrlBack: "/preview/body-3-back.png"
+                }
             ],
             pants: [
                 {
-                    id: 1,
-                    name: "Blue Jeans",
+                    id: 6523313,
+                    name: "MINI LOWER PART, NO. 2800",
                     imageUrl: "/preview/pants-1.png",
                     imageUrlBack: "/preview/pants-1-back.png"
                 },
-                {id: 2, name: "Black Pants", imageUrl: "/preview/pants-2.jpg"},
-                {id: 3, name: "Shorts", imageUrl: "/preview/pants-3.jpg"}
+                {
+                    id: 6521210,
+                    name: "MINI LOWER PART, NO. 2791",
+                    imageUrl: "/preview/pants-2.png",
+                    imageUrlBack: "/preview/pants-2-back.png"
+                },
+                {
+                    id: 6434777,
+                    name: "MINI LOWER PART, NO. 2479",
+                    imageUrl: "/preview/pants-3.png",
+                    imageUrlBack: "/preview/pants-3-back.png"
+                }
             ]
         }
     }, []);
