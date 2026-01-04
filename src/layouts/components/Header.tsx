@@ -41,7 +41,8 @@ export function Header() {
 
             const origin = typeof window !== 'undefined' ? window.location.origin : '';
             const returnUrl = `${origin.replace(/\/$/, '')}/`;
-            const {url} = await createBillingPortalSession(returnUrl);
+            // La firma de createBillingPortalSession es (customerId?, returnUrl?)
+            const {url} = await createBillingPortalSession(undefined, returnUrl);
             if (url) {
                 // Abrir el portal en una pestaña nueva siguiendo buenas prácticas de seguridad
                 window.open(url, '_blank', 'noopener,noreferrer');
@@ -71,6 +72,10 @@ export function Header() {
     };
 
     const [currentLang, setCurrentLang] = useState<'en' | 'es'>(() => {
+        if (typeof document !== 'undefined') {
+            const lang = (document.documentElement?.lang || '').toLowerCase();
+            if (lang === 'es' || lang === 'en') return lang as 'es' | 'en';
+        }
         if (typeof window !== 'undefined') {
             const path = window.location.pathname.toLowerCase();
             if (path.startsWith('/es')) return 'es';
@@ -92,7 +97,9 @@ export function Header() {
         if (typeof window === 'undefined') return;
         const updateLang = () => {
             const path = window.location.pathname.toLowerCase();
-            const next = path.startsWith('/es') ? 'es' : 'en';
+            // Prefer <html lang> when available; fallback to path prefix; default 'en'
+            const docLang = (document?.documentElement?.lang || '').toLowerCase();
+            const next: 'es' | 'en' = docLang === 'es' ? 'es' : (path.startsWith('/es') ? 'es' : (path.startsWith('/en') ? 'en' : 'en'));
             setCurrentLang(next);
             setFullPath(window.location.pathname + window.location.search + window.location.hash);
             // Ensure i18n language stays in sync even when Header is rendered without I18nProvider
@@ -137,7 +144,7 @@ export function Header() {
     const hrefEs = switchToLocale('es', fullPath);
     const hrefEn = switchToLocale('en', fullPath);
 
-    // Handler para clic en cambio de idioma: envía PATCH y redirige sin esperar
+    // Handler para clic en cambio de idioma: envía PATCH y redirige con un pequeño retardo
     const handleLangClick = (lang: 'es' | 'en') => (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         try {
@@ -145,7 +152,10 @@ export function Header() {
         } catch {
         }
         const target = switchToLocale(lang, fullPath);
-        window.location.href = target;
+        // Pequeño retraso para evitar que el navegador cancele la petición PATCH por navegación inmediata
+        window.setTimeout(() => {
+            window.location.href = target;
+        }, 140);
     };
 
     return (
