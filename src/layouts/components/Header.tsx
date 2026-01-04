@@ -36,42 +36,14 @@ export function Header() {
         if (portalLoading) return;
         try {
             setPortalLoading(true);
-            // Heurística para extraer el customerId del usuario o del storage
-            const maybeFromUser = (user && (
-                (user as any).stripeCustomerId ||
-                (user as any).customerId ||
-                (user as any)?.stripe?.customerId ||
-                (user as any)?.billing?.stripeCustomerId
-            )) as string | undefined;
-            let customerId = maybeFromUser;
-            if (!customerId && typeof window !== 'undefined') {
-                try {
-                    const raw = sessionStorage.getItem('stripeCustomerId');
-                    if (raw) customerId = raw;
-                } catch {
-                }
-            }
 
-            if (!customerId) {
-                // Sin customerId no podemos abrir el portal
-                const msg = i18n.language === 'es'
-                    ? 'No encontramos tu cuenta de Stripe para mostrar las facturas.'
-                    : 'We could not find your Stripe account to show invoices.';
-                try {
-                    toast.error(msg);
-                } catch {
-                    alert(msg);
-                }
-                // Redirigir a la cuenta por si desde allí se puede resolver
-                navigate(localizePath('/account'));
-                return;
-            }
 
             const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            const returnUrl = `${origin.replace(/\/$/, '')}/account`;
-            const {url} = await createBillingPortalSession(customerId, returnUrl);
+            const returnUrl = `${origin.replace(/\/$/, '')}/`;
+            const {url} = await createBillingPortalSession(returnUrl);
             if (url) {
-                window.location.href = url;
+                // Abrir el portal en una pestaña nueva siguiendo buenas prácticas de seguridad
+                window.open(url, '_blank', 'noopener,noreferrer');
             } else {
                 const msg2 = i18n.language === 'es'
                     ? 'No se pudo abrir el portal de facturación.'

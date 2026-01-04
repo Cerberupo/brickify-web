@@ -72,18 +72,17 @@ export async function getEmbeddedSessionStatus(sessionId: string, guestKey?: str
         `/payments/embedded/session-status?session_id=${encodeURIComponent(sessionId)}${guestKey ? `&guest_key=${encodeURIComponent(guestKey)}` : ''}`,
         {method: 'GET'}
     );
-    const data = payload?.data as EmbeddedSessionDetails;
-    return data;
+    return payload?.data as EmbeddedSessionDetails;
 }
 
 /**
  * Create a Stripe Billing Portal session and return its URL.
  * If returnUrl is omitted, the backend will choose a safe default.
  */
-export async function createBillingPortalSession(customerId?: string, returnUrl?: string): Promise<{ url: string }> {
+export async function createBillingPortalSession(returnUrl?: string): Promise<{ url: string }> {
     const payload = await fetchApi<{ status: string; url: string }>(
         '/payments/stripe/portal-session',
-        {method: 'POST', body: {customerId, returnUrl}}
+        {method: 'POST', body: {returnUrl}}
     );
     return {url: payload.url};
 }
