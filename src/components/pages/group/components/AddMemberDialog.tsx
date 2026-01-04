@@ -261,6 +261,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                             <p className="text-sm text-red-500">{errors.name.message}</p>
                                         )}
                                     </div>
+                                    {/*
                                     <div>
                                         <Label htmlFor="description" className="block mb-2">
                                             {t('group.memberDescription')}
@@ -272,6 +273,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                             className="w-full min-h-[150px]"
                                         />
                                     </div>
+                                    */}
                                 </div>
 
                                 {/* Right: Hair + Face (stacked) */}
@@ -335,6 +337,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                 </div>
 
                                 {/* Description field */}
+                                {/*
                                 <div>
                                     <Label htmlFor="description" className="block mb-2">
                                         {t('group.memberDescription')}
@@ -346,6 +349,7 @@ export function AddMemberDialog({onAdd, trigger}: AddMemberDialogProps) {
                                         className="w-full min-h-[150px]"
                                     />
                                 </div>
+                                */}
                             </>
                         )}
                     </div>

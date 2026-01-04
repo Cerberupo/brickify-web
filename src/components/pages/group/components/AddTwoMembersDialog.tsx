@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {Controller, useForm} from 'react-hook-form';
 import {
     Button,
+    Checkbox,
     Dialog,
     DialogContent,
     DialogDescription,
@@ -12,8 +13,7 @@ import {
     DialogTrigger,
     Input,
     Label,
-    Textarea,
-    Checkbox
+    Textarea
 } from "@/components/ui";
 import type {AddUserRequest} from '@/lib/types';
 
@@ -50,8 +50,8 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
         formState: {errors}
     } = useForm<AddTwoMembersFormValues>({
         defaultValues: {
-            person1: { name: '', description: '', noImage: false, hairDescription: '', faceDescription: '' },
-            person2: { name: '', description: '', noImage: false, hairDescription: '', faceDescription: '' },
+            person1: {name: '', description: '', noImage: false, hairDescription: '', faceDescription: ''},
+            person2: {name: '', description: '', noImage: false, hairDescription: '', faceDescription: ''},
         }
     });
 
@@ -99,8 +99,9 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                 <Controller
                     name={`person${index}.noImage` as const}
                     control={control}
-                    render={({ field: { value, onChange } }) => (
-                        <Checkbox id={`p${index}-noImage`} checked={!!value} onCheckedChange={(checked) => onChange(Boolean(checked))} />
+                    render={({field: {value, onChange}}) => (
+                        <Checkbox id={`p${index}-noImage`} checked={!!value}
+                                  onCheckedChange={(checked) => onChange(Boolean(checked))}/>
                     )}
                 />
                 <Label htmlFor={`p${index}-noImage`} className="leading-none">
@@ -115,7 +116,7 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                 </Label>
                 <Input
                     id={`p${index}-name`}
-                    {...register(`person${index}.name` as const, { required: t('form.name.required', 'El nombre es obligatorio') as string })}
+                    {...register(`person${index}.name` as const, {required: t('form.name.required', 'El nombre es obligatorio') as string})}
                     placeholder={t('group.namePlaceholder')}
                     aria-invalid={errors[`person${index}` as 'person1' | 'person2']?.name ? 'true' : 'false'}
                 />
@@ -137,7 +138,7 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                             </Label>
                             <Input
                                 id={`p${index}-name`}
-                                {...register(`person${index}.name` as const, { required: t('form.name.required', 'El nombre es obligatorio') as string })}
+                                {...register(`person${index}.name` as const, {required: t('form.name.required', 'El nombre es obligatorio') as string})}
                                 placeholder={t('group.namePlaceholder')}
                                 aria-invalid={errors[`person${index}` as 'person1' | 'person2']?.name ? 'true' : 'false'}
                             />
@@ -147,6 +148,7 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                                 </p>
                             )}
                         </div>
+                        {/*
                         <div>
                             <Label htmlFor={`p${index}-desc`} className="block mb-2">
                                 {t('group.memberDescription')}
@@ -158,6 +160,7 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                                 className="w-full min-h-[120px]"
                             />
                         </div>
+                        */}
                     </div>
 
                     {/* Right: Hair + Face */}
@@ -189,6 +192,7 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
             )}
 
             {/* Extra notes/description only when image is provided */}
+            {/*
             {!noImageChecked && (
                 <div>
                     <Label htmlFor={`p${index}-desc`} className="block mb-2">
@@ -202,6 +206,7 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                     />
                 </div>
             )}
+            */}
         </div>
     );
 
@@ -228,8 +233,8 @@ export function AddTwoMembersDialog({onAdd, trigger}: AddTwoMembersDialogProps) 
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmitForm)}>
                     <div className="flex flex-col gap-6 py-4">
-                        <Section index={1} noImageChecked={!!watchNoImage1} />
-                        <Section index={2} noImageChecked={!!watchNoImage2} />
+                        <Section index={1} noImageChecked={!!watchNoImage1}/>
+                        <Section index={2} noImageChecked={!!watchNoImage2}/>
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>

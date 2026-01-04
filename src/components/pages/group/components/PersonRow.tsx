@@ -228,6 +228,7 @@ export function PersonRow({
                             alt={person?.name || ''}/>
                         <div className="min-w-0">
                             <div className="font-medium leading-tight">{person?.name}</div>
+                            {/*
                             <div className="text-sm text-gray-600 max-w-prose whitespace-pre-wrap break-words">
                                 {mainDescription ? (
                                     mainDescription
@@ -236,6 +237,7 @@ export function PersonRow({
                                         className="text-gray-400 italic">{t('group.noDescription', 'No description provided')}</span>
                                 )}
                             </div>
+                            */}
                         </div>
                     </div>
                     {noImageMarked && (hairPreview || facePreview) && (

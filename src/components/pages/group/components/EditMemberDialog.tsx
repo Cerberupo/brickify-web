@@ -9,8 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     Input,
-    Label,
-    Textarea
+    Label
 } from "@/components/ui";
 import {type UpdateUserRequest} from '@/lib/types';
 
@@ -189,6 +188,7 @@ export function EditMemberDialog({open, onOpenChange, member, onUpdate}: EditMem
                         </div>
 
                         {/* Description field */}
+                        {/*
                         <div>
                             <Label htmlFor="edit-description" className="block mb-2">
                                 {t('group.memberDescription')}
@@ -201,6 +201,7 @@ export function EditMemberDialog({open, onOpenChange, member, onUpdate}: EditMem
                                 className="w-full min-h-[150px]"
                             />
                         </div>
+                        */}
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}

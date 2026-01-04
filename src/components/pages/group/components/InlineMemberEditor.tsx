@@ -292,6 +292,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                        maxLength={50}
                                        placeholder={t('group.namePlaceholder')}/>
                             </div>
+                            {/*
                             <div className="md:col-span-2">
                                 <Label htmlFor="desc" className="block mb-1">{t('group.memberDescription')}</Label>
                                 <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)}
@@ -299,6 +300,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                           placeholder={t('group.memberDescriptionPlaceholder')}
                                           className="min-h-[96px]"/>
                             </div>
+                            */}
                         </div>
                     </div>
                 ) : (
@@ -311,6 +313,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                        maxLength={50}
                                        placeholder={t('group.namePlaceholder')}/>
                             </div>
+                            {/*
                             <div>
                                 <Label htmlFor="desc" className="block mb-1">{t('group.memberDescription')}</Label>
                                 <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)}
@@ -318,6 +321,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                           placeholder={t('group.memberDescriptionPlaceholder')}
                                           className="min-h-[96px]"/>
                             </div>
+                            */}
                         </div>
                         <div className="md:col-span-7 grid grid-cols-1 gap-4">
                             <div>

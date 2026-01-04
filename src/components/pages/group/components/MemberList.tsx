@@ -12,6 +12,7 @@ import {
     TableRow
 } from "@/components/ui";
 import {Pencil, Trash2} from 'lucide-react';
+
 const faviconUrl: string = '/favicon.png';
 
 interface MemberListProps {
@@ -53,6 +54,7 @@ export function MemberList({readOnly = false, members, onEdit, onDelete}: Member
                                 </Avatar>
                             </TableCell>
                             <TableCell className="font-medium align-top">{member.name}</TableCell>
+                            {/*
                             <TableCell className="text-sm text-gray-600 align-top">
                                 {member.description ? (
                                     <div className="max-h-20 overflow-y-auto">
@@ -64,6 +66,7 @@ export function MemberList({readOnly = false, members, onEdit, onDelete}: Member
                                     </span>
                                 )}
                             </TableCell>
+                            */}
                             <TableCell className="text-right">
                                 <div className="flex justify-end gap-2">
                                     <Button
