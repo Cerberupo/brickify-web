@@ -7,10 +7,9 @@ import FooterSection from "@/components/home/FooterSection.astro";
 import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
-const localizedTitle = locale === 'es' ? `${PROJECT_NAME} - Confirmación de pago` : `${PROJECT_NAME} - Checkout return`;
 ---
 
-<MainLayout content={{title: localizedTitle}}>
+<MainLayout content={{title: `${PROJECT_NAME} - Checkout Return`}}>
     <AppWrapper client:only="react">
         <CheckoutReturnPage client:only="react"/>
     </AppWrapper>

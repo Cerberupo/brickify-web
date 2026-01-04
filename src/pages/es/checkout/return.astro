@@ -1,4 +1,16 @@
 ---
-// Re-export de la página base para ruta localizada
-export {default} from '../../checkout/return.astro';
+import MainLayout from "../../../layouts/main.astro";
+import {AppWrapper} from "../../../layouts";
+import CheckoutReturnPage from "../../../components/pages/checkout/Return";
+import {PROJECT_NAME} from "../../../config";
+import FooterSection from "@/components/home/FooterSection.astro";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
+
+<MainLayout content={{title: `${PROJECT_NAME} - Confirmación de pago`}}>
+    <AppWrapper client:only="react">
+        <CheckoutReturnPage client:only="react"/>
+    </AppWrapper>
+    <FooterSection locale={locale}/>
+</MainLayout>
