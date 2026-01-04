@@ -11,7 +11,8 @@
     "dashboard": "Mis colecciones",
     "login": "Iniciar sesión",
     "register": "Registrarse",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "invoices": "Facturas"
   },
   "footer": {
     "allRightsReserved": "© 2025 Brickify. Todos los derechos reservados.",
