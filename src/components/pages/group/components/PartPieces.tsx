@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import type {MatchPart} from "@/lib";
 import {setSelectedPiece} from '@/lib/services/groups';
+import {getStableImageSrc, invalidateImage, makePieceKey} from '@/lib/lego/imageCache';
 
 const faviconUrl: string = '/favicon.png';
 
@@ -92,6 +93,8 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
                 const pieceName = piece?.name || '';
                 const pid = normalizeId(piece) || String(idx);
                 const isSelected = selectedPieceId === pid;
+                const cacheKey = makePieceKey(pid, side);
+                const stableSrc = getStableImageSrc(cacheKey, imgSrc) || imgSrc;
                 return (
                     <div key={pid} className="text-left max-w-[100px] w-1/3 p-1">
                         <button
@@ -102,8 +105,18 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
                         >
                             <div
                                 className={`aspect-square w-full overflow-hidden rounded border bg-white p-2 transition-colors duration-150 ${isSelected ? 'border-black' : 'border-gray-300 hover:border-gray-500'} hover:shadow-sm`}>
-                                <img src={imgSrc} alt={pieceName || String(part)}
-                                     className="w-full h-full object-contain"/>
+                                <img
+                                    src={stableSrc}
+                                    alt={pieceName || String(part)}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                        invalidateImage(cacheKey);
+                                        try {
+                                            (e.currentTarget as HTMLImageElement).src = imgSrc;
+                                        } catch {
+                                        }
+                                    }}
+                                />
                             </div>
                         </button>
                         <div className="mt-1 text-[10px] leading-tight text-gray-600 truncate">{pieceName}</div>

@@ -1,5 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {RotateCcw} from 'lucide-react';
+import {getStableImageSrc, invalidateImage, makeUrlKey} from '@/lib/lego/imageCache';
 
 export type SideImages = {
     front: string;
@@ -107,7 +108,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
             style={style}
         >
             {pieces.map(({key, data}) => {
-                const src = useBack ? data.back : data.front;
+                const freshSrc = useBack ? data.back : data.front;
                 const alt = `${key}-${useBack ? 'back' : 'front'}`;
                 const pos = layout[key];
                 const pieceStyle: React.CSSProperties = {
@@ -123,10 +124,18 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                 return (
                     <img
                         key={key}
-                        src={src}
+                        src={getStableImageSrc(`${makeUrlKey(freshSrc)}::${alt}`, freshSrc) || freshSrc}
                         alt={alt}
                         style={pieceStyle}
                         draggable={false}
+                        onError={(e) => {
+                            const k = `${makeUrlKey(freshSrc)}::${alt}`;
+                            invalidateImage(k);
+                            try {
+                                (e.currentTarget as HTMLImageElement).src = freshSrc;
+                            } catch {
+                            }
+                        }}
                     />
                 );
             })}
