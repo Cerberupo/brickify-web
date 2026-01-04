@@ -6,6 +6,7 @@ import ShareActions from '@/components/common/ShareActions';
 import {toast} from 'sonner';
 import {LegoComposite} from "@/components";
 import {deriveCategoryStatuses, mapMatchesToOptions, thumbSrcFor, toSideWithFallback} from '@/lib/lego/parts';
+import {getStableImageSrc, invalidateImage, makePersonKey, makeUrlKey} from '@/lib/lego/imageCache';
 
 
 interface GuestGroupData {
@@ -517,12 +518,33 @@ export default function LegoPreviewCard({
                                         <div className="relative h-full w-full">
                                         <span
                                             className="absolute top-0 -translate-y-1/2 -translate-x-[15px] left-0 z-10 px-3 py-1 text-[12px] font-semibold rounded-full bg-[#3C204E] text-white select-none">{locale === 'es' ? 'Foto' : 'Photo'}</span>
-                                            <img
-                                                src={personOverrideSrc || personSrc}
-                                                alt={altPerson}
-                                                className="absolute inset-0 size-full object-cover select-none"
-                                                loading="lazy"
-                                            />
+                                            {(() => {
+                                                const rawPersonSrc = personOverrideSrc || personSrc;
+                                                // Intentar usar una clave estable por persona; si no, derivar de la URL
+                                                let personKey = '';
+                                                try {
+                                                    const rp = (guestGroupDetails as any)?.referencePeople?.[0];
+                                                    const pid = rp?.id || (referencePerson as any)?.id;
+                                                    personKey = pid ? makePersonKey(String(pid)) : makeUrlKey(rawPersonSrc);
+                                                } catch {
+                                                    personKey = makeUrlKey(rawPersonSrc);
+                                                }
+                                                const stableSrc = getStableImageSrc(personKey, rawPersonSrc) || rawPersonSrc;
+                                                return (
+                                                    <img
+                                                        src={stableSrc}
+                                                        alt={altPerson}
+                                                        className="absolute inset-0 size-full object-cover select-none"
+                                                        loading="lazy"
+                                                        onError={(e) => {
+                                                            invalidateImage(personKey);
+                                                            try {
+                                                                (e.currentTarget as HTMLImageElement).src = rawPersonSrc;
+                                                            } catch {}
+                                                        }}
+                                                    />
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 </>
