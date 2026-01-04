@@ -5,9 +5,10 @@ import {useAuth} from "@/lib/hooks/useAuth";
 import {navigate} from "@/lib/utils";
 import {PROJECT_NAME} from '@/config';
 import {buttonVariants} from "@/components/ui/button";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {createBillingPortalSession} from '@/lib/services/stripe';
 import {toast} from 'sonner';
+import {updateLanguagePreference} from '@/lib/services/auth';
 import {
     getCurrentLocale,
     homeHref as makeHomeHref,
@@ -110,12 +111,42 @@ export function Header() {
         };
     }, [i18n]);
 
+    // Redirección automática al idioma preferido del usuario si no coincide con la URL actual
+    const redirectingRef = useRef(false);
+    useEffect(() => {
+        try {
+            if (redirectingRef.current) return;
+            const preferred = (user && (user as any).language) as 'es' | 'en' | undefined;
+            if (!preferred) return;
+            if (preferred !== currentLang) {
+                redirectingRef.current = true;
+                // No esperamos la actualización en backend para redirigir
+                updateLanguagePreference(preferred).catch(() => {
+                });
+                const target = switchToLocale(preferred, fullPath);
+                window.location.href = target;
+            }
+        } catch {
+        }
+    }, [user, currentLang, fullPath]);
+
     const langNow = getCurrentLocale();
     const loginHref = makeLoginHref(langNow);
     const registerHref = makeRegisterHref(langNow);
     // Build language switch hrefs on client to preserve current path and query
     const hrefEs = switchToLocale('es', fullPath);
     const hrefEn = switchToLocale('en', fullPath);
+
+    // Handler para clic en cambio de idioma: envía PATCH y redirige sin esperar
+    const handleLangClick = (lang: 'es' | 'en') => (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        try {
+            updateLanguagePreference(lang);
+        } catch {
+        }
+        const target = switchToLocale(lang, fullPath);
+        window.location.href = target;
+    };
 
     return (
         <>
@@ -140,6 +171,7 @@ export function Header() {
                             <li className="flex items-center gap-2">
                                 <a
                                     href={hrefEs}
+                                    onClick={handleLangClick('es')}
                                     className={`text-sm transition-colors ${currentLang === 'es' ? 'font-bold' : 'opacity-70 hover:opacity-100'}`}
                                     aria-current={currentLang === 'es' ? 'true' : undefined}
                                 >
@@ -148,6 +180,7 @@ export function Header() {
                                 <span className="text-muted-foreground">/</span>
                                 <a
                                     href={hrefEn}
+                                    onClick={handleLangClick('en')}
                                     className={`text-sm transition-colors ${currentLang === 'en' ? 'font-bold' : 'opacity-70 hover:opacity-100'}`}
                                     aria-current={currentLang === 'en' ? 'true' : undefined}
                                 >

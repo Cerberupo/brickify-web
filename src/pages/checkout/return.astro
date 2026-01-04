@@ -4,14 +4,15 @@ import {AppWrapper} from "../../layouts";
 import CheckoutReturnPage from "../../components/pages/checkout/Return";
 import {PROJECT_NAME} from "../../config";
 import FooterSection from "@/components/home/FooterSection.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+const localizedTitle = locale === 'es' ? `${PROJECT_NAME} - Confirmación de pago` : `${PROJECT_NAME} - Checkout return`;
 ---
 
-<MainLayout content={{title: `${PROJECT_NAME} - Checkout Return`}}>
+<MainLayout content={{title: localizedTitle}}>
     <AppWrapper client:only="react">
         <CheckoutReturnPage client:only="react"/>
     </AppWrapper>
-    <FooterSection locale={locale} />
+    <FooterSection locale={locale}/>
 </MainLayout>

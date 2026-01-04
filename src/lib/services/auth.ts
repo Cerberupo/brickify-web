@@ -123,6 +123,21 @@ export async function register(name: string, email: string, password: string, la
 }
 
 /**
+ * Actualiza la preferencia de idioma del usuario autenticado en el backend.
+ * No es necesario esperar la respuesta para redirigir.
+ */
+export async function updateLanguagePreference(language: 'es' | 'en'): Promise<void> {
+    try {
+        await fetchApi('/auth/language', {
+            method: 'PATCH',
+            body: {language},
+        });
+    } catch (_) {
+        // Silenciar, no bloquea la navegación
+    }
+}
+
+/**
  * Gets the current user profile using the stored token
  * @returns A promise that resolves to the user profile
  */
@@ -189,7 +204,7 @@ export async function requestPasswordReset(
             '/auth/password/forgot',
             {
                 method: 'POST',
-                body: { email, language },
+                body: {email, language},
             }
         );
         return response;
@@ -215,7 +230,7 @@ export async function resetPassword(
             '/auth/password/reset',
             {
                 method: 'POST',
-                body: { email, code, newPassword },
+                body: {email, code, newPassword},
             }
         );
         return response;
