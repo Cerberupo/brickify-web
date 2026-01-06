@@ -1,0 +1,88 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Cómo convertir una foto en una minifig LEGO | Brickify",
+    description: "Guía paso a paso para conseguir la lista de piezas LEGO® oficiales más parecida a tu foto y montar una minifig lookalike.",
+    canonical: "/es/blog/como-convertir-una-foto-en-minifig-lego",
+    alternates: [
+        {href: "/blog/how-to-turn-a-photo-into-a-lego-minifigure", hrefLang: "x-default"},
+        {href: "/en/blog/how-to-turn-a-photo-into-a-lego-minifigure", hrefLang: "en"},
+    ],
+};
+
+const ctas = [
+    {label: "Accede para procesar", href: "/es/login"},
+    {label: "Ver precio por imagen", href: "/es/minifig-lego-personalizada-foto#precio"},
+];
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6  blog-prose">
+                <a href="/es/blog"
+                   class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4">
+                    <span aria-hidden="true">←</span>
+                    Volver
+                </a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Inicio', href: '/es'},
+                    {label: 'Blog', href: '/es/blog'},
+                    {label: 'Cómo convertir una foto en una minifig LEGO'}
+                ]}/>
+                <h1 class="!mt-0">Cómo convertir una foto en una minifig LEGO</h1>
+                <p class="text-neutral-700">La forma más rápida de conseguir un minifig lookalike: sube tu foto, hacemos
+                    el matching con piezas oficiales LEGO® y compras solo lo que necesitas. Sin afiliación con
+                    LEGO®.</p>
+
+                <h2>1) Elige una foto clara</h2>
+                <ul>
+                    <li>Frontal, buena luz, sin filtros pesados.</li>
+                    <li>Que se vea el pelo; si llevas gorra, añade nota de color y largo.</li>
+                </ul>
+
+                <h2>2) Sube y añade notas</h2>
+                <p>Ve al flujo de la home y suelta tu imagen. Añade notas rápidas: estilo de torso (casual, formal) o si
+                    quieres gafas/barba.</p>
+
+                <h2>3) Hacemos el matching con piezas oficiales</h2>
+                <ul>
+                    <li>Pelo, cabeza (expresión/tono), torso y piernas que se parezcan a la foto.</li>
+                    <li>Cada pieza clave lleva 1–2 alternativas por si cambia el stock.</li>
+                </ul>
+
+                <h2>4) Revisa tu lista de piezas</h2>
+                <p>Te enviamos SKUs y enlaces para comprar en Pick a Brick o tu tienda habitual. El precio es por imagen
+                    en EUR; baja al subir más fotos.</p>
+
+                <h2>5) Compra y monta</h2>
+                <p>Compra las piezas, ensambla en minutos y comparte tu minifig lookalike.</p>
+
+                <h3>Tips rápidos para más precisión</h3>
+                <ul>
+                    <li>Menciona tono y largo de pelo si la foto está oscura.</li>
+                    <li>Si es un regalo, di la ocasión (boda, cumpleaños, corporativo) para ajustar el outfit.</li>
+                    <li>Sube varias fotos para bajar el coste por imagen.</li>
+                </ul>
+
+                <div class="not-prose mt-10 flex flex-wrap gap-3">
+                    {ctas.map((cta) => (
+                            <a href={cta.href}
+                               class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                                {cta.label}
+                            </a>
+                    ))}
+                </div>
+            </div>
+        </article>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

@@ -1,0 +1,91 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalos de empresa LEGO personalizados con fotos | Brickify",
+    description: "Sube fotos de tu equipo o asistentes y recibe listas exactas de piezas LEGO® para minifigs lookalike. Ideal para regalos corporativos, eventos y kits de bienvenida.",
+    canonical: "/es/regalos-empresa-lego-personalizados",
+    alternates: [
+        {href: "/corporate-lego-gifts", hrefLang: "x-default"},
+        {href: "/en/corporate-lego-gifts", hrefLang: "en"},
+    ],
+};
+
+const hero = {
+    eyebrow: "Regalos corporativos que parecen tu equipo",
+    title: "Minifigs estilo LEGO® personalizados para empleados, clientes y eventos",
+    description: "Sube fotos del equipo o asistentes y te entregamos listas de compra con las piezas oficiales más parecidas. Regalos memorables que sí se parecen.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precios", href: "#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Minifigs lookalike", description: "Pelo, cabeza, torso y piernas que se parezcan a cada persona."},
+    {
+        title: "Perfecto para eventos",
+        description: "Úsalos en conferencias, activaciones de marca o recompensas de comunidad."
+    },
+    {title: "Ahorro por volumen", description: "El precio por imagen baja al subir más empleados o asistentes."},
+    {
+        title: "Compra donde quieras",
+        description: "Te damos SKUs y alternativas; compras donde prefieras y ensamblas rápido."
+    },
+];
+
+const steps = [
+    {title: "Sube las fotos", description: "Añade fotos frontales de empleados, clientes o asistentes."},
+    {
+        title: "Hacemos el matching",
+        description: "Elegimos las piezas oficiales más parecidas e incluimos alternativos por stock."
+    },
+    {title: "Recibe las listas", description: "SKUs y enlaces para comprar rápido (precio en EUR por ahora)."},
+    {
+        title: "Envía el swag",
+        description: "Ensamblas y añades los minifigs a kits, bolsas de evento o envíos a clientes."
+    },
+];
+
+const sections = [
+    {
+        heading: "Casos de uso que funcionan",
+        body: "Welcome kits, conferencias, offsites y recompensas destacan más cuando el minifig se parece al destinatario.",
+        bullets: [
+            {title: "Onboarding", description: "Incluye un minifig lookalike en cajas de bienvenida."},
+            {
+                title: "Eventos",
+                description: "Sorprende a los asistentes con figuras personalizadas para su escritorio."
+            },
+            {title: "Clientes", description: "Envía un detalle memorable a clientes importantes."},
+        ],
+    },
+    {
+        heading: "Entrega rápida y precio claro",
+        body: "La mayoría de listas están listas en menos de una hora en horario laboral. Ves el precio por imagen por adelantado; se paga en EUR.",
+        bullets: [
+            {title: "Costo transparente", description: "Conoce la tarifa por imagen antes de subir más fotos."},
+            {
+                title: "Listas con respaldo",
+                description: "Cada pieza clave lleva 1–2 alternativas para evitar retrasos."
+            },
+            {
+                title: "Sin afiliación LEGO®",
+                description: "Servicio independiente con piezas oficiales; LEGO® es marca del Grupo LEGO."
+            },
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/> 

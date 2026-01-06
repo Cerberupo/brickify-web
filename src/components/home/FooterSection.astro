@@ -12,6 +12,7 @@ const copies = {
         customer: "Servicio al cliente",
         about: "Sobre nosotros",
         more: "Más información",
+        seo: "Descubre más",
         links: {
             shipping: "Envíos",
             securePay: "Pago seguro",
@@ -20,6 +21,11 @@ const copies = {
             legalNotice: "Aviso legal",
             privacy: "Política de privacidad",
             terms: "Términos de servicio",
+            blog: "Blog",
+            customFig: "Minifig desde foto",
+            wedding: "Bodas",
+            corporate: "Empresa",
+            gift: "Regalo",
         },
         legalRow: ["Política de privacidad", "Política de privacidad", "Política de privacidad", "Política de privacidad"],
         disclaimer:
@@ -32,6 +38,7 @@ const copies = {
         customer: "Customer service",
         about: "About us",
         more: "More information",
+        seo: "Discover more",
         links: {
             shipping: "Shipping",
             securePay: "Secure payment",
@@ -40,6 +47,11 @@ const copies = {
             legalNotice: "Legal notice",
             privacy: "Privacy policy",
             terms: "Terms of Service",
+            blog: "Blog",
+            customFig: "Custom minifig from photo",
+            wedding: "Wedding favors",
+            corporate: "Corporate gifts",
+            gift: "Personalized gift",
         },
         legalRow: ["Privacy policy", "Privacy policy", "Privacy policy", "Privacy policy"],
         disclaimer:
@@ -54,6 +66,11 @@ const contactHref = locale === 'es' ? '/es/contact' : '/en/contact';
 const legalHref = locale === 'es' ? '/es/legal' : '/en/legal';
 const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
 const termsHref = locale === 'es' ? '/es/terms' : '/en/terms';
+const blogHref = locale === 'es' ? '/es/blog' : '/blog';
+const customHref = locale === 'es' ? '/es/minifig-lego-personalizada-foto' : '/custom-lego-minifigure-photo';
+const weddingHref = locale === 'es' ? '/es/recuerdos-boda-lego-personalizados' : '/lego-wedding-favors';
+const corporateHref = locale === 'es' ? '/es/regalos-empresa-lego-personalizados' : '/corporate-lego-gifts';
+const giftHref = locale === 'es' ? '/es/regalo-lego-personalizado' : '/personalized-lego-gift';
 ---
 <style is:global>
     @reference "../../styles/global.css";
@@ -98,8 +115,20 @@ const termsHref = locale === 'es' ? '/es/terms' : '/en/terms';
                     </ul>
                 </div>
 
-                <!-- Social -->
+                <!-- SEO / Landings column -->
                 <div class="md:col-span-3">
+                    <h4 class="text-[18px] font-semibold mb-3">{t.seo}</h4>
+                    <ul class="space-y-3 text-sm text-neutral-700">
+                        <li><a href={blogHref} class="hover:underline">{t.links.blog}</a></li>
+                        <li><a href={customHref} class="hover:underline">{t.links.customFig}</a></li>
+                        <li><a href={weddingHref} class="hover:underline">{t.links.wedding}</a></li>
+                        <li><a href={corporateHref} class="hover:underline">{t.links.corporate}</a></li>
+                        <li><a href={giftHref} class="hover:underline">{t.links.gift}</a></li>
+                    </ul>
+                </div>
+
+                <!-- Social -->
+                <div class="md:col-span-2">
                     <h4 class="text-[18px] font-semibold mb-4">{t.follow}</h4>
                     <div class="flex items-center gap-6">
                         <a href="https://x.com/BrickifyFun"

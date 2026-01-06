@@ -1,0 +1,84 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalos LEGO para compañeros y equipos | Brickify",
+    description: "Ideas corporativas para usar minifigs estilo LEGO® personalizados en eventos, onboarding y regalos a clientes.",
+    canonical: "/es/blog/regalos-lego-para-companeros",
+    alternates: [
+        {href: "/blog/lego-gifts-for-coworkers", hrefLang: "x-default"},
+        {href: "/en/blog/lego-gifts-for-coworkers", hrefLang: "en"},
+    ],
+};
+
+const ctas = [
+    {label: "Accede para procesar", href: "/es/login"},
+    {label: "Ver precios empresa", href: "/es/regalos-empresa-lego-personalizados#precio"},
+];
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6  blog-prose">
+                <a href="/es/blog"
+                   class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4">
+                    <span aria-hidden="true">←</span>
+                    Volver
+                </a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Inicio', href: '/es'},
+                    {label: 'Blog', href: '/es/blog'},
+                    {label: 'Regalos LEGO para compañeros y equipos'}
+                ]}/>
+                <h1 class="!mt-0">Regalos LEGO para compañeros y equipos</h1>
+                <p class="text-neutral-700">Los minifigs personalizados estilo LEGO® son memorables, seguros para
+                    entornos corporativos y se envían planos. Así puedes usarlos en onboarding, eventos y regalos a
+                    clientes.</p>
+
+                <h2>1) Kits de onboarding</h2>
+                <ul>
+                    <li>Incluye un minifig lookalike en cajas de bienvenida. Sube una foto frontal por persona nueva.
+                    </li>
+                    <li>Anota colores de marca para torso/piernas y que encajen con tu paleta.</li>
+                </ul>
+
+                <h2>2) Regalos para eventos</h2>
+                <p>En conferencias o meetups, pide alternativos por pieza para comprar rápido. Viajan ligero y aguantan
+                    desplazamientos.</p>
+
+                <h2>3) Detalles para clientes</h2>
+                <p>Sube la foto del cliente (con permiso) y entrega un compañero de escritorio personalizado. Añade una
+                    plaquita con nota.</p>
+
+                <h2>4) Hitos de equipo</h2>
+                <p>Celebrad lanzamientos o aniversarios con minifigs lookalike del equipo. Subir en lote reduce el
+                    precio por imagen.</p>
+
+                <h3>Checklist para pedidos sin fricción</h3>
+                <ul>
+                    <li>Fotos frontales de cada persona; anota color/largo de pelo y gafas/barba.</li>
+                    <li>Pide 1–2 alternativas por pieza clave para evitar retrasos de stock.</li>
+                    <li>Precio por imagen en EUR; más fotos reducen el coste unitario.</li>
+                </ul>
+
+                <div class="not-prose mt-10 flex flex-wrap gap-3">
+                    {ctas.map((cta) => (
+                            <a href={cta.href}
+                               class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                                {cta.label}
+                            </a>
+                    ))}
+                </div>
+            </div>
+        </article>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

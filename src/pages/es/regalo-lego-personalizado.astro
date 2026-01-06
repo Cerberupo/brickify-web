@@ -1,0 +1,73 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalo LEGO personalizado desde una foto | Brickify",
+    description: "Convierte cualquier foto en una lista de piezas de minifig estilo LEGO®. Perfecto para cumpleaños, aniversarios y regalos únicos. Pago por imagen en EUR.",
+    canonical: "/es/regalo-lego-personalizado",
+    alternates: [
+        {href: "/personalized-lego-gift", hrefLang: "x-default"},
+        {href: "/en/personalized-lego-gift", hrefLang: "en"},
+    ],
+};
+
+const hero = {
+    eyebrow: "Regala un minifig lookalike",
+    title: "Regalo estilo LEGO® personalizado a partir de cualquier foto",
+    description: "Sube una foto y te enviamos la lista exacta de piezas oficiales para montar un minifig que se parezca. Rápido, divertido y memorable.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precio por imagen", href: "#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Se parece de verdad", description: "Ajustamos pelo, cabeza, torso y piernas para parecerse a la foto."},
+    {title: "Para cualquier ocasión", description: "Cumpleaños, aniversarios, graduaciones o porque sí."},
+    {title: "Precio transparente", description: "Precio por imagen en EUR y descuento al añadir más fotos."},
+    {title: "Listo para comprar", description: "Incluimos SKUs y alternativas para evitar retrasos."},
+];
+
+const steps = [
+    {title: "Sube una foto clara", description: "Mejor frontal; puedes añadir un estilo de referencia."},
+    {title: "Hacemos el matching", description: "Piezas oficiales más cercanas y 1–2 alternativas por pieza."},
+    {title: "Recibe tu lista", description: "SKUs y enlaces listos para comprar donde prefieras."},
+    {title: "Regala y sorprende", description: "Ensamblas y entregas un minifig que se parece de verdad."},
+];
+
+const sections = [
+    {
+        heading: "Un regalo memorable en menos de una hora",
+        body: "La mayoría de listas están listas en menos de una hora en horario laboral, ideal para sorpresas de último minuto.",
+        bullets: [
+            {title: "Entrega rápida", description: "Lista de piezas en minutos."},
+            {title: "Alternativas incluidas", description: "Respaldo por pieza si cambia el stock."},
+            {
+                title: "Sin afiliación LEGO®",
+                description: "Servicio independiente con piezas oficiales; LEGO® es marca del Grupo LEGO."
+            },
+        ],
+    },
+    {
+        heading: "Por qué Brickify para regalos LEGO-style",
+        body: "Olvida buscar en catálogos. Hacemos el matching y te damos disponibilidad, tú solo compras y montas.",
+        bullets: [
+            {title: "Ahorra horas", description: "Recibe una lista preparada para comprar."},
+            {title: "Se ve preciso", description: "Color y expresión elegidos para parecerse a la foto."},
+            {title: "Flexible", description: "Para parejas, amigos, peques, coworkers y coleccionistas."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/> 

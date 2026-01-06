@@ -1,0 +1,79 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "Personalized LEGO gift from your photo | Brickify",
+    description: "Upload a photo, we match the closest official LEGO® parts with backups, and you gift a lookalike minifig that feels truly personal. Clear EUR pricing per image.",
+    canonical: "/personalized-lego-gift",
+    alternates: [
+        {href: "/en/personalized-lego-gift", hrefLang: "en"},
+        {href: "/es/regalo-lego-personalizado", hrefLang: "es"},
+    ],
+};
+
+const hero = {
+    eyebrow: "Gift a minifig that actually looks like them",
+    title: "Personalized LEGO®-style gift from any photo",
+    description: "Drop a photo, we pick the closest official bricks (hair, head, torso, legs) and send a ready-to-shop list with alternates in case stock shifts.",
+    ctas: [
+        {label: "Sign in to process", href: "/login"},
+        {label: "See price per image", href: "#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {
+        title: "Lookalike guaranteed",
+        description: "Hair, head, torso and legs selected to resemble your photo, with SKUs and buy links."
+    },
+    {title: "Fits any occasion", description: "Birthdays, anniversaries, graduations or just because."},
+    {title: "EUR price clarity", description: "Per-image pricing shown up front; volume lowers the rate."},
+    {title: "Stock-safe list", description: "Backups per key piece so you can order without delays."},
+];
+
+const steps = [
+    {title: "Upload a clear photo", description: "Front-facing works best; add notes on outfits or accessories."},
+    {
+        title: "We match official parts",
+        description: "Closest hair, head, torso and legs plus 1–2 alternates per piece."
+    },
+    {title: "Approve and buy", description: "SKUs and links so you purchase only what you need in EUR pricing."},
+    {title: "Gift and wow", description: "Assemble and gift a lookalike minifig that feels truly personal."},
+];
+
+const sections = [
+    {
+        heading: "A memorable gift in under an hour",
+        body: "Most lists are ready in under an hour during business hours, perfect for last-minute surprises without sacrificing accuracy.",
+        bullets: [
+            {title: "Fast turnaround", description: "Quick delivery of your parts list."},
+            {title: "Alternates included", description: "Backups per piece so stock changes don’t block you."},
+            {
+                title: "Independent service",
+                description: "Not affiliated with LEGO®; we use official bricks responsibly."
+            },
+        ],
+    },
+    {
+        heading: "Why Brickify for personalized LEGO-style gifts",
+        body: "Skip the catalog hunt. We handle matching and availability; you just buy and build.",
+        bullets: [
+            {title: "Saves hours", description: "Ready-to-shop list without browsing endless parts."},
+            {title: "Looks accurate", description: "Color and expression picked to resemble the photo."},
+            {title: "Flexible uses", description: "Couples, friends, kids, coworkers and collectors."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/> 

@@ -1,0 +1,101 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Minifig LEGO personalizada desde tu foto | Brickify",
+    description: "Sube tu foto, elegimos las piezas oficiales más parecidas y compras solo lo que necesitas. Rápido, preciso y listo para comprar en minutos.",
+    canonical: "/es/minifig-lego-personalizada-foto",
+    alternates: [
+        {href: "/custom-lego-minifigure-photo", hrefLang: "x-default"},
+        {href: "/en/custom-lego-minifigure-photo", hrefLang: "en"},
+    ],
+};
+
+const hero = {
+    eyebrow: "De tu foto a la lista exacta de piezas",
+    title: "Convierte cualquier foto en una minifig estilo LEGO® que sí se parezca",
+    description: "Sube tu imagen, elegimos las piezas oficiales más cercanas (pelo, cabeza, torso, piernas) y te enviamos una lista preparada para comprar con alternativas por si cambia el stock.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precio por imagen", href: "#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {
+        title: "Piezas oficiales más cercanas",
+        description: "Pelo, cabeza, torso y piernas seleccionados para parecerse a tu foto, con SKUs y enlaces de compra.",
+    },
+    {
+        title: "Matching hecho por nosotros",
+        description: "Haz upload y aprueba. Sin horas de catálogo ni dudas con colores o caras.",
+    },
+    {
+        title: "Listas seguras de stock",
+        description: "Cada pieza clave lleva 1–2 alternativas para no quedarte parado si cambia la disponibilidad.",
+    },
+    {
+        title: "Mejor precio en volumen",
+        description: "Para amigos, bodas o equipos, el precio por imagen baja al añadir más fotos.",
+    },
+];
+
+const steps = [
+    {
+        title: "Sube una foto clara",
+        description: "Frontal mejor y con buena luz."
+    },
+    {
+        title: "Hacemos el matching",
+        description: "Elegimos pelo, cabeza, torso y piernas más cercanos, con alternativos por stock."
+    },
+    {
+        title: "Aprueba tu lista",
+        description: "Recibe SKUs y enlaces para comprar solo lo necesario con precio en EUR mostrado."
+    },
+    {title: "Compra y monta", description: "Pide en tu tienda favorita y arma una minifig lookalike en minutos."},
+];
+
+const sections = [
+    {
+        heading: "Brickify hace el trabajo duro por ti",
+        body: "Los catálogos son enormes y los colores varían. Seguimos disponibilidad, elegimos las piezas más cercanas y te damos una lista preparada para comprar para que no pierdas horas.",
+        bullets: [
+            {title: "Lista rápida", description: "La mayoría está lista en menos de una hora en horario laboral."},
+            {
+                title: "Stock bajo control",
+                description: "Alternativas por pieza para que no te frene la disponibilidad."
+            },
+            {
+                title: "Precio transparente",
+                description: "Ves el precio por imagen en EUR antes de confirmar; con volumen pagas menos."
+            },
+            {
+                title: "Servicio independiente",
+                description: "Sin afiliación con LEGO®; usamos piezas oficiales de forma responsable."
+            },
+        ],
+    },
+    {
+        heading: "Listo para regalos, bodas y equipos",
+        body: "Las minifigs lookalike hacen que bodas, swag corporativo y regalos personales se sientan únicos. Sube varias fotos y baja el precio unitario.",
+        bullets: [
+            {title: "Bodas", description: "Recuerdos lookalike para invitados o el cortejo."},
+            {title: "Corporativo", description: "Swag memorable para empleados, clientes o asistentes."},
+            {title: "Regalo único", description: "Cumpleaños, aniversarios, graduaciones o porque sí."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/> 

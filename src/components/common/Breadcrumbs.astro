@@ -1,0 +1,46 @@
+---
+interface CrumbItem {
+    label: string;
+    href?: string;
+}
+
+interface Props {
+    items: CrumbItem[];
+    ariaLabel?: string;
+    class?: string;
+    /** visual tone for text colors */
+    tone?: 'light' | 'dark';
+}
+
+const {items, ariaLabel = 'Breadcrumb', class: klass = '', tone = 'light'} = Astro.props as Props;
+
+const isDark = tone === 'dark';
+---
+<nav aria-label={ariaLabel} class={`not-prose ${klass}`}>
+    <ol class={`flex items-center gap-2 text-sm list-none pl-0 m-0 p-0 ${isDark ? 'text-white/80' : 'text-neutral-600'}`}>
+        {items.map((item, idx) => {
+            const last = idx === items.length - 1;
+            return (
+                    <li class="flex items-center gap-2">
+                        {last || !item.href ? (
+                                <span class={isDark ? 'text-white' : 'text-neutral-900'}>{item.label}</span>
+                        ) : (
+                                <a href={item.href}
+                                   class={`hover:underline ${isDark ? 'hover:text-white' : ''}`}>{item.label}</a>
+                        )}
+                        {!last && (<span aria-hidden="true" class={isDark ? 'opacity-70' : 'opacity-60'}>/</span>)}
+                    </li>
+            );
+        })}
+    </ol>
+</nav>
+
+<style is:global>
+    @reference "../../styles/global.css";
+    /* Defensive reset in case any parent sets list styles */
+    nav.not-prose[aria-label="Breadcrumb"] ol {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+</style>

@@ -1,0 +1,136 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Blog Brickify | Ideas para regalos LEGO® personalizados",
+    description: "Guías e ideas para convertir fotos en minifigs estilo LEGO® para bodas, empresa y regalos personales.",
+    canonical: "/es/blog",
+    alternates: [
+        {href: "/blog", hrefLang: "x-default"},
+        {href: "/blog", hrefLang: "en"},
+    ],
+};
+
+const posts = [
+    {
+        title: "Cómo convertir una foto en una minifig LEGO",
+        desc: "Paso a paso para obtener la lista de piezas oficiales más parecida, con alternativas por stock.",
+        href: "/es/blog/como-convertir-una-foto-en-minifig-lego",
+        date: "2025-11-20",
+        readMin: 6,
+    },
+    {
+        title: "Mejores regalos LEGO para bodas",
+        desc: "Ideas para sorprender a invitados y cortejo con minifigs lookalike y precio claro.",
+        href: "/es/blog/mejores-regalos-lego-para-bodas",
+        date: "2025-11-22",
+        readMin: 5,
+    },
+    {
+        title: "Regalos LEGO para compañeros de trabajo",
+        desc: "Formas de usar minifigs personalizados en eventos, swag y onboarding.",
+        href: "/es/blog/regalos-lego-para-companeros",
+        date: "2025-11-24",
+        readMin: 5,
+    },
+    {
+        title: "Ideas de regalos LEGO personalizados",
+        desc: "Ocasiones y consejos para un regalo lookalike desde cualquier foto con precio en EUR.",
+        href: "/es/blog/ideas-regalos-lego-personalizados",
+        date: "2025-11-26",
+        readMin: 4,
+    },
+];
+
+// Helpers
+const formatDate = (iso: string) => new Intl.DateTimeFormat('es-ES', {
+    year: 'numeric', month: 'long', day: 'numeric'
+}).format(new Date(iso));
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <section class="pt-16 md:pt-24 bg-gradient-to-b from-[#F7F3EE] to-white">
+            <div class="container mx-auto px-4 md:px-6">
+                <p class="text-sm uppercase tracking-[0.2em] text-primary mb-3">Blog</p>
+                <h1 class="text-3xl md:text-[40px] font-semibold leading-tight mb-3">Guías e ideas para crear minifigs
+                    lookalike</h1>
+                <p class="text-base md:text-lg text-neutral-700 max-w-3xl">Aprende a convertir fotos en minifigs
+                    lookalike y descubre ideas para bodas, empresa y regalos personales. Sin afiliación con LEGO®.</p>
+            </div>
+        </section>
+
+        <section class="py-12 md:py-16">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="divide-y divide-neutral-200">
+                    {posts.map((post) => (
+                            <article class="py-6 group">
+                                <h2 class="text-[22px] md:text-2xl font-semibold mb-1 tracking-tight">
+                                    <a href={post.href} class="hover:underline decoration-2 underline-offset-2">
+                                        {post.title}
+                                    </a>
+                                </h2>
+                                <p class="text-xs text-neutral-500 mb-3 flex items-center gap-3">
+                                    <span class="inline-flex items-center gap-1">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round" class="opacity-70">
+                                            <path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18"
+                                                                                       height="18" rx="2" ry="2"/><path
+                                                d="M3 10h18"/>
+                                        </svg>
+                                        <time datetime={post.date}>{formatDate(post.date)}</time>
+                                    </span>
+                                    <span aria-hidden="true" class="opacity-40">•</span>
+                                    <span class="inline-flex items-center gap-1">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round" class="opacity-70">
+                                            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                                        </svg>
+                                        {post.readMin} min de lectura
+                                    </span>
+                                </p>
+                                <p class="text-[15px] text-neutral-700 mb-3 leading-relaxed">{post.desc}</p>
+                                <a href={post.href}
+                                   class="text-primary font-semibold text-sm inline-flex items-center gap-1">
+                                    Leer artículo
+                                    <span aria-hidden="true"
+                                          class="transition-transform group-hover:translate-x-0.5">→</span>
+                                </a>
+                            </article>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 md:py-20 bg-[#181818] text-white">
+            <div class="container mx-auto px-4 md:px-6 flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.2em] text-primary/80 mb-2">Empieza ahora</p>
+                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">Sube tus fotos y recibe la lista exacta
+                        de piezas</h2>
+                    <p class="text-sm md:text-base text-white/80 mt-2 max-w-2xl">Ve al flujo de la home para subir una
+                        imagen y recibir las piezas oficiales más cercanas con alternativas. Sin afiliación con
+                        LEGO®.</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="/es/login"
+                       class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">Accede
+                        para procesar</a>
+                    <a href="/es/minifig-lego-personalizada-foto#precio"
+                       class="inline-flex items-center justify-center rounded-full border border-white/40 px-5 py-3 text-sm font-semibold hover:bg-white/10 transition text-white">Ver
+                        precios</a>
+                </div>
+            </div>
+        </section>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

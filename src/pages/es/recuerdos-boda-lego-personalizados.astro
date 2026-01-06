@@ -1,0 +1,76 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Recuerdos de boda LEGO personalizados desde fotos | Brickify",
+    description: "Sube fotos de tus invitados, te damos la lista de piezas oficiales más parecidas con alternativas y montas recuerdos lookalike inolvidables. Precio claro que baja por volumen.",
+    canonical: "/es/recuerdos-boda-lego-personalizados",
+    alternates: [
+        {href: "/lego-wedding-favors", hrefLang: "x-default"},
+        {href: "/en/lego-wedding-favors", hrefLang: "en"},
+    ],
+};
+
+const hero = {
+    eyebrow: "Recuerdos que sí se parecen a tus invitados",
+    title: "Recuerdos de boda estilo LEGO® hechos desde las fotos de tus invitados",
+    description: "Sube las fotos, elegimos las piezas oficiales más parecidas (pelo, cabeza, torso, piernas) y te enviamos una lista preparada para comprar con alternativas por si cambia el stock.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precios por volumen", href: "#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {
+        title: "Lookalike real",
+        description: "Pelo, cabeza, torso y piernas elegidos para parecerse a cada invitado, con SKUs y enlaces."
+    },
+    {title: "Ahorro por volumen", description: "El precio por imagen baja al añadir cortejo e invitados."},
+    {title: "Listas seguras de stock", description: "Alternativas por pieza clave para no frenar la compra."},
+    {title: "Monta donde quieras", description: "Compra donde prefieras y monta rápido para mesas o kits."},
+];
+
+const steps = [
+    {title: "Sube fotos de invitados", description: "Mejor frontales; añade notas de peinados o looks."},
+    {title: "Hacemos el matching", description: "Piezas oficiales más cercanas con alternativos por stock."},
+    {title: "Aprueba y compra", description: "SKUs y enlaces para comprar solo lo necesario con precio en EUR."},
+    {
+        title: "Monta y coloca",
+        description: "Arma los recuerdos y úsalos como marcasitios, bienvenida o agradecimiento."
+    },
+];
+
+const sections = [
+    {
+        heading: "Recuerdos que la gente guarda",
+        body: "Minifigs lookalike funcionan como marcasitios, sorpresas en kits de bienvenida o regalos de agradecimiento que terminan en el escritorio de tus invitados.",
+        bullets: [
+            {title: "Marcasitios", description: "Siéntalos con un minifig personalizado que se llevan a casa."},
+            {title: "Kits del cortejo", description: "Figuras lookalike para damas de honor, padrinos y familia."},
+            {title: "Fácil de transportar", description: "Compactos; compra piezas cerca del venue si hace falta."},
+        ],
+    },
+    {
+        heading: "Rápido, sin bloqueos por stock",
+        body: "La mayoría de listas están listas en menos de una hora en horario laboral. Precio en EUR por imagen a la vista; alternativas por pieza te evitan parones si cambia el stock.",
+        bullets: [
+            {title: "Precio transparente", description: "Tarifa por imagen y total antes de comprometerte."},
+            {title: "Alternativas incluidas", description: "Backups por pieza clave para comprar sin retrasos."},
+            {title: "Servicio independiente", description: "Sin afiliación con LEGO®; usamos piezas oficiales."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/> 

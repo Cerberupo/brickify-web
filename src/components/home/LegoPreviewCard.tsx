@@ -6,6 +6,7 @@ import ShareActions from '@/components/common/ShareActions';
 import {toast} from 'sonner';
 import {LegoComposite} from "@/components";
 import {deriveCategoryStatuses, mapMatchesToOptions, thumbSrcFor, toSideWithFallback} from '@/lib/lego/parts';
+import {buildPickABrickUrl} from '@/lib/lego/pab';
 import {getStableImageSrc, invalidateImage, makePersonKey, makeUrlKey} from '@/lib/lego/imageCache';
 
 
@@ -540,7 +541,8 @@ export default function LegoPreviewCard({
                                                             invalidateImage(personKey);
                                                             try {
                                                                 (e.currentTarget as HTMLImageElement).src = rawPersonSrc;
-                                                            } catch {}
+                                                            } catch {
+                                                            }
                                                         }}
                                                     />
                                                 );
@@ -569,29 +571,51 @@ export default function LegoPreviewCard({
                                             const isSelected = selectedItems[category] === item.id;
                                             const isErrorCat = (catStatusMap[category as keyof LegoCategories] || '').toString() === 'error';
                                             const thumbSrc = thumbSrcFor(category as any, item, side);
+                                            const pabUrl = buildPickABrickUrl(item?.id, locale);
+                                            const pabLabel = locale === 'es' ? 'Ver en Pick a Brick' : 'View on Pick a Brick';
                                             return (
-                                                <button
-                                                    key={`${category}-${item.id}`}
-                                                    type="button"
-                                                    onClick={() => handleSelect(category as keyof LegoCategories, item.id)}
-                                                    aria-pressed={isSelected}
-                                                    className={cn(
-                                                        "w-1/3  md:w-[121px] aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none p-[10px]",
-                                                        // Estado de error tiene prioridad visual independientemente de selección
-                                                        isErrorCat
-                                                            ? "bg-red-50 border border-red-300"
-                                                            : (isSelected
-                                                                ? "bg-[#FFF3D6] border border-[#F9C14A]"
-                                                                : "bg-white/90 hover:bg-[#FFF3D6]")
+                                                <div key={`${category}-${item.id}`}
+                                                     className="relative w-1/3 md:w-[121px]">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleSelect(category as keyof LegoCategories, item.id)}
+                                                        aria-pressed={isSelected}
+                                                        className={cn(
+                                                            "w-full aspect-square rounded-[8px] shadow-xs flex items-center justify-center transition-colors duration-200 cursor-pointer select-none focus:outline-none p-[10px]",
+                                                            // Estado de error tiene prioridad visual independientemente de selección
+                                                            isErrorCat
+                                                                ? "bg-red-50 border border-red-300"
+                                                                : (isSelected
+                                                                    ? "bg-[#FFF3D6] border border-[#F9C14A]"
+                                                                    : "bg-white/90 hover:bg-[#FFF3D6]")
+                                                        )}
+                                                        title={item?.name || ''}
+                                                    >
+                                                        <img
+                                                            src={thumbSrc}
+                                                            alt={item.name}
+                                                            className="w-full h-full p-[2px] object-cover"
+                                                            style={category === 'hair' ? {objectPosition: 'center -12px'} : undefined}
+                                                        />
+                                                    </button>
+                                                    {pabUrl && (
+                                                        <a
+                                                            href={pabUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            aria-label={`${pabLabel}: ${item?.name || ''}`}
+                                                            title={pabLabel}
+                                                            className="absolute -top-1 -right-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-neutral-200 shadow hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                                 className="w-3.5 h-3.5 text-neutral-700"
+                                                                 fill="currentColor" aria-hidden="true">
+                                                                <path
+                                                                    d="M4 8.5A2.5 2.5 0 0 1 6.5 6H9V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1h2.5A2.5 2.5 0 0 1 20 8.5V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8.5Zm2.5-.5A.5.5 0 0 0 6 8.5V10h12V8.5a.5.5 0 0 0-.5-.5H6.5ZM10 6h4V5h-4v1Z"/>
+                                                            </svg>
+                                                        </a>
                                                     )}
-                                                >
-                                                    <img
-                                                        src={thumbSrc}
-                                                        alt={item.name}
-                                                        className="w-full h-full p-[2px] object-cover"
-                                                        style={category === 'hair' ? {objectPosition: 'center -12px'} : undefined}
-                                                    />
-                                                </button>
+                                                </div>
                                             );
                                         })}
                                     </div>

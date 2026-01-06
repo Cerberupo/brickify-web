@@ -1,0 +1,174 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+import PriceCalculatorSection from "@/components/home/PriceCalculatorSection.astro";
+
+interface Cta {
+    label: string;
+    href: string;
+    variant?: 'primary' | 'secondary';
+}
+
+interface Bullet {
+    title: string;
+    description: string;
+}
+
+interface Step extends Bullet {
+}
+
+interface Section {
+    heading: string;
+    body: string;
+    bullets?: Bullet[];
+}
+
+interface Props {
+    locale: SupportedLocale;
+    seo: {
+        title: string;
+        description: string;
+        canonical: string;
+        alternates: Array<{ href: string; hrefLang: string }>;
+    };
+    hero: {
+        eyebrow: string;
+        title: string;
+        description: string;
+        ctas: Cta[];
+    };
+    highlights: Bullet[];
+    steps: Step[];
+    sections?: Section[];
+    showPriceCalculator?: boolean;
+    priceTitle?: string;
+    priceDescription?: string;
+}
+
+const {
+    locale,
+    seo,
+    hero,
+    highlights,
+    steps,
+    sections = [],
+    showPriceCalculator = false,
+    priceTitle,
+    priceDescription
+} = Astro.props as Props;
+
+const pillBg = locale === 'es' ? 'bg-[#E6F1FF]' : 'bg-[#E6F1FF]';
+const ctaPrimaryClass = "inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition";
+const ctaSecondaryClass = "inline-flex items-center justify-center rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold hover:bg-white/70 transition";
+---
+
+<Layout content={{title: hero.title}} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <section class="py-16 md:py-24 bg-gradient-to-b from-[#F7F3EE] to-white">
+            <div class="container mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div class="space-y-6">
+                    <div class="inline-flex items-center px-3 py-1 rounded-full {pillBg} text-sm font-semibold text-primary uppercase tracking-wide">
+                        {hero.eyebrow}
+                    </div>
+                    <h1 class="text-3xl md:text-[40px] leading-tight font-semibold tracking-tight">
+                        {hero.title}
+                    </h1>
+                    <p class="text-lg text-neutral-700 leading-relaxed">
+                        {hero.description}
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        {hero.ctas.map((cta) => (
+                                <a href={cta.href}
+                                   class={cta.variant === 'secondary' ? ctaSecondaryClass : ctaPrimaryClass}>
+                                    {cta.label}
+                                </a>
+                        ))}
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-[#E8C79E]/60 shadow-sm p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {highlights.map((item) => (
+                                <div class="rounded-xl bg-[#FFF6E6] border border-[#E8C79E]/60 p-4">
+                                    <h3 class="text-lg font-semibold mb-2">{item.title}</h3>
+                                    <p class="text-sm text-neutral-700 leading-relaxed">{item.description}</p>
+                                </div>
+                        ))}
+                    </div>
+                    <div class="rounded-xl bg-[#F1EEFF] border border-[#E8C79E]/60 p-5">
+                        <h3 class="text-lg font-semibold mb-2">{locale === 'es' ? 'Cómo funciona' : 'How it works'}</h3>
+                        <ol class="space-y-3 text-sm text-neutral-700">
+                            {steps.map((step, idx) => (
+                                    <li>
+                                        <div class="font-semibold text-primary">{idx + 1}. {step.title}</div>
+                                        <p class="leading-relaxed">{step.description}</p>
+                                    </li>
+                            ))}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {sections.length > 0 && (
+                <section class="py-16 md:py-20">
+                    <div class="container mx-auto px-4 md:px-6 space-y-12">
+                        {sections.map((section) => (
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                                    <div class="space-y-3">
+                                        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">{section.heading}</h2>
+                                        <p class="text-base md:text-lg text-neutral-700 leading-relaxed">{section.body}</p>
+                                    </div>
+                                    {section.bullets && section.bullets.length > 0 && (
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {section.bullets.map((b) => (
+                                                        <div class="rounded-xl bg-white border border-neutral-200 p-4 shadow-[0_6px_24px_-12px_rgba(0,0,0,0.18)]">
+                                                            <div class="text-lg font-semibold mb-2">{b.title}</div>
+                                                            <p class="text-sm text-neutral-700 leading-relaxed">{b.description}</p>
+                                                        </div>
+                                                ))}
+                                            </div>
+                                    )}
+                                </div>
+                        ))}
+                    </div>
+                </section>
+        )}
+
+        {showPriceCalculator && (
+                <section class="py-16 md:py-24 bg-[#F8F5FF]">
+                    <div class="container mx-auto px-4 md:px-6 text-center mb-10">
+                        <h2 class="text-3xl font-semibold tracking-tight mb-3">{priceTitle ?? (locale === 'es' ? 'Precio transparente por imagen' : 'Transparent price per image')}</h2>
+                        <p class="text-base md:text-lg text-neutral-700 max-w-3xl mx-auto">{priceDescription ?? (locale === 'es' ? 'Calcula tu coste por imagen y ahorra más cuando subes varias fotos. Puedes comprar solo las piezas que necesitas.' : 'Estimate your cost per image and save more when you upload multiple photos. Pay only for the parts you need.')}</p>
+                    </div>
+                    <div class="container mx-auto px-4 md:px-6">
+                        <PriceCalculatorSection locale={locale}/>
+                    </div>
+                </section>
+        )}
+
+        <section class="py-16 md:py-20 bg-[#181818] text-white">
+            <div class="container mx-auto px-4 md:px-6 flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.2em] text-primary/80 mb-2">{locale === 'es' ? 'Listo en minutos' : 'Ready in minutes'}</p>
+                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">{locale === 'es' ? 'Consigue la lista exacta de piezas en menos de una hora' : 'Get the exact parts list in under an hour'}</h2>
+                    <p class="text-sm md:text-base text-white/80 mt-2 max-w-2xl">{locale === 'es' ? 'Sube tus fotos, recibe las referencias oficiales más parecidas y compra solo lo que necesitas. Sin afiliación con LEGO®.' : 'Upload your photos, receive the closest official part references, and buy only what you need. Not affiliated with LEGO®.'}</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    {hero.ctas.map((cta) => (
+                            <a href={cta.href}
+                               class={cta.variant === 'secondary'
+                                   ? ctaSecondaryClass + ' bg-white !text-black'
+                                   : ctaPrimaryClass + ' bg-white !text-black border border-white/30'}>
+                                {cta.label}
+                            </a>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

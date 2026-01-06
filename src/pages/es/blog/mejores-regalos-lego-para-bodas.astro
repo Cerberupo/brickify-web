@@ -1,0 +1,84 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Mejores regalos LEGO para bodas | Brickify",
+    description: "Ideas para sorprender a invitados y cortejo con minifigs estilo LEGO® personalizados a partir de sus fotos.",
+    canonical: "/es/blog/mejores-regalos-lego-para-bodas",
+    alternates: [
+        {href: "/blog/best-lego-gifts-for-weddings", hrefLang: "x-default"},
+        {href: "/en/blog/best-lego-gifts-for-weddings", hrefLang: "en"},
+    ],
+};
+
+const ctas = [
+    {label: "Accede para procesar", href: "/es/login"},
+    {label: "Ver precios boda", href: "/es/recuerdos-boda-lego-personalizados#precio"},
+];
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6  blog-prose">
+                <a href="/es/blog"
+                   class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4">
+                    <span aria-hidden="true">←</span>
+                    Volver
+                </a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Inicio', href: '/es'},
+                    {label: 'Blog', href: '/es/blog'},
+                    {label: 'Mejores regalos LEGO para bodas'}
+                ]}/>
+                <h1 class="!mt-0">Mejores regalos LEGO para bodas</h1>
+                <p class="text-neutral-700">Los minifigs personalizados estilo LEGO® son recuerdos que los invitados sí
+                    guardan. Así puedes crear figuras lookalike que encanten.</p>
+
+                <h2>1) Pareja y cortejo lookalike</h2>
+                <ul>
+                    <li>Sube fotos claras de la pareja y del cortejo.</li>
+                    <li>Añade colores de atuendo (vestido, traje, corbatas) para ajustar torso y piernas.</li>
+                </ul>
+
+                <h2>2) Úsalos como marcasitios</h2>
+                <p>Coloca un minifig lookalike en cada puesto. Se lo llevan de recuerdo y sirve como marcador de
+                    mesa.</p>
+
+                <h2>3) Incluye alternativas por stock</h2>
+                <p>Pide 1–2 alternativas por pieza clave (pelo, cabeza, torso) para comprar sin retrasos.</p>
+
+                <h2>4) Pide en lote para ahorrar</h2>
+                <p>El precio por imagen baja al subir varias fotos de invitados. Sube en batch para optimizar
+                    presupuesto.</p>
+
+                <h2>5) Presenta y entrega</h2>
+                <p>Usa cajitas o bolsas de organza con una nota. Viajan bien para bodas destino.</p>
+
+                <h3>Checklist rápida</h3>
+                <ul>
+                    <li>Fotos frontales de pareja + cortejo + invitados clave.</li>
+                    <li>Colores de outfit; anota gafas/barba si aplica.</li>
+                    <li>Pide alternativas por pieza para evitar sorpresas de stock.</li>
+                </ul>
+
+                <div class="not-prose mt-10 flex flex-wrap gap-3">
+                    {ctas.map((cta) => (
+                            <a href={cta.href}
+                               class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                                {cta.label}
+                            </a>
+                    ))}
+                </div>
+            </div>
+        </article>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>
