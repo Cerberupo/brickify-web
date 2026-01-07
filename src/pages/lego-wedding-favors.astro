@@ -4,19 +4,20 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
-    title: "LEGO wedding favors: personalized minifigs from photos | Brickify",
-    description: "Upload guest photos, we deliver the closest official LEGO® part lists with backups, and you assemble unforgettable lookalike favors. Clear pricing that drops with volume.",
+    title: "Personalized LEGO wedding favors from photos | Brickify",
+    description: "Upload guest photos, we give you the list of closest official pieces with alternates and you build unforgettable lookalike favors. Pricing drops with volume.",
     canonical: "/lego-wedding-favors",
     alternates: [
-        {href: "/en/lego-wedding-favors", hrefLang: "en"},
+        {href: "/lego-wedding-favors", hrefLang: "x-default"},
+        {href: "/lego-wedding-favors", hrefLang: "en"},
         {href: "/es/recuerdos-boda-lego-personalizados", hrefLang: "es"},
     ],
 };
 
 const hero = {
-    eyebrow: "Wedding favors that actually resemble your guests",
-    title: "Personalized LEGO®-style wedding favors from guest photos",
-    description: "Drop your guest photos, we match the closest official bricks (hair, head, torso, legs) and send you a ready-to-shop list with alternates for stock changes.",
+    eyebrow: "Favors that actually resemble your guests",
+    title: "LEGO®-style wedding favors made from your guests' photos",
+    description: "Upload the photos, we pick the closest official pieces (hair, head, torso, legs) and send you a ready-to-shop list with alternates in case stock changes.",
     ctas: [
         {label: "Sign in to process", href: "/login"},
         {label: "See volume pricing", href: "#precio", variant: "secondary"},
@@ -25,49 +26,40 @@ const hero = {
 
 const highlights = [
     {
-        title: "Lookalike favors",
-        description: "Hair, head, torso and legs chosen to resemble each guest, with SKUs and buy links."
+        title: "Real lookalike",
+        description: "Hair, head, torso and legs chosen to resemble each guest, with SKUs and links."
     },
-    {title: "Volume savings", description: "Per-image price drops as you add bridal party and guest photos."},
-    {title: "Stock-safe lists", description: "Backups per key piece so you never pause ordering."},
-    {title: "Assemble anywhere", description: "Order where you prefer, assemble quickly and place on tables or kits."},
+    {title: "Volume savings", description: "The price per image drops as you add bridal party and guests."},
+    {title: "Stock-safe lists", description: "Alternates per key piece so you never pause ordering."},
+    {title: "Assemble anywhere", description: "Buy where you prefer and assemble quickly for tables or kits."},
 ];
 
 const steps = [
-    {title: "Collect guest photos", description: "Front-facing is ideal; add notes like hairstyles or outfits."},
-    {
-        title: "We match official parts",
-        description: "Closest hair, heads, torsos and legs plus alternates for stock shifts."
-    },
-    {
-        title: "Approve and shop",
-        description: "SKUs and links so you buy only what you need, with EUR pricing shown up front."
-    },
+    {title: "Upload guest photos", description: "Front-facing works best; add notes for hairstyles or looks."},
+    {title: "We match official parts", description: "Closest official pieces with backups for stock shifts."},
+    {title: "Buy", description: "SKUs and links so you can purchase on the official LEGO store."},
     {
         title: "Assemble and place",
-        description: "Build the favors, use as place cards, welcome gifts or thank-you surprises."
+        description: "Build the favors and use them as place cards, welcome gifts, or thank-you surprises."
     },
 ];
 
 const sections = [
     {
         heading: "Favors guests actually keep",
-        body: "Lookalike minifigs work as place cards, welcome kit surprises or thank-you gifts that people keep on their desks.",
+        body: "Lookalike minifigs work as place cards, welcome kit surprises, or thank-you gifts that end up on your guests' desks.",
         bullets: [
-            {title: "Place cards", description: "Seat guests with a custom minifig they’ll take home."},
-            {title: "Bridal party kits", description: "Lookalike figures for bridesmaids, groomsmen and family."},
-            {
-                title: "Destination friendly",
-                description: "Compact and easy to pack; order parts near the venue if needed."
-            },
+            {title: "Place cards", description: "Seat them with a personalized minifig they’ll take home."},
+            {title: "Bridal party kits", description: "Lookalike figures for bridesmaids, groomsmen, and family."},
+            {title: "Easy to transport", description: "Compact; buy parts near the venue if needed."},
         ],
     },
     {
-        heading: "Fast delivery, no guesswork",
-        body: "Usually ready in under an hour (24/7 service). See EUR per-image pricing up front; backups per piece keep you moving even if stock shifts.",
+        heading: "Fast, no stock blocks",
+        body: "Most lists are ready in less than a minute. Transparent pricing per image; backups per piece prevent delays if stock changes.",
         bullets: [
             {title: "Transparent pricing", description: "Per-image rate and total shown before you commit."},
-            {title: "Backups included", description: "Alternates per key piece to avoid delays."},
+            {title: "Alternates included", description: "Backups for key pieces to shop without delays."},
             {
                 title: "Independent service",
                 description: "Not affiliated with LEGO®; we use official bricks responsibly."

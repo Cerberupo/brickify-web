@@ -13,6 +13,7 @@ const seo = {
     alternates: [
         {href: "/blog", hrefLang: "x-default"},
         {href: "/blog", hrefLang: "en"},
+        {href: "/es/blog", hrefLang: "es"},
     ],
 };
 
@@ -54,7 +55,7 @@ const formatDate = (iso: string) => new Intl.DateTimeFormat('es-ES', {
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <section class="pt-16 md:pt-24 bg-gradient-to-b from-[#F7F3EE] to-white">
             <div class="container mx-auto px-4 md:px-6">

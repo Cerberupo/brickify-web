@@ -45,7 +45,7 @@ const seo = {
 } as const;
 ---
 <Layout content={content} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <AboutContent locale={locale}/>
         <FooterSection locale={locale}/>

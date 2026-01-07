@@ -19,7 +19,7 @@ import {
     switchToLocale
 } from '@/lib/localeLinks';
 
-export function Header() {
+export function Header({alternates}: { alternates?: Array<{ href: string; hrefLang: string }> }) {
     const {t, i18n} = useTranslation();
     const {user} = useAuth();
     const [portalLoading, setPortalLoading] = useState(false);
@@ -131,7 +131,7 @@ export function Header() {
                 // No esperamos la actualización en backend para redirigir
                 updateLanguagePreference(preferred).catch(() => {
                 });
-                const target = switchToLocale(preferred, fullPath);
+                const target = getTargetHref(preferred);
                 const currentFull = (typeof window !== 'undefined')
                     ? (window.location.pathname + window.location.search + window.location.hash)
                     : '';
@@ -149,9 +149,19 @@ export function Header() {
     const langNow = getCurrentLocale();
     const loginHref = makeLoginHref(langNow);
     const registerHref = makeRegisterHref(langNow);
+
     // Build language switch hrefs on client to preserve current path and query
-    const hrefEs = switchToLocale('es', fullPath);
-    const hrefEn = switchToLocale('en', fullPath);
+    // If alternates are provided, use them for specific language redirection
+    const getTargetHref = (target: 'es' | 'en') => {
+        if (alternates && alternates.length > 0) {
+            const match = alternates.find(a => a.hrefLang === target || (target === 'en' && a.hrefLang === 'x-default'));
+            if (match) return match.href;
+        }
+        return switchToLocale(target, fullPath);
+    };
+
+    const hrefEs = getTargetHref('es');
+    const hrefEn = getTargetHref('en');
 
     // Handler para clic en cambio de idioma: envía PATCH, sincroniza sesión cliente e i18n, y redirige con un pequeño retardo
     const handleLangClick = (lang: 'es' | 'en') => (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -171,7 +181,7 @@ export function Header() {
             }
         } catch {
         }
-        const target = switchToLocale(lang, fullPath);
+        const target = getTargetHref(lang);
         // Pequeño retraso para evitar que el navegador cancele la petición PATCH por navegación inmediata
         window.setTimeout(() => {
             window.location.href = target;

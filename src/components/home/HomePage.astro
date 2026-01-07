@@ -74,7 +74,7 @@ const seo = {
 } as const;
 ---
 <Layout content={content} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main id="inicio" class="relative overflow-x-hidden">
         <script define:vars={{enableRedirect}}>
             if (enableRedirect && typeof window !== 'undefined') {

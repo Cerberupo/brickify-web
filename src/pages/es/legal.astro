@@ -1,17 +1,25 @@
 ---
 import Layout from "@/layouts/main.astro";
-import { Header } from "@/layouts/components/Header";
+import {Header} from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
 import LegalContent from "@/components/legal/LegalContent.astro";
-import type { SupportedLocale } from "@/lib/locale";
+import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
-const content = { title: 'Brickify — Aviso legal' };
+const content = {title: 'Brickify — Aviso legal'};
+const seo = {
+    title: content.title,
+    alternates: [
+        {href: '/legal', hrefLang: 'x-default'},
+        {href: '/es/legal', hrefLang: 'es'},
+        {href: '/en/legal', hrefLang: 'en'},
+    ],
+};
 ---
-<Layout content={content} lang={locale}>
-  <Header client:only="react" />
-  <main class="relative overflow-x-hidden">
-    <LegalContent locale={locale} />
-    <FooterSection locale={locale} />
-  </main>
+<Layout content={content} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <LegalContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
 </Layout>

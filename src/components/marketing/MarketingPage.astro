@@ -65,7 +65,7 @@ const ctaSecondaryClass = "inline-flex items-center justify-center rounded-full 
 ---
 
 <Layout content={{title: hero.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <section class="py-16 md:py-24 bg-gradient-to-b from-[#F7F3EE] to-white">
             <div class="container mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -139,10 +139,6 @@ const ctaSecondaryClass = "inline-flex items-center justify-center rounded-full 
 
         {showPriceCalculator && (
                 <section class="py-16 md:py-24 bg-[#F8F5FF]">
-                    <div class="container mx-auto px-4 md:px-6 text-center mb-10">
-                        <h2 class="text-3xl font-semibold tracking-tight mb-3">{priceTitle ?? (locale === 'es' ? 'Precio transparente por imagen' : 'Transparent price per image')}</h2>
-                        <p class="text-base md:text-lg text-neutral-700 max-w-3xl mx-auto">{priceDescription ?? (locale === 'es' ? 'Calcula tu coste por imagen y ahorra más cuando subes varias fotos. Puedes comprar solo las piezas que necesitas.' : 'Estimate your cost per image and save more when you upload multiple photos. Pay only for the parts you need.')}</p>
-                    </div>
                     <div class="container mx-auto px-4 md:px-6">
                         <PriceCalculatorSection locale={locale}/>
                     </div>
@@ -153,7 +149,7 @@ const ctaSecondaryClass = "inline-flex items-center justify-center rounded-full 
             <div class="container mx-auto px-4 md:px-6 flex flex-col lg:flex-row items-center justify-between gap-6">
                 <div>
                     <p class="text-sm uppercase tracking-[0.2em] text-primary/80 mb-2">{locale === 'es' ? 'Listo en minutos' : 'Ready in minutes'}</p>
-                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">{locale === 'es' ? 'Consigue la lista exacta de piezas en menos de una hora' : 'Get the exact parts list in under an hour'}</h2>
+                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">{locale === 'es' ? 'Consigue la lista exacta de piezas' : 'Get the exact parts list'}</h2>
                     <p class="text-sm md:text-base text-white/80 mt-2 max-w-2xl">{locale === 'es' ? 'Sube tus fotos, recibe las referencias oficiales más parecidas y compra solo lo que necesitas. Sin afiliación con LEGO®.' : 'Upload your photos, receive the closest official part references, and buy only what you need. Not affiliated with LEGO®.'}</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
@@ -169,6 +165,6 @@ const ctaSecondaryClass = "inline-flex items-center justify-center rounded-full 
             </div>
         </section>
 
-        <FooterSection locale={locale}/>
+        <FooterSection locale={locale} addMargin={false}/>
     </main>
 </Layout>

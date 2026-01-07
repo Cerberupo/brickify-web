@@ -4,73 +4,77 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
-    title: "Corporate LEGO gifts: lookalike minifigs from team photos | Brickify",
-    description: "Upload team or attendee photos, we match the closest official LEGO® parts with backups, and you deliver memorable swag that actually looks like your people. Pricing that improves with volume.",
+    title: "Personalized corporate LEGO gifts from photos | Brickify",
+    description: "Upload photos of your team or attendees and receive exact LEGO® parts lists for lookalike minifigs. Ideal for corporate gifts, events, and welcome kits.",
     canonical: "/corporate-lego-gifts",
     alternates: [
-        {href: "/en/corporate-lego-gifts", hrefLang: "en"},
+        {href: "/corporate-lego-gifts", hrefLang: "x-default"},
+        {href: "/corporate-lego-gifts", hrefLang: "en"},
         {href: "/es/regalos-empresa-lego-personalizados", hrefLang: "es"},
     ],
 };
 
 const hero = {
-    eyebrow: "Corporate gifts that resemble your team",
-    title: "Personalized LEGO®-style minifigs for employees, clients and events",
-    description: "Drop team or attendee photos, we pick the closest official bricks (hair, head, torso, legs) and send ready-to-shop lists with alternates for stock shifts.",
+    eyebrow: "Corporate gifts that look like your team",
+    title: "Personalized LEGO®-style minifigs for employees, clients, and events",
+    description: "Upload photos of your team or attendees and we provide shopping lists with the closest official parts. Memorable gifts that actually look like them.",
     ctas: [
         {label: "Sign in to process", href: "/login"},
-        {label: "See price per image", href: "#precio", variant: "secondary"},
+        {label: "See pricing", href: "#precio", variant: "secondary"},
     ],
 };
 
 const highlights = [
+    {title: "Lookalike minifigs", description: "Hair, head, torso, and legs that look like each person."},
     {
-        title: "Lookalike swag",
-        description: "Hair, head, torso and legs chosen to resemble each person, with SKUs and buy links."
+        title: "Perfect for events",
+        description: "Use them in conferences, brand activations, or community rewards."
     },
-    {title: "Event-ready", description: "Ideal for conferences, activations, meetups or community rewards."},
-    {title: "Volume pricing", description: "Per-image price drops as you add more employees or attendees."},
+    {title: "Volume savings", description: "The price per image drops as you upload more employees or attendees."},
     {
-        title: "Stock-safe lists",
-        description: "Alternates per key piece so procurement never stalls."
+        title: "Buy where you want",
+        description: "We give you SKUs and alternates; buy where you prefer and assemble quickly."
     },
 ];
 
 const steps = [
-    {title: "Upload team photos", description: "Front-facing is best; add notes on outfits or accessories."},
+    {title: "Upload photos", description: "Add front-facing photos of employees, clients, or attendees."},
     {
-        title: "We match official parts",
-        description: "Closest hair, heads, torsos and legs plus backups for stock shifts."
+        title: "We do the matching",
+        description: "We pick the closest official pieces and include alternatives for stock shifts."
     },
+    {title: "Receive the lists", description: "SKUs and links for fast shopping."},
     {
-        title: "Approve and buy",
-        description: "SKUs and links so you purchase only what you need with EUR pricing up front."
-    },
-    {
-        title: "Deliver memorable swag",
-        description: "Assemble and add to onboarding kits, event bags or client mailers."
+        title: "Send the swag",
+        description: "Assemble and add the minifigs to kits, event bags, or client mailings."
     },
 ];
 
 const sections = [
     {
-        heading: "Use cases teams remember",
-        body: "Onboarding kits, conference swag, offsites and client gifts stand out when the minifig actually looks like the recipient.",
+        heading: "Use cases that work",
+        body: "Welcome kits, conferences, offsites, and rewards stand out more when the minifig looks like the recipient.",
         bullets: [
-            {title: "Onboarding", description: "Add lookalike minifigs to new hire boxes."},
-            {title: "Events", description: "Delight attendees with personalized figures for their desk."},
-            {title: "Clients", description: "Send a custom, memorable gift to top customers."},
+            {title: "Onboarding", description: "Include a lookalike minifig in welcome boxes."},
+            {
+                title: "Events",
+                description: "Surprise attendees with personalized figures for their desks."
+            },
+            {title: "Clients", description: "Send a memorable gift to key customers."},
         ],
     },
     {
-        heading: "Fast delivery, predictable cost",
-        body: "Usually ready in under an hour (24/7 service). EUR per-image pricing is clear, and backups per piece keep procurement moving even if stock shifts.",
+        heading: "Fast delivery and clear pricing",
+        body: "Most lists are ready in less than a minute per person.",
         bullets: [
-            {title: "Transparent pricing", description: "See per-image rate and total before you commit."},
-            {title: "Backups included", description: "Alternates per key piece to avoid delays."},
+            {title: "Transparent cost", description: "Know the rate per image before uploading more photos."},
             {
-                title: "Independent service",
-                description: "Not affiliated with LEGO®; we use official bricks responsibly."
+                title: "Stock-safe lists",
+                description: "Each key piece includes 1–2 alternatives to avoid delays."
+            },
+            {
+                title: "No LEGO® affiliation",
+                description: "Independent service using official parts; LEGO® is a trademark of the LEGO Group."
             },
         ],
     },

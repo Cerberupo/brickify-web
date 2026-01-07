@@ -8,11 +8,12 @@ import type {SupportedLocale} from "@/lib/locale";
 const locale: SupportedLocale = 'es';
 const seo = {
     title: "Mejores regalos LEGO para bodas | Brickify",
-    description: "Ideas para sorprender a invitados y cortejo con minifigs estilo LEGO® personalizados a partir de sus fotos.",
+    description: "La mejor idea para tu boda: regala una minifigura personalizada a cada invitado. Descubre cómo crear legos que se parecen a tus seres queridos.",
     canonical: "/es/blog/mejores-regalos-lego-para-bodas",
     alternates: [
         {href: "/blog/best-lego-gifts-for-weddings", hrefLang: "x-default"},
-        {href: "/en/blog/best-lego-gifts-for-weddings", hrefLang: "en"},
+        {href: "/blog/best-lego-gifts-for-weddings", hrefLang: "en"},
+        {href: "/es/blog/mejores-regalos-lego-para-bodas", hrefLang: "es"},
     ],
 };
 
@@ -23,7 +24,7 @@ const ctas = [
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <article class="py-14 md:py-20 bg-white">
             <div class="container mx-auto px-4 md:px-6  blog-prose">
@@ -39,33 +40,43 @@ const ctas = [
                 ]}/>
                 <h1 class="!mt-0">Mejores regalos LEGO para bodas</h1>
                 <p class="text-neutral-700">Los minifigs personalizados estilo LEGO® son recuerdos que los invitados sí
-                    guardan. Así puedes crear figuras lookalike que encanten.</p>
+                    guardan. La idea que realmente marca la diferencia es crear una minifigura de cada invitado de tu
+                    boda para que se sientan parte del recuerdo.</p>
 
-                <h2>1) Pareja y cortejo lookalike</h2>
+                <div class="my-10 max-w-2xl">
+                    <img src="/memory-highlight.jpg" alt="Minifiguras LEGO personalizadas de invitados de boda"
+                         class="rounded-2xl shadow-lg w-full h-auto"/>
+                    <p class="text-sm text-neutral-500 mt-3 italic">Una foto real de mi boda: cada LEGO fue
+                        diseñado para parecerse a un invitado específico, ¡fue un éxito absoluto!</p>
+                </div>
+
+                <h2>Una minifigura para cada invitado</h2>
+                <p>En mi boda, decidimos que el mejor regalo sería que cada invitado tuviera su propia minifigura
+                    personalizada. No fue un regalo genérico; cada lego se parecía a la persona que lo recibía.</p>
+
+                <h2>Personalización total</h2>
+                <p>La clave es subir una foto de cada invitado. Nuestro sistema analiza los rasgos y te sugiere las
+                    piezas (pelo, cara, ropa) que mejor encajan con su estilo real.</p>
+
+                <h2>Úsalos como marcasitios</h2>
+                <p>Coloca el minifig lookalike de cada invitado en su puesto en la mesa. Se convierte en el tema de
+                    conversación instantáneo.</p>
+
+                <h2>El factor sorpresa</h2>
+                <p>Ver la reacción de los invitados al encontrar una "versión LEGO" de sí mismos no tiene precio. Es un
+                    detalle que demuestra que has pensado en cada uno de ellos individualmente.</p>
+
+                <h2>Proceso sencillo</h2>
+                <p>Nuestro sistema te ayudará a gestionar la lista de piezas para que el montaje sea divertido y
+                    organizado.</p>
+
+                <h3>¿Por qué elegir minifiguras personalizadas?</h3>
                 <ul>
-                    <li>Sube fotos claras de la pareja y del cortejo.</li>
-                    <li>Añade colores de atuendo (vestido, traje, corbatas) para ajustar torso y piernas.</li>
-                </ul>
-
-                <h2>2) Úsalos como marcasitios</h2>
-                <p>Coloca un minifig lookalike en cada puesto. Se lo llevan de recuerdo y sirve como marcador de
-                    mesa.</p>
-
-                <h2>3) Incluye alternativas por stock</h2>
-                <p>Pide 1–2 alternativas por pieza clave (pelo, cabeza, torso) para comprar sin retrasos.</p>
-
-                <h2>4) Pide en lote para ahorrar</h2>
-                <p>El precio por imagen baja al subir varias fotos de invitados. Sube en batch para optimizar
-                    presupuesto.</p>
-
-                <h2>5) Presenta y entrega</h2>
-                <p>Usa cajitas o bolsas de organza con una nota. Viajan bien para bodas destino.</p>
-
-                <h3>Checklist rápida</h3>
-                <ul>
-                    <li>Fotos frontales de pareja + cortejo + invitados clave.</li>
-                    <li>Colores de outfit; anota gafas/barba si aplica.</li>
-                    <li>Pide alternativas por pieza para evitar sorpresas de stock.</li>
+                    <li><strong>Recuerdo único:</strong> Nadie tira un LEGO que se parece a él.</li>
+                    <li><strong>Conversación asegurada:</strong> Los invitados compararán sus figuras durante toda la
+                        cena.
+                    </li>
+                    <li><strong>Toque personal:</strong> Refleja el cariño que tienes por tus amigos y familiares.</li>
                 </ul>
 
                 <div class="not-prose mt-10 flex flex-wrap gap-3">

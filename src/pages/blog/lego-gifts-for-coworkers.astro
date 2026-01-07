@@ -1,36 +1,30 @@
 ---
-import Layout from "/src/layouts/main.astro";
-import {Header} from "/src/layouts/components/Header";
-import FooterSection from "/src/components/home/FooterSection.astro";
-import Breadcrumbs from "/src/components/common/Breadcrumbs.astro";
-import type {SupportedLocale} from "/src/lib/locale";
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
     title: "LEGO gifts for coworkers and teams | Brickify",
-    description: "Corporate-friendly ideas to use personalized LEGO®-style minifigs for events, onboarding and client swag.",
+    description: "Corporate ideas for using personalized LEGO®-style minifigs in events, onboarding, and gifts for clients.",
     canonical: "/blog/lego-gifts-for-coworkers",
     alternates: [
-        {href: "/en/blog/lego-gifts-for-coworkers", hrefLang: "en"},
+        {href: "/blog/lego-gifts-for-coworkers", hrefLang: "x-default"},
+        {href: "/blog/lego-gifts-for-coworkers", hrefLang: "en"},
         {href: "/es/blog/regalos-lego-para-companeros", hrefLang: "es"},
     ],
 };
 
-// Meta
-const date = "2025-11-24";
-const readMin = 5;
-const formatDate = (iso: string) => new Intl.DateTimeFormat('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric'
-}).format(new Date(iso));
-
 const ctas = [
-    {label: "Sign in to process", href: "/en/login"},
+    {label: "Sign in to process", href: "/login"},
     {label: "See corporate pricing", href: "/corporate-lego-gifts#precio"},
 ];
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <article class="py-14 md:py-20 bg-white">
             <div class="container mx-auto px-4 md:px-6  blog-prose">
@@ -39,54 +33,42 @@ const ctas = [
                     <span aria-hidden="true">←</span>
                     Back
                 </a>
-                <Breadcrumbs class="mb-4" items={[{label: 'Home', href: '/en'}, {
-                    label: 'Blog',
-                    href: '/blog'
-                }, {label: 'LEGO gifts for coworkers and teams'}]}/>
-                <p class="text-sm uppercase tracking-[0.2em] text-primary mb-3">Corporate ideas</p>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Home', href: '/en'},
+                    {label: 'Blog', href: '/blog'},
+                    {label: 'LEGO gifts for coworkers and teams'}
+                ]}/>
                 <h1 class="!mt-0">LEGO gifts for coworkers and teams</h1>
-                <p class="not-prose text-xs text-neutral-500 mb-6 flex items-center gap-3">
-                    <span class="inline-flex items-center gap-1">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path
-                                d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path
-                                d="M3 10h18"/></svg>
-                        <time datetime={date}>{formatDate(date)}</time>
-                    </span>
-                    <span aria-hidden="true" class="opacity-40">•</span>
-                    <span class="inline-flex items-center gap-1">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><circle
-                                cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                        {readMin} min read
-                    </span>
-                </p>
-                <p class="text-neutral-700">Personalized LEGO®-style minifigs are memorable, safe for corporate
-                    settings, and ship flat. Here’s how to use them for onboarding, events and client swag.</p>
+                <p class="text-neutral-700">Personalized LEGO®-style minifigs are the perfect detail to celebrate team
+                    successes or welcome new colleagues. You only need a photo, and our system will recommend the
+                    official pieces that best fit each person.</p>
 
-                <h2>1) Onboarding kits</h2>
+                <h2>Personalized onboarding kits</h2>
+                <p>Make the first day unforgettable by including a minifigure that looks like the new employee in their
+                    welcome kit. Just upload their photo and you'll receive the list of recommended pieces.</p>
+
+                <h2>Team milestones and celebrations</h2>
+                <p>Have you closed a big project? Celebrate it with a LEGO version of the entire team. By uploading
+                    photos in bulk, the process is fast and the system suggests pieces so that each figure is
+                    recognizable.</p>
+
+                <h2>Team Building dynamics</h2>
+                <p>Use minifigures as a fun activity: give everyone their recommended pieces to assemble their own
+                    "mini-me". It's an excellent icebreaker for events and meetings.</p>
+
+                <h2>Memorable details for clients</h2>
+                <p>Surprise your clients with a gift that won't end up in a drawer. A desk companion that looks like
+                    them is a unique way to strengthen the relationship and stand out.</p>
+
+                <h3>How does Brickify for business work?</h3>
                 <ul>
-                    <li>Include a lookalike minifig in welcome boxes. Upload a front photo per new hire.</li>
-                    <li>Note brand colors for torso/legs to align with your company palette.</li>
-                </ul>
-
-                <h2>2) Event giveaways</h2>
-                <p>For conferences or meetups, ask for alternates per piece so you can order quickly. Minifigs pack
-                    light and survive travel.</p>
-
-                <h2>3) Client thank-you gifts</h2>
-                <p>Upload a client’s photo (with permission) and deliver a personalized desk companion. Add a small
-                    baseplate with a thank-you note.</p>
-
-                <h2>4) Team milestones</h2>
-                <p>Celebrate project launches or anniversaries with lookalike figures of the team. Batch uploads reduce
-                    per-image cost.</p>
-
-                <h3>Checklist for smooth orders</h3>
-                <ul>
-                    <li>Front photos of each person; note hair color/length and glasses/beards.</li>
-                    <li>Request 1–2 alternates per key piece to avoid stock delays.</li>
-                    <li>Use EUR pricing per image; bigger batches lower the unit price.</li>
+                    <li><strong>Upload photos:</strong> Our system analyzes facial features and style.</li>
+                    <li><strong>Receive recommendations:</strong> We suggest the closest official pieces (hair, face,
+                        clothing).
+                    </li>
+                    <li><strong>Buy with confidence:</strong> Get the exact list of references so your order is perfect
+                        from the first moment.
+                    </li>
                 </ul>
 
                 <div class="not-prose mt-10 flex flex-wrap gap-3">

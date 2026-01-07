@@ -12,7 +12,8 @@ const seo = {
     canonical: "/es/blog/ideas-regalos-lego-personalizados",
     alternates: [
         {href: "/blog/personalized-lego-gifts-ideas", hrefLang: "x-default"},
-        {href: "/en/blog/personalized-lego-gifts-ideas", hrefLang: "en"},
+        {href: "/blog/personalized-lego-gifts-ideas", hrefLang: "en"},
+        {href: "/es/blog/ideas-regalos-lego-personalizados", hrefLang: "es"},
     ],
 };
 
@@ -23,7 +24,7 @@ const ctas = [
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <article class="py-14 md:py-20 bg-white">
             <div class="container mx-auto px-4 md:px-6  blog-prose">
@@ -38,28 +39,50 @@ const ctas = [
                     {label: 'Ideas de regalos LEGO personalizados'}
                 ]}/>
                 <h1 class="!mt-0">Ideas de regalos LEGO personalizados</h1>
-                <p class="text-neutral-700">Convierte cualquier foto en una lista de piezas de minifig estilo LEGO®.
-                    Aquí tienes ocasiones y tips para que tu regalo sea preciso y rápido de montar.</p>
+                <p class="text-neutral-700">Convierte cualquier foto en una lista de piezas oficiales de LEGO® para
+                    crear
+                    minifiguras que se parecen a tus seres queridos. Descubre cómo usar Brickify para hacer regalos que
+                    realmente emocionan.</p>
 
-                <h2>Ocasiones que funcionan muy bien</h2>
+                <h2>Ocasiones perfectas para regalar un LEGO</h2>
                 <ul>
-                    <li>Cumpleaños y aniversarios: crea un lookalike de la persona o la pareja.</li>
-                    <li>Graduaciones: ajusta toga y colores; añade accesorio de libro o portátil.</li>
-                    <li>Agradecimientos: clientes, profes, mentores; anota el estilo de ropa para elegir torso.</li>
+                    <li><strong>Cumpleaños y aniversarios:</strong> Crea una versión "mini-yo" de la persona o la
+                        pareja. Es un detalle que demuestra cuánto les conoces.
+                    </li>
+                    <li><strong>Graduaciones y éxitos:</strong> Inmortaliza ese momento especial con una figura que
+                        lleve los colores de su universidad o sus herramientas de trabajo.
+                    </li>
+                    <li><strong>Agradecimientos:</strong> Sorprende a profesores, mentores o amigos con un compañero de
+                        escritorio que se parece a ellos.
+                    </li>
                 </ul>
 
                 <h2>Cómo lograr el mejor parecido</h2>
+                <p>Nuestro sistema utiliza inteligencia artificial para analizar los rasgos de la foto que subas. Para
+                    obtener el mejor resultado:</p>
                 <ul>
-                    <li>Sube una foto frontal clara; añade notas de color/largo de pelo si está oscura.</li>
-                    <li>Menciona barba, gafas y el estilo de outfit (casual, formal, sport).</li>
-                    <li>Pide 1–2 alternativas por pieza clave para evitar problemas de stock.</li>
+                    <li><strong>Iluminación:</strong> Sube una foto frontal con buena luz donde se aprecien bien los
+                        rasgos y el color de pelo.
+                    </li>
+                    <li><strong>Estilo de ropa:</strong> El sistema te sugerirá el torso y las piernas que mejor encajen
+                        con el estilo de la imagen.
+                    </li>
+                    <li><strong>Sin complicaciones:</strong> No necesitas anotar rasgos manualmente; la IA se encarga de
+                        identificar pelo, cara y ropa por ti.
+                    </li>
                 </ul>
 
-                <h2>Tips de compra</h2>
+                <h2>¿Por qué regalar Brickify?</h2>
                 <ul>
-                    <li>Precio por imagen en EUR; el precio unitario baja al subir más fotos.</li>
-                    <li>Enviamos SKUs y enlaces para comprar en Pick a Brick o tu tienda habitual.</li>
-                    <li>Se arma en minutos; acompaña con nota o plaquita para presentarlo.</li>
+                    <li><strong>Personalización automática:</strong> Solo subes la foto y recibes las recomendaciones de
+                        piezas oficiales de LEGO®.
+                    </li>
+                    <li><strong>Lista preparada para comprar:</strong> Te damos las referencias exactas para que puedas
+                        pedirlas directamente sin errores.
+                    </li>
+                    <li><strong>Un recuerdo para siempre:</strong> A diferencia de otros regalos, una minifigura
+                        personalizada nunca acaba en la basura.
+                    </li>
                 </ul>
 
                 <div class="not-prose mt-10 flex flex-wrap gap-3">

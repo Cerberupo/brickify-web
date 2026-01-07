@@ -12,7 +12,8 @@ const seo = {
     canonical: "/es/blog/regalos-lego-para-companeros",
     alternates: [
         {href: "/blog/lego-gifts-for-coworkers", hrefLang: "x-default"},
-        {href: "/en/blog/lego-gifts-for-coworkers", hrefLang: "en"},
+        {href: "/blog/lego-gifts-for-coworkers", hrefLang: "en"},
+        {href: "/es/blog/regalos-lego-para-companeros", hrefLang: "es"},
     ],
 };
 
@@ -23,7 +24,7 @@ const ctas = [
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <article class="py-14 md:py-20 bg-white">
             <div class="container mx-auto px-4 md:px-6  blog-prose">
@@ -38,34 +39,40 @@ const ctas = [
                     {label: 'Regalos LEGO para compañeros y equipos'}
                 ]}/>
                 <h1 class="!mt-0">Regalos LEGO para compañeros y equipos</h1>
-                <p class="text-neutral-700">Los minifigs personalizados estilo LEGO® son memorables, seguros para
-                    entornos corporativos y se envían planos. Así puedes usarlos en onboarding, eventos y regalos a
-                    clientes.</p>
+                <p class="text-neutral-700">Los minifigs personalizados estilo LEGO® son el detalle perfecto para
+                    celebrar éxitos en equipo o dar la bienvenida a nuevos compañeros. Solo necesitas una foto y nuestro
+                    sistema te recomendará las piezas oficiales que mejor encajan con cada persona.</p>
 
-                <h2>1) Kits de onboarding</h2>
+                <h2>Kits de onboarding personalizados</h2>
+                <p>Haz que el primer día sea inolvidable incluyendo una minifigura que se parezca al nuevo empleado en
+                    su
+                    kit de bienvenida. Solo tienes que subir su foto y recibirás la lista de piezas recomendadas.</p>
+
+                <h2>Hitos y celebraciones de equipo</h2>
+                <p>¿Habéis cerrado un gran proyecto? Celebradlo con una versión LEGO de todo el equipo. Al subir las
+                    fotos
+                    en lote, el proceso es rápido y el sistema te sugiere las piezas para que cada figura sea
+                    reconocible.</p>
+
+                <h2>Dinámicas de Team Building</h2>
+                <p>Usa las minifiguras como una actividad divertida: entrega a cada uno sus piezas recomendadas para que
+                    monten su propio "mini-yo". Es un rompehielo excelente para eventos y reuniones.</p>
+
+                <h2>Detalles memorables para clientes</h2>
+                <p>Sorprende a tus clientes con un regalo que no acabará en un cajón. Un compañero de escritorio que se
+                    parece a ellos es una forma única de fortalecer la relación y destacar.</p>
+
+                <h3>¿Cómo funciona Brickify para empresas?</h3>
                 <ul>
-                    <li>Incluye un minifig lookalike en cajas de bienvenida. Sube una foto frontal por persona nueva.
+                    <li><strong>Sube las fotos:</strong> Nuestro sistema analiza los rasgos faciales y el estilo.</li>
+                    <li><strong>Recibe recomendaciones:</strong> Te sugerimos las piezas oficiales (pelo, cara, ropa)
+                        más
+                        parecidas.
                     </li>
-                    <li>Anota colores de marca para torso/piernas y que encajen con tu paleta.</li>
-                </ul>
-
-                <h2>2) Regalos para eventos</h2>
-                <p>En conferencias o meetups, pide alternativos por pieza para comprar rápido. Viajan ligero y aguantan
-                    desplazamientos.</p>
-
-                <h2>3) Detalles para clientes</h2>
-                <p>Sube la foto del cliente (con permiso) y entrega un compañero de escritorio personalizado. Añade una
-                    plaquita con nota.</p>
-
-                <h2>4) Hitos de equipo</h2>
-                <p>Celebrad lanzamientos o aniversarios con minifigs lookalike del equipo. Subir en lote reduce el
-                    precio por imagen.</p>
-
-                <h3>Checklist para pedidos sin fricción</h3>
-                <ul>
-                    <li>Fotos frontales de cada persona; anota color/largo de pelo y gafas/barba.</li>
-                    <li>Pide 1–2 alternativas por pieza clave para evitar retrasos de stock.</li>
-                    <li>Precio por imagen en EUR; más fotos reducen el coste unitario.</li>
+                    <li><strong>Compra con confianza:</strong> Obtén la lista exacta de referencias para que tu pedido
+                        sea
+                        perfecto desde el primer momento.
+                    </li>
                 </ul>
 
                 <div class="not-prose mt-10 flex flex-wrap gap-3">

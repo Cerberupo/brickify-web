@@ -1,17 +1,25 @@
 ---
 import Layout from "@/layouts/main.astro";
-import { Header } from "@/layouts/components/Header";
+import {Header} from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
 import AboutContent from "@/components/about/AboutContent.astro";
-import type { SupportedLocale } from "@/lib/locale";
+import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
-const content = { title: 'Brickify — Quiénes somos' };
+const content = {title: 'Brickify — Quiénes somos'};
+const seo = {
+    title: content.title,
+    alternates: [
+        {href: '/about', hrefLang: 'x-default'},
+        {href: '/es/about', hrefLang: 'es'},
+        {href: '/en/about', hrefLang: 'en'},
+    ],
+};
 ---
-<Layout content={content} lang={locale}>
-  <Header client:only="react" />
-  <main class="relative overflow-x-hidden">
-    <AboutContent locale={locale} />
-    <FooterSection locale={locale} />
-  </main>
+<Layout content={content} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <AboutContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
 </Layout>

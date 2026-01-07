@@ -12,7 +12,8 @@ const seo = {
     canonical: "/es/blog/como-convertir-una-foto-en-minifig-lego",
     alternates: [
         {href: "/blog/how-to-turn-a-photo-into-a-lego-minifigure", hrefLang: "x-default"},
-        {href: "/en/blog/how-to-turn-a-photo-into-a-lego-minifigure", hrefLang: "en"},
+        {href: "/blog/how-to-turn-a-photo-into-a-lego-minifigure", hrefLang: "en"},
+        {href: "/es/blog/como-convertir-una-foto-en-minifig-lego", hrefLang: "es"},
     ],
 };
 
@@ -23,7 +24,7 @@ const ctas = [
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <article class="py-14 md:py-20 bg-white">
             <div class="container mx-auto px-4 md:px-6  blog-prose">
@@ -42,40 +43,28 @@ const ctas = [
                     el matching con piezas oficiales LEGO® y compras solo lo que necesitas. Sin afiliación con
                     LEGO®.</p>
 
-                <h2>1) Elige una foto clara</h2>
+                <h2>Elige una foto clara</h2>
                 <ul>
                     <li>Frontal, buena luz, sin filtros pesados.</li>
-                    <li>Que se vea el pelo; si llevas gorra, añade nota de color y largo.</li>
+                    <li>Que se vea el pelo.</li>
                 </ul>
 
-                <h2>2) Sube y añade notas</h2>
-                <p>Ve al flujo de la home y suelta tu imagen. Añade notas rápidas: estilo de torso (casual, formal) o si
-                    quieres gafas/barba.</p>
-
-                <h2>3) Hacemos el matching con piezas oficiales</h2>
+                <h2>Hacemos el matching con piezas oficiales</h2>
                 <ul>
                     <li>Pelo, cabeza (expresión/tono), torso y piernas que se parezcan a la foto.</li>
                     <li>Cada pieza clave lleva 1–2 alternativas por si cambia el stock.</li>
                 </ul>
 
-                <h2>4) Revisa tu lista de piezas</h2>
-                <p>Te enviamos SKUs y enlaces para comprar en Pick a Brick o tu tienda habitual. El precio es por imagen
-                    en EUR; baja al subir más fotos.</p>
+                <h2>Revisa tu lista de piezas</h2>
+                <p>Te enviamos SKUs y enlaces para comprar en Pick a Brick o tu tienda habitual.</p>
 
-                <h2>5) Compra y monta</h2>
+                <h2>Compra y monta</h2>
                 <p>Compra las piezas, ensambla en minutos y comparte tu minifig lookalike.</p>
-
-                <h3>Tips rápidos para más precisión</h3>
-                <ul>
-                    <li>Menciona tono y largo de pelo si la foto está oscura.</li>
-                    <li>Si es un regalo, di la ocasión (boda, cumpleaños, corporativo) para ajustar el outfit.</li>
-                    <li>Sube varias fotos para bajar el coste por imagen.</li>
-                </ul>
 
                 <div class="not-prose mt-10 flex flex-wrap gap-3">
                     {ctas.map((cta) => (
                             <a href={cta.href}
-                               class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                               class="inline-flex items-center  justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
                                 {cta.label}
                             </a>
                     ))}

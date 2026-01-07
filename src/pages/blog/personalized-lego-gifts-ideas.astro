@@ -1,9 +1,9 @@
 ---
-import Layout from "/src/layouts/main.astro";
-import {Header} from "/src/layouts/components/Header";
-import FooterSection from "/src/components/home/FooterSection.astro";
-import Breadcrumbs from "/src/components/common/Breadcrumbs.astro";
-import type {SupportedLocale} from "/src/lib/locale";
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
@@ -11,26 +11,20 @@ const seo = {
     description: "Occasions and tips to create unique LEGO®-style gifts from any photo, with ready-to-buy parts lists.",
     canonical: "/blog/personalized-lego-gifts-ideas",
     alternates: [
-        {href: "/en/blog/personalized-lego-gifts-ideas", hrefLang: "en"},
+        {href: "/blog/personalized-lego-gifts-ideas", hrefLang: "x-default"},
+        {href: "/blog/personalized-lego-gifts-ideas", hrefLang: "en"},
         {href: "/es/blog/ideas-regalos-lego-personalizados", hrefLang: "es"},
     ],
 };
 
-// Meta
-const date = "2025-11-26";
-const readMin = 4;
-const formatDate = (iso: string) => new Intl.DateTimeFormat('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric'
-}).format(new Date(iso));
-
 const ctas = [
-    {label: "Sign in to process", href: "/en/login"},
+    {label: "Sign in to process", href: "/login"},
     {label: "See gift pricing", href: "/personalized-lego-gift#precio"},
 ];
 ---
 
 <Layout content={{title: seo.title}} lang={locale} seo={seo}>
-    <Header client:only="react"/>
+    <Header alternates={seo.alternates} client:only="react"/>
     <main class="relative overflow-x-hidden">
         <article class="py-14 md:py-20 bg-white">
             <div class="container mx-auto px-4 md:px-6  blog-prose">
@@ -39,50 +33,55 @@ const ctas = [
                     <span aria-hidden="true">←</span>
                     Back
                 </a>
-                <Breadcrumbs class="mb-4" items={[{label: 'Home', href: '/en'}, {
-                    label: 'Blog',
-                    href: '/blog'
-                }, {label: 'Personalized LEGO gift ideas'}]}/>
-                <p class="text-sm uppercase tracking-[0.2em] text-primary mb-3">Gift ideas</p>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Home', href: '/en'},
+                    {label: 'Blog', href: '/blog'},
+                    {label: 'Personalized LEGO gift ideas'}
+                ]}/>
                 <h1 class="!mt-0">Personalized LEGO gift ideas</h1>
-                <p class="not-prose text-xs text-neutral-500 mb-6 flex items-center gap-3">
-                    <span class="inline-flex items-center gap-1">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path
-                                d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path
-                                d="M3 10h18"/></svg>
-                        <time datetime={date}>{formatDate(date)}</time>
-                    </span>
-                    <span aria-hidden="true" class="opacity-40">•</span>
-                    <span class="inline-flex items-center gap-1">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><circle
-                                cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                        {readMin} min read
-                    </span>
-                </p>
-                <p class="text-neutral-700">Turn any photo into a LEGO®-style minifig parts list. Here are occasions and
-                    tips to make your gift accurate and fast to assemble.</p>
+                <p class="text-neutral-700">Turn any photo into a list of official LEGO® pieces to create minifigures
+                    that look like your loved ones. Discover how to use Brickify to make gifts that truly move
+                    people.</p>
 
-                <h2>Occasions that work great</h2>
+                <h2>Perfect occasions to gift a LEGO</h2>
                 <ul>
-                    <li>Birthdays and anniversaries: make a lookalike of the recipient or the couple.</li>
-                    <li>Graduations: match gowns and colors; add a book or laptop accessory.</li>
-                    <li>Thank-you gifts: clients, teachers, mentors—add a note on attire to match torsos.</li>
+                    <li><strong>Birthdays and anniversaries:</strong> Create a \"mini-me\" version of the person or the
+                        couple. It's a detail that shows how well you know them.
+                    </li>
+                    <li><strong>Graduations and successes:</strong> Immortalize that special moment with a figure
+                        wearing their university colors or work tools.
+                    </li>
+                    <li><strong>Thank-yous:</strong> Surprise teachers, mentors, or friends with a desk companion that
+                        looks just like them.
+                    </li>
                 </ul>
 
-                <h2>How to get the best match</h2>
+                <h2>How to get the best likeness</h2>
+                <p>Our system uses artificial intelligence to analyze the features of the photo you upload. To get the
+                    best result:</p>
                 <ul>
-                    <li>Upload a clear front photo; add hair color/length notes if the picture is dark.</li>
-                    <li>Mention facial hair, glasses, and outfit vibe (casual, formal, sporty).</li>
-                    <li>Request 1–2 alternates per key piece to avoid stock hiccups.</li>
+                    <li><strong>Lighting:</strong> Upload a front-facing photo with good light where features and hair
+                        color can be clearly seen.
+                    </li>
+                    <li><strong>Clothing style:</strong> The system will suggest the torso and legs that best match the
+                        style of the image.
+                    </li>
+                    <li><strong>Hassle-free:</strong> You don't need to note down features manually; the IA takes care
+                        of identifying hair, face, and clothes for you.
+                    </li>
                 </ul>
 
-                <h2>Ordering tips</h2>
+                <h2>Why gift Brickify?</h2>
                 <ul>
-                    <li>Pricing is per image in EUR; the unit price drops with more photos.</li>
-                    <li>We send SKUs and links so you can buy on LEGO® Pick a Brick or your usual shop.</li>
-                    <li>Assemble in minutes; pack with a small note or baseplate for presentation.</li>
+                    <li><strong>Automatic personalization:</strong> You just upload the photo and receive official LEGO®
+                        part recommendations.
+                    </li>
+                    <li><strong>Ready-to-buy list:</strong> We give you the exact references so you can order them
+                        directly without errors.
+                    </li>
+                    <li><strong>A keepsake forever:</strong> Unlike other gifts, a personalized minifigure never ends up
+                        in the trash.
+                    </li>
                 </ul>
 
                 <div class="not-prose mt-10 flex flex-wrap gap-3">

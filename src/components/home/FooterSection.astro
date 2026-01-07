@@ -3,8 +3,9 @@ import type {SupportedLocale} from "@/lib/locale";
 
 interface Props {
     locale: SupportedLocale;
+    addMargin?: boolean;
 }
-const {locale} = Astro.props as Props;
+const {locale, addMargin = true} = Astro.props as Props;
 
 const copies = {
     es: {
@@ -86,7 +87,7 @@ const giftHref = locale === 'es' ? '/es/regalo-lego-personalizado' : '/personali
     }
 </style>
 
-<footer class="w-full mt-10">
+<footer class:list={["w-full", addMargin && "mt-10"]}>
     <!-- Top light area -->
     <div class="bg-[#F7F3EE]">
         <div class="container mx-auto px-4 md:px-6 py-10">
