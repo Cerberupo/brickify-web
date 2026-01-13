@@ -67,6 +67,10 @@ export function privacyHref(locale?: SupportedLocale): string {
     return localizePath('/privacy/', locale);
 }
 
+export function refundHref(locale?: SupportedLocale): string {
+    return localizePath('/refund-policy/', locale);
+}
+
 /** Swap current URL to target locale, keeping the rest of the path after the locale, including query and hash. */
 export function switchToLocale(target: SupportedLocale, currentPath?: string): string {
     // Build a full reference string including pathname + search + hash

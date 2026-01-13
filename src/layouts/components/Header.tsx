@@ -1,4 +1,16 @@
-import {Button} from "@/components/ui";
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui";
+import {Coins, CreditCard, History, LayoutDashboard, LogOut} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {clearUser} from "@/lib";
 import {useAuth} from "@/lib/hooks/useAuth";
@@ -200,12 +212,6 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
                     </div>
                     <nav>
                         <ul className="flex space-x-4 items-center">
-                            {user ? (
-                                <li>
-                                    <a href={localizePath('/dashboard')}
-                                       className="hover:text-primary transition-colors">{t('header.dashboard')}</a>
-                                </li>
-                            ) : null}
 
                             {/* Language selector */}
                             <li className="flex items-center gap-2">
@@ -251,26 +257,58 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
                             ) : null}
 
                             {user ? (
-                                <li>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={handleOpenInvoices}
-                                        disabled={portalLoading}
-                                        title={t('header.invoices', {defaultValue: 'Invoices'})}
-                                    >
-                                        {portalLoading
-                                            ? (i18n.language === 'es' ? 'Abriendo…' : 'Opening…')
-                                            : t('header.invoices', {defaultValue: 'Invoices'})}
-                                    </Button>
-                                </li>
-                            ) : null}
-
-                            {user ? (
-                                <li>
-                                    <Button variant="outline" size="sm" onClick={handleLogout}>
-                                        {t('header.logout')}
-                                    </Button>
+                                <li className="ml-2">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                                                <Avatar className="h-10 w-10">
+                                                    <AvatarImage src={(user as any).avatar} alt={user.name || ''}/>
+                                                    <AvatarFallback>{(user.name || 'U').charAt(0).toUpperCase()}</AvatarFallback>
+                                                </Avatar>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                                            <DropdownMenuLabel className="font-normal">
+                                                <div className="flex flex-col space-y-1">
+                                                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                                                    <p className="text-xs leading-none text-muted-foreground">
+                                                        {user.email}
+                                                    </p>
+                                                </div>
+                                            </DropdownMenuLabel>
+                                            <DropdownMenuSeparator/>
+                                            <DropdownMenuItem className="flex justify-between items-center">
+                                                <div className="flex items-center">
+                                                    <Coins className="mr-2 h-4 w-4 text-yellow-500"/>
+                                                    <span>{t('header.balance', {defaultValue: 'Balance'})}</span>
+                                                </div>
+                                                <span className="font-bold">{(user as any).balance || 0}</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator/>
+                                            <DropdownMenuItem onClick={() => navigate(localizePath('/dashboard'))}>
+                                                <LayoutDashboard className="mr-2 h-4 w-4"/>
+                                                <span>{t('header.dashboard')}</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => navigate(localizePath('/recharge'))}>
+                                                <CreditCard className="mr-2 h-4 w-4"/>
+                                                <span>{t('header.recharge', {defaultValue: 'Recharge Credits'})}</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => navigate(localizePath('/transactions'))}>
+                                                <History className="mr-2 h-4 w-4"/>
+                                                <span>{t('header.transactions', {defaultValue: 'My Transactions'})}</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={handleOpenInvoices} disabled={portalLoading}>
+                                                <CreditCard className="mr-2 h-4 w-4"/>
+                                                <span>{t('header.invoices', {defaultValue: 'Invoices'})}</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator/>
+                                            <DropdownMenuItem onClick={handleLogout}
+                                                              className="text-red-600 focus:text-red-600">
+                                                <LogOut className="mr-2 h-4 w-4"/>
+                                                <span>{t('header.logout')}</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </li>
                             ) : null}
                         </ul>

@@ -1,0 +1,17 @@
+---
+import MainLayout from "../../layouts/main.astro";
+import {PROJECT_NAME} from "../../config";
+import {AppWrapper} from "../../layouts";
+import FooterSection from "@/components/home/FooterSection.astro";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+import {TransactionsList} from "../../components/pages/transactions/TransactionsList";
+
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+---
+
+<MainLayout content={{title: `${PROJECT_NAME} - Mis Transacciones`}}>
+    <AppWrapper client:only="react">
+        <TransactionsList client:only="react"/>
+    </AppWrapper>
+    <FooterSection locale={locale}/>
+</MainLayout>

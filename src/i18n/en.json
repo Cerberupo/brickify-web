@@ -1,4 +1,73 @@
 {
+  "recharge": {
+    "cost_per_person": "100 tokens per photo",
+    "cost_breakdown": "25 hair · 25 face · 25 body · 25 legs",
+    "title": "Recharge your balance",
+    "subtitle": "Choose a pack and get credits to spend on your creations.",
+    "feature_credits": "{{credits}} Credits",
+    "feature_instant": "Instant recharge",
+    "buy_now": "Buy now",
+    "no_products": "No recharge products available at the moment.",
+    "error_loading": "Error loading products",
+    "error_session": "Error starting payment",
+    "products": {
+      "prod_recharge_300": {
+        "name": "Explorer",
+        "description": "Perfect for a small trial"
+      },
+      "prod_recharge_1100": {
+        "name": "Enthusiast",
+        "description": "For those who want more"
+      },
+      "prod_recharge_2000": {
+        "name": "Collector",
+        "description": "The perfect balance"
+      },
+      "prod_recharge_4600": {
+        "name": "Master",
+        "description": "Master your creations"
+      },
+      "prod_recharge_10000": {
+        "name": "Legend",
+        "description": "For ambitious projects"
+      },
+      "prod_recharge_21600": {
+        "name": "Architect",
+        "description": "The best value for money"
+      }
+    }
+  },
+  "transactions": {
+    "title": "My Transactions",
+    "total_balance": "Current Balance",
+    "date": "Date",
+    "description": "Description",
+    "type": "Type",
+    "amount": "Amount",
+    "status": "Status",
+    "no_transactions": "No transactions found",
+    "type_recharge": "Recharge",
+    "type_spend": "Spend",
+    "status_completed": "Completed",
+    "status_pending": "Pending",
+    "status_failed": "Failed"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "confirm_title": "Confirm Payment",
+    "confirm_subtitle": "Review the details before processing the payment with your credits.",
+    "group_name": "Collection",
+    "persons_count": "Number of photos",
+    "total_cost": "Total Cost",
+    "your_balance": "Your Balance",
+    "insufficient_balance": "Insufficient balance",
+    "pay_now": "Pay with Credits",
+    "go_to_recharge": "Recharge Credits",
+    "success_title": "Payment Successful",
+    "success_description": "Your collection is being processed. You will be redirected shortly.",
+    "payment_success": "Payment successful!",
+    "payment_error": "Payment failed"
+  },
   "common": {
     "loading": "Loading...",
     "cancel": "Cancel",
@@ -12,12 +81,16 @@
     "login": "Login",
     "register": "Register",
     "logout": "Logout",
-    "invoices": "Invoices"
+    "invoices": "Invoices",
+    "balance": "Balance",
+    "recharge": "Recharge Credits",
+    "transactions": "My Transactions"
   },
   "footer": {
     "allRightsReserved": "© 2025 Brickify. All rights reserved.",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
+    "refundPolicy": "Refund Policy",
     "contactUs": "Contact Us"
   },
   "errors": {
@@ -263,7 +336,7 @@
     "contactInfo": {
       "title": "Contact Information",
       "address": "123 Brickify Street, Tech City, TC 12345",
-      "email": "support@brickify.com",
+      "email": "contact@brickify.fun",
       "phone": "+1 (555) 123-4567",
       "hours": "Monday - Friday: 9am - 5pm"
     },

@@ -23,7 +23,7 @@ const copies = {
         formName: "Nombre*",
         formEmail: "Email*",
         formOpt2: "Acepto la política de privacidad",
-        btn: "Continuar al pago €2.99"
+        btn: "Continuar al pago"
     },
     en: {
         badge: "FAST PURCHASE · 1 PHOTO",
@@ -39,7 +39,7 @@ const copies = {
         formName: "Name*",
         formEmail: "Email*",
         formOpt2: "I accept the privacy policy",
-        btn: "Continue to payment €2.99"
+        btn: "Continue to payment"
     }
 } as const;
 const t = copies[locale];
@@ -240,7 +240,7 @@ const t = copies[locale];
             const hasImage = () => !!preview && !preview.classList.contains('hidden');
             const setHasImageState = (on) => {
                 drop.classList.toggle('has-image', !!on);
-            };
+                };
 
             const ensureErrorBanner = () => {
                 if (errorBanner) return errorBanner;
@@ -253,28 +253,28 @@ const t = copies[locale];
                 const dropWrapper = drop.parentElement;
                 if (dropWrapper) dropWrapper.insertBefore(errorBanner, drop);
                 return errorBanner;
-            };
+                };
             const showError = (msg) => {
                 const box = ensureErrorBanner();
                 if (!box) return;
                 box.textContent = msg;
                 box.classList.remove('hidden');
                 box.scrollIntoView({behavior: 'smooth', block: 'center'});
-            };
+                };
             const hideError = () => {
                 if (errorBanner) errorBanner.classList.add('hidden');
-            };
+                };
 
             const enter = (e) => {
                 e.preventDefault();
                 drop.classList.add('outline', 'outline-2', 'outline-black/30', 'is-hovering');
-            };
+                };
             const over = (e) => {
                 e.preventDefault();
-            };
+                };
             const leave = () => {
                 drop.classList.remove('outline', 'outline-2', 'outline-black/30', 'is-hovering');
-            };
+                };
 
             // Nota: no calculamos límite antes del recorte; el compresor del cropper lo reduce.
 
@@ -293,18 +293,18 @@ const t = copies[locale];
                 if (form) form.classList.remove('hidden');
                 // Mark state for hover overlay
                 setHasImageState(true);
-            };
+                };
 
             // Helpers
             const isValidEmail = (email) => {
                 if (!email || typeof email !== 'string') return false;
                 if (email.length > 200) return false;
                 return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(email);
-            };
+                };
 
             const isValidName = (name) => {
                 return typeof name === 'string' && name.trim().length >= 1 && name.trim().length <= 100;
-            };
+                };
 
             const setBtnLoading = (loading) => {
                 if (!btn) return;
@@ -313,11 +313,11 @@ const t = copies[locale];
                 if (loading) {
                     btn.dataset.prevText = btn.textContent || '';
                     btn.textContent = localeStr === 'es' ? 'Cargando…' : 'Loading…';
-                } else if (btn.dataset.prevText) {
+                    } else if (btn.dataset.prevText) {
                     btn.textContent = btn.dataset.prevText;
                     delete btn.dataset.prevText;
-                }
-            };
+                    }
+                };
 
             const handleFile = async (file) => {
                 hideError();
@@ -331,19 +331,19 @@ const t = copies[locale];
                     const tryOpen = (attempt) => {
                         window.dispatchEvent(new CustomEvent('open-quick-cropper', {
                             detail: {src: objectUrl, token}
-                        }));
+                            }));
                         // Si en ~200ms no se ha abierto para este token, reintentar hasta 3 veces
                         setTimeout(() => {
                             if (lastOpenedToken !== token && attempt < 3) {
                                 tryOpen(attempt + 1);
-                            }
-                        }, 200);
-                    };
+                                }
+                            }, 200);
+                        };
                     tryOpen(0);
-                } catch (err) {
+                    } catch (err) {
                     showError(localeStr === 'es' ? 'No se pudo abrir el recortador. Inténtalo de nuevo.' : 'Could not open cropper. Please try again.');
-                }
-            };
+                    }
+                };
 
             drop.addEventListener('dragenter', enter);
             drop.addEventListener('dragover', over);
@@ -354,7 +354,7 @@ const t = copies[locale];
                 const dt = e.dataTransfer;
                 const files = dt && dt.files ? dt.files : null;
                 if (files && files[0]) handleFile(files[0]);
-            });
+                });
 
             // Helper to open the native file picker reliably and recover if user cancels
             const openFilePicker = () => {
@@ -373,11 +373,11 @@ const t = copies[locale];
                             const f = fileInput && fileInput.files && fileInput.files[0];
                             if (!f) {
                                 isSelectingFile = false;
+                                }
                             }
-                        }
-                    }, 0);
+                        }, 0);
                     window.removeEventListener('focus', onWindowFocus);
-                };
+                    };
                 window.addEventListener('focus', onWindowFocus, {once: true});
 
                 // Salvaguarda adicional por si el focus handler no dispara en algún navegador
@@ -385,24 +385,24 @@ const t = copies[locale];
                     if (!cropperOpen) {
                         const f = fileInput && fileInput.files && fileInput.files[0];
                         if (!f) isSelectingFile = false;
-                    }
-                }, 2000);
+                        }
+                    }, 2000);
 
                 // Abrir selector nativo
                 setTimeout(() => fileInput.click(), 0);
-            };
+                };
 
             // Click/keyboard to open file dialog
             drop.addEventListener('click', () => {
                 openFilePicker();
-            });
+                });
             drop.addEventListener('keydown', (e) => {
                 const k = e && e.key ? e.key : '';
                 if (k === 'Enter' || k === ' ') {
                     e.preventDefault();
                     openFilePicker();
-                }
-            });
+                    }
+                });
 
             if (fileInput) {
                 fileInput.addEventListener('change', () => {
@@ -410,19 +410,19 @@ const t = copies[locale];
                     // salir del estado selección tanto si canceló como si eligió
                     isSelectingFile = false;
                     if (f) handleFile(f);
-                });
+                    });
                 // Algunos navegadores emiten 'cancel' en <input type="file"> al cerrar sin escoger
                 fileInput.addEventListener('cancel', () => {
                     isSelectingFile = false;
-                });
-            }
+                    });
+                }
 
             // Listeners del puente React
             const onOpened = (ev) => {
                 const tk = ev && ev.detail ? ev.detail.token : '';
                 if (tk) lastOpenedToken = tk;
                 cropperOpen = true;
-            };
+                };
             const onClosed = () => {
                 cropperOpen = false;
                 isSelectingFile = false;
@@ -430,7 +430,7 @@ const t = copies[locale];
                 lastOpenedToken = '';
                 if (fileInput) fileInput.value = '';
                 drop.classList.remove('is-hovering', 'outline', 'outline-2', 'outline-black/30');
-            };
+                };
             const onConfirmed = (ev) => {
                 const detail = ev && ev.detail ? ev.detail : {};
                 const tk = detail.token || '';
@@ -441,13 +441,13 @@ const t = copies[locale];
                 if (preview && previewUrl) {
                     preview.onload = () => {
                         applyPreviewStyles();
-                    };
+                        };
                     preview.src = previewUrl;
                     preview.classList.remove('hidden');
-                } else {
+                    } else {
                     applyPreviewStyles();
-                }
-            };
+                    }
+                };
             window.addEventListener('quick-cropper-opened', onOpened);
             window.addEventListener('quick-cropper-closed', onClosed);
             window.addEventListener('quick-cropper-confirmed', onConfirmed);
@@ -460,8 +460,8 @@ const t = copies[locale];
                 const dropEl = document.getElementById('qp-drop');
                 if (dropEl && dropEl.dataset) {
                     delete dropEl.dataset.inited;
-                }
-            };
+                    }
+                };
             window.addEventListener('astro:before-swap', cleanup, {once: true});
 
             // Submit handler: create guest order
@@ -478,19 +478,19 @@ const t = copies[locale];
                     if (!hasImage() || !croppedDataUrl) {
                         showError(localeStr === 'es' ? 'Primero sube una imagen válida.' : 'Please upload an image first.');
                         return;
-                    }
+                        }
                     if (!isValidName(name)) {
                         showError(localeStr === 'es' ? 'Introduce un nombre válido (1–100 caracteres).' : 'Enter a valid name (1–100 characters).');
                         return;
-                    }
+                        }
                     if (!isValidEmail(email)) {
                         showError(localeStr === 'es' ? 'Introduce un email válido (máx. 200 caracteres).' : 'Enter a valid email (max 200 chars).');
                         return;
-                    }
+                        }
                     if (!accepted) {
                         showError(localeStr === 'es' ? 'Debes aceptar la política de privacidad.' : 'You must accept the privacy policy.');
                         return;
-                    }
+                        }
 
                     // Build body strictly with allowed props
                     const body = {
@@ -499,7 +499,7 @@ const t = copies[locale];
                         imageBase64: croppedDataUrl, // data URL del recorte
                         lang: localeStr
                         // amount, currency: opcionales, omitimos para defaults del servidor
-                    };
+                        };
 
                     try {
                         setBtnLoading(true);
@@ -507,7 +507,7 @@ const t = copies[locale];
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify(body)
-                        });
+                            });
                         if (!resp.ok) {
                             // Intentar traducir errores conocidos relacionados con email
                             let msg = localeStr === 'es'
@@ -522,21 +522,21 @@ const t = copies[locale];
                                         msg = localeStr === 'es'
                                             ? 'No pudimos enviar el email porque esta dirección está suprimida debido a un rebote o queja previa.'
                                             : "We couldn't send the email because this address is suppressed due to a previous bounce or complaint.";
-                                    } else if (reason === 'disposable-domain' || reason === 'disposable_domain') {
+                                        } else if (reason === 'disposable-domain' || reason === 'disposable_domain') {
                                         msg = localeStr === 'es'
                                             ? 'No se permiten direcciones de correo desechables. Por favor, use otro email.'
                                             : 'Disposable email addresses are not allowed. Please use a different email.';
-                                    } else if (err && (err.message || err.error)) {
+                                        } else if (err && (err.message || err.error)) {
                                         msg = String(err.message || err.error);
-                                    }
-                                } else if (err && (err.message || err.error)) {
+                                        }
+                                    } else if (err && (err.message || err.error)) {
                                     msg = String(err.message || err.error);
-                                }
-                            } catch (_) {
+                                    }
+                                } catch (_) {
                                 // Ignorar errores de parseo y mantener mensaje por defecto
-                            }
+                                }
                             throw new Error(msg);
-                        }
+                            }
                         const json = await resp.json();
                         const data = json && (json.data || json);
                         const clientSecret = data?.clientSecret;
@@ -544,7 +544,7 @@ const t = copies[locale];
                         const groupId = data?.groupId;
                         if (!clientSecret || !groupId) {
                             throw new Error(localeStr === 'es' ? 'Respuesta inválida del servidor.' : 'Invalid server response.');
-                        }
+                            }
                         // Persist for checkout page consumption
                         try {
                             sessionStorage.setItem('guestCheckout', JSON.stringify({
@@ -552,33 +552,33 @@ const t = copies[locale];
                                 sessionId,
                                 groupId,
                                 ts: Date.now()
-                            }));
-                        } catch (_) {
-                        }
+                                }));
+                            } catch (_) {
+                            }
                         // Redirect to localized checkout
                         const target = `/${localeStr}/checkout?groupId=${encodeURIComponent(groupId)}`;
                         window.location.href = target;
 
-                    } catch (err) {
+                        } catch (err) {
                         const msg = (err && err.message) ? err.message : (localeStr === 'es' ? 'Ha ocurrido un error inesperado.' : 'An unexpected error occurred.');
                         showError(msg);
-                    } finally {
+                        } finally {
                         setBtnLoading(false);
-                    }
-                });
+                        }
+                    });
+                }
             }
-        }
 
-        // Initialize on first load and on Astro client transitions
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            initQuickPhotoSection();
-        } else {
-            document.addEventListener('DOMContentLoaded', () => initQuickPhotoSection(), {once: true});
-        }
-        window.addEventListener('astro:page-load', initQuickPhotoSection);
-        window.addEventListener('astro:after-swap', initQuickPhotoSection);
-        // When Astro is about to swap the page, a per-init cleanup is registered above to detach listeners
-        // Ensure re-initialization when returning with browser back/forward
-        window.addEventListener('pageshow', () => initQuickPhotoSection());
+            // Initialize on first load and on Astro client transitions
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                initQuickPhotoSection();
+                } else {
+                document.addEventListener('DOMContentLoaded', () => initQuickPhotoSection(), {once: true});
+                }
+            window.addEventListener('astro:page-load', initQuickPhotoSection);
+            window.addEventListener('astro:after-swap', initQuickPhotoSection);
+            // When Astro is about to swap the page, a per-init cleanup is registered above to detach listeners
+            // Ensure re-initialization when returning with browser back/forward
+            window.addEventListener('pageshow', () => initQuickPhotoSection());
     </script>
 </section>

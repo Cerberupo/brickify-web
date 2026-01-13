@@ -73,8 +73,9 @@ export default function CheckoutReturnPage() {
     if (status === 'complete') {
         const params = new URLSearchParams(window.location.search);
         const groupId = params.get('groupId');
-        const currency = (details?.currency || 'eur').toUpperCase();
-        const fmt = (cents?: number | null) => typeof cents === 'number' ? `${(cents / 100).toFixed(2)} €` : '—';
+        const currency = (details?.currency || 'usd').toUpperCase();
+        const symbol = currency === 'USD' ? '$' : currency;
+        const fmt = (cents?: number | null) => typeof cents === 'number' ? `${(cents / 100).toFixed(2)} ${symbol}` : '—';
         const goHomeWithGuestParams = () => {
             // Inferir locale por la ruta actual
             const loc = window.location.pathname.startsWith('/es') ? 'es' : 'en';

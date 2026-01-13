@@ -1,4 +1,73 @@
 {
+  "recharge": {
+    "cost_per_person": "100 tokens por foto",
+    "cost_breakdown": "25 pelo · 25 cara · 25 cuerpo · 25 pantalón",
+    "title": "Recarga tu saldo",
+    "subtitle": "Elige un pack y obtén créditos para gastar en tus creaciones.",
+    "feature_credits": "{{credits}} Créditos",
+    "feature_instant": "Recarga instantánea",
+    "buy_now": "Comprar ahora",
+    "no_products": "No hay productos de recarga disponibles en este momento.",
+    "error_loading": "Error al cargar los productos",
+    "error_session": "Error al iniciar el pago",
+    "products": {
+      "prod_recharge_300": {
+        "name": "Explorador",
+        "description": "Ideal para una pequeña prueba"
+      },
+      "prod_recharge_1100": {
+        "name": "Entusiasta",
+        "description": "Para los que quieren más"
+      },
+      "prod_recharge_2000": {
+        "name": "Coleccionista",
+        "description": "El equilibrio perfecto"
+      },
+      "prod_recharge_4600": {
+        "name": "Maestro",
+        "description": "Domina tus creaciones"
+      },
+      "prod_recharge_10000": {
+        "name": "Leyenda",
+        "description": "Para proyectos ambiciosos"
+      },
+      "prod_recharge_21600": {
+        "name": "Arquitecto",
+        "description": "La mejor relación calidad-precio"
+      }
+    }
+  },
+  "transactions": {
+    "title": "Mis transacciones",
+    "total_balance": "Saldo actual",
+    "date": "Fecha",
+    "description": "Descripción",
+    "type": "Tipo",
+    "amount": "Cantidad",
+    "status": "Estado",
+    "no_transactions": "No se encontraron transacciones",
+    "type_recharge": "Recarga",
+    "type_spend": "Gasto",
+    "status_completed": "Completado",
+    "status_pending": "Pendiente",
+    "status_failed": "Fallido"
+  },
+  "checkout": {
+    "title": "Pago",
+    "confirm_title": "Confirmar Pago",
+    "confirm_subtitle": "Revisa los detalles antes de procesar el pago con tus créditos.",
+    "group_name": "Colección",
+    "persons_count": "Número de fotos",
+    "total_cost": "Coste Total",
+    "your_balance": "Tu Saldo",
+    "insufficient_balance": "Saldo insuficiente",
+    "pay_now": "Pagar con Créditos",
+    "go_to_recharge": "Recargar Créditos",
+    "success_title": "Pago Exitoso",
+    "success_description": "Tu colección está siendo procesada. Serás redirigido en breve.",
+    "payment_success": "¡Pago realizado con éxito!",
+    "payment_error": "Error al procesar el pago"
+  },
   "common": {
     "loading": "Cargando...",
     "cancel": "Cancelar",
@@ -12,12 +81,16 @@
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "logout": "Cerrar sesión",
-    "invoices": "Facturas"
+    "invoices": "Facturas",
+    "balance": "Saldo",
+    "recharge": "Recargar créditos",
+    "transactions": "Mis transacciones"
   },
   "footer": {
     "allRightsReserved": "© 2025 Brickify. Todos los derechos reservados.",
     "termsOfService": "Términos de servicio",
     "privacyPolicy": "Política de privacidad",
+    "refundPolicy": "Política de reembolso",
     "contactUs": "Contáctenos"
   },
   "errors": {
@@ -261,7 +334,7 @@
     "contactInfo": {
       "title": "Información de Contacto",
       "address": "123 Calle Brickify, Ciudad Tecnológica, CT 12345",
-      "email": "soporte@brickify.com",
+      "email": "contact@brickify.fun",
       "phone": "+1 (555) 123-4567",
       "hours": "Lunes - Viernes: 9am - 5pm"
     },

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Button, Card, CardContent, CardHeader, CardTitle} from '@/components/ui';
+import {Coins} from 'lucide-react';
 
 export type PurchaseDetails = {
     line_items?: Array<{
@@ -57,7 +58,7 @@ export function OrderSummaryCard(props: {
     } = props;
 
     const fmt2 = (cents: number) => (cents / 100).toFixed(2);
-    const fmtPrice = (cents?: number | null) => typeof cents === 'number' ? `${fmt2(cents)} €` : '—';
+    const fmtPrice = (cents?: number | null) => typeof cents === 'number' ? `${fmt2(cents)} $` : '—';
 
     // Derive total members (persons) from entries (sum individuals and people inside groups)
     let totalMembers = 0;
@@ -132,6 +133,10 @@ export function OrderSummaryCard(props: {
 
     const subtotal = items.reduce((acc, it) => acc + it.amount_total, 0);
 
+    // Cost in credits
+    const costPerPerson = 100;
+    const totalCredits = totalMembers * costPerPerson;
+
     return (
         <Card>
             <CardHeader>
@@ -140,33 +145,35 @@ export function OrderSummaryCard(props: {
             <CardContent>
                 <div className="space-y-2">
                     <div className="divide-y">
-                        {items.map((it) => (
-                            <div key={it.id} className="flex items-center justify-between py-2 text-sm">
-                                <div className="min-w-0">
-                                    <div className="font-medium truncate" title={it.description}>{it.description}</div>
-                                    <div className="text-gray-500">
-                                        {(labels.qty || 'Qty')}: {it.quantity} · {(labels.unit || 'Unit')}: {fmtPrice(it.unit_amount)}
-                                    </div>
+                        <div className="flex items-center justify-between py-2 text-sm">
+                            <div className="min-w-0">
+                                <div className="font-medium truncate">{labels.item || 'Item'}</div>
+                                <div className="text-gray-500">
+                                    {(labels.qty || 'Qty')}: {totalMembers} · {costPerPerson} {(labels.unit || 'Credits')}
                                 </div>
-                                <div className="font-medium">{fmtPrice(it.amount_total)}</div>
                             </div>
-                        ))}
-                        {items.length === 0 ? (
-                            <div className="py-2 text-sm text-gray-500">{labels.item || 'Item'}: —</div>
-                        ) : null}
+                            <div className="font-medium flex items-center">
+                                <Coins className="h-4 w-4 mr-1 text-yellow-500"/>
+                                {totalCredits}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="mt-3 pt-3 border-t text-sm space-y-1">
-                        {/* Subtotal omitted because VAT is unknown */}
                         <div className="flex justify-between font-semibold text-base">
                             <span>{labels.total || 'Total'}</span>
-                            <span>{fmtPrice(subtotal)}</span>
+                            <div className="flex items-center">
+                                <Coins className="h-5 w-5 mr-1 text-yellow-500"/>
+                                {totalCredits}
+                            </div>
                         </div>
                     </div>
 
                     {canEdit && onCheckout ? (
                         <div className="flex justify-end mt-4">
-                            <Button onClick={onCheckout}>{labels.checkout || 'Checkout'}</Button>
+                            <Button onClick={onCheckout} className="w-full sm:w-auto">
+                                {labels.checkout || 'Checkout'}
+                            </Button>
                         </div>
                     ) : null}
                 </div>

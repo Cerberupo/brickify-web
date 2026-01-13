@@ -144,7 +144,7 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
                     <CardFooter className="border-t pt-4">
                         <div className="flex justify-between w-full">
                             <span className="font-medium">{t('dashboard.groupPrice')}</span>
-                            <span className="font-bold">{group.price.toFixed(2)} €</span>
+                            <span className="font-bold">${group.price.toFixed(2)}</span>
                         </div>
                     </CardFooter>
                 )}
