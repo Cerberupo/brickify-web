@@ -12,3 +12,4 @@ export * from './OrderSummaryCard';
 export * from './GroupHeader';
 export * from './GroupSummaryHeader';
 export * from './StickyOverlay';
+export * from './ConfirmPaymentDialog';

@@ -27,9 +27,11 @@ import {
     OrderSummaryCard,
     StickyOverlay
 } from './components';
+import {useAuthContext} from '@/lib/stores/authStore';
 
 export function GroupPage() {
     const {t} = useTranslation();
+    const {user} = useAuthContext();
     const [group, setGroup] = useState<Group | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [groupId, setGroupId] = useState<string>('');
@@ -58,6 +60,10 @@ export function GroupPage() {
         type: 'person' | 'group'
     }>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Payment confirmation dialog state
+    const [confirmPaymentOpen, setConfirmPaymentOpen] = useState(false);
+    const [isPaying, setIsPaying] = useState(false);
 
     useEffect(() => {
         const fetchGroup = async () => {
@@ -135,6 +141,26 @@ export function GroupPage() {
 
     // Use backend-provided totalUsers for consistency with dashboard card and API
     const totalMembers = group?.totalUsers ?? 0;
+
+    const handlePayWithCredits = async () => {
+        try {
+            setIsPaying(true);
+            await payGroupWithCredits(groupId);
+            toast.success(t('checkout.payment_success'));
+            // Actualizar el grupo para ver el nuevo estado (inProcess/inAssembly)
+            const fresh = await getGroupById(groupId);
+            setGroup(fresh);
+            // Actualizar el perfil del usuario para ver el nuevo saldo
+            await getProfile();
+            setConfirmPaymentOpen(false);
+        } catch (error: any) {
+            console.error('Error paying with credits:', error);
+            const msg = error?.message || t('checkout.payment_error');
+            toast.error(msg);
+        } finally {
+            setIsPaying(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -373,24 +399,7 @@ export function GroupPage() {
                     title={t('group.totalCost')}
                     entries={(group.referencePeople as any[]) || []}
                     canEdit={canEdit}
-                    onCheckout={async () => {
-                        try {
-                            setIsLoading(true);
-                            await payGroupWithCredits(groupId);
-                            toast.success(t('checkout.payment_success'));
-                            // Actualizar el grupo para ver el nuevo estado (inProcess/inAssembly)
-                            const fresh = await getGroupById(groupId);
-                            setGroup(fresh);
-                            // Actualizar el perfil del usuario para ver el nuevo saldo
-                            await getProfile();
-                        } catch (error: any) {
-                            console.error('Error paying with credits:', error);
-                            const msg = error?.message || t('checkout.payment_error');
-                            toast.error(msg);
-                        } finally {
-                            setIsLoading(false);
-                        }
-                    }}
+                    onCheckout={() => setConfirmPaymentOpen(true)}
                     labels={{
                         item: t('checkout.item', 'Item'),
                         qty: t('checkout.qty', 'Qty'),
@@ -445,6 +454,17 @@ export function GroupPage() {
                         setIsDeleting(false);
                     }
                 }}
+            />
+
+            <ConfirmPaymentDialog
+                open={confirmPaymentOpen}
+                onOpenChange={setConfirmPaymentOpen}
+                onConfirm={handlePayWithCredits}
+                isProcessing={isPaying}
+                totalMembers={totalMembers}
+                costPerMember={100}
+                totalCost={totalMembers * 100}
+                currentBalance={user?.balance || 0}
             />
         </div>
     );

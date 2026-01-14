@@ -62,7 +62,19 @@
   },
   "checkout": {
     "payment_success": "Payment successful!",
-    "payment_error": "Payment failed"
+    "payment_error": "Payment failed",
+    "confirm_payment": {
+      "title": "Confirm order",
+      "description": "Are you sure you want to place the order? Credits will be deducted from your balance.",
+      "summary": "Order Summary",
+      "members": "Members:",
+      "cost_per_member": "Cost per member:",
+      "total_cost": "Total cost:",
+      "current_balance": "Current balance:",
+      "remaining_balance": "Balance after payment:",
+      "confirm": "Confirm and pay",
+      "cancel": "Cancel"
+    }
   },
   "common": {
     "loading": "Loading...",
