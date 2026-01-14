@@ -12,18 +12,53 @@ export default function RechargeStatus() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const statusParam = urlParams.get('status');
-        setStatus(statusParam);
+        const updateStatus = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let statusParam = urlParams.get('status');
 
-        if (statusParam === 'success') {
-            // Refresh profile to get updated balance
-            getProfile().finally(() => {
+            // Defensive: if status is missing but session_id is present, it's likely a success redirect that lost params
+            if (!statusParam && urlParams.has('session_id')) {
+                statusParam = 'success';
+            }
+
+            setStatus(statusParam);
+
+            if (statusParam === 'success') {
+                // Initial immediate refresh
+                getProfile().finally(() => {
+                    setLoading(false);
+                });
+
+                // Schedule subsequent refreshes at 15s, 30s, and 60s
+                // We do NOT clear these in the cleanup function so they persist even if user navigates away
+                // (as long as the JS environment stays alive, e.g. Astro view transitions)
+                setTimeout(() => {
+                    console.log('[recharge] Scheduled refresh at 15s');
+                    getProfile().catch(() => {
+                    });
+                }, 15000);
+
+                setTimeout(() => {
+                    console.log('[recharge] Scheduled refresh at 30s');
+                    getProfile().catch(() => {
+                    });
+                }, 30000);
+
+                setTimeout(() => {
+                    console.log('[recharge] Scheduled refresh at 60s');
+                    getProfile().catch(() => {
+                    });
+                }, 60000);
+            } else {
                 setLoading(false);
-            });
-        } else {
-            setLoading(false);
-        }
+            }
+        };
+
+        updateStatus();
+
+        // Listen for Astro view transitions / page loads
+        window.addEventListener('astro:page-load', updateStatus);
+        return () => window.removeEventListener('astro:page-load', updateStatus);
     }, []);
 
     if (loading) {
