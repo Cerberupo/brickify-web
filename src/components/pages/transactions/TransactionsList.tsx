@@ -6,9 +6,11 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/
 import {Button} from '@/components/ui/button';
 import {ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, Coins, History} from 'lucide-react';
 import {format} from 'date-fns';
+import {useAuthContext} from "@/lib/stores/authStore";
 
 export function TransactionsList() {
     const {t, i18n} = useTranslation();
+    const {user} = useAuthContext();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -52,7 +54,7 @@ export function TransactionsList() {
                     <div className="flex items-center space-x-2">
                         <Coins className="h-5 w-5 text-yellow-500"/>
                         <span
-                            className="text-lg font-semibold">{t('transactions.total_balance', {defaultValue: 'Balance'})}: {pagination.total > 0 ? transactions[0]?.userBalance || 0 : 0}</span>
+                            className="text-lg font-semibold">{t('transactions.total_balance', {defaultValue: 'Balance'})}: {user?.balance || 0}</span>
                     </div>
                 </CardHeader>
                 <CardContent>
