@@ -1,5 +1,6 @@
 ---
 import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+import {API_URL} from "@/config";
 
 interface Props {
     locale?: SupportedLocale
@@ -76,13 +77,10 @@ const t = copies[locale];
         </div>
     </div>
 
-    <script define:vars={{locale, tMinutes: t.minutes, tLabels: t}}>
+    <script define:vars={{locale, tMinutes: t.minutes, tLabels: t, API_URL}}>
         async function getRechargeProducts() {
             try {
-                // Get API_URL from window if available, or fallback
-                // Since this is a script tag, we use fetch directly to avoid complex imports if possible
-                const apiUrl = (window.PROJECT_CONFIG && window.PROJECT_CONFIG.API_URL) || 'http://localhost:3000/api';
-                const response = await fetch(`${apiUrl}/payments/recharge-products?lang=${locale}`);
+                const response = await fetch(`${API_URL}/payments/recharge-products?lang=${locale}`);
                 const payload = await response.json();
                 return payload.data || [];
             } catch (error) {
