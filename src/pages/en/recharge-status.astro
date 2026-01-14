@@ -1,10 +1,10 @@
 ---
-import MainLayout from "../../../layouts/main.astro";
-import {PROJECT_NAME} from "../../../config";
-import {AppWrapper} from "../../../layouts";
+import MainLayout from "../../layouts/main.astro";
+import {PROJECT_NAME} from "../../config";
+import {AppWrapper} from "../../layouts";
 import FooterSection from "@/components/home/FooterSection.astro";
 import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
-import RechargeStatus from "../../../components/pages/recharge/RechargeStatus";
+import RechargeStatus from "../../components/pages/recharge/RechargeStatus";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
