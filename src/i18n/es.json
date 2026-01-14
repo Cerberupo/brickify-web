@@ -60,22 +60,6 @@
     "status_pending": "Pendiente",
     "status_failed": "Fallido"
   },
-  "checkout": {
-    "payment_success": "¡Pago realizado con éxito!",
-    "payment_error": "Error al procesar el pago",
-    "confirm_payment": {
-      "title": "Confirmar pedido",
-      "description": "¿Estás seguro de que quieres realizar el pedido? Se descontarán los créditos de tu saldo.",
-      "summary": "Resumen del pedido",
-      "members": "Miembros:",
-      "cost_per_member": "Coste por miembro:",
-      "total_cost": "Coste total:",
-      "current_balance": "Saldo actual:",
-      "remaining_balance": "Saldo tras el pago:",
-      "confirm": "Confirmar y pagar",
-      "cancel": "Cancelar"
-    }
-  },
   "common": {
     "loading": "Cargando...",
     "cancel": "Cancelar",
@@ -476,7 +460,21 @@
     "noShipping": "Sin dirección de envío",
     "paymentStatus": "Estado del pago",
     "email": "Correo electrónico",
-    "currency": "Moneda"
+    "currency": "Moneda",
+    "payment_success": "¡Pago realizado con éxito!",
+    "payment_error": "Error al procesar el pago",
+    "confirm_payment": {
+      "title": "Confirmar pedido",
+      "description": "¿Estás seguro de que quieres realizar el pedido? Se descontarán los créditos de tu saldo.",
+      "summary": "Resumen del pedido",
+      "members": "Miembros:",
+      "cost_per_member": "Coste por miembro:",
+      "total_cost": "Coste total:",
+      "current_balance": "Saldo actual:",
+      "remaining_balance": "Saldo tras el pago:",
+      "confirm": "Confirmar y pagar",
+      "cancel": "Cancelar"
+    }
   },
   "publicShare": {
     "title": "Perfil compartido",
