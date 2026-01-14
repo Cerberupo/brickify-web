@@ -1,17 +1,17 @@
 ---
-import MainLayout from "../../../layouts/main.astro";
-import {AppWrapper} from "../../../layouts";
-import CheckoutReturnPage from "../../../components/pages/checkout/Return";
-import {PROJECT_NAME} from "../../../config";
+import MainLayout from "../layouts/main.astro";
+import {PROJECT_NAME} from "../config";
+import {AppWrapper} from "../layouts";
 import FooterSection from "@/components/home/FooterSection.astro";
 import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+import RechargeStatus from "../components/pages/recharge/RechargeStatus";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 
-<MainLayout content={{title: `${PROJECT_NAME} - Checkout Return`}}>
+<MainLayout content={{title: `${PROJECT_NAME} - Recharge Status`}}>
     <AppWrapper client:only="react">
-        <CheckoutReturnPage client:only="react"/>
+        <RechargeStatus client:only="react"/>
     </AppWrapper>
     <FooterSection locale={locale}/>
 </MainLayout>

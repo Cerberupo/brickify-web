@@ -35,6 +35,14 @@
         "name": "Architect",
         "description": "The best value for money"
       }
+    },
+    "status": {
+      "successTitle": "Recharge completed!",
+      "successMessage": "Your tokens have been successfully added to your account. You can now use them for your creations.",
+      "cancelTitle": "Recharge cancelled",
+      "cancelMessage": "The recharge process has been cancelled. No charges have been made.",
+      "goToDashboard": "Go to Dashboard",
+      "tryAgain": "Try again"
     }
   },
   "transactions": {
@@ -53,18 +61,6 @@
     "status_failed": "Failed"
   },
   "checkout": {
-    "title": "Checkout",
-    "confirm_title": "Confirm Payment",
-    "confirm_subtitle": "Review the details before processing the payment with your credits.",
-    "group_name": "Collection",
-    "persons_count": "Number of photos",
-    "total_cost": "Total Cost",
-    "your_balance": "Your Balance",
-    "insufficient_balance": "Insufficient balance",
-    "pay_now": "Pay with Credits",
-    "go_to_recharge": "Recharge Credits",
-    "success_title": "Payment Successful",
-    "success_description": "Your collection is being processed. You will be redirected shortly.",
     "payment_success": "Payment successful!",
     "payment_error": "Payment failed"
   },

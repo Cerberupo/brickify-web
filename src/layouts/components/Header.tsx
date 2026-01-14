@@ -260,7 +260,8 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
                                 <li className="ml-2">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                                            <Button variant="ghost"
+                                                    className="relative h-10 w-10 rounded-full cursor-pointer">
                                                 <Avatar className="h-10 w-10">
                                                     <AvatarImage src={(user as any).avatar} alt={user.name || ''}/>
                                                     <AvatarFallback>{(user.name || 'U').charAt(0).toUpperCase()}</AvatarFallback>
@@ -277,7 +278,8 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
                                                 </div>
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator/>
-                                            <DropdownMenuItem className="flex justify-between items-center">
+                                            <DropdownMenuItem
+                                                className="flex justify-between items-center cursor-pointer">
                                                 <div className="flex items-center">
                                                     <Coins className="mr-2 h-4 w-4 text-yellow-500"/>
                                                     <span>{t('header.balance', {defaultValue: 'Balance'})}</span>
@@ -285,25 +287,29 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
                                                 <span className="font-bold">{(user as any).balance || 0}</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator/>
-                                            <DropdownMenuItem onClick={() => navigate(localizePath('/dashboard'))}>
+                                            <DropdownMenuItem onClick={() => navigate(localizePath('/dashboard'))}
+                                                              className="cursor-pointer">
                                                 <LayoutDashboard className="mr-2 h-4 w-4"/>
                                                 <span>{t('header.dashboard')}</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => navigate(localizePath('/recharge'))}>
+                                            <DropdownMenuItem onClick={() => navigate(localizePath('/recharge'))}
+                                                              className="cursor-pointer">
                                                 <CreditCard className="mr-2 h-4 w-4"/>
                                                 <span>{t('header.recharge', {defaultValue: 'Recharge Credits'})}</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => navigate(localizePath('/transactions'))}>
+                                            <DropdownMenuItem onClick={() => navigate(localizePath('/transactions'))}
+                                                              className="cursor-pointer">
                                                 <History className="mr-2 h-4 w-4"/>
                                                 <span>{t('header.transactions', {defaultValue: 'My Transactions'})}</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={handleOpenInvoices} disabled={portalLoading}>
+                                            <DropdownMenuItem onClick={handleOpenInvoices} disabled={portalLoading}
+                                                              className="cursor-pointer">
                                                 <CreditCard className="mr-2 h-4 w-4"/>
                                                 <span>{t('header.invoices', {defaultValue: 'Invoices'})}</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator/>
                                             <DropdownMenuItem onClick={handleLogout}
-                                                              className="text-red-600 focus:text-red-600">
+                                                              className="text-red-600 focus:text-red-600 cursor-pointer">
                                                 <LogOut className="mr-2 h-4 w-4"/>
                                                 <span>{t('header.logout')}</span>
                                             </DropdownMenuItem>

@@ -25,29 +25,12 @@ import {
     OrderSummaryCard,
     StickyOverlay
 } from './components';
-import {getUnitPrices} from '@/lib/services/stripe';
 
 export function GroupPage() {
     const {t} = useTranslation();
     const [group, setGroup] = useState<Group | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [groupId, setGroupId] = useState<string>('');
-    const [unitPrices, setUnitPrices] = useState<{
-        single: {
-            id: string;
-            name: string | null;
-            unitAmount: number;
-            currency: string;
-            taxBehavior?: 'inclusive' | 'exclusive' | null
-        } | null;
-        group: {
-            id: string;
-            name: string | null;
-            unitAmount: number;
-            currency: string;
-            taxBehavior?: 'inclusive' | 'exclusive' | null
-        } | null
-    }>({single: null, group: null});
 
     // Inline add/edit state
     const [addingMode, setAddingMode] = useState<'none' | 'single' | 'pair'>('none');
@@ -104,9 +87,6 @@ export function GroupPage() {
         };
 
         fetchGroup();
-        // Fetch unit prices for summary
-        getUnitPrices().then(setUnitPrices).catch(() => {
-        });
     }, [t]);
 
     // Poll group details every 15s while status is inAssembly or inProcess
@@ -389,11 +369,9 @@ export function GroupPage() {
                 {/* Bottom Section: Order Summary */}
                 {group.status === 'readyForPayment' && (<OrderSummaryCard
                     title={t('group.totalCost')}
-
-                    unitPrices={unitPrices as any}
                     entries={(group.referencePeople as any[]) || []}
                     canEdit={canEdit}
-                    onCheckout={() => navigate(APP_ROUTES.CHECKOUT, {id: groupId})}
+                    onCheckout={() => navigate('/checkout/', {id: groupId})}
                     labels={{
                         item: t('checkout.item', 'Item'),
                         qty: t('checkout.qty', 'Qty'),

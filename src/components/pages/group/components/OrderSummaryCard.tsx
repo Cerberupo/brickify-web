@@ -27,7 +27,6 @@ export type UnitPrice = {
 
 export function OrderSummaryCard(props: {
     title?: string;
-    unitPrices: { single: UnitPrice | null; group: UnitPrice | null };
     entries: any[];
     canEdit: boolean;
     onCheckout?: () => void;
@@ -50,7 +49,6 @@ export function OrderSummaryCard(props: {
 }) {
     const {
         title = 'Order Summary',
-        unitPrices,
         entries,
         canEdit,
         onCheckout,
@@ -99,37 +97,15 @@ export function OrderSummaryCard(props: {
         amount_total: number;
     }> = [];
 
-    if (totalMembers > 0) {
-        const unitCents = getUnitPriceCentsForCount(totalMembers);
-        const description = labels.item || 'Item';
-        items = [{
-            id: 'per-person',
-            description,
-            quantity: totalMembers,
-            unit_amount: unitCents,
-            amount_total: unitCents * totalMembers,
-        }];
-    } else {
-        // Fallback to original behavior when there are no members yet
-        if (unitPrices.single && singles > 0) {
-            items.push({
-                id: unitPrices.single.id || 'single',
-                description: unitPrices.single.name || (labels.item || 'Item'),
-                quantity: singles,
-                unit_amount: unitPrices.single.unitAmount,
-                amount_total: unitPrices.single.unitAmount * singles,
-            });
-        }
-        if (unitPrices.group && groupsCnt > 0) {
-            items.push({
-                id: unitPrices.group.id || 'group',
-                description: unitPrices.group.name || (labels.item || 'Item'),
-                quantity: groupsCnt,
-                unit_amount: unitPrices.group.unitAmount,
-                amount_total: unitPrices.group.unitAmount * groupsCnt,
-            });
-        }
-    }
+    const unitCents = getUnitPriceCentsForCount(totalMembers);
+    const description = labels.item || 'Item';
+    items = [{
+        id: 'per-person',
+        description,
+        quantity: totalMembers,
+        unit_amount: unitCents,
+        amount_total: unitCents * totalMembers,
+    }];
 
     const subtotal = items.reduce((acc, it) => acc + it.amount_total, 0);
 

@@ -35,6 +35,14 @@
         "name": "Arquitecto",
         "description": "La mejor relación calidad-precio"
       }
+    },
+    "status": {
+      "successTitle": "¡Recarga completada!",
+      "successMessage": "Tus tokens han sido añadidos a tu cuenta con éxito. Ya puedes usarlos para tus creaciones.",
+      "cancelTitle": "Recarga cancelada",
+      "cancelMessage": "El proceso de recarga ha sido cancelado. No se ha realizado ningún cargo.",
+      "goToDashboard": "Ir al Dashboard",
+      "tryAgain": "Intentar de nuevo"
     }
   },
   "transactions": {
@@ -53,18 +61,6 @@
     "status_failed": "Fallido"
   },
   "checkout": {
-    "title": "Pago",
-    "confirm_title": "Confirmar Pago",
-    "confirm_subtitle": "Revisa los detalles antes de procesar el pago con tus créditos.",
-    "group_name": "Colección",
-    "persons_count": "Número de fotos",
-    "total_cost": "Coste Total",
-    "your_balance": "Tu Saldo",
-    "insufficient_balance": "Saldo insuficiente",
-    "pay_now": "Pagar con Créditos",
-    "go_to_recharge": "Recargar Créditos",
-    "success_title": "Pago Exitoso",
-    "success_description": "Tu colección está siendo procesada. Serás redirigido en breve.",
     "payment_success": "¡Pago realizado con éxito!",
     "payment_error": "Error al procesar el pago"
   },
