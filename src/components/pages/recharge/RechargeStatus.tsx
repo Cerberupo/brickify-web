@@ -4,6 +4,7 @@ import {Button} from '@/components/ui/button';
 import {navigate} from "@/lib";
 import {localizePath} from "@/lib/localeLinks";
 import {CheckCircle2, Loader2, XCircle} from "lucide-react";
+import {getProfile} from "@/lib/services/auth";
 
 export default function RechargeStatus() {
     const {t} = useTranslation();
@@ -14,7 +15,15 @@ export default function RechargeStatus() {
         const urlParams = new URLSearchParams(window.location.search);
         const statusParam = urlParams.get('status');
         setStatus(statusParam);
-        setLoading(false);
+
+        if (statusParam === 'success') {
+            // Refresh profile to get updated balance
+            getProfile().finally(() => {
+                setLoading(false);
+            });
+        } else {
+            setLoading(false);
+        }
     }, []);
 
     if (loading) {

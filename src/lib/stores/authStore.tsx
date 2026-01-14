@@ -60,19 +60,16 @@ export async function initAuth(): Promise<User | null> {
         // Check if user data is already in sessionStorage
         const storedUser = getUserFromStorage();
         if (storedUser) {
-            // Use the stored user data instead of making an API call
+            // Use the stored user data as initial state
             userAtom.set(storedUser);
 
             // Change language if user has a language preference
             if (storedUser.language && i18n.languages.includes(storedUser.language)) {
                 i18n.changeLanguage(storedUser.language);
             }
-
-            isLoadingAtom.set(false);
-            return storedUser;
         }
 
-        // If no stored user data, fetch from API
+        // Always fetch from API to ensure we have the latest data (e.g. balance)
         const response = await fetchProfile();
         const user = response.user || null;
 

@@ -371,7 +371,24 @@ export function GroupPage() {
                     title={t('group.totalCost')}
                     entries={(group.referencePeople as any[]) || []}
                     canEdit={canEdit}
-                    onCheckout={() => navigate('/checkout/', {id: groupId})}
+                    onCheckout={async () => {
+                        try {
+                            setIsLoading(true);
+                            await payGroupWithCredits(groupId);
+                            toast.success(t('checkout.payment_success'));
+                            // Actualizar el grupo para ver el nuevo estado (inProcess/inAssembly)
+                            const fresh = await getGroupById(groupId);
+                            setGroup(fresh);
+                            // Actualizar el perfil del usuario para ver el nuevo saldo
+                            await getProfile();
+                        } catch (error: any) {
+                            console.error('Error paying with credits:', error);
+                            const msg = error?.message || t('checkout.payment_error');
+                            toast.error(msg);
+                        } finally {
+                            setIsLoading(false);
+                        }
+                    }}
                     labels={{
                         item: t('checkout.item', 'Item'),
                         qty: t('checkout.qty', 'Qty'),
