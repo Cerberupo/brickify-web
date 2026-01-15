@@ -8,10 +8,10 @@ import {APP_ROUTES} from '@/constants/routes';
 import {EmailField, PasswordField} from "@/components/inputFields";
 import {toast} from 'sonner';
 import {navigate} from '@/lib/utils';
-import { localizePath } from '@/lib/localeLinks';
+import {localizePath} from '@/lib/localeLinks';
 
 
-export function LoginForm() {
+export function LoginForm({redirect}: { redirect?: string }) {
     const {t, i18n} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm({
@@ -29,8 +29,12 @@ export function LoginForm() {
             console.log('Login response:', response);
 
             toast.success(t('login.successMessage', 'Login successful!'));
-            // Navigate to dashboard after successful login
-            navigate(APP_ROUTES.DASHBOARD);
+            // Navigate to dashboard or redirect path after successful login
+            if (redirect) {
+                navigate(localizePath(redirect));
+            } else {
+                navigate(APP_ROUTES.DASHBOARD);
+            }
         } catch (error) {
             console.error('Error during login:', error);
             toast.error(
@@ -53,8 +57,12 @@ export function LoginForm() {
             console.log('Login response:', data);
 
             toast.success(t('login.successMessage', 'Login successful!'));
-            // Navigate to dashboard after successful login
-            navigate(APP_ROUTES.DASHBOARD);
+            // Navigate to dashboard or redirect path after successful login
+            if (redirect) {
+                navigate(localizePath(redirect));
+            } else {
+                navigate(APP_ROUTES.DASHBOARD);
+            }
         } catch (error) {
             console.error('Error during Google login:', error);
             const code = (error as any)?.code;

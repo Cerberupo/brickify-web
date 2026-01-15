@@ -36,9 +36,11 @@ const copies = {
 } as const;
 const t = copies[locale];
 ---
-<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-[100] px-3 pb-3 pointer-events-none"
-     style="opacity:0;pointer-events: none">
+<div id="cookie-banner"
+     class="fixed inset-x-0 bottom-0 z-[100] px-3 pb-3 pointer-events-none transition-opacity duration-300"
+     style="opacity:0;">
     <div
+            id="cookie-banner-content"
             class="mx-auto max-w-3xl rounded-2xl bg-white border shadow-xl p-4 md:p-5 pointer-events-auto flex flex-col md:flex-row md:items-center gap-3"
             role="dialog"
             aria-labelledby="cookie-banner-title"
@@ -136,18 +138,27 @@ const t = copies[locale];
         const getBannerEl = function () {
             return document.getElementById('cookie-banner');
         };
+        const getBannerContentEl = function () {
+            return document.getElementById('cookie-banner-content');
+        };
         const hide = function () {
             const el = getBannerEl();
+            const content = getBannerContentEl();
             if (el) {
                 el.style.opacity = '0';
-                el.style.pointerEvents = 'none';
+            }
+            if (content) {
+                content.style.pointerEvents = 'none';
             }
         };
         const show = function () {
             const el = getBannerEl();
+            const content = getBannerContentEl();
             if (el) {
                 el.style.opacity = '1';
-                el.style.pointerEvents = 'all';
+            }
+            if (content) {
+                content.style.pointerEvents = 'all';
             }
         };
 

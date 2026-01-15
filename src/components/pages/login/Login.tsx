@@ -14,18 +14,28 @@ export function LoginPage({initialSearch}: LoginPageProps) {
     const {t} = useTranslation();
     const {user, isLoading: authLoading} = useAuth();
 
+    // Separate params parsing to be reused
+    const getParams = () => {
+        const search = initialSearch ? initialSearch : (typeof window !== 'undefined' ? window.location.search : '');
+        return new URLSearchParams(search || '');
+    };
+
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
         if (user && !authLoading) {
-            navigate(localizePath('/dashboard'));
+            const params = getParams();
+            const redirectTo = params.get('redirect');
+            if (redirectTo) {
+                navigate(localizePath(redirectTo));
+            } else {
+                navigate(localizePath('/dashboard'));
+            }
         }
     }, [user, authLoading]);
 
     // Mostrar toast si venimos de un registro (checkEmail=1) o tras reset de contraseña (resetSuccess=1)
     useEffect(() => {
-        // Preferir la query inicial proporcionada por Astro (para evitar pérdidas por redirecciones previas)
-        const search = initialSearch ? initialSearch : (typeof window !== 'undefined' ? window.location.search : '');
-        const params = new URLSearchParams(search || '');
+        const params = getParams();
         const checkEmail = params.get('checkEmail');
         const resetSuccess = params.get('resetSuccess');
         if (checkEmail) {
@@ -51,7 +61,7 @@ export function LoginPage({initialSearch}: LoginPageProps) {
                 <span className="sr-only">{PROJECT_NAME}</span>
             </a>
             <GoogleAuthProvider>
-                <LoginForm/>
+                <LoginForm redirect={getParams().get('redirect') || undefined}/>
             </GoogleAuthProvider>
         </div>
     )

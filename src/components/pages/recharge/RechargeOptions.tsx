@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {createRechargeSession, getRechargeProducts} from '@/lib/services/stripe';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
-import {ArrowRight, Building, Check, Coins, Crown, Gem, Rocket, Sparkles, Trophy} from 'lucide-react';
+import {ArrowRight, Building, Coins, Crown, Gem, Rocket, Sparkles, Trophy} from 'lucide-react';
 import {toast} from 'sonner';
 import {refundHref as makeRefundHref} from '@/lib/localeLinks';
 
@@ -15,6 +15,8 @@ const productIcons: Record<string, React.ReactNode> = {
     'prod_recharge_10000': <Crown className="h-6 w-6 text-yellow-500"/>,
     'prod_recharge_21600': <Building className="h-6 w-6 text-primary"/>,
 };
+
+const MOST_POPULAR_ID = 'prod_recharge_2000';
 
 export function RechargeOptions() {
     const {t, i18n} = useTranslation();
@@ -75,57 +77,72 @@ export function RechargeOptions() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                {products.map((product) => (
-                    <Card key={product.id}
-                          className="relative flex flex-col hover:border-primary transition-all duration-300">
-                        <CardHeader>
-                            <div className="flex justify-between items-start">
-                                <CardTitle className="text-2xl font-bold">
-                                    {product.name}
-                                </CardTitle>
-                                {productIcons[product.id] || <Coins className="h-6 w-6 text-yellow-500"/>}
-                            </div>
-                            <CardDescription className="min-h-[40px]">
-                                {product.description}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                            <div className="mt-4 flex items-baseline text-3xl font-bold">
-                                {product.amount / 100}
-                                <span
-                                    className="ml-1 text-xl font-medium text-muted-foreground uppercase">{product.currency === 'usd' ? '$' : product.currency}</span>
-                            </div>
-                            <ul className="mt-6 space-y-4 text-sm">
-                                <li className="flex items-center">
-                                    <Check className="mr-2 h-4 w-4 text-green-500"/>
-                                    <span>{t('recharge.feature_credits', {
-                                        defaultValue: '{{credits}} Credits',
-                                        credits: product.credits
-                                    })}</span>
-                                </li>
-                                <li className="flex items-center">
-                                    <Check className="mr-2 h-4 w-4 text-green-500"/>
-                                    <span>{t('recharge.feature_instant', {defaultValue: 'Instant recharge'})}</span>
-                                </li>
-                            </ul>
-                        </CardContent>
-                        <CardFooter>
-                            <Button
-                                className="w-full"
-                                onClick={() => handleRecharge(product.priceId)}
-                                disabled={buyingId === product.priceId}
-                            >
-                                {buyingId === product.priceId ? (
+                {products.map((product) => {
+                    const isMostPopular = product.id === MOST_POPULAR_ID;
+                    return (
+                        <Card key={product.id}
+                              className={`relative flex flex-col hover:border-primary transition-all duration-300 ${isMostPopular ? 'border-[#FFD700] ring-1 ring-[#FFD700] shadow-xl scale-105 z-10' : ''}`}>
+                            {isMostPopular && (
+                                <div
+                                    className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFD700] text-black text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md whitespace-nowrap z-20">
+                                    <span>🔥</span>
+                                    <span>{t('recharge.mostPopular')}</span>
+                                </div>
+                            )}
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <CardTitle className="text-2xl font-bold">
+                                        {product.name}
+                                    </CardTitle>
+                                    {productIcons[product.id] || <Coins className="h-6 w-6 text-yellow-500"/>}
+                                </div>
+                                <CardDescription className="min-h-[40px]">
+                                    {product.description}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex-grow">
+                                <div className="mt-4 flex items-center justify-center gap-3">
+                                    <div className="flex items-baseline text-3xl font-bold">
+                                        {product.amount / 100}
+                                        <span className="ml-1 text-xl font-medium text-muted-foreground uppercase">
+                                            {product.currency === 'usd' ? '$' : product.currency}
+                                        </span>
+                                    </div>
                                     <div
-                                        className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                ) : (
-                                    <ArrowRight className="mr-2 h-4 w-4"/>
-                                )}
-                                {t('recharge.buy_now', {defaultValue: 'Buy now'})}
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
+                                        className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20">
+                                        <span className="text-xl font-bold text-primary">{product.credits}</span>
+                                        <Coins className="h-5 w-5 text-yellow-500"/>
+                                    </div>
+                                </div>
+                                <ul className="mt-6 space-y-4 text-sm">
+                                    <li className="flex items-center justify-center gap-1 text-muted-foreground pt-4 border-t border-gray-100">
+                                        <span>{product.credits - product.bonus}</span>
+                                        <Coins className="h-3 w-3 text-yellow-500/80"/>
+                                        <span
+                                            className={product.bonus > 0 ? "font-bold text-green-600" : "font-bold text-muted-foreground"}>
+                                            +{product.bonus} extra
+                                        </span>
+                                    </li>
+                                </ul>
+                            </CardContent>
+                            <CardFooter>
+                                <Button
+                                    className={`w-full ${isMostPopular ? 'bg-black hover:bg-black/90' : ''}`}
+                                    onClick={() => handleRecharge(product.priceId)}
+                                    disabled={buyingId === product.priceId}
+                                >
+                                    {buyingId === product.priceId ? (
+                                        <div
+                                            className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                    ) : (
+                                        <ArrowRight className="mr-2 h-4 w-4"/>
+                                    )}
+                                    {t('recharge.buy_now', {defaultValue: 'Buy now'})}
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    );
+                })}
             </div>
 
             <div className="mt-8 text-center">

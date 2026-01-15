@@ -3,11 +3,12 @@ import MainLayout from "../layouts/main.astro";
 import {PROJECT_NAME} from "../config";
 import RegisterShell from "../components/pages/register/RegisterShell";
 import FooterSection from "@/components/home/FooterSection.astro";
-import { normalizeLocale, type SupportedLocale } from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+const initialSearch = Astro.url.search;
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Register`}}>
-    <RegisterShell client:only="react" />
-    <FooterSection locale={locale} />
+    <RegisterShell client:only="react" initialSearch={initialSearch}/>
+    <FooterSection locale={locale}/>
 </MainLayout>

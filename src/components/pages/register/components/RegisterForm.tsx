@@ -7,9 +7,9 @@ import {register as registerUser} from '@/lib/services/auth';
 import {toast} from 'sonner';
 import {APP_ROUTES} from '@/constants/routes';
 import {navigate} from '@/lib/utils';
-import { loginHref as makeLoginHref } from '@/lib/localeLinks';
+import {loginHref as makeLoginHref} from '@/lib/localeLinks';
 
-export function RegisterForm() {
+export function RegisterForm({redirect}: { redirect?: string }) {
     const {t, i18n} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm({
@@ -25,7 +25,10 @@ export function RegisterForm() {
         try {
             await registerUser(data.name, data.email, data.password, i18n.language);
             // Señalamos a la página de login que debe mostrar el aviso de verificación por email
-            const loginUrl = `${makeLoginHref()}?checkEmail=1`;
+            let loginUrl = `${makeLoginHref()}?checkEmail=1`;
+            if (redirect) {
+                loginUrl += `&redirect=${encodeURIComponent(redirect)}`;
+            }
             navigate(loginUrl);
         } catch (error) {
             console.error('Registration error:', error);

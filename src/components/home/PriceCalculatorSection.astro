@@ -19,10 +19,14 @@ const copies = {
         perPerson: "Precio por foto",
         total: "Precio total",
         savings: "Valor extra",
+        totalReceived: "Total a recibir",
+        baseTokens: "Tokens base",
+        extraTokens: "Tokens extra",
         costPerPerson: "100 tokens por foto",
         costBreakdown: "25 pelo · 25 cara · 25 cuerpo · 25 pantalón",
         minutes: "tokens gratis",
         hours: "tokens gratis",
+        mostPopular: "Más comprado",
         error_loading: "Error al cargar los precios",
         cta: "¡Empieza ahora y compra tus tokens!",
         products: {
@@ -43,10 +47,14 @@ const copies = {
         perPerson: "Price per photo",
         total: "Total price",
         savings: "Extra value",
+        totalReceived: "Total to receive",
+        baseTokens: "Base tokens",
+        extraTokens: "Extra tokens",
         costPerPerson: "100 tokens per photo",
         costBreakdown: "25 hair · 25 face · 25 body · 25 legs",
         minutes: "free tokens",
         hours: "free tokens",
+        mostPopular: "Most popular",
         error_loading: "Error loading prices",
         cta: "Get started and buy your tokens now!",
         products: {
@@ -112,29 +120,47 @@ const t = copies[locale];
                 container.innerHTML = `
                     <div class="w-full max-w-3xl rounded-2xl bg-white shadow-sm border border-[#E8C79E] p-6 md:p-8">
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8" id="packs-grid">
-                            ${tokenPacks.map((pack, index) => `
+                            ${tokenPacks.map((pack, index) => {
+                    const isMostPopular = pack.id === 'prod_recharge_2000';
+                    const base = pack.credits - pack.bonus;
+                    return `
                                 <button
                                         type="button"
-                                        class="token-pack-btn group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all hover:border-primary/50 aria-selected:border-primary aria-selected:bg-primary/5"
+                                        class="token-pack-btn group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all hover:border-primary/50 aria-selected:border-primary aria-selected:bg-primary/5 ${isMostPopular ? 'border-[#FFD700] shadow-md' : ''}"
                                         data-index="${index}"
                                         aria-selected="${index === 1 ? "true" : "false"}"
                                 >
+                                    ${isMostPopular ? `
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFD700] text-black text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm whitespace-nowrap z-10">
+                                            <span>🔥</span>
+                                            <span>${tLabels.mostPopular}</span>
+                                        </div>
+                                    ` : ''}
                                     <span class="text-xs font-medium text-muted-foreground mb-1">
                                         ${pack.name}
                                     </span>
-                                    <span class="text-lg font-bold text-primary">${pack.credits}</span>
-                                    <span class="mt-2 font-semibold">${pack.amount / 100} ${pack.currency.toUpperCase() === 'USD' ? '$' : pack.currency.toUpperCase()}</span>
-                                    ${pack.bonus > 0 ? `
-                                        <span class="absolute -top-2 -right-1 bg-green-500 text-[10px] text-white px-1.5 py-0.5 rounded-full font-bold">
-                                            +${pack.bonus}
-                                        </span>
-                                    ` : ''}
+                                    <div class="flex items-center justify-center gap-2 mt-1 w-full text-center">
+                                        <span class="font-semibold">${pack.amount / 100} ${pack.currency.toUpperCase() === 'USD' ? '$' : pack.currency.toUpperCase()}</span>
+                                        <div class="flex items-center gap-1 bg-primary/10 px-1.5 py-0.5 rounded-lg inline-flex">
+                                            <span class="text-sm font-bold text-primary">${pack.credits}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-coins text-yellow-500 h-4 w-4"><circle cx="8" cy="8" r="6"></circle><path d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path d="M7 6h1v4"></path><path d="m16.71 13.88.7.71-2.82 2.82"></path></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3 w-full border-t border-gray-100 pt-2 flex flex-col gap-1 text-[10px]">
+                                        <div class="flex items-center justify-center gap-1 text-muted-foreground">
+                                            <span>${base}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-coins text-yellow-500/80 h-3 w-3"><circle cx="8" cy="8" r="6"></circle><path d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path d="M7 6h1v4"></path><path d="m16.71 13.88.7.71-2.82 2.82"></path></svg>
+                                            ${pack.bonus > 0 ? `<span class="font-bold text-green-600">+ ${pack.bonus} extra</span>` : `<span class="font-bold text-muted-foreground">+0 extra</span>`}
+                                        </div>
+                                    </div>
                                 </button>
-                            `).join('')}
+                            `
+                }).join('')}
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                            <div class="rounded-xl bg-[#F1EEFF] p-4 border border-[#E8C79E]/60">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="rounded-xl bg-[#F1EEFF] p-4 border border-[#E8C79E]/60 text-center">
                                 <p class="text-sm text-muted-foreground">${tLabels.perPerson}</p>
                                 <p class="text-2xl font-semibold" id="pc-unit-price"></p>
                             </div>
@@ -142,20 +168,15 @@ const t = copies[locale];
                                 <p class="text-sm font-bold text-primary uppercase tracking-wider mb-1">${tLabels.costPerPerson}</p>
                                 <p class="text-xs text-muted-foreground">${tLabels.costBreakdown}</p>
                             </div>
-                            <div class="rounded-xl bg-[#E6F1FF] p-4 border border-[#B5D6FF] text-right">
+                            <div class="rounded-xl bg-[#E6F1FF] p-4 border border-[#B5D6FF] text-center">
                                 <p class="text-sm text-muted-foreground">${tLabels.total}</p>
                                 <p class="text-2xl font-semibold" id="pc-total"></p>
                             </div>
                         </div>
-
-                        <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-dashed border-gray-200">
-                             <p class="text-sm text-muted-foreground">${tLabels.savings}</p>
-                             <p class="text-xl font-bold text-green-600" id="pc-savings"></p>
-                        </div>
                     </div>
 
                     <div class="mt-8 flex justify-center">
-                        <a href="${locale === 'es' ? '/es/register' : '/register'}" class="inline-flex items-center justify-center bg-black text-white font-semibold py-3 px-6 rounded-xl hover:opacity-90 transition-all shadow-lg text-l hover:-translate-y-1 active:scale-95">
+                        <a href="${locale === 'es' ? '/es/register/?redirect=/recharge' : '/register/?redirect=/recharge'}" class="inline-flex items-center justify-center bg-black text-white font-semibold py-3 px-6 rounded-xl hover:opacity-90 transition-all shadow-lg text-l hover:-translate-y-1 active:scale-95">
                             ${tLabels.cta}
                         </a>
                     </div>
@@ -164,7 +185,6 @@ const t = copies[locale];
                 const buttons = container.querySelectorAll('.token-pack-btn');
                 const unitEl = document.getElementById('pc-unit-price');
                 const totalEl = document.getElementById('pc-total');
-                const savingsEl = document.getElementById('pc-savings');
 
                 const fmt = new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'en-US', {
                     style: 'currency',
@@ -178,18 +198,9 @@ const t = copies[locale];
 
                     const pricePerPerson = (pack.amount / 100) / (pack.credits / 100);
                     const total = pack.amount / 100;
-                    const bonus = pack.bonus;
 
                     if (unitEl) unitEl.textContent = fmt.format(pricePerPerson);
                     if (totalEl) totalEl.textContent = fmt.format(total);
-                    if (savingsEl) {
-                        if (bonus > 0) {
-                            savingsEl.parentElement.style.display = 'flex';
-                            savingsEl.textContent = `${bonus} ${tMinutes}`;
-                        } else {
-                            savingsEl.parentElement.style.display = 'none';
-                        }
-                    }
 
                     buttons.forEach((btn, i) => {
                         btn.setAttribute('aria-selected', String(i === index));

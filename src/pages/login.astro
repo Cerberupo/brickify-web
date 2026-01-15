@@ -8,7 +8,6 @@ import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 ---
 <MainLayout content={{title: `${PROJECT_NAME} - Login`}}>
-    {Astro.url.search}
     <LoginShell client:only="react" initialSearch={Astro.url.search}/>
     <FooterSection locale={locale}/>
 </MainLayout>
