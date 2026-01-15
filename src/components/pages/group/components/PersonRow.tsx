@@ -221,13 +221,14 @@ export function PersonRow({
             <div className="flex flex-col gap-3 flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row items-start sm:items-start gap-3">
                     <div
-                        className={`flex ${person.status === 'processed' ? 'flex-col' : 'flex-row'} items-center gap-3`}>
+                        className="flex flex-col items-center text-center gap-3 w-40 shrink-0">
                         <img
                             className={`${person.status === 'processed' ? 'w-40' : 'w-12 sm:w-20 md:w-24 lg:w-28'} border rounded shrink-0`}
                             src={src || faviconUrl}
                             alt={person?.name || ''}/>
-                        <div className="min-w-0">
-                            <div className="font-medium leading-tight">{person?.name}</div>
+                        <div className="w-full">
+                            <div className="font-medium leading-tight truncate px-1"
+                                 title={person?.name}>{person?.name}</div>
                             {/*
                             <div className="text-sm text-gray-600 max-w-prose whitespace-pre-wrap break-words">
                                 {mainDescription ? (
