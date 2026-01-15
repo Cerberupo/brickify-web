@@ -24,6 +24,7 @@ const copies = {
         minutes: "tokens gratis",
         hours: "tokens gratis",
         error_loading: "Error al cargar los precios",
+        cta: "¡Empieza ahora y compra tus tokens!",
         products: {
             prod_recharge_300: "Explorador",
             prod_recharge_1100: "Entusiasta",
@@ -47,6 +48,7 @@ const copies = {
         minutes: "free tokens",
         hours: "free tokens",
         error_loading: "Error loading prices",
+        cta: "Get started and buy your tokens now!",
         products: {
             prod_recharge_300: "Explorer",
             prod_recharge_1100: "Enthusiast",
@@ -146,10 +148,14 @@ const t = copies[locale];
                             </div>
                         </div>
 
-                        <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-dashed border-gray-200">
+                        <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-dashed border-gray-200 mb-8">
                              <p class="text-sm text-muted-foreground">${tLabels.savings}</p>
                              <p class="text-xl font-bold text-green-600" id="pc-savings"></p>
                         </div>
+
+                        <a href="${locale === 'es' ? '/es/register' : '/register'}" class="block w-full text-center bg-primary text-white font-bold py-4 px-6 rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 text-lg">
+                            ${tLabels.cta}
+                        </a>
                     </div>
                 `;
 
