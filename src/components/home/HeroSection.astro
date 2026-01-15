@@ -34,10 +34,7 @@ const title = titleProp ?? t.title;
             <p class="text-base md:text-[20px] font-light leading-relaxed max-w-prose mb-6"
                set:html={t.description}></p>
             <div class="flex items-center gap-4">
-                <a href="#quick-photo" aria-label={t.ctaPrimaryAria} class={buttonVariants({size: "lg"})}>
-                    {t.ctaPrimary}
-                </a>
-                <a href="#como-funciona" class="text-sm underline underline-offset-4 hover:no-underline"
+                <a href="#como-funciona" class={buttonVariants({size: "lg"})}
                    aria-label={t.ctaSecondaryAria}>
                     {t.ctaSecondary}
                 </a>

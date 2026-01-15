@@ -254,10 +254,22 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
                                         </a>
                                     </li>
                                 </>
-                            ) : null}
+                            ) : (
+                                <li className="flex items-center gap-3">
+                                    <a
+                                        href={localizePath('/recharge')}
+                                        className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20 hover:bg-primary/20 transition-colors"
+                                        title={t('header.recharge')}
+                                    >
+                                        <span
+                                            className="text-sm font-bold text-primary">{(user as any).balance || 0}</span>
+                                        <Coins className="h-4 w-4 text-yellow-500"/>
+                                    </a>
+                                </li>
+                            )}
 
                             {user ? (
-                                <li className="ml-2">
+                                <li className="ml-0 sm:ml-2">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost"

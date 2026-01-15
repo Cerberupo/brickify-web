@@ -5,7 +5,7 @@ import {useAuth} from '@/lib';
 import {APP_ROUTES} from '@/constants/routes';
 import {navigate} from '@/lib/utils';
 import {PROJECT_NAME} from '@/config';
-import {homeHref as makeHomeHref} from '@/lib/localeLinks';
+import {homeHref as makeHomeHref, localizePath} from '@/lib/localeLinks';
 import {Toaster} from "@/components";
 
 type RegisterPageProps = { initialSearch?: string };
