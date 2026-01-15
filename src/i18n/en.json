@@ -400,7 +400,7 @@
     "totalCost": "Order Summary",
     "orderTotal": "Total Cost",
     "priceNotAvailable": "Price not available yet",
-    "checkout": "Checkout",
+    "checkout": "Process order",
     "summary": {
       "singleCount": "{{count}} single users",
       "groupCount": "{{count}} pairs",

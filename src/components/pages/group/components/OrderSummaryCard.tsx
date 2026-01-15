@@ -135,20 +135,11 @@ export function OrderSummaryCard(props: {
                         </div>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t text-sm space-y-1">
-                        <div className="flex justify-between font-semibold text-base">
-                            <span>{labels.total || 'Total'}</span>
-                            <div className="flex items-center">
-                                <Coins className="h-5 w-5 mr-1 text-yellow-500"/>
-                                {totalCredits}
-                            </div>
-                        </div>
-                    </div>
 
                     {canEdit && onCheckout ? (
                         <div className="flex justify-end mt-4">
                             <Button onClick={onCheckout} className="w-full sm:w-auto">
-                                {labels.checkout || 'Checkout'}
+                                {labels.checkout || 'Process'}
                             </Button>
                         </div>
                     ) : null}

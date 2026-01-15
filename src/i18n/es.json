@@ -398,7 +398,7 @@
     "totalCost": "Resumen del Pedido",
     "orderTotal": "Coste Total",
     "priceNotAvailable": "Precio no disponible aún",
-    "checkout": "Pagar",
+    "checkout": "Procesar pedido",
     "deleteConfirmation": {
       "title": "Eliminar Miembro",
       "description": "¿Está seguro de que desea eliminar este miembro? Esta acción no se puede deshacer.",
