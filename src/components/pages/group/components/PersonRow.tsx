@@ -215,8 +215,19 @@ export function PersonRow({
     // Control del lado (front/back) sincronizado entre composite y miniaturas
     const [side, setSide] = useState<'front' | 'back'>('front');
 
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+    const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
+    const isDev = appEnv === 'dev';
+
     return (
         <div className="flex flex-col sm:flex-row gap-3 rounded-md border p-3">
+            <DevPreviewModal
+                isOpen={isPreviewModalOpen}
+                onClose={() => setIsPreviewModalOpen(false)}
+                originalImage={src || faviconUrl}
+                personName={person?.name || ''}
+                legoProps={{...compositeProps, side, onSideChange: (s) => setSide(s)}}
+            />
             <Toaster position="top-right"/>
             <div className="flex flex-col gap-3 flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row items-start sm:items-start gap-3">
@@ -325,6 +336,16 @@ export function PersonRow({
                         >
                             <Download className="h-4 w-4 mr-1"/> {t('group.downloadPieces', 'Descargar piezas')}
                         </Button>
+                        {isDev && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setIsPreviewModalOpen(true)}
+                                className="border-yellow-500 text-yellow-700 hover:bg-yellow-50"
+                            >
+                                <Camera className="h-4 w-4 mr-1"/> Social Preview (DEV)
+                            </Button>
+                        )}
                         {/* En responsive, forzar que el bloque de compartir salte a la siguiente línea */}
                         <div className="basis-full sm:basis-auto w-full sm:w-auto flex justify-end">
                             <div className="flex gap-3 items-center">
