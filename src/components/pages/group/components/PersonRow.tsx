@@ -1,13 +1,14 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Toaster} from '@/components/ui';
-import {Download, Pencil, Trash2} from 'lucide-react';
+import {Camera, Download, Pencil, Trash2} from 'lucide-react';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
 import type {MatchPart} from '@/lib/services/groups';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
 import {toSideWithFallback} from '@/lib/lego/parts';
+import {DevPreviewModal} from './DevPreviewModal';
 
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
