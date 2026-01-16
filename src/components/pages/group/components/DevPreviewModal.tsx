@@ -29,8 +29,9 @@ export function DevPreviewModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-6xl w-[95vw] h-[90vh] flex flex-col p-0 overflow-hidden bg-white">
-                <DialogHeader className="p-4 border-b flex flex-row items-center justify-between">
+            <DialogContent
+                className="max-w-[100vw] w-screen h-screen flex flex-col p-0 overflow-hidden bg-white border-none rounded-none">
+                <DialogHeader className="p-4 border-b flex flex-row items-center justify-between print:hidden">
                     <DialogTitle>Social Media Preview - {personName}</DialogTitle>
                     <Button variant="outline" size="sm" onClick={handleCapture} className="mr-8">
                         <Camera className="h-4 w-4 mr-2"/>
@@ -38,10 +39,10 @@ export function DevPreviewModal({
                     </Button>
                 </DialogHeader>
 
-                <div id="preview-capture-area"
-                     className="flex-1 flex items-center justify-center p-8 bg-gray-50 overflow-auto">
-                    <div
-                        className="flex items-center gap-12 bg-white p-12 rounded-xl shadow-2xl border border-gray-100 min-w-fit">
+                <div
+                    className="flex-1 flex items-center justify-center p-8 bg-gray-50 overflow-auto print:bg-white print:p-0">
+                    <div id="preview-capture-area"
+                         className="flex items-center gap-12 bg-white p-12 rounded-xl shadow-2xl border border-gray-100 min-w-fit print:shadow-none print:border-none print:p-0">
                         {/* Left: Original Image */}
                         <div className="flex flex-col items-center gap-4">
                             <div className="w-64 h-80 rounded-lg overflow-hidden border-4 border-white shadow-lg">
@@ -57,12 +58,15 @@ export function DevPreviewModal({
 
                         {/* Center: Arrow */}
                         <div className="flex flex-col items-center">
-                            <ArrowRight className="h-16 w-16 text-yellow-500" strokeWidth={3}/>
+                            <div className="bg-yellow-50 p-4 rounded-full border-2 border-yellow-200">
+                                <ArrowRight className="h-16 w-16 text-yellow-500" strokeWidth={3}/>
+                            </div>
                         </div>
 
                         {/* Right: Lego Preview */}
                         <div className="flex flex-col items-center gap-4">
-                            <div className="w-64 h-80 flex items-center justify-center">
+                            <div
+                                className="w-64 h-80 flex items-center justify-center bg-white rounded-lg border-4 border-white shadow-lg p-4">
                                 <LegoComposite
                                     {...legoProps}
                                     className="w-full h-full"
@@ -77,6 +81,15 @@ export function DevPreviewModal({
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @media print {
+                        @page {
+                            size: landscape;
+                            margin: 0;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            -webkit-print-color-adjust: exact;
+                        }
                         body * {
                             visibility: hidden;
                         }
@@ -84,16 +97,22 @@ export function DevPreviewModal({
                             visibility: visible;
                         }
                         #preview-capture-area {
-                            position: absolute;
-                            left: 0;
-                            top: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: white !important;
-                            padding: 0 !important;
+                            position: fixed;
+                            left: 50%;
+                            top: 50%;
+                            transform: translate(-50%, -50%);
+                            width: auto;
+                            height: auto;
+                            margin: 0;
+                            padding: 0;
                             display: flex !important;
-                            align-items: center !important;
-                            justify-content: center !important;
+                            align-items: center;
+                            justify-content: center;
+                            background: white !important;
+                        }
+                        /* Hide close button and other UI elements that might have been visible */
+                        [data-slot="dialog-close"], button {
+                            display: none !important;
                         }
                     }
                 `
