@@ -30,7 +30,7 @@ export function DevPreviewModal({
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent
-                className="max-w-none w-screen h-screen flex flex-col p-0 overflow-hidden bg-white border-none rounded-none !top-0 !left-0 !translate-x-0 !translate-y-0">
+                className="!max-w-none !w-screen !h-screen flex flex-col p-0 overflow-hidden bg-white border-none rounded-none z-[100]">
                 <DialogHeader className="p-4 border-b flex flex-row items-center justify-between print:hidden">
                     <DialogTitle>Social Media Preview - {personName}</DialogTitle>
                     <Button variant="outline" size="sm" onClick={handleCapture} className="mr-8">

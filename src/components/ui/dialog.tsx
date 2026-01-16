@@ -7,8 +7,9 @@ import {XIcon} from "lucide-react"
 import {cn} from "@/lib/utils"
 
 function Dialog({
+                    className,
                     ...props
-                }: React.ComponentProps<typeof DialogPrimitive.Root>) {
+                }: React.ComponentProps<typeof DialogPrimitive.Root> & { className?: string }) {
     return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
@@ -19,6 +20,7 @@ function DialogTrigger({
 }
 
 function DialogPortal({
+                          className,
                           ...props
                       }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
     return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
@@ -50,6 +52,7 @@ function DialogContent({
                            className,
                            children,
                            showCloseButton = true,
+                           style,
                            ...props
                        }: React.ComponentProps<typeof DialogPrimitive.Content> & {
     showCloseButton?: boolean
@@ -61,9 +64,20 @@ function DialogContent({
                 data-slot="dialog-content"
                 className={cn(
                     "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200",
-                    "max-w-[calc(100%-2rem)] sm:max-w-lg", // Default constraints
+                    "max-w-[calc(100%-2rem)] sm:max-w-lg",
                     className
                 )}
+                style={{
+                    ...(className?.includes('max-w-none') || className?.includes('w-screen') ? {
+                        maxWidth: 'none',
+                        width: '100vw',
+                        height: '100vh',
+                        top: '0',
+                        left: '0',
+                        transform: 'none'
+                    } : {}),
+                    ...style
+                }}
                 {...props}
             >
                 {children}
