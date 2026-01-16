@@ -72,8 +72,8 @@ function DialogContent({
                         maxWidth: 'none',
                         width: '100vw',
                         height: '100vh',
-                        top: '0',
-                        left: '0',
+                        top: '50%',
+                        left: '50%',
                         transform: 'none'
                     } : {}),
                     ...style
