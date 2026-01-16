@@ -220,6 +220,16 @@ export function PersonRow({
     const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
     const isDev = appEnv === 'dev';
 
+    const showSocialPreview = useMemo(() => {
+        if (!isDev) return false;
+        try {
+            const params = new URLSearchParams(window.location.search);
+            return params.has('photo');
+        } catch {
+            return false;
+        }
+    }, [isDev]);
+
     return (
         <div className="flex flex-col sm:flex-row gap-3 rounded-md border p-3">
             <DevPreviewModal
@@ -337,7 +347,7 @@ export function PersonRow({
                         >
                             <Download className="h-4 w-4 mr-1"/> {t('group.downloadPieces', 'Descargar piezas')}
                         </Button>
-                        {isDev && (
+                        {showSocialPreview && (
                             <Button
                                 variant="outline"
                                 size="sm"
