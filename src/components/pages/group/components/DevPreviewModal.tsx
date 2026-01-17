@@ -169,6 +169,12 @@ export function DevPreviewModal({
                 fontEmbedCSS: '', // Evita que intente leer reglas CSS externas
                 cacheBust: false,
                 includeQueryParams: true,
+                filter: (node: any) => {
+                    if (node?.hasAttribute && node.hasAttribute('data-recording-ignore')) {
+                        return false;
+                    }
+                    return true;
+                },
             });
             const link = document.createElement('a');
             link.download = `brickify-${personName.replace(/\s+/g, '-').toLowerCase()}-${aspectRatio.replace(':', '-')}.png`;
@@ -250,6 +256,12 @@ export function DevPreviewModal({
                         skipFonts: true,
                         cacheBust: true,
                         includeQueryParams: true,
+                        filter: (node: any) => {
+                            if (node?.hasAttribute && node.hasAttribute('data-recording-ignore')) {
+                                return false;
+                            }
+                            return true;
+                        },
                         style: {
                             transform: 'scale(1)',
                             transformOrigin: 'top left',
@@ -460,9 +472,11 @@ export function DevPreviewModal({
                         {/* REC Indicator */}
                         {isRecording && (
                             <div
-                                className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                                className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm data-[recording-ignore]:hidden"
+                                data-recording-ignore="true"
+                            >
                                 <div className="h-3 w-3 rounded-full bg-red-600 animate-pulse"/>
-                                <span className="text-xs font-bold tracking-tighter">REC</span>
+                                <span className="text-xs font-bold tracking-tighter text-white">REC</span>
                             </div>
                         )}
                     </div>
