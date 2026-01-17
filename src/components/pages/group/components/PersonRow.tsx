@@ -237,6 +237,7 @@ export function PersonRow({
                 onClose={() => setIsPreviewModalOpen(false)}
                 originalImage={src || faviconUrl}
                 personName={person?.name || ''}
+                person={person}
                 legoProps={{...compositeProps, side, onSideChange: (s) => setSide(s)}}
             />
             <Toaster position="top-right"/>
@@ -247,7 +248,16 @@ export function PersonRow({
                         <img
                             className={`${person.status === 'processed' ? 'w-40' : 'w-12 sm:w-20 md:w-24 lg:w-28'} border rounded shrink-0`}
                             src={src || faviconUrl}
-                            alt={person?.name || ''}/>
+                            alt={person?.name || ''}
+                            onError={(e) => {
+                                try {
+                                    const target = e.currentTarget as HTMLImageElement;
+                                    target.removeAttribute('crossorigin');
+                                    target.src = src || faviconUrl;
+                                } catch {
+                                }
+                            }}
+                        />
                         <div className="w-full">
                             <div className="font-medium leading-tight truncate px-1"
                                  title={person?.name}>{person?.name}</div>

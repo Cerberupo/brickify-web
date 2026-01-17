@@ -99,6 +99,8 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
                 const pid = normalizeId(piece) || String(idx);
                 const isSelected = selectedPieceId === pid;
                 const cacheKey = makePieceKey(pid, side);
+                // Si falla la carga con el src estable (que puede intentar CORS si el navegador lo cacheó así)
+                // forzamos el src original.
                 const stableSrc = getStableImageSrc(cacheKey, imgSrc) || imgSrc;
                 const pabUrl = buildPickABrickUrl(piece?.storePieceId || piece?.elementId || null, locale);
                 const pabLabel = locale === 'es' ? 'Ver en Pick a Brick' : 'View on Pick a Brick';

@@ -24,8 +24,20 @@ export function makeUrlKey(url: string | null | undefined): string {
     if (!u) return '';
     try {
         // Soporta rutas relativas y absolutas
-        const abs = u.startsWith('http') ? new URL(u) : new URL(u, typeof window !== 'undefined' ? window.location.origin : 'https://local');
-        return abs.pathname;
+        // Usar lógica segura para evitar "URL is not a constructor" en SSR
+        if (typeof window !== 'undefined' && typeof URL === 'function') {
+            const abs = u.startsWith('http') ? new URL(u) : new URL(u, window.location.origin);
+            return abs.pathname;
+        } else if (typeof URL === 'function') {
+            try {
+                const abs = u.startsWith('http') ? new URL(u) : new URL(u, 'https://local');
+                return abs.pathname;
+            } catch {
+                return u.split('#')[0]?.split('?')[0] || u;
+            }
+        }
+        // Fallback simple si URL no está disponible
+        return u.split('#')[0]?.split('?')[0] || u;
     } catch {
         // Si falla, devolver como está sin query/hash si se puede
         return u.split('#')[0]?.split('?')[0] || u;

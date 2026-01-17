@@ -243,7 +243,8 @@ export function GroupedReferenceList({
                                             onClick={() => handleDeleteGroupClick(entry)}
                                         >
                                             <Trash2 className="h-4 w-4"/>
-                                            <span className="sr-only">{t('group.deleteGroup', 'Eliminar colección')}</span>
+                                            <span
+                                                className="sr-only">{t('group.deleteGroup', 'Eliminar colección')}</span>
                                         </Button>
                                     )}
                                 </div>

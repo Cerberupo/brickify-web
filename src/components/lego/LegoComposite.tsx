@@ -37,6 +37,9 @@ export type LegoCompositeProps = {
 
     /** Callback cuando se cambia el lado (útil en modo controlado) */
     onSideChange?: (side: 'front' | 'back') => void;
+
+    /** Si es true, oculta el botón de alternar vista frontal/trasera */
+    hideToggle?: boolean;
 };
 
 /**
@@ -58,6 +61,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                                                          locale = 'en',
                                                          side,
                                                          onSideChange,
+                                                         hideToggle = false,
                                                      }) => {
     const [internalUseBack, setInternalUseBack] = useState(false);
     const useBack = (side ? side === 'back' : internalUseBack);
@@ -132,7 +136,10 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                             const k = `${makeUrlKey(freshSrc)}::${alt}`;
                             invalidateImage(k);
                             try {
-                                (e.currentTarget as HTMLImageElement).src = freshSrc;
+                                const target = e.currentTarget as HTMLImageElement;
+                                // Limpiar crossOrigin si estaba presente para intentar carga normal
+                                target.removeAttribute('crossorigin');
+                                target.src = freshSrc;
                             } catch {
                             }
                         }}
@@ -141,22 +148,24 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
             })}
 
             {/* Botón para alternar vista frontal/trasera */}
-            <button
-                type="button"
-                aria-label={toggleAriaLabel ?? labels.toggle}
-                onClick={() => {
-                    const next = useBack ? 'front' : 'back';
-                    if (onSideChange) {
-                        onSideChange(next);
-                    } else {
-                        setInternalUseBack((v) => !v);
-                    }
-                }}
-                className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md border border-black/10 bg-white/90 px-2 py-1 text-xs shadow hover:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-500/60 dark:border-white/10 dark:bg-black/60"
-            >
-                <RotateCcw className="h-4 w-4"/>
-                <span>{useBack ? labels.back : labels.front}</span>
-            </button>
+            {!hideToggle && (
+                <button
+                    type="button"
+                    aria-label={toggleAriaLabel ?? labels.toggle}
+                    onClick={() => {
+                        const next = useBack ? 'front' : 'back';
+                        if (onSideChange) {
+                            onSideChange(next);
+                        } else {
+                            setInternalUseBack((v) => !v);
+                        }
+                    }}
+                    className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md border border-black/10 bg-white/90 px-2 py-1 text-xs shadow hover:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-500/60 dark:border-white/10 dark:bg-black/60"
+                >
+                    <RotateCcw className="h-4 w-4"/>
+                    <span>{useBack ? labels.back : labels.front}</span>
+                </button>
+            )}
         </div>
     );
 };
