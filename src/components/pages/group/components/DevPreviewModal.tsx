@@ -159,11 +159,23 @@ export function DevPreviewModal({
         });
     }, [availablePieces, legoProps, currentSelectedPieces]);
 
+    const getCappedDimensions = (width: number, height: number, maxRes: number = 1080) => {
+        if (width <= maxRes && height <= maxRes) return {width, height};
+        const ratio = width / height;
+        if (width > height) {
+            return {width: maxRes, height: Math.round(maxRes / ratio)};
+        }
+        return {width: Math.round(maxRes * ratio), height: maxRes};
+    };
+
     const handleCaptureJpg = async () => {
         const area = document.getElementById('preview-capture-area');
         if (!area) return;
 
         try {
+            const rect = area.getBoundingClientRect();
+            const {width, height} = getCappedDimensions(rect.width * 2, rect.height * 2);
+
             const dataUrl = await toPng(area, {
                 quality: 0.95,
                 backgroundColor: '#ffffff',
@@ -171,6 +183,10 @@ export function DevPreviewModal({
                 fontEmbedCSS: '', // Evita que intente leer reglas CSS externas
                 cacheBust: false,
                 includeQueryParams: true,
+                width: rect.width,
+                height: rect.height,
+                canvasWidth: width,
+                canvasHeight: height,
                 filter: (node: any) => {
                     if (node?.hasAttribute && node.hasAttribute('data-recording-ignore')) {
                         return false;
@@ -202,9 +218,11 @@ export function DevPreviewModal({
             // Creamos un canvas para la grabación
             const canvas = document.createElement('canvas');
             const rect = area.getBoundingClientRect();
-            // Usar dimensiones reales para mejor calidad
-            canvas.width = rect.width * 2;
-            canvas.height = rect.height * 2;
+            // Usar dimensiones reales pero limitadas a 1080p
+            const {width: canvasWidth, height: canvasHeight} = getCappedDimensions(rect.width * 2, rect.height * 2);
+
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
             const ctx = canvas.getContext('2d');
             if (!ctx) throw new Error('Could not get canvas context');
 
@@ -251,10 +269,10 @@ export function DevPreviewModal({
                 // Capturar el estado actual del HTML al canvas
                 try {
                     const tempCanvas = await toCanvas(area, {
-                        width: canvas.width / 2, // Dimensiones lógicas del elemento
-                        height: canvas.height / 2,
-                        canvasWidth: canvas.width, // Dimensiones reales del canvas destino
-                        canvasHeight: canvas.height,
+                        width: rect.width, // Dimensiones lógicas del elemento
+                        height: rect.height,
+                        canvasWidth: canvasWidth, // Dimensiones reales del canvas destino
+                        canvasHeight: canvasHeight,
                         skipFonts: true,
                         cacheBust: true,
                         includeQueryParams: true,
@@ -267,12 +285,12 @@ export function DevPreviewModal({
                         style: {
                             transform: 'scale(1)',
                             transformOrigin: 'top left',
-                            width: (canvas.width / 2) + 'px',
-                            height: (canvas.height / 2) + 'px'
+                            width: rect.width + 'px',
+                            height: rect.height + 'px'
                         }
                     });
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+                    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                    ctx.drawImage(tempCanvas, 0, 0, canvasWidth, canvasHeight);
                 } catch (e) {
                     console.error('Error capturing frame:', e);
                 }
