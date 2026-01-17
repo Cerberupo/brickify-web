@@ -239,6 +239,7 @@ export function PersonRow({
                 personName={person?.name || ''}
                 person={person}
                 legoProps={{...compositeProps, side, onSideChange: (s) => setSide(s)}}
+                selectedPieceByPart={selectedPieceByPart}
             />
             <Toaster position="top-right"/>
             <div className="flex flex-col gap-3 flex-1 min-w-0">

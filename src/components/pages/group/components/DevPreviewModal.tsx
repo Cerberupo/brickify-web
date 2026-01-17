@@ -16,6 +16,7 @@ interface DevPreviewModalProps {
     personName: string;
     person: any;
     legoProps: LegoCompositeProps;
+    selectedPieceByPart?: Record<string, any>;
 }
 
 type AspectRatio = '1:1' | '9:16';
@@ -27,6 +28,7 @@ export function DevPreviewModal({
                                     personName,
                                     person,
                                     legoProps,
+                                    selectedPieceByPart,
                                 }: DevPreviewModalProps) {
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
     const [isRecording, setIsRecording] = useState(false);
@@ -210,6 +212,11 @@ export function DevPreviewModal({
 
         const matches = person?.matches || {};
         const resolvePiece = (part: string) => {
+            // Prioritize selection passed from PersonRow
+            if (selectedPieceByPart && selectedPieceByPart[part]) {
+                return selectedPieceByPart[part];
+            }
+
             const m = matches[part];
             if (!m) return null;
 
@@ -235,7 +242,7 @@ export function DevPreviewModal({
             upperPart: resolvePiece('upperPart'),
             lowerPart: resolvePiece('lowerPart'),
         };
-    }, [randomSelectedPieces, person?.matches]);
+    }, [randomSelectedPieces, person?.matches, selectedPieceByPart]);
 
     if (!isOpen || !isClient) return null;
 
