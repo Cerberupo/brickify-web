@@ -35,6 +35,13 @@ export function DevPreviewModal({
     const [recordingProgress, setRecordingProgress] = useState(0);
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
     const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
+    const partUsageCounts = useRef<Record<string, number>>({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
+    const pieceUsageCounts = useRef<Record<string, Record<string, number>>>({
+        wig: {},
+        head: {},
+        upperPart: {},
+        lowerPart: {}
+    });
     const recordingIntervalRef = useRef<number | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
@@ -51,37 +58,104 @@ export function DevPreviewModal({
         return out;
     }, [person?.matches]);
 
-    const getRandomPiece = (part: string) => {
-        const pieces = availablePieces[part];
-        if (!pieces || pieces.length === 0) return {sideImages: undefined, piece: undefined};
-        const random = pieces[Math.floor(Math.random() * pieces.length)];
-        return {
-            sideImages: toSideWithFallback(part === 'wig' ? 'hair' : part === 'upperPart' ? 'body' : part === 'lowerPart' ? 'pants' : 'head', random),
-            piece: random
+    const currentSelectedPieces = useMemo(() => {
+        if (randomSelectedPieces) return randomSelectedPieces;
+
+        const matches = person?.matches || {};
+        const resolvePiece = (part: string) => {
+            // Prioritize selection passed from PersonRow
+            if (selectedPieceByPart && selectedPieceByPart[part]) {
+                return selectedPieceByPart[part];
+            }
+
+            const m = matches[part];
+            if (!m) return null;
+
+            const pieces = Array.isArray(m.matchedPieceIds) ? m.matchedPieceIds : [];
+            const selected = m.selectedPiece || pieces[0];
+
+            if (!selected) return null;
+
+            // Si ya es un objeto con imágenes, lo devolvemos
+            if (typeof selected === 'object' && (selected.imageFrontUrl || selected.imageUrl)) return selected;
+
+            // Si es un ID, buscamos en matchedPieceIds
+            const id = typeof selected === 'string' ? selected : (selected.id || selected._id || selected.pieceId);
+            return pieces.find((p: any) => {
+                const pid = p.id || p._id || p.pieceId;
+                return String(pid) === String(id);
+            });
         };
-    };
+
+        return {
+            wig: resolvePiece('wig'),
+            head: resolvePiece('head'),
+            upperPart: resolvePiece('upperPart'),
+            lowerPart: resolvePiece('lowerPart'),
+        };
+    }, [randomSelectedPieces, person?.matches, selectedPieceByPart]);
 
     const randomizeLego = useCallback(() => {
-        const wig = getRandomPiece('wig');
-        const head = getRandomPiece('head');
-        const upperPart = getRandomPiece('upperPart');
-        const lowerPart = getRandomPiece('lowerPart');
+        // 1. Decidir qué parte cambiar (la que tenga menor carga)
+        const parts = ['wig', 'head', 'upperPart', 'lowerPart'];
+        const minPartUsage = Math.min(...parts.map(p => partUsageCounts.current[p]));
+        const candidateParts = parts.filter(p => partUsageCounts.current[p] === minPartUsage);
+        const selectedPart = candidateParts[Math.floor(Math.random() * candidateParts.length)];
 
-        setRandomLegoProps({
-            wig: wig.sideImages,
-            head: head.sideImages,
-            upperPart: upperPart.sideImages,
-            lowerPart: lowerPart.sideImages,
-            side: 'front'
+        // Incrementar carga de la parte
+        partUsageCounts.current[selectedPart]++;
+
+        // 2. Decidir qué pieza de esa parte poner (la que tenga menor carga)
+        const pieces = availablePieces[selectedPart];
+        if (!pieces || pieces.length === 0) return;
+
+        const getPieceId = (p: any) => p.id || p._id || p.pieceId || p.elementId || p.storePieceId;
+
+        // Inicializar contadores para piezas nuevas si no existen
+        pieces.forEach((p: any) => {
+            const id = getPieceId(p);
+            if (pieceUsageCounts.current[selectedPart][id] === undefined) {
+                pieceUsageCounts.current[selectedPart][id] = 0;
+            }
         });
 
-        setRandomSelectedPieces({
-            wig: wig.piece,
-            head: head.piece,
-            upperPart: upperPart.piece,
-            lowerPart: lowerPart.piece
+        const minPieceUsage = Math.min(...pieces.map((p: any) => pieceUsageCounts.current[selectedPart][getPieceId(p)]));
+        const candidatePieces = pieces.filter((p: any) => pieceUsageCounts.current[selectedPart][getPieceId(p)] === minPieceUsage);
+        const selectedPiece = candidatePieces[Math.floor(Math.random() * candidatePieces.length)];
+
+        // Incrementar carga de la pieza
+        pieceUsageCounts.current[selectedPart][getPieceId(selectedPiece)]++;
+
+        // 3. Actualizar el estado
+        setRandomSelectedPieces(prev => {
+            const current = prev || {...currentSelectedPieces};
+            return {
+                ...current,
+                [selectedPart]: selectedPiece
+            };
         });
-    }, []);
+
+        setRandomLegoProps(prev => {
+            const sideImages = toSideWithFallback(
+                selectedPart === 'wig' ? 'hair' : selectedPart === 'upperPart' ? 'body' : selectedPart === 'lowerPart' ? 'pants' : 'head',
+                selectedPiece
+            );
+
+            // Si es la primera vez, inicializamos con los props actuales
+            if (!prev) {
+                return {
+                    ...legoProps,
+                    [selectedPart]: sideImages,
+                    side: 'front'
+                };
+            }
+
+            return {
+                ...prev,
+                [selectedPart]: sideImages
+            };
+        });
+    }, [availablePieces, legoProps, currentSelectedPieces]);
 
     const handleCaptureJpg = async () => {
         const area = document.getElementById('preview-capture-area');
@@ -112,6 +186,9 @@ export function DevPreviewModal({
         setIsRecording(true);
         setRecordingProgress(0);
         chunksRef.current = [];
+        // Reset usage counts
+        partUsageCounts.current = {wig: 0, head: 0, upperPart: 0, lowerPart: 0};
+        pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
 
         try {
             // Creamos un canvas para la grabación
@@ -159,8 +236,7 @@ export function DevPreviewModal({
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / totalSeconds) * 100);
 
-                // Cambiar piezas aleatoriamente cada 0.5 segundos (5 frames de captura)
-                if (Math.floor(seconds * frameRate) % 5 === 0) {
+                if (Math.floor(seconds * frameRate) % 10 === 0) {
                     randomizeLego();
                 }
 
@@ -206,43 +282,6 @@ export function DevPreviewModal({
     };
 
     const currentLegoProps = randomLegoProps || legoProps;
-
-    const currentSelectedPieces = useMemo(() => {
-        if (randomSelectedPieces) return randomSelectedPieces;
-
-        const matches = person?.matches || {};
-        const resolvePiece = (part: string) => {
-            // Prioritize selection passed from PersonRow
-            if (selectedPieceByPart && selectedPieceByPart[part]) {
-                return selectedPieceByPart[part];
-            }
-
-            const m = matches[part];
-            if (!m) return null;
-
-            const pieces = Array.isArray(m.matchedPieceIds) ? m.matchedPieceIds : [];
-            const selected = m.selectedPiece || pieces[0];
-
-            if (!selected) return null;
-
-            // Si ya es un objeto con imágenes, lo devolvemos
-            if (typeof selected === 'object' && (selected.imageFrontUrl || selected.imageUrl)) return selected;
-
-            // Si es un ID, buscamos en matchedPieceIds
-            const id = typeof selected === 'string' ? selected : (selected.id || selected._id || selected.pieceId);
-            return pieces.find((p: any) => {
-                const pid = p.id || p._id || p.pieceId;
-                return String(pid) === String(id);
-            });
-        };
-
-        return {
-            wig: resolvePiece('wig'),
-            head: resolvePiece('head'),
-            upperPart: resolvePiece('upperPart'),
-            lowerPart: resolvePiece('lowerPart'),
-        };
-    }, [randomSelectedPieces, person?.matches, selectedPieceByPart]);
 
     if (!isOpen || !isClient) return null;
 
