@@ -47,7 +47,7 @@ export function DevPreviewModal({
             lowerPart: Array.isArray(matches.lowerPart?.matchedPieceIds) ? matches.lowerPart.matchedPieceIds : [],
         };
         return out;
-    }, [person]);
+    }, [person?.matches]);
 
     const getRandomPiece = (part: string) => {
         const pieces = availablePieces[part];
@@ -79,7 +79,7 @@ export function DevPreviewModal({
             upperPart: upperPart.piece,
             lowerPart: lowerPart.piece
         });
-    }, [availablePieces]);
+    }, []);
 
     const handleCaptureJpg = async () => {
         const area = document.getElementById('preview-capture-area');
@@ -235,7 +235,7 @@ export function DevPreviewModal({
             upperPart: resolvePiece('upperPart'),
             lowerPart: resolvePiece('lowerPart'),
         };
-    }, [randomSelectedPieces, person]);
+    }, [randomSelectedPieces, person?.matches]);
 
     if (!isOpen || !isClient) return null;
 
