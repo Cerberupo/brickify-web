@@ -32,6 +32,7 @@ export function DevPreviewModal({
     const [isRecording, setIsRecording] = useState(false);
     const [recordingProgress, setRecordingProgress] = useState(0);
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
+    const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
     const recordingIntervalRef = useRef<number | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
@@ -50,18 +51,33 @@ export function DevPreviewModal({
 
     const getRandomPiece = (part: string) => {
         const pieces = availablePieces[part];
-        if (!pieces || pieces.length === 0) return undefined;
+        if (!pieces || pieces.length === 0) return {sideImages: undefined, piece: undefined};
         const random = pieces[Math.floor(Math.random() * pieces.length)];
-        return toSideWithFallback(part === 'wig' ? 'hair' : part === 'upperPart' ? 'body' : part === 'lowerPart' ? 'pants' : 'head', random);
+        return {
+            sideImages: toSideWithFallback(part === 'wig' ? 'hair' : part === 'upperPart' ? 'body' : part === 'lowerPart' ? 'pants' : 'head', random),
+            piece: random
+        };
     };
 
     const randomizeLego = useCallback(() => {
+        const wig = getRandomPiece('wig');
+        const head = getRandomPiece('head');
+        const upperPart = getRandomPiece('upperPart');
+        const lowerPart = getRandomPiece('lowerPart');
+
         setRandomLegoProps({
-            wig: getRandomPiece('wig'),
-            head: getRandomPiece('head'),
-            upperPart: getRandomPiece('upperPart'),
-            lowerPart: getRandomPiece('lowerPart'),
+            wig: wig.sideImages,
+            head: head.sideImages,
+            upperPart: upperPart.sideImages,
+            lowerPart: lowerPart.sideImages,
             side: 'front'
+        });
+
+        setRandomSelectedPieces({
+            wig: wig.piece,
+            head: head.piece,
+            upperPart: upperPart.piece,
+            lowerPart: lowerPart.piece
         });
     }, [availablePieces]);
 
@@ -126,6 +142,7 @@ export function DevPreviewModal({
                 setIsRecording(false);
                 setRecordingProgress(0);
                 setRandomLegoProps(null);
+                setRandomSelectedPieces(null);
                 recorderRef.current = null;
             };
 
@@ -187,6 +204,38 @@ export function DevPreviewModal({
     };
 
     const currentLegoProps = randomLegoProps || legoProps;
+
+    const currentSelectedPieces = useMemo(() => {
+        if (randomSelectedPieces) return randomSelectedPieces;
+
+        const matches = person?.matches || {};
+        const resolvePiece = (part: string) => {
+            const m = matches[part];
+            if (!m) return null;
+
+            const pieces = Array.isArray(m.matchedPieceIds) ? m.matchedPieceIds : [];
+            const selected = m.selectedPiece || pieces[0];
+
+            if (!selected) return null;
+
+            // Si ya es un objeto con imágenes, lo devolvemos
+            if (typeof selected === 'object' && (selected.imageFrontUrl || selected.imageUrl)) return selected;
+
+            // Si es un ID, buscamos en matchedPieceIds
+            const id = typeof selected === 'string' ? selected : (selected.id || selected._id || selected.pieceId);
+            return pieces.find((p: any) => {
+                const pid = p.id || p._id || p.pieceId;
+                return String(pid) === String(id);
+            });
+        };
+
+        return {
+            wig: resolvePiece('wig'),
+            head: resolvePiece('head'),
+            upperPart: resolvePiece('upperPart'),
+            lowerPart: resolvePiece('lowerPart'),
+        };
+    }, [randomSelectedPieces, person]);
 
     if (!isOpen || !isClient) return null;
 
@@ -272,11 +321,10 @@ export function DevPreviewModal({
                             alt="Background"
                             crossOrigin="anonymous"
                             onError={(e) => {
-                                try {
-                                    const target = e.currentTarget as HTMLImageElement;
+                                const target = e.currentTarget as HTMLImageElement;
+                                if (target.getAttribute('crossorigin') === 'anonymous') {
                                     target.removeAttribute('crossorigin');
                                     target.src = aspectRatio === '1:1' ? '/share/1-1.jpg' : '/share/9-16.jpg';
-                                } catch {
                                 }
                             }}
                         />
@@ -286,7 +334,7 @@ export function DevPreviewModal({
                             className={`absolute overflow-hidden transition-all duration-300 ${
                                 aspectRatio === '1:1'
                                     ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
-                                    : 'top-[10%] left-1/2 -translate-x-1/2 w-[220px] h-[220px] rounded-full'
+                                    : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded'
                             }`}>
                             <img
                                 src={originalImage}
@@ -294,11 +342,10 @@ export function DevPreviewModal({
                                 alt={personName}
                                 crossOrigin="anonymous"
                                 onError={(e) => {
-                                    try {
-                                        const target = e.currentTarget as HTMLImageElement;
+                                    const target = e.currentTarget as HTMLImageElement;
+                                    if (target.getAttribute('crossorigin') === 'anonymous') {
                                         target.removeAttribute('crossorigin');
                                         target.src = originalImage;
-                                    } catch {
                                     }
                                 }}
                             />
@@ -308,15 +355,57 @@ export function DevPreviewModal({
                         <div className={`absolute transition-all duration-300 ${
                             aspectRatio === '1:1'
                                 ? 'bottom-[-15%] right-[-5%] w-[62.66%]'
-                                : 'bottom-[15%] left-1/2 -translate-x-1/2 w-[250px]'
+                                : 'bottom-[5%] right-[-7%] w-[72%]'
                         }`}>
                             <LegoComposite
                                 {...currentLegoProps}
                                 className="w-full"
                                 hideToggle={true}
-                                crossOrigin="anonymous"
+                                crossOrigin={isRecording ? 'anonymous' : undefined}
                             />
                         </div>
+
+                        {/* Selected Pieces List (Only for 9:16) */}
+                        {aspectRatio === '9:16' && (
+                            <div className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2">
+                                {Object.entries(currentSelectedPieces).map(([key, piece]: [string, any]) => {
+                                    if (!piece) return null;
+                                    const imgSrc = currentLegoProps.side === 'back' ? piece.imageBackUrl : piece.imageFrontUrl;
+                                    if (!imgSrc) return null;
+
+                                    return (
+                                        <div key={key}
+                                             className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm">
+                                            <div
+                                                className="w-14 h-14 flex-shrink-0 bg-white rounded-lg p-1.5 shadow-inner">
+                                                <img
+                                                    src={imgSrc}
+                                                    alt={piece.name || key}
+                                                    className="w-full h-full object-contain"
+                                                    crossOrigin={isRecording ? 'anonymous' : undefined}
+                                                    onError={(e) => {
+                                                        const target = e.currentTarget as HTMLImageElement;
+                                                        if (target.getAttribute('crossorigin') === 'anonymous') {
+                                                            target.removeAttribute('crossorigin');
+                                                            target.src = imgSrc;
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div
+                                                    className="text-[12px] font-bold text-gray-900 truncate leading-tight">
+                                                    {piece.name || 'LEGO Piece'}
+                                                </div>
+                                                <div className="text-[10px] font-medium text-gray-600 truncate">
+                                                    {piece.elementId || piece.storePieceId || '-'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {/* REC Indicator */}
                         {isRecording && (

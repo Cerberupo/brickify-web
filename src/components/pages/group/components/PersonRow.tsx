@@ -250,11 +250,10 @@ export function PersonRow({
                             src={src || faviconUrl}
                             alt={person?.name || ''}
                             onError={(e) => {
-                                try {
-                                    const target = e.currentTarget as HTMLImageElement;
+                                const target = e.currentTarget as HTMLImageElement;
+                                if (target.getAttribute('crossorigin') === 'anonymous') {
                                     target.removeAttribute('crossorigin');
                                     target.src = src || faviconUrl;
-                                } catch {
                                 }
                             }}
                         />

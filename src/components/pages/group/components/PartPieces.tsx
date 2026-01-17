@@ -120,11 +120,10 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
                                     className="w-full h-full object-contain"
                                     onError={(e) => {
                                         invalidateImage(cacheKey);
-                                        try {
-                                            const target = e.currentTarget as HTMLImageElement;
+                                        const target = e.currentTarget as HTMLImageElement;
+                                        if (target.getAttribute('crossorigin') === 'anonymous') {
                                             target.removeAttribute('crossorigin');
                                             target.src = imgSrc;
-                                        } catch {
                                         }
                                     }}
                                 />
