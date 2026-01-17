@@ -40,6 +40,9 @@ export type LegoCompositeProps = {
 
     /** Si es true, oculta el botón de alternar vista frontal/trasera */
     hideToggle?: boolean;
+
+    /** Configuración de CORS para las imágenes */
+    crossOrigin?: 'anonymous' | 'use-credentials' | '';
 };
 
 /**
@@ -62,6 +65,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                                                          side,
                                                          onSideChange,
                                                          hideToggle = false,
+                                                         crossOrigin,
                                                      }) => {
     const [internalUseBack, setInternalUseBack] = useState(false);
     const useBack = (side ? side === 'back' : internalUseBack);
@@ -132,6 +136,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                         alt={alt}
                         style={pieceStyle}
                         draggable={false}
+                        crossOrigin={crossOrigin}
                         onError={(e) => {
                             const k = `${makeUrlKey(freshSrc)}::${alt}`;
                             invalidateImage(k);

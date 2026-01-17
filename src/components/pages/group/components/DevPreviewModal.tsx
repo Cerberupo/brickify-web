@@ -73,11 +73,10 @@ export function DevPreviewModal({
             const dataUrl = await toPng(area, {
                 quality: 0.95,
                 backgroundColor: '#ffffff',
-                // Skip problematic external CSS/Fonts that cause SecurityError
                 skipFonts: true,
-                // html-to-image uses fetch internally if we don't handle it
-                // and if the server doesn't have CORS headers, it fails.
-                // For now we don't use useCORS: true because it triggers CORS preflights that fail.
+                fontEmbedCSS: '', // Evita que intente leer reglas CSS externas
+                cacheBust: false,
+                includeQueryParams: true,
             });
             const link = document.createElement('a');
             link.download = `brickify-${personName.replace(/\s+/g, '-').toLowerCase()}-${aspectRatio.replace(':', '-')}.png`;
@@ -152,6 +151,8 @@ export function DevPreviewModal({
                         width: canvas.width,
                         height: canvas.height,
                         skipFonts: true,
+                        cacheBust: true,
+                        includeQueryParams: true,
                         style: {
                             transform: 'scale(1)',
                             transformOrigin: 'top left'
@@ -269,6 +270,7 @@ export function DevPreviewModal({
                             src={aspectRatio === '1:1' ? '/share/1-1.jpg' : '/share/9-16.jpg'}
                             className="absolute inset-0 w-full h-full object-cover"
                             alt="Background"
+                            crossOrigin="anonymous"
                             onError={(e) => {
                                 try {
                                     const target = e.currentTarget as HTMLImageElement;
@@ -281,15 +283,16 @@ export function DevPreviewModal({
 
                         {/* User Original Image */}
                         <div
-                            className={`absolute border-4 border-white shadow-lg overflow-hidden transition-all duration-300 ${
+                            className={`absolute overflow-hidden transition-all duration-300 ${
                                 aspectRatio === '1:1'
-                                    ? 'top-[10%] left-[10%] w-[180px] h-[180px] rounded-xl rotate-[-3deg]'
+                                    ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
                                     : 'top-[10%] left-1/2 -translate-x-1/2 w-[220px] h-[220px] rounded-full'
                             }`}>
                             <img
                                 src={originalImage}
                                 className="w-full h-full object-cover"
                                 alt={personName}
+                                crossOrigin="anonymous"
                                 onError={(e) => {
                                     try {
                                         const target = e.currentTarget as HTMLImageElement;
@@ -304,13 +307,14 @@ export function DevPreviewModal({
                         {/* Lego Character */}
                         <div className={`absolute transition-all duration-300 ${
                             aspectRatio === '1:1'
-                                ? 'bottom-[-15%] right-[-5%] w-[370px]'
+                                ? 'bottom-[-15%] right-[-5%] w-[62.66%]'
                                 : 'bottom-[15%] left-1/2 -translate-x-1/2 w-[250px]'
                         }`}>
                             <LegoComposite
                                 {...currentLegoProps}
                                 className="w-full"
                                 hideToggle={true}
+                                crossOrigin="anonymous"
                             />
                         </div>
 

@@ -121,7 +121,9 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
                                     onError={(e) => {
                                         invalidateImage(cacheKey);
                                         try {
-                                            (e.currentTarget as HTMLImageElement).src = imgSrc;
+                                            const target = e.currentTarget as HTMLImageElement;
+                                            target.removeAttribute('crossorigin');
+                                            target.src = imgSrc;
                                         } catch {
                                         }
                                     }}
