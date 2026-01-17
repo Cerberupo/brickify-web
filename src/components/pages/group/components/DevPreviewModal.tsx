@@ -30,6 +30,7 @@ export function DevPreviewModal({
                                     legoProps,
                                     selectedPieceByPart,
                                 }: DevPreviewModalProps) {
+    const {t} = useTranslation();
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
     const [isRecording, setIsRecording] = useState(false);
     const [recordingProgress, setRecordingProgress] = useState(0);
@@ -308,7 +309,7 @@ export function DevPreviewModal({
                 <DialogHeader
                     className="p-4 border-b border-gray-100 flex flex-row items-center justify-between print:hidden">
                     <div className="flex items-center gap-4">
-                        <DialogTitle className="text-xl">Content Creator (DEV)</DialogTitle>
+                        <DialogTitle className="text-xl">{t('devPreview.title')}</DialogTitle>
                         <div className="flex bg-gray-100 rounded-lg p-1">
                             <Button
                                 variant="ghost"
@@ -344,7 +345,7 @@ export function DevPreviewModal({
                         <Button variant="outline" size="sm" onClick={handleCaptureJpg} disabled={isRecording}
                                 className="bg-white border-gray-200 hover:bg-gray-50">
                             <Camera className="h-4 w-4 mr-2"/>
-                            Capture JPG
+                            {t('devPreview.captureJpg')}
                         </Button>
                         <Button
                             variant={isRecording ? 'destructive' : 'default'}
@@ -355,12 +356,12 @@ export function DevPreviewModal({
                             {isRecording ? (
                                 <>
                                     <div className="h-2 w-2 rounded-full bg-white animate-pulse mr-2"/>
-                                    Recording ({Math.round(recordingProgress)}%)
+                                    {t('devPreview.recording', {progress: Math.round(recordingProgress)})}
                                 </>
                             ) : (
                                 <>
                                     <Play className="h-4 w-4 mr-2"/>
-                                    Record 15s Video
+                                    {t('devPreview.recordVideo')}
                                 </>
                             )}
                         </Button>
@@ -457,7 +458,7 @@ export function DevPreviewModal({
                                             <div className="min-w-0 flex-1">
                                                 <div
                                                     className="text-[12px] font-bold text-gray-900 truncate leading-tight">
-                                                    {piece.name || 'LEGO Piece'}
+                                                    {piece.name || t('devPreview.legoPiece')}
                                                 </div>
                                                 <div className="text-[10px] font-medium text-gray-600 truncate">
                                                     {piece.elementId || piece.storePieceId || '-'}

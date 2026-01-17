@@ -503,5 +503,12 @@
     "help": "Use pinch (mobile) or mouse wheel to zoom. Drag to reframe. Portrait crop is enforced.",
     "cancel": "Cancel",
     "apply": "Apply"
+  },
+  "devPreview": {
+    "title": "Content Creator (DEV)",
+    "captureJpg": "Capture JPG",
+    "recordVideo": "Record 15s Video",
+    "recording": "Recording ({{progress}}%)",
+    "legoPiece": "LEGO Piece"
   }
 }

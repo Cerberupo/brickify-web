@@ -220,6 +220,8 @@ export function PersonRow({
     const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
     const isDev = appEnv === 'dev';
 
+    const showSocialPreviewLabel = t('common.actions') + ' (DEV)';
+
     const showSocialPreview = useMemo(() => {
         if (!isDev) return false;
         try {
@@ -364,7 +366,7 @@ export function PersonRow({
                                 onClick={() => setIsPreviewModalOpen(true)}
                                 className="border-yellow-500 text-yellow-700 hover:bg-yellow-50"
                             >
-                                <Camera className="h-4 w-4 mr-1"/> Social Preview (DEV)
+                                <Camera className="h-4 w-4 mr-1"/> {showSocialPreviewLabel}
                             </Button>
                         )}
                         {/* En responsive, forzar que el bloque de compartir salte a la siguiente línea */}

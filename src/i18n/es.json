@@ -501,5 +501,12 @@
     "help": "Usa el gesto de pellizcar (móvil) o la rueda del ratón para hacer zoom. Arrastra para encuadrar. Se aplica un recorte vertical.",
     "cancel": "Cancelar",
     "apply": "Aplicar"
+  },
+  "devPreview": {
+    "title": "Creador de Contenido (DEV)",
+    "captureJpg": "Capturar JPG",
+    "recordVideo": "Grabar Vídeo 15s",
+    "recording": "Grabando ({{progress}}%)",
+    "legoPiece": "Pieza LEGO"
   }
 }
