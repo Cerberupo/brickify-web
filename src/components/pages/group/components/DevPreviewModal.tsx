@@ -243,18 +243,22 @@ export function DevPreviewModal({
                 // Capturar el estado actual del HTML al canvas
                 try {
                     const tempCanvas = await toCanvas(area, {
-                        width: canvas.width,
-                        height: canvas.height,
+                        width: canvas.width / 2, // Dimensiones lógicas del elemento
+                        height: canvas.height / 2,
+                        canvasWidth: canvas.width, // Dimensiones reales del canvas destino
+                        canvasHeight: canvas.height,
                         skipFonts: true,
                         cacheBust: true,
                         includeQueryParams: true,
                         style: {
                             transform: 'scale(1)',
-                            transformOrigin: 'top left'
+                            transformOrigin: 'top left',
+                            width: (canvas.width / 2) + 'px',
+                            height: (canvas.height / 2) + 'px'
                         }
                     });
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(tempCanvas, 0, 0);
+                    ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
                 } catch (e) {
                     console.error('Error capturing frame:', e);
                 }
