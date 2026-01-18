@@ -4,7 +4,36 @@
 User-agent: *
 Allow: /
 
-# Rutas internas que no deberían ser rastreadas (ajusta según necesidades)
+# Rutas internas que no deberían ser rastreadas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+Disallow: /recover
+Disallow: /reset
+
+# AI Crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+
+User-agent: CCBot
+Allow: /
 Disallow: /api/
 Disallow: /admin/
 Disallow: /dashboard/

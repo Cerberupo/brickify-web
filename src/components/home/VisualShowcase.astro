@@ -4,20 +4,41 @@ const {locale: localeProp} = Astro.props as { locale?: SupportedLocale };
 const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
 const copies = {
     en: {
-        sectionAria: 'LEGO-style preview',
-        img1Alt: 'LEGO person figure holding a blue brick',
-        img2Alt: 'LEGO girl with colorful bricks',
-        piece1Alt: 'LEGO brick',
+        sectionAria: 'LEGO-style preview showcase',
+        img1Alt: 'Custom LEGO® minifigure portrait of a person holding a blue brick',
+        img2Alt: 'Personalized LEGO®-style girl character with colorful bricks',
+        piece1Alt: 'Official LEGO® brick element',
     },
     es: {
-        sectionAria: 'Vista previa en estilo LEGO',
-        img1Alt: 'Figura de persona convertida a LEGO sosteniendo un bloque azul',
-        img2Alt: 'Niña LEGO con bloques de colores',
-        piece1Alt: 'Bloque LEGO',
+        sectionAria: 'Muestra de retratos estilo LEGO®',
+        img1Alt: 'Retrato de minifigura LEGO® personalizada sosteniendo un bloque azul',
+        img2Alt: 'Personaje de niña estilo LEGO® personalizado con bloques de colores',
+        piece1Alt: 'Pieza oficial de LEGO®',
     }
 } as const;
 const t = copies[locale];
+
+// Structured Data for Images
+const imageSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "ImageObject",
+            "contentUrl": "/people-1.png",
+            "description": t.img2Alt,
+            "name": locale === 'es' ? "Niña LEGO personalizada" : "Personalized LEGO girl"
+        },
+        {
+            "@type": "ImageObject",
+            "contentUrl": "/people-2.png",
+            "description": t.img1Alt,
+            "name": locale === 'es' ? "Retrato LEGO personalizado" : "Custom LEGO portrait"
+        }
+    ]
+};
 ---
+<script type="application/ld+json" is:inline set:html={JSON.stringify(imageSchema)}/>
+
 <section aria-label={t.sectionAria} class="relative">
     <div class={`relative h-[360px] md:h-[720px]`}
          fetchpriority="high"
@@ -26,13 +47,13 @@ const t = copies[locale];
             <figure class="relative w-full h-full">
                 <img src="/piece-1.svg" width="398" height="135" alt={t.piece1Alt} fetchpriority="high"
                      class="h-auto absolute top-0 left-0 origin-top-left scale-50 md:scale-100"
-                     style="transform: translateX(-20%) translateY(-20%);"/>
+                     style="transform: translateX(-20%) translateY(-20%);" loading="eager"/>
                 <img src="/people-1.png" width="253" height="380" alt={t.img2Alt} fetchpriority="high"
                      class="h-auto absolute bottom-0 left-0 origin-bottom-left scale-50 md:scale-100"
-                     style="transform: translateX(-35%) translateY(20%);"/>
+                     style="transform: translateX(-35%) translateY(20%);" loading="eager"/>
                 <img src="/people-2.png" width="294" height="441" alt={t.img1Alt} fetchpriority="high"
                      class="h-auto absolute top-0 right-0 origin-top-right scale-50 md:scale-100"
-                     style="transform: translateX(30%) translateY(0%);"/>
+                     style="transform: translateX(30%) translateY(0%);" loading="eager"/>
             </figure>
         </div>
     </div>

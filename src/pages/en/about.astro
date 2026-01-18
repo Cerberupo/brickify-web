@@ -9,11 +9,23 @@ const locale: SupportedLocale = 'en';
 const content = {title: 'Brickify — About us'};
 const seo = {
     title: content.title,
+    description: "Learn about Brickify, the AI-powered service that transforms your photos into custom LEGO® minifigure parts lists. Discover how we help you create unique gifts.",
+    keywords: "about brickify, custom lego portrait, personalized lego gift, how brickify works",
+    canonical: "/en/about",
     alternates: [
         {href: '/about', hrefLang: 'x-default'},
         {href: '/es/about', hrefLang: 'es'},
         {href: '/en/about', hrefLang: 'en'},
     ],
+    structuredData: {
+        organization: true,
+        website: true,
+        webpage: true,
+        breadcrumb: [
+            {name: 'Home', url: '/en'},
+            {name: 'About us', url: '/en/about'}
+        ]
+    },
 };
 ---
 <Layout content={content} lang={locale} seo={seo}>
