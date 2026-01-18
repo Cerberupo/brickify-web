@@ -38,7 +38,8 @@ const title = titleProp ?? t.title;
                    aria-label={t.ctaSecondaryAria}>
                     {t.ctaSecondary}
                 </a>
-                <a href="/login" class={buttonVariants({size: "lg", variant: "outline"})}
+                <a href={locale === 'es' ? '/es/login' : '/login'}
+                   class={buttonVariants({size: "lg", variant: "outline"})}
                    aria-label={t.ctaPrimaryAria}>
                     {t.ctaPrimary}
                 </a>
