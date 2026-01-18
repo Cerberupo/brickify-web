@@ -2,13 +2,14 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {CreateGroupModal, GroupCard, Toaster} from '@/components';
 import {Button, Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui';
-import {Plus, UsersRound} from 'lucide-react';
+import {ChevronLeft, ChevronRight, Plus, UsersRound} from 'lucide-react';
 import {createGroup, getGroups, updateGroup} from '@/lib/services';
 import {toast} from 'sonner';
 import type {Group} from '@/lib/types/group';
 import {MAX_PENDING_GROUPS} from '@/constants/uiConfig';
 import {hasGroupAlreadyPaidStatus} from "@/lib";
 
+const ITEMS_PER_PAGE = 9;
 
 export function DashboardPage() {
     const {t} = useTranslation();
@@ -20,49 +21,25 @@ export function DashboardPage() {
 
     // State for storing groups
     const [groups, setGroups] = useState<Group[]>([]);
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalGroups, setTotalGroups] = useState(0);
 
     // State for loading status
     const [isLoading, setIsLoading] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     // Count groups that have not paid yet
     const pendingGroupsCount = useMemo(() => {
+        // This count only considers groups currently loaded in the frontend.
+        // For strict enforcement, the backend should probably check this.
         return groups.filter(group => !hasGroupAlreadyPaidStatus(group)).length;
     }, [groups]);
 
     // Check if button should be disabled
     const isCreateButtonDisabled = pendingGroupsCount > MAX_PENDING_GROUPS;
 
-    // Fetch groups on component mount
-    useEffect(() => {
-        fetchGroups();
-    }, []);
-
-    // Function to fetch groups
-    const fetchGroups = async () => {
-        try {
-            setIsLoading(true);
-            const fetchedGroups = await getGroups();
-            console.log('fetchedGroups', fetchedGroups);
-            // Sort collections by newest first (createdAt DESC), with safe fallbacks
-            const sorted = [...fetchedGroups].sort((a: any, b: any) => {
-                const aTime = a?.createdAt ? new Date(a.createdAt).getTime() : (a?.updatedAt ? new Date(a.updatedAt).getTime() : 0);
-                const bTime = b?.createdAt ? new Date(b.createdAt).getTime() : (b?.updatedAt ? new Date(b.updatedAt).getTime() : 0);
-                if (bTime !== aTime) return bTime - aTime;
-                // Fallback: try to use id ordering if timestamps are missing/equal
-                const aId = typeof a?.id === 'string' ? a.id : String(a?.id ?? '');
-                const bId = typeof b?.id === 'string' ? b.id : String(b?.id ?? '');
-                return bId.localeCompare(aId);
-            });
-            setGroups(sorted as any);
-        } catch (error) {
-            console.error('Error fetching groups:', error);
-            toast.error(t('dashboard.errorFetchingGroups'));
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Handler for opening the modal
     const handleOpenModal = () => {
         setSelectedGroup(null);
         setIsModalOpen(true);
@@ -73,10 +50,40 @@ export function DashboardPage() {
         setIsModalOpen(true);
     };
 
-    // Handler for closing the modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedGroup(null);
+    };
+
+    // Fetch groups on component mount or page change
+    useEffect(() => {
+        fetchGroupsByPage(page);
+    }, [page]);
+
+    const fetchGroupsByPage = async (pageNumber: number) => {
+        try {
+            if (pageNumber === 1) setIsInitialLoading(true);
+            else setIsLoading(true);
+
+            const response = await getGroups(pageNumber, ITEMS_PER_PAGE);
+            setGroups(response.groups);
+            setTotalGroups(response.total);
+            setTotalPages(response.pages);
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+            toast.error(t('dashboard.errorFetchingGroups'));
+        } finally {
+            setIsInitialLoading(false);
+            setIsLoading(false);
+        }
+    };
+
+    // Handler for page change
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
     };
 
     // Handler for form submission
@@ -90,8 +97,12 @@ export function DashboardPage() {
             // Show success message
             toast.success(t('dashboard.groupCreated'));
 
-            // Fetch updated groups
-            await fetchGroups();
+            // Reset to first page and fetch
+            if (page === 1) {
+                await fetchGroupsByPage(1);
+            } else {
+                setPage(1);
+            }
 
             // Close the modal after submission
             handleCloseModal();
@@ -108,7 +119,7 @@ export function DashboardPage() {
             setIsLoading(true);
             await updateGroup(id, {name, description});
             toast.success(t('dashboard.groupUpdated', 'Group updated successfully'));
-            await fetchGroups();
+            await fetchGroupsByPage(page);
             handleCloseModal();
         } catch (error) {
             console.error('Error updating group:', error);
@@ -118,13 +129,91 @@ export function DashboardPage() {
         }
     };
 
+    const renderPagination = () => {
+        if (totalPages <= 1) return null;
+
+        const pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="flex justify-center items-center gap-2 mt-10">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1 || isLoading}
+                >
+                    <ChevronLeft size={16}/>
+                </Button>
+
+                {startPage > 1 && (
+                    <>
+                        <Button
+                            variant={page === 1 ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => handlePageChange(1)}
+                            disabled={isLoading}
+                        >
+                            1
+                        </Button>
+                        {startPage > 2 && <span className="text-gray-400">...</span>}
+                    </>
+                )}
+
+                {pages.map(p => (
+                    <Button
+                        key={p}
+                        variant={page === p ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => handlePageChange(p)}
+                        disabled={isLoading}
+                        className={page === p ? 'pointer-events-none' : ''}
+                    >
+                        {p}
+                    </Button>
+                ))}
+
+                {endPage < totalPages && (
+                    <>
+                        {endPage < totalPages - 1 && <span className="text-gray-400">...</span>}
+                        <Button
+                            variant={page === totalPages ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => handlePageChange(totalPages)}
+                            disabled={isLoading}
+                        >
+                            {totalPages}
+                        </Button>
+                    </>
+                )}
+
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === totalPages || isLoading}
+                >
+                    <ChevronRight size={16}/>
+                </Button>
+            </div>
+        );
+    };
+
     return (
         <div className="container mx-auto p-4 py-6">
             <Toaster position="top-right"/>
             <div className="mb-8">
-
-
-                {isLoading ? (
+                {isInitialLoading ? (
                     <div className="flex justify-center py-12">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
                     </div>
@@ -157,6 +246,7 @@ export function DashboardPage() {
                                 <GroupCard key={group.id} group={group} onEdit={handleOpenEditModal}/>
                             ))}
                         </div>
+                        {renderPagination()}
                     </>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">

@@ -66,6 +66,7 @@
   },
   "common": {
     "loading": "Loading...",
+    "loadMore": "Load more",
     "cancel": "Cancel",
     "create": "Create",
     "save": "Save",

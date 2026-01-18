@@ -40,16 +40,31 @@ export async function createGroup(data: CreateGroupRequest): Promise<CreateGroup
 }
 
 /**
- * Gets all groups for the current user
- * @returns A promise that resolves to an array of groups
+ * Gets groups for the current user with optional pagination
+ * @returns A promise that resolves to an object containing groups and pagination metadata
  */
-export async function getGroups(): Promise<Group[]> {
+export async function getGroups(page = 1, limit = 10): Promise<{
+    groups: Group[],
+    total: number,
+    page: number,
+    pages: number
+}> {
     try {
-        const response = await fetchApi<{ groups: Group[] }>('/groups', {
+        const response = await fetchApi<{
+            groups: Group[],
+            total: number,
+            page: number,
+            pages: number
+        }>(`/groups?page=${page}&limit=${limit}`, {
             method: 'GET',
         });
 
-        return response.groups || [];
+        return {
+            groups: response.groups || [],
+            total: response.total || 0,
+            page: response.page || 1,
+            pages: response.pages || 1
+        };
     } catch (error) {
         console.error('Get groups error:', error);
         throw error;

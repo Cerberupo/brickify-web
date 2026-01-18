@@ -145,12 +145,7 @@ const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import
             "@type": "WebSite",
             "name": PROJECT_NAME,
             "url": baseOrigin || "/",
-            "inLanguage": htmlLang,
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": `${baseOrigin}/search?q={search_term_string}`,
-                "query-input": "required name=search_term_string"
-            }
+            "inLanguage": htmlLang
         })}/>
     )}
     {seo?.structuredData?.breadcrumb && (
