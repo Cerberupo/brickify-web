@@ -4,13 +4,21 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
 const seo = {
-    title: "Minifig LEGO personalizada desde tu foto | Brickify",
-    description: "Sube tu foto, elegimos las piezas oficiales más parecidas y compras solo lo que necesitas. Rápido, preciso y listo para comprar en minutos.",
+    title: "Minifigura LEGO® Personalizada desde tu Foto | Brickify",
+    description: "Convierte cualquier foto en una minifigura estilo LEGO®. Nuestra IA selecciona las piezas oficiales más parecidas para que puedas crear un regalo único y personalizado.",
     canonical: "/es/minifig-lego-personalizada-foto",
     alternates: [
         {href: "/custom-lego-minifigure-photo", hrefLang: "x-default"},
         {href: "/en/custom-lego-minifigure-photo", hrefLang: "en"},
+        {href: "/es/minifig-lego-personalizada-foto", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Minifigura desde Foto", url: "/es/minifig-lego-personalizada-foto"},
+        ]
+    }
 };
 
 const hero = {

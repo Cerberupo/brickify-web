@@ -4,13 +4,21 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
 const seo = {
-    title: "Regalos de empresa LEGO personalizados con fotos | Brickify",
-    description: "Sube fotos de tu equipo o asistentes y recibe listas exactas de piezas LEGO® para minifigs lookalike. Ideal para regalos corporativos, eventos y kits de bienvenida.",
+    title: "Regalos de Empresa LEGO® Personalizados con Fotos | Brickify",
+    description: "Crea regalos corporativos memorables con minifiguras estilo LEGO® de tu equipo. Sube fotos y obtén listas de piezas oficiales seleccionadas por IA para empleados y eventos.",
     canonical: "/es/regalos-empresa-lego-personalizados",
     alternates: [
         {href: "/corporate-lego-gifts", hrefLang: "x-default"},
         {href: "/en/corporate-lego-gifts", hrefLang: "en"},
+        {href: "/es/regalos-empresa-lego-personalizados", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Regalos de Empresa", url: "/es/regalos-empresa-lego-personalizados"},
+        ]
+    }
 };
 
 const hero = {

@@ -112,6 +112,8 @@ const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import
     <meta property="og:image" content={ogImageUrl}/>
     <meta property="og:site_name" content={PROJECT_NAME}/>
     <meta property="og:locale" content={htmlLang === 'es' ? 'es_ES' : 'en_US'}/>
+    {seo?.ogAlt && (
+            <meta property="og:image:alt" content={seo.ogAlt}/>)}
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image"/>
@@ -122,60 +124,62 @@ const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import
     {seo?.ogAlt && (
             <meta name="twitter:image:alt" content={seo.ogAlt}/>)}
 
+    <!-- Structured Data -->
     {seo?.structuredData?.organization && (
-        <script type="application/ld+json" set:html={JSON.stringify({
+        <script type="application/ld+json" is:inline set:html={JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: PROJECT_NAME,
-            url: baseOrigin || "/",
-            logo: `${baseOrigin}/logo.png`,
-            sameAs: [
+            "name": PROJECT_NAME,
+            "url": baseOrigin || "/",
+            "logo": `${baseOrigin}/favicon.png`,
+            "sameAs": [
                 "https://x.com/BrickifyFun",
-                "https://www.tiktok.com/@brickify.fun"
+                "https://www.tiktok.com/@brickifyfun",
+                "https://instagram.com/brickifyfun"
             ]
-        })} />
+        })}/>
     )}
     {seo?.structuredData?.website && (
-        <script type="application/ld+json" set:html={JSON.stringify({
+        <script type="application/ld+json" is:inline set:html={JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: PROJECT_NAME,
-            url: baseOrigin || "/",
-            inLanguage: htmlLang,
-            potentialAction: {
+            "name": PROJECT_NAME,
+            "url": baseOrigin || "/",
+            "inLanguage": htmlLang,
+            "potentialAction": {
                 "@type": "SearchAction",
-                target: `${baseOrigin}/?q={search_term_string}`,
+                "target": `${baseOrigin}/search?q={search_term_string}`,
                 "query-input": "required name=search_term_string"
             }
-        })} />
+        })}/>
     )}
-    {seo?.structuredData?.webpage && (
-        <script type="application/ld+json" set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            name: pageTitle,
-            url: canonicalUrl,
-            inLanguage: htmlLang,
-            description: seo?.description,
-            isPartOf: {
-                "@type": "WebSite",
-                url: baseOrigin || "/",
-                name: PROJECT_NAME,
-                inLanguage: htmlLang
-            }
-        })} />
-    )}
-    {seo?.structuredData?.breadcrumb && seo.structuredData.breadcrumb.length > 0 && (
-        <script type="application/ld+json" set:html={JSON.stringify({
+    {seo?.structuredData?.breadcrumb && (
+        <script type="application/ld+json" is:inline set:html={JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            itemListElement: seo.structuredData.breadcrumb.map((item, index) => ({
+            "itemListElement": seo.structuredData.breadcrumb.map((b, i) => ({
                 "@type": "ListItem",
-                position: index + 1,
-                name: item.name,
-                item: item.url.startsWith('http') ? item.url : `${origin}${item.url}`
+                "position": i + 1,
+                "name": b.name,
+                "item": b.url.startsWith('http') ? b.url : `${baseOrigin}${b.url}`
             }))
-        })} />
+        })}/>
+    )}
+    {seo?.structuredData?.webpage && (
+        <script type="application/ld+json" is:inline set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": pageTitle,
+            "description": seo?.description,
+            "url": currentUrl,
+            "inLanguage": htmlLang,
+            "isPartOf": {
+                "@type": "WebSite",
+                "url": baseOrigin || "/",
+                "name": PROJECT_NAME,
+                "inLanguage": htmlLang
+            }
+        })}/>
     )}
 
     <!-- Flag de depuración para banner/cookies (solo dev) -->

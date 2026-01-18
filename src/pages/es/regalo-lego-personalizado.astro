@@ -4,13 +4,21 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
 const seo = {
-    title: "Regalo LEGO personalizado desde una foto | Brickify",
-    description: "Convierte cualquier foto en una lista de piezas de minifig estilo LEGO®. Perfecto para cumpleaños, aniversarios y regalos únicos. Pago por imagen en EUR.",
+    title: "Regalo LEGO® Personalizado con tu Foto | Brickify",
+    description: "Convierte tus fotos en un regalo personalizado estilo LEGO®. Obtén la lista de piezas oficiales seleccionada por IA para crear una minifigura idéntica para cualquier ocasión.",
     canonical: "/es/regalo-lego-personalizado",
     alternates: [
         {href: "/personalized-lego-gift", hrefLang: "x-default"},
         {href: "/en/personalized-lego-gift", hrefLang: "en"},
+        {href: "/es/regalo-lego-personalizado", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Regalo Personalizado", url: "/es/regalo-lego-personalizado"},
+        ]
+    }
 };
 
 const hero = {

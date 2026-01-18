@@ -150,6 +150,74 @@
         <priority>0.5</priority>
     </url>
 
+    <!-- Landing Pages ES -->
+    <url>
+        <loc>https://brickify.fun/es/regalo-lego-personalizado</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/regalo-lego-personalizado"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/personalized-lego-gift"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/personalized-lego-gift"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/es/recuerdos-boda-lego-personalizados</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/recuerdos-boda-lego-personalizados"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/lego-wedding-favors"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/lego-wedding-favors"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/es/regalos-empresa-lego-personalizados</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/regalos-empresa-lego-personalizados"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/corporate-lego-gifts"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/corporate-lego-gifts"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/es/minifig-lego-personalizada-foto</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/minifig-lego-personalizada-foto"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/custom-lego-minifigure-photo"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/custom-lego-minifigure-photo"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Landing Pages EN -->
+    <url>
+        <loc>https://brickify.fun/en/personalized-lego-gift</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/regalo-lego-personalizado"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/personalized-lego-gift"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/personalized-lego-gift"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/en/lego-wedding-favors</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/recuerdos-boda-lego-personalizados"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/lego-wedding-favors"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/lego-wedding-favors"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/en/corporate-lego-gifts</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/regalos-empresa-lego-personalizados"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/corporate-lego-gifts"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/corporate-lego-gifts"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://brickify.fun/en/custom-lego-minifigure-photo</loc>
+        <xhtml:link rel="alternate" hreflang="es" href="https://brickify.fun/es/minifig-lego-personalizada-foto"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://brickify.fun/en/custom-lego-minifigure-photo"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://brickify.fun/custom-lego-minifigure-photo"/>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
     <!-- Quick purchase anclaje no se lista (no es URL propia). Otras rutas públicas se pueden añadir aquí. -->
 
 </urlset>

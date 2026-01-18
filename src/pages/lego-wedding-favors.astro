@@ -5,13 +5,20 @@ import type {SupportedLocale} from "@/lib/locale";
 const locale: SupportedLocale = 'en';
 const seo = {
     title: "Personalized LEGO wedding favors from photos | Brickify",
-    description: "Upload guest photos, we give you the list of closest official pieces with alternates and you build unforgettable lookalike favors. Pricing drops with volume.",
+    description: "Create unique LEGO®-style wedding favors from your guests' photos. We provide the AI-selected official parts list and links so you can build unforgettable lookalikes.",
     canonical: "/lego-wedding-favors",
     alternates: [
         {href: "/lego-wedding-favors", hrefLang: "x-default"},
         {href: "/lego-wedding-favors", hrefLang: "en"},
         {href: "/es/recuerdos-boda-lego-personalizados", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "Wedding Favors", url: "/lego-wedding-favors"},
+        ]
+    }
 };
 
 const hero = {

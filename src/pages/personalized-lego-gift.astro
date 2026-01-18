@@ -4,14 +4,21 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
-    title: "Personalized LEGO gift from your photo | Brickify",
-    description: "Turn any photo into a LEGO®-style minifigure parts list. Perfect for birthdays, anniversaries, and unique gifts. Pay per image in EUR.",
+    title: "Personalized LEGO®-style Gift from Your Photo | Brickify",
+    description: "Transform your photos into a personalized LEGO®-style gift. Get an AI-selected list of official pieces to build a custom lookalike minifigure for any special occasion.",
     canonical: "/personalized-lego-gift",
     alternates: [
         {href: "/personalized-lego-gift", hrefLang: "x-default"},
         {href: "/personalized-lego-gift", hrefLang: "en"},
         {href: "/es/regalo-lego-personalizado", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "Personalized Gift", url: "/personalized-lego-gift"},
+        ]
+    }
 };
 
 const hero = {

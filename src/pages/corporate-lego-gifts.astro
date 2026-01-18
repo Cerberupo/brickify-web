@@ -4,14 +4,21 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
-    title: "Personalized corporate LEGO gifts from photos | Brickify",
-    description: "Upload photos of your team or attendees and receive exact LEGO® parts lists for lookalike minifigs. Ideal for corporate gifts, events, and welcome kits.",
+    title: "Personalized Corporate LEGO® Gifts from Photos | Brickify",
+    description: "Create memorable corporate gifts with custom LEGO®-style minifigures of your team. Upload photos and get AI-matched official parts lists for employees and events.",
     canonical: "/corporate-lego-gifts",
     alternates: [
         {href: "/corporate-lego-gifts", hrefLang: "x-default"},
         {href: "/corporate-lego-gifts", hrefLang: "en"},
         {href: "/es/regalos-empresa-lego-personalizados", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "Corporate Gifts", url: "/corporate-lego-gifts"},
+        ]
+    }
 };
 
 const hero = {

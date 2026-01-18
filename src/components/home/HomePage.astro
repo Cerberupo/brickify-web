@@ -39,12 +39,12 @@ const content = {title: t.title};
 
 // SEO
 const descriptions = {
-    en: "Turn your photo into a LEGO®-style minifig with AI-selected official parts. Upload a picture and get the exact pieces and codes.",
-    es: "Convierte tu foto en una minifig al estilo LEGO® con piezas oficiales seleccionadas por IA. Sube una imagen y recibe piezas y códigos exactos."
+    en: "Transform your photos into custom LEGO®-style minifigures with AI. Get the exact official parts list and codes to build your own personalized gift.",
+    es: "Convierte tus fotos en minifiguras estilo LEGO® personalizadas con IA. Obtén la lista exacta de piezas oficiales y códigos para crear tu regalo perfecto."
 } as const;
 const keywords = {
-    en: "lego gift, ai lego, lego minifigure, personalized lego, brickify, lego photo, lego parts list",
-    es: "regalo lego, lego personalizado, minifig lego, ia lego, brickify, foto lego, lista piezas lego"
+    en: "custom lego minifigure, personalized lego gift, lego from photo, lego parts list, brickify, ai lego generator, custom brick portraits",
+    es: "lego personalizado foto, regalo lego personalizado, minifigura lego personalizada, lista piezas lego, brickify, generador lego ia, retratos lego"
 } as const;
 
 const path = Astro.url?.pathname || '/';
@@ -71,7 +71,7 @@ const seo = {
             {name: isEs ? 'Inicio' : 'Home', url: canonical},
         ]
     },
-} as const;
+};
 ---
 <Layout content={content} lang={locale} seo={seo}>
     <Header alternates={seo.alternates} client:only="react"/>

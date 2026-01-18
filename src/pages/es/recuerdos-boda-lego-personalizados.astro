@@ -4,13 +4,21 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
 const seo = {
-    title: "Recuerdos de boda LEGO personalizados desde fotos | Brickify",
-    description: "Sube fotos de tus invitados, te damos la lista de piezas oficiales más parecidas con alternativas y montas recuerdos lookalike inolvidables. Precio claro que baja por volumen.",
+    title: "Recuerdos de boda LEGO® personalizados con fotos | Brickify",
+    description: "Crea recuerdos de boda únicos con figuras estilo LEGO® que se parecen a tus invitados. Te damos la lista de piezas oficiales seleccionada por IA y enlaces de compra.",
     canonical: "/es/recuerdos-boda-lego-personalizados",
     alternates: [
         {href: "/lego-wedding-favors", hrefLang: "x-default"},
         {href: "/en/lego-wedding-favors", hrefLang: "en"},
+        {href: "/es/recuerdos-boda-lego-personalizados", hrefLang: "es"},
     ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Recuerdos de Boda", url: "/es/recuerdos-boda-lego-personalizados"},
+        ]
+    }
 };
 
 const hero = {
