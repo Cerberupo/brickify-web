@@ -501,6 +501,9 @@ export function DevPreviewModal({
                         )}
                     </div>
                 </div>
+                <div className="py-2 text-center text-gray-400 text-sm border-t border-gray-50 print:hidden">
+                    https://brickify.fun
+                </div>
             </DialogContent>
         </Dialog>
     );
