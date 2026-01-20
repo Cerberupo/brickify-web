@@ -510,6 +510,14 @@
     "captureJpg": "Capture JPG",
     "recordVideo": "Record 15s Video",
     "recording": "Recording ({{progress}}%)",
-    "legoPiece": "LEGO Piece"
+    "legoPiece": "LEGO Piece",
+    "slogan": [
+      "From photo to LEGO pieces",
+      "Your memories, piece by piece",
+      "Make it real, make it LEGO",
+      "Your brick version starts here",
+      "The magic of bricks in your photo",
+      "Reimagine your world in miniature"
+    ]
   }
 }

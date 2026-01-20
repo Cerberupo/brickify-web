@@ -37,6 +37,7 @@ export function DevPreviewModal({
     const [recordingProgress, setRecordingProgress] = useState(0);
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
     const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
+    const [selectedSlogan, setSelectedSlogan] = useState<string>('');
     const partUsageCounts = useRef<Record<string, number>>({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
     const pieceUsageCounts = useRef<Record<string, Record<string, number>>>({
         wig: {},
@@ -47,6 +48,17 @@ export function DevPreviewModal({
     const recordingIntervalRef = useRef<number | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+    const slogans = useMemo(() => {
+        const s = t('devPreview.slogan', {returnObjects: true});
+        return Array.isArray(s) ? s : [t('devPreview.slogan', 'De la foto a las piezas LEGO')];
+    }, [t]);
+
+    React.useEffect(() => {
+        if (isOpen && slogans.length > 0) {
+            const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
+            setSelectedSlogan(randomSlogan);
+        }
+    }, [isOpen, slogans]);
 
     // Obtener todas las piezas disponibles para aleatorizar
     const availablePieces = useMemo(() => {
@@ -210,6 +222,13 @@ export function DevPreviewModal({
         setIsRecording(true);
         setRecordingProgress(0);
         chunksRef.current = [];
+
+        // Cambiar eslogan al empezar a grabar
+        if (slogans.length > 0) {
+            const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
+            setSelectedSlogan(randomSlogan);
+        }
+
         // Reset usage counts
         partUsageCounts.current = {wig: 0, head: 0, upperPart: 0, lowerPart: 0};
         pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
@@ -447,6 +466,21 @@ export function DevPreviewModal({
                             />
                         </div>
 
+                        <div
+                            className={aspectRatio === '1:1' ? "absolute top-[10%] left-[5%]" : "absolute top-[13.5%] left-[50%] -translate-x-1/2"}>
+                            <span className="text-[20px] font-medium tracking-wider whitespace-nowrap">
+                                {selectedSlogan}
+                            </span>
+
+                        </div>
+
+                        <div
+                            className={aspectRatio === '1:1' ? 'absolute bottom-[2%] left-[3%]' : 'absolute bottom-[1%] left-[3%]'}>
+                            <span className="text-sm font-medium tracking-wider leading-none">
+                                https://brickify.fun
+                            </span>
+                        </div>
+
                         {/* Selected Pieces List (Only for 9:16) */}
                         {aspectRatio === '9:16' && (
                             <div className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2">
@@ -500,9 +534,6 @@ export function DevPreviewModal({
                             </div>
                         )}
                     </div>
-                </div>
-                <div className="py-2 text-center text-gray-400 text-sm border-t border-gray-50 print:hidden">
-                    https://brickify.fun
                 </div>
             </DialogContent>
         </Dialog>
