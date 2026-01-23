@@ -220,17 +220,16 @@ export function PersonRow({
     const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
     const isDev = appEnv === 'dev';
 
-    const showSocialPreviewLabel = t('common.actions') + ' (DEV)';
+    const showSocialPreviewLabel = t('common.actions');
 
     const showSocialPreview = useMemo(() => {
-        if (!isDev) return false;
         try {
             const params = new URLSearchParams(window.location.search);
             return params.has('photo');
         } catch {
             return false;
         }
-    }, [isDev]);
+    }, []);
 
     return (
         <div className="flex flex-col sm:flex-row gap-3 rounded-md border p-3">
