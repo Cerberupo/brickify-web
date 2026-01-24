@@ -1,0 +1,101 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Guía para Combinar Piezas LEGO Según tu Foto | Brickify",
+    description: "La guía definitiva para seleccionar y combinar piezas oficiales de LEGO para crear una minifigura que coincida perfectamente con tu foto. Consejos sobre pelo, caras y más.",
+    canonical: "/es/blog/guia-definitiva-combinar-piezas-lego-segun-tu-foto",
+    alternates: [
+        {href: "/blog/ultimate-guide-to-combining-lego-pieces-from-photo", hrefLang: "x-default"},
+        {href: "/blog/ultimate-guide-to-combining-lego-pieces-from-photo", hrefLang: "en"},
+        {href: "/es/blog/guia-definitiva-combinar-piezas-lego-segun-tu-foto", hrefLang: "es"},
+    ],
+};
+
+const ctas = [
+    {label: "Accede para procesar", href: "/es/login"},
+    {label: "Ver precio por imagen", href: "/es/minifig-lego-personalizada-foto#precio"},
+];
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6 blog-prose">
+                <a href="/es/blog"
+                   class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4">
+                    <span aria-hidden="true">←</span>
+                    Volver
+                </a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Inicio', href: '/es'},
+                    {label: 'Blog', href: '/es/blog'},
+                    {label: 'Guía para Combinar Piezas LEGO'}
+                ]}/>
+                <h1 class="!mt-0">La Guía Definitiva para Combinar Piezas LEGO® Según tu Foto</h1>
+                <p class="text-neutral-700">Crear una minifigura lookalike es un arte. Aunque existen miles de piezas
+                    oficiales, elegir la combinación correcta es clave para que el resultado sea reconocible. Aquí
+                    tienes nuestra guía para acertar.</p>
+
+                <h2>1. Empieza por el Pelo (El Rasgo Más Reconocible)</h2>
+                <p>El peinado suele ser lo primero en lo que la gente se fija. LEGO tiene una biblioteca inmensa de
+                    piezas de pelo, pero no siempre coinciden 1:1 con los estilos modernos. Céntrate en:</p>
+                <ul>
+                    <li><strong>Forma general:</strong> ¿Es ondulado, liso o rizado?</li>
+                    <li><strong>Longitud:</strong> ¿Corto, media melena o largo?</li>
+                    <li><strong>Color:</strong> Los colores de LEGO son estándar. Si dudas entre dos, elige el que mejor
+                        combine con el tono de pelo actual de la persona bajo luz natural.
+                    </li>
+                </ul>
+
+                <h2>2. Elegir la Expresión Facial Correcta</h2>
+                <p>La cabeza de una minifigura transmite la personalidad. Busca cabezas que capturen el look
+                    característico de la persona:</p>
+                <ul>
+                    <li><strong>Cejas:</strong> Definen la expresión más que los ojos.</li>
+                    <li><strong>Vello facial:</strong> ¿Barba de tres días, barba completa o afeitado?</li>
+                    <li><strong>Gafas:</strong> Si la persona lleva gafas a diario, encontrar una cabeza con gafas es
+                        imprescindible para un reconocimiento instantáneo.
+                    </li>
+                </ul>
+
+                <h2>3. El Torso: Captura el Estilo</h2>
+                <p>No busques solo la camiseta exacta. Busca una "vibra". Si la persona siempre lleva sudaderas, busca
+                    un torso de sudadera. Si es médico, un torso de bata de laboratorio hace maravillas. El color del
+                    torso ayuda a asentar el look.</p>
+
+                <h2>4. No Olvides las Piernas</h2>
+                <p>Las piernas suelen pasarse por alto, pero completan el outfit. Elige entre piernas estándar, piernas
+                    cortas (para niños) o piernas medianas (para adolescentes). El color debe coincidir con los
+                    pantalones que la persona más usa en la foto.</p>
+
+                <h2>5. Cómo Simplifica Esto la IA de Brickify</h2>
+                <p>Buscar entre miles de SKUs en el catálogo de Pick a Brick puede llevar horas. La IA de Brickify está
+                    entrenada para analizar estos rasgos (pelo, cara, ropa) y sugerir automáticamente las coincidencias
+                    más cercanas actualmente en stock.</p>
+
+                <div class="bg-primary/5 p-6 rounded-2xl my-8 border border-primary/10 text-neutral-800">
+                    <h3 class="!mt-0">Deja de buscar, empieza a construir</h3>
+                    <p>Sube tu foto hoy mismo y deja que nuestra IA haga el matching por ti. Obtendrás una lista de
+                        números de pieza exactos y enlaces directos a la tienda oficial.</p>
+                    <div class="not-prose mt-6 flex flex-wrap gap-3">
+                        {ctas.map((cta) => (
+                                <a href={cta.href}
+                                   class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                                    {cta.label}
+                                </a>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

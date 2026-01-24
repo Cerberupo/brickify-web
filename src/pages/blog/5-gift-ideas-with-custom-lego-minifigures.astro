@@ -1,0 +1,84 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "5 Gift Ideas With Custom LEGO Minifigures | Brickify",
+    description: "Discover 5 unique and creative gift ideas using personalized LEGO-style minifigures from photos. Perfect for birthdays, weddings, and more.",
+    canonical: "/blog/5-gift-ideas-with-custom-lego-minifigures",
+    alternates: [
+        {href: "/blog/5-gift-ideas-with-custom-lego-minifigures", hrefLang: "x-default"},
+        {href: "/blog/5-gift-ideas-with-custom-lego-minifigures", hrefLang: "en"},
+        {href: "/es/blog/5-ideas-de-regalos-con-minifiguras-lego-personalizadas", hrefLang: "es"},
+    ],
+};
+
+const ctas = [
+    {label: "Sign in to process", href: "/login"},
+    {label: "See price per image", href: "/custom-lego-minifigure-photo#precio"},
+];
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6 blog-prose">
+                <a href="/blog"
+                   class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4">
+                    <span aria-hidden="true">←</span>
+                    Back
+                </a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Home', href: '/en'},
+                    {label: 'Blog', href: '/blog'},
+                    {label: '5 Gift Ideas with Custom LEGO Minifigures'}
+                ]}/>
+                <h1 class="!mt-0">5 Creative Gift Ideas with Custom LEGO Minifigures</h1>
+                <p class="text-neutral-700 font-medium">Personalized LEGO-style minifigures are more than just toys;
+                    they are unique memories. Here are 5 ideas to surprise someone special using Brickify.</p>
+
+                <h2>1. The Ultimate Wedding Favor</h2>
+                <p>Forget about traditional wedding favors that end up in a drawer. Imagine giving each guest (or at
+                    least the wedding party) a minifigure that looks exactly like them. It's a conversation starter and
+                    a keepsake they will actually keep.</p>
+
+                <h2>2. "Mini-Me" Corporate Swag</h2>
+                <p>Welcome new employees with a minifigure of themselves for their desk. It's much more memorable than a
+                    branded pen or a notebook and helps build a fun company culture from day one.</p>
+
+                <h2>3. Anniversary Milestones</h2>
+                <p>Recreate your wedding photo or a favorite travel memory with two lookalike minifigures. You can place
+                    them in a small shadow box with the date and location for a truly sentimental gift.</p>
+
+                <h2>4. Personalized Birthday Cake Toppers</h2>
+                <p>Instead of generic wax candles, use a custom minifig of the birthday boy or girl as a cake topper.
+                    After the party, it becomes a permanent memento of that year's celebration.</p>
+
+                <h2>5. Group Portraits in Bricks</h2>
+                <p>Create a full group portrait where every person is represented by a LEGO-style minifigure. It's a
+                    perfect way to commemorate a graduation, a sports team victory, or a special group of friends.</p>
+
+                <div class="bg-neutral-50 p-6 rounded-2xl my-8 border border-neutral-100">
+                    <h3 class="!mt-0">Ready to start?</h3>
+                    <p>With Brickify, you just need a photo. Our AI handles the matching with official parts so you can
+                        build these gifts easily.</p>
+                    <div class="not-prose mt-6 flex flex-wrap gap-3">
+                        {ctas.map((cta) => (
+                                <a href={cta.href}
+                                   class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                                    {cta.label}
+                                </a>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

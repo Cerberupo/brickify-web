@@ -6,7 +6,7 @@ const {title: titleProp, locale: localeProp} = Astro.props as { title?: string; 
 const locale = localeProp ?? normalizeLocale(Astro.currentLocale as string | undefined);
 const copies = {
     en: {
-        title: "Use our AI to craft the perfect LEGO® gift",
+        title: "Create a LEGO® Minifigure From a Photo With AI Recommendations",
         description: "Whether it’s for a wedding, a unique gift for friends, or a corporate present, our AI analyzes an image and <strong class='font-medium'>selects the official LEGO® pieces that best match the person in the photo</strong>. You’ll also receive the reference code for each piece, so you can <strong class='font-medium'>easily find them in the official LEGO® store</strong>. From only 100 tokens.",
         ctaPrimary: "Upload your photo",
         ctaPrimaryAria: "Upload your image and get started",
@@ -14,7 +14,7 @@ const copies = {
         ctaSecondaryAria: "How Brickify works"
     },
     es: {
-        title: "Ayúdate de nuestra IA para crear el regalo perfecto en LEGO®",
+        title: "Crea tu Minifigura LEGO® Personalizada desde Foto con IA",
         description: "Ya sea para una boda, un detalle único para amigos o un regalo de empresa, nuestra IA analiza una imagen y <strong class='font-medium'>selecciona las piezas oficiales de LEGO® que mejor encajan con la persona de la foto</strong>. Además, recibirás el código de cada pieza para <strong class='font-medium'>localizarlas fácilmente en la tienda oficial de LEGO®</strong>. ¡Desde solo 100 tokens!",
         ctaPrimary: "Sube tu imagen",
         ctaPrimaryAria: "Sube tu imagen y comienza",

@@ -1,0 +1,88 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "5 Ideas de Regalos con Minifiguras LEGO Personalizadas | Brickify",
+    description: "Descubre 5 ideas de regalos únicas y creativas usando minifiguras personalizadas estilo LEGO desde fotos. Ideal para cumpleaños, bodas y más.",
+    canonical: "/es/blog/5-ideas-de-regalos-con-minifiguras-lego-personalizadas",
+    alternates: [
+        {href: "/blog/5-gift-ideas-with-custom-lego-minifigures", hrefLang: "x-default"},
+        {href: "/blog/5-gift-ideas-with-custom-lego-minifigures", hrefLang: "en"},
+        {href: "/es/blog/5-ideas-de-regalos-con-minifiguras-lego-personalizadas", hrefLang: "es"},
+    ],
+};
+
+const ctas = [
+    {label: "Accede para procesar", href: "/es/login"},
+    {label: "Ver precio por imagen", href: "/es/minifig-lego-personalizada-foto#precio"},
+];
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6 blog-prose">
+                <a href="/es/blog"
+                   class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4">
+                    <span aria-hidden="true">←</span>
+                    Volver
+                </a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Inicio', href: '/es'},
+                    {label: 'Blog', href: '/es/blog'},
+                    {label: '5 Ideas de Regalos con Minifiguras LEGO'}
+                ]}/>
+                <h1 class="!mt-0">5 Ideas Creativas de Regalos con Minifiguras LEGO Personalizadas</h1>
+                <p class="text-neutral-700 font-medium">Las minifiguras personalizadas estilo LEGO son más que juguetes;
+                    son recuerdos únicos. Aquí tienes 5 ideas para sorprender a alguien especial usando Brickify.</p>
+
+                <h2>1. El Regalo de Boda Definitivo</h2>
+                <p>Olvida los detalles de boda tradicionales que acaban en un cajón. Imagina regalar a cada invitado (o
+                    al menos al cortejo) una minifigura que se parezca exactamente a ellos. Es un tema de conversación
+                    asegurado y un recuerdo que realmente conservarán.</p>
+
+                <h2>2. Swag Corporativo "Mini-Me"</h2>
+                <p>Da la bienvenida a nuevos empleados con una minifigura de ellos mismos para su escritorio. Es mucho
+                    más memorable que un bolígrafo o una libreta con logo y ayuda a construir una cultura de empresa
+                    divertida desde el primer día.</p>
+
+                <h2>3. Aniversarios y Fechas Especiales</h2>
+                <p>Recrea tu foto de boda o un recuerdo de viaje favorito con dos minifiguras lookalike. Puedes
+                    colocarlas en una pequeña vitrina o marco con la fecha y el lugar para un regalo realmente
+                    sentimental.</p>
+
+                <h2>4. Cake Toppers Personalizados</h2>
+                <p>En lugar de las típicas velas de cera, usa una minifig personalizada del cumpleañero como decoración
+                    para la tarta. Después de la fiesta, se convierte en un recuerdo permanente de la celebración de ese
+                    año.</p>
+
+                <h2>5. Retratos de Grupo en Piezas</h2>
+                <p>Crea un retrato de grupo completo donde cada persona esté representada por una minifigura estilo
+                    LEGO. Es la forma perfecta de conmemorar una graduación, la victoria de un equipo deportivo o un
+                    grupo especial de amigos.</p>
+
+                <div class="bg-neutral-50 p-6 rounded-2xl my-8 border border-neutral-100">
+                    <h3 class="!mt-0">¿Listo para empezar?</h3>
+                    <p>Con Brickify, solo necesitas una foto. Nuestra IA se encarga de buscar las piezas oficiales más
+                        parecidas para que puedas crear estos regalos fácilmente.</p>
+                    <div class="not-prose mt-6 flex flex-wrap gap-3">
+                        {ctas.map((cta) => (
+                                <a href={cta.href}
+                                   class="inline-flex items-center justify-center rounded-full bg-primary text-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">
+                                    {cta.label}
+                                </a>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>
