@@ -241,29 +241,28 @@ export function DevPreviewModal({
         const area = document.getElementById('preview-capture-area');
         if (!area) return;
 
-        setIsRecording(true);
-        setRecordingProgress(0);
-        chunksRef.current = [];
-        setShowIntro(true); // Mostrar intro a pantalla completa
+        // Reset usage counts y estados
+        setPartUsageCounts({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
+        pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
+        setRandomLegoProps(null);
+        setRandomSelectedPieces(null);
+        setShowCTA(false);
+        setShowOutro(false);
 
-        // IA Voice (TTS)
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(introText);
-            utterance.lang = currentLang.startsWith('es') ? 'es-ES' : 'en-US';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Cambiar eslogan al empezar a grabar
+        // Cambiar eslogan al empezar
         if (slogans.length > 0) {
             const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
             setSelectedSlogan(randomSlogan);
         }
 
-        // Reset usage counts
-        setPartUsageCounts({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
-        pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
+        // 1. Mostrar intro a pantalla completa ANTES de empezar a grabar
+        setShowIntro(true);
+        setIsRecording(true);
+        setRecordingProgress(0);
+        chunksRef.current = [];
+
+        // Pequeña espera para asegurar que el DOM se actualizó y la imagen está en grande
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         try {
             // Creamos un canvas para la grabación
@@ -277,9 +276,42 @@ export function DevPreviewModal({
             const ctx = canvas.getContext('2d');
             if (!ctx) throw new Error('Could not get canvas context');
 
-            const stream = canvas.captureStream(30); // 30 FPS
+            // --- AUDIO CAPTURE ---
+            const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const destination = audioCtx.createMediaStreamDestination();
 
-            // Prefer MP4 if supported (mostly not in Chrome/Firefox yet via MediaRecorder, but we can try)
+            // IA Voice (TTS)
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(introText);
+                utterance.lang = currentLang.startsWith('es') ? 'es-ES' : 'en-US';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+
+                // Intentar capturar audio del micrófono si no hay otra forma de capturar TTS directamente
+                // (En la mayoría de navegadores modernos no se puede capturar speechSynthesis directamente en un MediaStream)
+                // Como alternativa, usaremos un truco: si el usuario permite el micro, se escuchará el TTS por los altavoces
+                // Pero lo ideal sería inyectar el audio. Dado que speechSynthesis no se deja, vamos a usar el micro como fallback
+                // o avisar que se requiere salida de audio.
+                // OTRA OPCIÓN: Usar un oscilador para confirmar que el audio funciona en el stream.
+
+                try {
+                    const micStream = await navigator.mediaDevices.getUserMedia({audio: true});
+                    const source = audioCtx.createMediaStreamSource(micStream);
+                    source.connect(destination);
+                } catch (e) {
+                    console.warn('Microphone access denied, audio might not be captured', e);
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            const videoStream = canvas.captureStream(30); // 30 FPS
+            const combinedStream = new MediaStream([
+                ...videoStream.getVideoTracks(),
+                ...destination.stream.getAudioTracks()
+            ]);
+
+            // Prefer MP4 if supported
             let mimeType = 'video/webm;codecs=vp9';
             if (MediaRecorder.isTypeSupported('video/mp4')) {
                 mimeType = 'video/mp4';
@@ -287,7 +319,7 @@ export function DevPreviewModal({
                 mimeType = 'video/webm;codecs=h264';
             }
 
-            const recorder = new MediaRecorder(stream, {
+            const recorder = new MediaRecorder(combinedStream, {
                 mimeType: mimeType
             });
 
@@ -304,6 +336,10 @@ export function DevPreviewModal({
                 link.href = url;
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(url), 100);
+
+                // Stop all tracks in combinedStream
+                combinedStream.getTracks().forEach(track => track.stop());
+                audioCtx.close();
 
                 setIsRecording(false);
                 setRecordingProgress(0);
@@ -341,14 +377,14 @@ export function DevPreviewModal({
                     setShowCTA(true);
                 }
 
-                // Outro dura 3s (10.5 - 3 = 7.5s)
+                // Outro dura 3s (10.5 - 3 = 8.5s)
                 if (seconds >= 8.5 && !currentShowOutro) {
                     currentShowOutro = true;
                     setShowOutro(true);
                 }
 
                 // Randomización: dura unos 6s después de la intro
-                // Intro termina en 1.5. Randomización hasta 1.5 + 6 = 7.5s
+                // Intro termina en 2. Randomización hasta 2 + 6 = 8.5s
                 if (seconds > 2 && seconds <= 8.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 3 === 0) {
                     randomizeLego();
                 }
