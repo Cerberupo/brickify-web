@@ -316,6 +316,8 @@ export function DevPreviewModal({
             recorder.start();
 
             let seconds = 0;
+            let currentShowIntro = true;
+            let currentShowOutro = false;
             const totalSeconds = 15;
             const frameRate = 10; // capturar 10 veces por segundo el HTML al canvas
 
@@ -323,15 +325,17 @@ export function DevPreviewModal({
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / totalSeconds) * 100);
 
-                if (seconds > 1.0 && showIntro) {
+                if (seconds > 1.0 && currentShowIntro) {
+                    currentShowIntro = false;
                     setShowIntro(false);
                 }
 
-                if (seconds >= 14.0 && !showOutro) {
+                if (seconds >= 14.0 && !currentShowOutro) {
+                    currentShowOutro = true;
                     setShowOutro(true);
                 }
 
-                if (!showIntro && !showOutro && Math.floor(seconds * frameRate) % 10 === 0) {
+                if (!currentShowIntro && !currentShowOutro && Math.floor(seconds * frameRate) % 10 === 0) {
                     randomizeLego();
                 }
 
