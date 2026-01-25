@@ -334,9 +334,9 @@ export function DevPreviewModal({
                     setShowIntro(false);
                 }
 
-                // CTA sale casi al final (ej: segundo 9.0, dura hasta el final o hasta el logo)
-                // Lo ponemos a los 9 segundos (1.5s antes del final de 10.5)
-                if (seconds >= 9.0 && !currentShowCTA) {
+                // CTA sale casi al final (ej: segundo 8.0, dura hasta el final o hasta el logo)
+                // Lo ponemos a los 8 segundos (2.5s antes del final de 10.5)
+                if (seconds >= 6.5 && !currentShowCTA) {
                     currentShowCTA = true;
                     setShowCTA(true);
                 }
@@ -534,8 +534,8 @@ export function DevPreviewModal({
                         {/* Instagram Style Overlay */}
                         {isRecording && showIntro && (
                             <div
-                                className="absolute inset-0 z-20 flex flex-center items-center justify-center p-8 pointer-events-none">
-                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
+                                className="absolute inset-x-0 top-[10%] z-20 flex items-start justify-center p-8 pointer-events-none">
+                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
                                     <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
                                         {introText}
                                     </p>
@@ -558,8 +558,8 @@ export function DevPreviewModal({
                         {/* CTA Overlay */}
                         {isRecording && showCTA && (
                             <div
-                                className="absolute inset-0 z-40 flex flex-center items-center justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
-                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
+                                className="absolute inset-x-0 top-[18%] z-40 flex items-start justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
+                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
                                     <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
                                         {currentLang.startsWith('es')
                                             ? "¿Quieres ser el siguiente? Comenta \"YO\""
