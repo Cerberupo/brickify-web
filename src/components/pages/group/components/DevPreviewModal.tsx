@@ -31,6 +31,7 @@ export function DevPreviewModal({
                                     legoProps,
                                     selectedPieceByPart,
                                 }: DevPreviewModalProps) {
+    const [dayNumber, setDayNumber] = useState<number>(1);
     const {t, i18n} = useTranslation();
     const currentLang = i18n.language || 'en';
     const introText = currentLang.startsWith('es')
@@ -42,7 +43,6 @@ export function DevPreviewModal({
     const [recordingProgress, setRecordingProgress] = useState(0);
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
     const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
-    const [dayNumber, setDayNumber] = useState<number>(1);
     const [showIntro, setShowIntro] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
     const [selectedSlogan, setSelectedSlogan] = useState('');
@@ -120,15 +120,24 @@ export function DevPreviewModal({
         };
     }, [randomSelectedPieces, person?.matches, selectedPieceByPart]);
 
+    const [partUsageCounts, setPartUsageCounts] = useState<Record<string, number>>({
+        wig: 0,
+        head: 0,
+        upperPart: 0,
+        lowerPart: 0
+    });
     const randomizeLego = useCallback(() => {
         // 1. Decidir qué parte cambiar (la que tenga menor carga)
         const parts = ['wig', 'head', 'upperPart', 'lowerPart'];
-        const minPartUsage = Math.min(...parts.map(p => partUsageCounts.current[p]));
-        const candidateParts = parts.filter(p => partUsageCounts.current[p] === minPartUsage);
+        const minPartUsage = Math.min(...parts.map(p => partUsageCounts[p]));
+        const candidateParts = parts.filter(p => partUsageCounts[p] === minPartUsage);
         const selectedPart = candidateParts[Math.floor(Math.random() * candidateParts.length)];
 
         // Incrementar carga de la parte
-        partUsageCounts.current[selectedPart]++;
+        setPartUsageCounts(prev => ({
+            ...prev,
+            [selectedPart]: prev[selectedPart] + 1
+        }));
 
         // 2. Decidir qué pieza de esa parte poner (la que tenga menor carga)
         const pieces = availablePieces[selectedPart];
@@ -180,7 +189,7 @@ export function DevPreviewModal({
                 [selectedPart]: sideImages
             };
         });
-    }, [availablePieces, legoProps, currentSelectedPieces]);
+    }, [availablePieces, legoProps, currentSelectedPieces, partUsageCounts]);
 
     const getCappedDimensions = (width: number, height: number, maxRes: number = 1080) => {
         if (width <= maxRes && height <= maxRes) return {width, height};
@@ -251,7 +260,7 @@ export function DevPreviewModal({
         }
 
         // Reset usage counts
-        partUsageCounts.current = {wig: 0, head: 0, upperPart: 0, lowerPart: 0};
+        setPartUsageCounts({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
         pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
 
         try {
