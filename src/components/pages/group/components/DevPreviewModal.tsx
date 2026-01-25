@@ -31,7 +31,12 @@ export function DevPreviewModal({
                                     legoProps,
                                     selectedPieceByPart,
                                 }: DevPreviewModalProps) {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
+    const currentLang = i18n.language || 'en';
+    const introText = currentLang.startsWith('es')
+        ? `Día ${dayNumber} convirtiendo personas en minifiguras LEGO`
+        : `Day ${dayNumber} turning people into LEGO minifigures`;
+
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
     const [isRecording, setIsRecording] = useState(false);
     const [recordingProgress, setRecordingProgress] = useState(0);
@@ -40,7 +45,22 @@ export function DevPreviewModal({
     const [dayNumber, setDayNumber] = useState<number>(1);
     const [showIntro, setShowIntro] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
-    const partUsageCounts = useRef<Record<string, number>>({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
+    const [selectedSlogan, setSelectedSlogan] = useState('');
+    const [isClientState, setIsClientState] = useState(false);
+
+    const slogans = useMemo(() => {
+        const s = t('devPreview.slogan', {returnObjects: true});
+        return Array.isArray(s) ? s : [t('devPreview.slogan', 'De la foto a las piezas LEGO')];
+    }, [t]);
+
+    React.useEffect(() => {
+        setIsClientState(true);
+        if (slogans.length > 0) {
+            const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
+            setSelectedSlogan(randomSlogan);
+        }
+    }, [slogans]);
+
     const pieceUsageCounts = useRef<Record<string, Record<string, number>>>({
         wig: {},
         head: {},
@@ -50,17 +70,6 @@ export function DevPreviewModal({
     const recordingIntervalRef = useRef<number | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
-    const slogans = useMemo(() => {
-        const s = t('devPreview.slogan', {returnObjects: true});
-        return Array.isArray(s) ? s : [t('devPreview.slogan', 'De la foto a las piezas LEGO')];
-    }, [t]);
-
-    React.useEffect(() => {
-        if (isOpen && slogans.length > 0) {
-            const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
-            setSelectedSlogan(randomSlogan);
-        }
-    }, [isOpen, slogans]);
 
     // Obtener todas las piezas disponibles para aleatorizar
     const availablePieces = useMemo(() => {
@@ -219,7 +228,7 @@ export function DevPreviewModal({
 
     const startRecording = async () => {
         const area = document.getElementById('preview-capture-area');
-        if (!area || !isClient) return;
+        if (!area) return;
 
         setIsRecording(true);
         setRecordingProgress(0);
@@ -228,8 +237,8 @@ export function DevPreviewModal({
 
         // IA Voice (TTS)
         if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(`Day ${dayNumber} turning people into LEGO minifigures`);
-            utterance.lang = 'en-US';
+            const utterance = new SpeechSynthesisUtterance(introText);
+            utterance.lang = currentLang.startsWith('es') ? 'es-ES' : 'en-US';
             utterance.rate = 1.0;
             utterance.pitch = 1.0;
             window.speechSynthesis.speak(utterance);
@@ -370,7 +379,7 @@ export function DevPreviewModal({
 
     const currentLegoProps = randomLegoProps || legoProps;
 
-    if (!isOpen || !isClient) return null;
+    if (!isOpen || !isClientState) return null;
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -501,7 +510,7 @@ export function DevPreviewModal({
                                 className="absolute inset-0 z-20 flex flex-center items-center justify-center p-8 pointer-events-none">
                                 <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
                                     <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
-                                        Day {dayNumber} turning people into LEGO minifigures
+                                        {introText}
                                     </p>
                                 </div>
                             </div>
