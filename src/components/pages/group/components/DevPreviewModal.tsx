@@ -37,7 +37,9 @@ export function DevPreviewModal({
     const [recordingProgress, setRecordingProgress] = useState(0);
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
     const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
-    const [selectedSlogan, setSelectedSlogan] = useState<string>('');
+    const [dayNumber, setDayNumber] = useState<number>(1);
+    const [showIntro, setShowIntro] = useState(false);
+    const [showOutro, setShowOutro] = useState(false);
     const partUsageCounts = useRef<Record<string, number>>({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
     const pieceUsageCounts = useRef<Record<string, Record<string, number>>>({
         wig: {},
@@ -222,6 +224,16 @@ export function DevPreviewModal({
         setIsRecording(true);
         setRecordingProgress(0);
         chunksRef.current = [];
+        setShowIntro(true); // Mostrar intro a pantalla completa
+
+        // IA Voice (TTS)
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(`Day ${dayNumber} turning people into LEGO minifigures`);
+            utterance.lang = 'en-US';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
 
         // Cambiar eslogan al empezar a grabar
         if (slogans.length > 0) {
@@ -246,8 +258,17 @@ export function DevPreviewModal({
             if (!ctx) throw new Error('Could not get canvas context');
 
             const stream = canvas.captureStream(30); // 30 FPS
+
+            // Prefer MP4 if supported (mostly not in Chrome/Firefox yet via MediaRecorder, but we can try)
+            let mimeType = 'video/webm;codecs=vp9';
+            if (MediaRecorder.isTypeSupported('video/mp4')) {
+                mimeType = 'video/mp4';
+            } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) {
+                mimeType = 'video/webm;codecs=h264';
+            }
+
             const recorder = new MediaRecorder(stream, {
-                mimeType: 'video/webm;codecs=vp9'
+                mimeType: mimeType
             });
 
             recorder.ondataavailable = (e) => {
@@ -255,10 +276,11 @@ export function DevPreviewModal({
             };
 
             recorder.onstop = () => {
-                const blob = new Blob(chunksRef.current, {type: 'video/webm'});
+                const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+                const blob = new Blob(chunksRef.current, {type: mimeType});
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.download = `brickify-${personName.replace(/\s+/g, '-').toLowerCase()}-${aspectRatio.replace(':', '-')}.webm`;
+                link.download = `brickify-${personName.replace(/\s+/g, '-').toLowerCase()}-${aspectRatio.replace(':', '-')}.${extension}`;
                 link.href = url;
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(url), 100);
@@ -267,6 +289,8 @@ export function DevPreviewModal({
                 setRecordingProgress(0);
                 setRandomLegoProps(null);
                 setRandomSelectedPieces(null);
+                setShowIntro(false);
+                setShowOutro(false);
                 recorderRef.current = null;
             };
 
@@ -281,7 +305,15 @@ export function DevPreviewModal({
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / totalSeconds) * 100);
 
-                if (Math.floor(seconds * frameRate) % 10 === 0) {
+                if (seconds > 1.0 && showIntro) {
+                    setShowIntro(false);
+                }
+
+                if (seconds >= 14.0 && !showOutro) {
+                    setShowOutro(true);
+                }
+
+                if (!showIntro && !showOutro && Math.floor(seconds * frameRate) % 10 === 0) {
                     randomizeLego();
                 }
 
@@ -377,6 +409,15 @@ export function DevPreviewModal({
                                 9:16
                             </Button>
                         </div>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span className="text-sm font-medium">Día:</span>
+                            <input
+                                type="number"
+                                value={dayNumber}
+                                onChange={(e) => setDayNumber(parseInt(e.target.value) || 1)}
+                                className="w-16 h-8 border border-gray-200 rounded px-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2 mr-8">
@@ -432,10 +473,12 @@ export function DevPreviewModal({
 
                         {/* User Original Image */}
                         <div
-                            className={`absolute overflow-hidden transition-all duration-300 ${
-                                aspectRatio === '1:1'
-                                    ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
-                                    : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded'
+                            className={`absolute overflow-hidden transition-all duration-500 ${
+                                isRecording && showIntro
+                                    ? 'inset-0 w-full h-full z-10'
+                                    : (aspectRatio === '1:1'
+                                        ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
+                                        : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded')
                             }`}>
                             <img
                                 src={originalImage}
@@ -451,6 +494,30 @@ export function DevPreviewModal({
                                 }}
                             />
                         </div>
+
+                        {/* Instagram Style Overlay */}
+                        {isRecording && showIntro && (
+                            <div
+                                className="absolute inset-0 z-20 flex flex-center items-center justify-center p-8 pointer-events-none">
+                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
+                                    <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
+                                        Day {dayNumber} turning people into LEGO minifigures
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Outro Transition */}
+                        {isRecording && showOutro && (
+                            <div className="absolute inset-0 z-30 animate-in fade-in duration-500">
+                                <img
+                                    src="/social-logo-vertical.jpg"
+                                    className="w-full h-full object-cover"
+                                    alt="Brickify"
+                                    crossOrigin="anonymous"
+                                />
+                            </div>
+                        )}
 
                         {/* Lego Character */}
                         <div className={`absolute transition-all duration-300 ${
