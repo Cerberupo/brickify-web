@@ -44,6 +44,7 @@ export function DevPreviewModal({
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
     const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
     const [showIntro, setShowIntro] = useState(false);
+    const [showCTA, setShowCTA] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
     const [selectedSlogan, setSelectedSlogan] = useState('');
     const [isClientState, setIsClientState] = useState(false);
@@ -308,6 +309,7 @@ export function DevPreviewModal({
                 setRandomLegoProps(null);
                 setRandomSelectedPieces(null);
                 setShowIntro(false);
+                setShowCTA(false);
                 setShowOutro(false);
                 recorderRef.current = null;
             };
@@ -317,6 +319,7 @@ export function DevPreviewModal({
 
             let seconds = 0;
             let currentShowIntro = true;
+            let currentShowCTA = false;
             let currentShowOutro = false;
             const totalSeconds = 15;
             const frameRate = 10; // capturar 10 veces por segundo el HTML al canvas
@@ -325,17 +328,30 @@ export function DevPreviewModal({
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / totalSeconds) * 100);
 
-                if (seconds > 1.0 && currentShowIntro) {
+                // Intro dura 1.5s
+                if (seconds > 1.5 && currentShowIntro) {
                     currentShowIntro = false;
                     setShowIntro(false);
                 }
 
+                // CTA sale 4 segundos antes del final (15 - 4 = 11s)
+                if (seconds >= 11.0 && !currentShowCTA) {
+                    currentShowCTA = true;
+                    setShowCTA(true);
+                }
+
+                // Outro en el último segundo
                 if (seconds >= 14.0 && !currentShowOutro) {
                     currentShowOutro = true;
                     setShowOutro(true);
+                    setShowCTA(false); // Ocultar CTA para que no tape el logo final
                 }
 
-                if (!currentShowIntro && !currentShowOutro && Math.floor(seconds * frameRate) % 10 === 0) {
+                // Randomización: dura unos 6s después de la intro
+                // Intro termina en 1.5. Randomización hasta 1.5 + 6 = 7.5s
+                // Queremos que sea más rápido. Antes era cada 10 frames (1s).
+                // Hagámoslo cada 3 frames (~0.3s)
+                if (seconds > 1.5 && seconds <= 7.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 3 === 0) {
                     randomizeLego();
                 }
 
@@ -524,6 +540,20 @@ export function DevPreviewModal({
                                 <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
                                     <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
                                         {introText}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* CTA Overlay */}
+                        {isRecording && showCTA && (
+                            <div
+                                className="absolute inset-0 z-20 flex flex-center items-center justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
+                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
+                                    <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
+                                        {currentLang.startsWith('es')
+                                            ? "¿Quieres ser el siguiente? Comenta \"YO\""
+                                            : "Want to be next? Comment \"ME\""}
                                     </p>
                                 </div>
                             </div>
