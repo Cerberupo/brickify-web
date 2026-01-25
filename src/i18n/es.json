@@ -506,7 +506,7 @@
   "devPreview": {
     "title": "Creador de Contenido (DEV)",
     "captureJpg": "Capturar JPG",
-    "recordVideo": "Grabar Vídeo 15s",
+    "recordVideo": "Grabar Vídeo {{s}}s",
     "recording": "Grabando ({{progress}}%)",
     "legoPiece": "Pieza LEGO",
     "slogan": [

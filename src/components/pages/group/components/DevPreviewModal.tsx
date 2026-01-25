@@ -31,6 +31,7 @@ export function DevPreviewModal({
                                     legoProps,
                                     selectedPieceByPart,
                                 }: DevPreviewModalProps) {
+    const totalSeconds = 12;
     const [dayNumber, setDayNumber] = useState<number>(1);
     const {t, i18n} = useTranslation();
     const currentLang = i18n.language || 'en';
@@ -321,35 +322,34 @@ export function DevPreviewModal({
             let currentShowIntro = true;
             let currentShowCTA = false;
             let currentShowOutro = false;
-            const totalSeconds = 10.5;
             const frameRate = 10; // capturar 10 veces por segundo el HTML al canvas
 
             recordingIntervalRef.current = window.setInterval(async () => {
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / totalSeconds) * 100);
 
-                // Intro dura 1.5s
-                if (seconds > 1.5 && currentShowIntro) {
+                // Intro dura 2s
+                if (seconds > 2 && currentShowIntro) {
                     currentShowIntro = false;
                     setShowIntro(false);
                 }
 
                 // CTA sale casi al final (ej: segundo 8.0, dura hasta el final o hasta el logo)
                 // Lo ponemos a los 8 segundos (2.5s antes del final de 10.5)
-                if (seconds >= 6.5 && !currentShowCTA) {
+                if (seconds >= 8 && !currentShowCTA) {
                     currentShowCTA = true;
                     setShowCTA(true);
                 }
 
                 // Outro dura 3s (10.5 - 3 = 7.5s)
-                if (seconds >= 7.5 && !currentShowOutro) {
+                if (seconds >= 8.5 && !currentShowOutro) {
                     currentShowOutro = true;
                     setShowOutro(true);
                 }
 
                 // Randomización: dura unos 6s después de la intro
                 // Intro termina en 1.5. Randomización hasta 1.5 + 6 = 7.5s
-                if (seconds > 1.5 && seconds <= 7.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 3 === 0) {
+                if (seconds > 2 && seconds <= 8.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 3 === 0) {
                     randomizeLego();
                 }
 
@@ -476,7 +476,7 @@ export function DevPreviewModal({
                             ) : (
                                 <>
                                     <Play className="h-4 w-4 mr-2"/>
-                                    {t('devPreview.recordVideo')}
+                                    {t('devPreview.recordVideo', {s: totalSeconds})}
                                 </>
                             )}
                         </Button>
