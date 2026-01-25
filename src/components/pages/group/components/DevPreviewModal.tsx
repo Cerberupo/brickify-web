@@ -543,20 +543,6 @@ export function DevPreviewModal({
                             </div>
                         )}
 
-                        {/* CTA Overlay */}
-                        {isRecording && showCTA && (
-                            <div
-                                className="absolute inset-0 z-20 flex flex-center items-center justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
-                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
-                                    <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
-                                        {currentLang.startsWith('es')
-                                            ? "¿Quieres ser el siguiente? Comenta \"YO\""
-                                            : "Want to be next? Comment \"ME\""}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
                         {/* Outro Transition */}
                         {isRecording && showOutro && (
                             <div className="absolute inset-0 z-30 animate-in fade-in duration-500">
@@ -566,6 +552,20 @@ export function DevPreviewModal({
                                     alt="Brickify"
                                     crossOrigin="anonymous"
                                 />
+                            </div>
+                        )}
+
+                        {/* CTA Overlay */}
+                        {isRecording && showCTA && (
+                            <div
+                                className="absolute inset-0 z-40 flex flex-center items-center justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
+                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10">
+                                    <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
+                                        {currentLang.startsWith('es')
+                                            ? "¿Quieres ser el siguiente? Comenta \"YO\""
+                                            : "Want to be next? Comment \"ME\""}
+                                    </p>
+                                </div>
                             </div>
                         )}
 
