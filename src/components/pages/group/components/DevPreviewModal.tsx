@@ -321,7 +321,7 @@ export function DevPreviewModal({
             let currentShowIntro = true;
             let currentShowCTA = false;
             let currentShowOutro = false;
-            const totalSeconds = 15;
+            const totalSeconds = 10.5;
             const frameRate = 10; // capturar 10 veces por segundo el HTML al canvas
 
             recordingIntervalRef.current = window.setInterval(async () => {
@@ -334,23 +334,21 @@ export function DevPreviewModal({
                     setShowIntro(false);
                 }
 
-                // CTA sale 4 segundos antes del final (15 - 4 = 11s)
-                if (seconds >= 11.0 && !currentShowCTA) {
+                // CTA sale casi al final (ej: segundo 9.0, dura hasta el final o hasta el logo)
+                // Lo ponemos a los 9 segundos (1.5s antes del final de 10.5)
+                if (seconds >= 9.0 && !currentShowCTA) {
                     currentShowCTA = true;
                     setShowCTA(true);
                 }
 
-                // Outro en el último segundo
-                if (seconds >= 14.0 && !currentShowOutro) {
+                // Outro dura 3s (10.5 - 3 = 7.5s)
+                if (seconds >= 7.5 && !currentShowOutro) {
                     currentShowOutro = true;
                     setShowOutro(true);
-                    setShowCTA(false); // Ocultar CTA para que no tape el logo final
                 }
 
                 // Randomización: dura unos 6s después de la intro
                 // Intro termina en 1.5. Randomización hasta 1.5 + 6 = 7.5s
-                // Queremos que sea más rápido. Antes era cada 10 frames (1s).
-                // Hagámoslo cada 3 frames (~0.3s)
                 if (seconds > 1.5 && seconds <= 7.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 3 === 0) {
                     randomizeLego();
                 }
