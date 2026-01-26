@@ -335,20 +335,20 @@ export function DevPreviewModal({
 
                 // CTA sale casi al final (ej: segundo 9.0, dura hasta el final o hasta el logo)
                 // Lo ponemos a los 9 segundos (2.5s antes del final de 13)
-                if (seconds >= 10 && !currentShowCTA) {
+                if (seconds >= 9.5 && !currentShowCTA) {
                     currentShowCTA = true;
                     setShowCTA(true);
                 }
 
                 // Outro dura 3s (13 - 3 = 9.5s)
-                if (seconds >= 9.5 && !currentShowOutro) {
+                if (seconds >= 10.5 && !currentShowOutro) {
                     currentShowOutro = true;
                     setShowOutro(true);
                 }
 
                 // Randomización: dura unos 6s después de la intro
                 // Intro termina en 3. Randomización hasta 3 + 7 = 9.5s
-                if (seconds > 3 && seconds <= 10.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 5 === 0) {
+                if (seconds > 3 && seconds <= 11.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 5 === 0) {
                     randomizeLego();
                 }
 
