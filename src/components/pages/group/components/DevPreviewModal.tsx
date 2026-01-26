@@ -276,40 +276,7 @@ export function DevPreviewModal({
             const ctx = canvas.getContext('2d');
             if (!ctx) throw new Error('Could not get canvas context');
 
-            // --- AUDIO CAPTURE ---
-            const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const destination = audioCtx.createMediaStreamDestination();
-
-            // IA Voice (TTS)
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(introText);
-                utterance.lang = currentLang.startsWith('es') ? 'es-ES' : 'en-US';
-                utterance.rate = 1.0;
-                utterance.pitch = 1.0;
-
-                // Intentar capturar audio del micrófono si no hay otra forma de capturar TTS directamente
-                // (En la mayoría de navegadores modernos no se puede capturar speechSynthesis directamente en un MediaStream)
-                // Como alternativa, usaremos un truco: si el usuario permite el micro, se escuchará el TTS por los altavoces
-                // Pero lo ideal sería inyectar el audio. Dado que speechSynthesis no se deja, vamos a usar el micro como fallback
-                // o avisar que se requiere salida de audio.
-                // OTRA OPCIÓN: Usar un oscilador para confirmar que el audio funciona en el stream.
-
-                try {
-                    const micStream = await navigator.mediaDevices.getUserMedia({audio: true});
-                    const source = audioCtx.createMediaStreamSource(micStream);
-                    source.connect(destination);
-                } catch (e) {
-                    console.warn('Microphone access denied, audio might not be captured', e);
-                }
-
-                window.speechSynthesis.speak(utterance);
-            }
-
             const videoStream = canvas.captureStream(30); // 30 FPS
-            const combinedStream = new MediaStream([
-                ...videoStream.getVideoTracks(),
-                ...destination.stream.getAudioTracks()
-            ]);
 
             // Prefer MP4 if supported
             let mimeType = 'video/webm;codecs=vp9';
@@ -319,7 +286,7 @@ export function DevPreviewModal({
                 mimeType = 'video/webm;codecs=h264';
             }
 
-            const recorder = new MediaRecorder(combinedStream, {
+            const recorder = new MediaRecorder(videoStream, {
                 mimeType: mimeType
             });
 
@@ -337,9 +304,8 @@ export function DevPreviewModal({
                 link.click();
                 setTimeout(() => URL.revokeObjectURL(url), 100);
 
-                // Stop all tracks in combinedStream
-                combinedStream.getTracks().forEach(track => track.stop());
-                audioCtx.close();
+                // Stop all tracks in videoStream
+                videoStream.getTracks().forEach(track => track.stop());
 
                 setIsRecording(false);
                 setRecordingProgress(0);
