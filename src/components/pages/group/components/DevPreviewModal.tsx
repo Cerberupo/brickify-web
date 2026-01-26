@@ -351,7 +351,7 @@ export function DevPreviewModal({
 
                 // Randomización: dura unos 6s después de la intro
                 // Intro termina en 2. Randomización hasta 2 + 6 = 8.5s
-                if (seconds > 2 && seconds <= 8.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 3 === 0) {
+                if (seconds > 2 && seconds <= 8.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 5 === 0) {
                     randomizeLego();
                 }
 
