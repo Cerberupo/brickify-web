@@ -122,7 +122,7 @@ export function DevPreviewModal({
         };
     }, [randomSelectedPieces, person?.matches, selectedPieceByPart]);
 
-    const [partUsageCounts, setPartUsageCounts] = useState<Record<string, number>>({
+    const partUsageCounts = useRef<Record<string, number>>({
         wig: 0,
         head: 0,
         upperPart: 0,
@@ -131,15 +131,12 @@ export function DevPreviewModal({
     const randomizeLego = useCallback(() => {
         // 1. Decidir qué parte cambiar (la que tenga menor carga)
         const parts = ['wig', 'head', 'upperPart', 'lowerPart'];
-        const minPartUsage = Math.min(...parts.map(p => partUsageCounts[p]));
-        const candidateParts = parts.filter(p => partUsageCounts[p] === minPartUsage);
+        const minPartUsage = Math.min(...parts.map(p => partUsageCounts.current[p]));
+        const candidateParts = parts.filter(p => partUsageCounts.current[p] === minPartUsage);
         const selectedPart = candidateParts[Math.floor(Math.random() * candidateParts.length)];
 
         // Incrementar carga de la parte
-        setPartUsageCounts(prev => ({
-            ...prev,
-            [selectedPart]: prev[selectedPart] + 1
-        }));
+        partUsageCounts.current[selectedPart]++;
 
         // 2. Decidir qué pieza de esa parte poner (la que tenga menor carga)
         const pieces = availablePieces[selectedPart];
@@ -191,7 +188,7 @@ export function DevPreviewModal({
                 [selectedPart]: sideImages
             };
         });
-    }, [availablePieces, legoProps, currentSelectedPieces, partUsageCounts]);
+    }, [availablePieces, legoProps, currentSelectedPieces]);
 
     const getCappedDimensions = (width: number, height: number, maxRes: number = 1080) => {
         if (width <= maxRes && height <= maxRes) return {width, height};
@@ -242,7 +239,7 @@ export function DevPreviewModal({
         if (!area) return;
 
         // Reset usage counts y estados
-        setPartUsageCounts({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
+        partUsageCounts.current = {wig: 0, head: 0, upperPart: 0, lowerPart: 0};
         pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
         setRandomLegoProps(null);
         setRandomSelectedPieces(null);
