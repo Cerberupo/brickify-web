@@ -31,7 +31,7 @@ export function DevPreviewModal({
                                     legoProps,
                                     selectedPieceByPart,
                                 }: DevPreviewModalProps) {
-    const totalSeconds = 12;
+    const totalSeconds = 14;
     const [dayNumber, setDayNumber] = useState<number>(1);
     const {t, i18n} = useTranslation();
     const currentLang = i18n.language || 'en';
@@ -327,28 +327,28 @@ export function DevPreviewModal({
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / totalSeconds) * 100);
 
-                // Intro dura 2s
-                if (seconds > 2 && currentShowIntro) {
+                // Intro dura 3s
+                if (seconds > 3 && currentShowIntro) {
                     currentShowIntro = false;
                     setShowIntro(false);
                 }
 
-                // CTA sale casi al final (ej: segundo 8.0, dura hasta el final o hasta el logo)
-                // Lo ponemos a los 8 segundos (2.5s antes del final de 10.5)
-                if (seconds >= 8 && !currentShowCTA) {
+                // CTA sale casi al final (ej: segundo 9.0, dura hasta el final o hasta el logo)
+                // Lo ponemos a los 9 segundos (2.5s antes del final de 13)
+                if (seconds >= 10 && !currentShowCTA) {
                     currentShowCTA = true;
                     setShowCTA(true);
                 }
 
-                // Outro dura 3s (10.5 - 3 = 8.5s)
-                if (seconds >= 8.5 && !currentShowOutro) {
+                // Outro dura 3s (13 - 3 = 9.5s)
+                if (seconds >= 9.5 && !currentShowOutro) {
                     currentShowOutro = true;
                     setShowOutro(true);
                 }
 
                 // Randomización: dura unos 6s después de la intro
-                // Intro termina en 2. Randomización hasta 2 + 6 = 8.5s
-                if (seconds > 2 && seconds <= 8.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 5 === 0) {
+                // Intro termina en 3. Randomización hasta 3 + 7 = 9.5s
+                if (seconds > 3 && seconds <= 10.5 && !currentShowOutro && Math.floor(seconds * frameRate) % 5 === 0) {
                     randomizeLego();
                 }
 
