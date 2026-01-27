@@ -36,6 +36,8 @@ export function DevPreviewModal({
         totalSeconds: 10.5,
         introStart: 0,
         introEnd: 1.5,
+        introTextStart: 0,
+        introTextEnd: 1.5,
         legoStart: 1.5,
         legoEnd: 7.5,
         legoSpeed: 3, // Cada cuántos frames cambiar pieza (frameRate=10, 3 = 0.3s)
@@ -45,11 +47,9 @@ export function DevPreviewModal({
         outroEnd: 10.5
     });
 
-    const {t, i18n} = useTranslation();
-    const currentLang = i18n.language || 'en';
-    const introText = currentLang.startsWith('es')
-        ? `Día ${dayNumber} convirtiendo personas en minifiguras LEGO`
-        : `Day ${dayNumber} turning people into LEGO minifigures`;
+    const {t} = useTranslation();
+    const introText = t('devPreview.dayText', {n: dayNumber});
+    const ctaText = t('devPreview.ctaText');
 
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
     const [isRecording, setIsRecording] = useState(false);
@@ -57,6 +57,7 @@ export function DevPreviewModal({
     const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
     const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
     const [showIntro, setShowIntro] = useState(false);
+    const [showIntroText, setShowIntroText] = useState(false);
     const [showCTA, setShowCTA] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
     const [selectedSlogan, setSelectedSlogan] = useState('');
@@ -266,6 +267,7 @@ export function DevPreviewModal({
 
         // 1. Mostrar intro a pantalla completa ANTES de empezar a grabar
         setShowIntro(true);
+        setShowIntroText(true);
         setIsRecording(true);
         setRecordingProgress(0);
         chunksRef.current = [];
@@ -321,6 +323,7 @@ export function DevPreviewModal({
                 setRandomLegoProps(null);
                 setRandomSelectedPieces(null);
                 setShowIntro(false);
+                setShowIntroText(false);
                 setShowCTA(false);
                 setShowOutro(false);
                 recorderRef.current = null;
@@ -331,6 +334,7 @@ export function DevPreviewModal({
 
             let seconds = 0;
             let currentShowIntro = true;
+            let currentShowIntroText = true;
             let currentShowCTA = false;
             let currentShowOutro = false;
             const frameRate = 10; // capturar 10 veces por segundo el HTML al canvas
@@ -339,14 +343,19 @@ export function DevPreviewModal({
                 seconds += (1 / frameRate);
                 setRecordingProgress((seconds / config.totalSeconds) * 100);
 
-                // Intro
+                // Intro image
                 const shouldShowIntro = seconds >= config.introStart && seconds <= config.introEnd;
                 if (shouldShowIntro !== currentShowIntro) {
                     currentShowIntro = shouldShowIntro;
                     setShowIntro(shouldShowIntro);
                 }
 
-                // CTA
+                // Intro text
+                const shouldShowIntroText = seconds >= config.introTextStart && seconds <= config.introTextEnd;
+                if (shouldShowIntroText !== currentShowIntroText) {
+                    currentShowIntroText = shouldShowIntroText;
+                    setShowIntroText(shouldShowIntroText);
+                }
                 const shouldShowCTA = seconds >= config.ctaStart && seconds <= config.ctaEnd;
                 if (shouldShowCTA !== currentShowCTA) {
                     currentShowCTA = shouldShowCTA;
@@ -461,7 +470,8 @@ export function DevPreviewModal({
                         <div
                             className="flex flex-wrap items-center gap-x-4 gap-y-2 ml-4 p-1 bg-gray-50 rounded-lg border border-gray-100">
                             <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">Día:</span>
+                                <span
+                                    className="text-[10px] uppercase font-bold text-gray-400">{t('devPreview.config.day')}:</span>
                                 <input
                                     type="number"
                                     value={dayNumber}
@@ -470,7 +480,8 @@ export function DevPreviewModal({
                                 />
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">Total(s):</span>
+                                <span
+                                    className="text-[10px] uppercase font-bold text-gray-400">{t('devPreview.config.total')}:</span>
                                 <input
                                     type="number"
                                     value={config.totalSeconds}
@@ -484,7 +495,8 @@ export function DevPreviewModal({
 
                             {/* Intro config */}
                             <div className="flex items-center gap-1 bg-blue-50/50 p-1 rounded">
-                                <span className="text-[9px] uppercase font-bold text-blue-400">Intro:</span>
+                                <span
+                                    className="text-[9px] uppercase font-bold text-blue-400">{t('devPreview.config.intro')}:</span>
                                 <input
                                     type="number"
                                     step="0.1"
@@ -510,9 +522,39 @@ export function DevPreviewModal({
                                 />
                             </div>
 
+                            {/* Intro Text config */}
+                            <div className="flex items-center gap-1 bg-cyan-50/50 p-1 rounded">
+                                <span
+                                    className="text-[9px] uppercase font-bold text-cyan-600">{t('devPreview.config.dayText')}:</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.introTextStart}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        introTextStart: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Intro Text Start"
+                                />
+                                <span className="text-[10px] text-gray-400">-</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.introTextEnd}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        introTextEnd: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Intro Text End"
+                                />
+                            </div>
+
                             {/* Lego config */}
                             <div className="flex items-center gap-1 bg-yellow-50/50 p-1 rounded">
-                                <span className="text-[9px] uppercase font-bold text-yellow-600">Lego:</span>
+                                <span
+                                    className="text-[9px] uppercase font-bold text-yellow-600">{t('devPreview.config.lego')}:</span>
                                 <input
                                     type="number"
                                     step="0.1"
@@ -536,7 +578,8 @@ export function DevPreviewModal({
                                     className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
                                     title="Lego End"
                                 />
-                                <span className="text-[9px] uppercase font-bold text-gray-400 ml-1">Spd:</span>
+                                <span
+                                    className="text-[9px] uppercase font-bold text-gray-400 ml-1">{t('devPreview.config.speed')}:</span>
                                 <input
                                     type="number"
                                     value={config.legoSpeed}
@@ -551,7 +594,8 @@ export function DevPreviewModal({
 
                             {/* CTA config */}
                             <div className="flex items-center gap-1 bg-green-50/50 p-1 rounded">
-                                <span className="text-[9px] uppercase font-bold text-green-600">CTA:</span>
+                                <span
+                                    className="text-[9px] uppercase font-bold text-green-600">{t('devPreview.config.cta')}:</span>
                                 <input
                                     type="number"
                                     step="0.1"
@@ -579,7 +623,8 @@ export function DevPreviewModal({
 
                             {/* Outro config */}
                             <div className="flex items-center gap-1 bg-purple-50/50 p-1 rounded">
-                                <span className="text-[9px] uppercase font-bold text-purple-600">Outro:</span>
+                                <span
+                                    className="text-[9px] uppercase font-bold text-purple-600">{t('devPreview.config.outro')}:</span>
                                 <input
                                     type="number"
                                     step="0.1"
@@ -683,7 +728,7 @@ export function DevPreviewModal({
                         </div>
 
                         {/* Instagram Style Overlay */}
-                        {isRecording && showIntro && (
+                        {isRecording && showIntroText && (
                             <div
                                 className="absolute inset-x-0 top-[10%] z-20 flex items-start justify-center p-8 pointer-events-none">
                                 <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
@@ -712,9 +757,7 @@ export function DevPreviewModal({
                                 className="absolute inset-x-0 top-[18%] z-40 flex items-start justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
                                 <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
                                     <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
-                                        {currentLang.startsWith('es')
-                                            ? "¿Quieres ser el siguiente? Comenta \"YO\""
-                                            : "Want to be next? Comment \"ME\""}
+                                        {ctaText}
                                     </p>
                                 </div>
                             </div>

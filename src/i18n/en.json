@@ -511,6 +511,18 @@
     "recordVideo": "Record {{s}}s Video",
     "recording": "Recording ({{progress}}%)",
     "legoPiece": "LEGO Piece",
+    "dayText": "Day {{n}} turning people into LEGO minifigures",
+    "ctaText": "Want to be next? Comment “ME”",
+    "config": {
+      "day": "Day",
+      "total": "Total(s)",
+      "intro": "Intro",
+      "dayText": "Day Text",
+      "lego": "Lego",
+      "speed": "Spd",
+      "cta": "CTA",
+      "outro": "Outro"
+    },
     "slogan": [
       "From photo to LEGO pieces",
       "Your memories, piece by piece",
