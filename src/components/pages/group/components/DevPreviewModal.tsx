@@ -63,11 +63,11 @@ export function DevPreviewModal({
     const [showCTA, setShowCTA] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
     const [revealProgress, setRevealProgress] = useState(0); // 0 to 1 for reveal animation
-    const [revealPartsProgress, setRevealPartsProgress] = useState<Record<string, number>>({
-        wig: 0,
-        head: 0,
-        upperPart: 0,
-        lowerPart: 0
+    const [revealedParts, setRevealedParts] = useState<Record<string, boolean>>({
+        wig: false,
+        head: false,
+        upperPart: false,
+        lowerPart: false
     });
     const [selectedSlogan, setSelectedSlogan] = useState('');
     const [isClientState, setIsClientState] = useState(false);
@@ -268,11 +268,11 @@ export function DevPreviewModal({
         setShowCTA(false);
         setShowOutro(false);
         setRevealProgress(0);
-        setRevealPartsProgress({
-            wig: 0,
-            head: 0,
-            upperPart: 0,
-            lowerPart: 0
+        setRevealedParts({
+            wig: false,
+            head: false,
+            upperPart: false,
+            lowerPart: false
         });
 
         // Cambiar eslogan al empezar
@@ -343,11 +343,11 @@ export function DevPreviewModal({
                 setShowCTA(false);
                 setShowOutro(false);
                 setRevealProgress(0);
-                setRevealPartsProgress({
-                    wig: 0,
-                    head: 0,
-                    upperPart: 0,
-                    lowerPart: 0
+                setRevealedParts({
+                    wig: false,
+                    head: false,
+                    upperPart: false,
+                    lowerPart: false
                 });
                 recorderRef.current = null;
                 // Detener el intervalo explícitamente al parar el grabador por cualquier motivo
@@ -410,30 +410,22 @@ export function DevPreviewModal({
                         const partDuration = config.revealPartSpeed;
                         const revealOrder = ['wig', 'head', 'upperPart', 'lowerPart'];
 
-                        const newPartsProgress: Record<string, number> = {};
+                        const newRevealedParts: Record<string, boolean> = {};
                         revealOrder.forEach((part, index) => {
                             const partStart = config.legoStart + (index * partDuration);
-                            const partEnd = partStart + partDuration;
-
-                            if (seconds < partStart) {
-                                newPartsProgress[part] = 0;
-                            } else if (seconds > partEnd) {
-                                newPartsProgress[part] = 1;
-                            } else {
-                                newPartsProgress[part] = (seconds - partStart) / partDuration;
-                            }
+                            newRevealedParts[part] = seconds >= partStart;
                         });
-                        setRevealPartsProgress(newPartsProgress);
+                        setRevealedParts(newRevealedParts);
 
                         // Global progress for backward compatibility if needed
                         const prog = (seconds - config.legoStart) / totalRevealTime;
                         setRevealProgress(prog);
                     } else if (seconds > config.legoEnd) {
                         setRevealProgress(1);
-                        setRevealPartsProgress({wig: 1, head: 1, upperPart: 1, lowerPart: 1});
+                        setRevealedParts({wig: true, head: true, upperPart: true, lowerPart: true});
                     } else {
                         setRevealProgress(0);
-                        setRevealPartsProgress({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
+                        setRevealedParts({wig: false, head: false, upperPart: false, lowerPart: false});
                     }
                 } else {
                     // Randomization mode: existing logic
@@ -870,7 +862,7 @@ export function DevPreviewModal({
                                 className="w-full"
                                 hideToggle={true}
                                 crossOrigin={isRecording ? 'anonymous' : undefined}
-                                partsProgress={revealMode ? revealPartsProgress : undefined}
+                                revealedParts={revealMode ? revealedParts : undefined}
                             />
                         </div>
 
@@ -898,14 +890,14 @@ export function DevPreviewModal({
                                     const imgSrc = currentLegoProps.side === 'back' ? piece.imageBackUrl : piece.imageFrontUrl;
                                     if (!imgSrc) return null;
 
-                                    const progress = revealMode ? revealPartsProgress[key] : 1;
+                                    const isRevealed = revealMode ? revealedParts[key] : true;
 
                                     return (
                                         <div key={key}
-                                             className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm transition-all duration-300"
+                                             className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm transition-all duration-500"
                                              style={revealMode ? {
-                                                 transform: `translateX(${(1 - progress) * 200}%)`,
-                                                 opacity: progress > 0 ? 1 : 0
+                                                 transform: isRevealed ? 'translateX(0)' : 'translateX(200%)',
+                                                 opacity: isRevealed ? 1 : 0
                                              } : {}}
                                         >
                                             <div
