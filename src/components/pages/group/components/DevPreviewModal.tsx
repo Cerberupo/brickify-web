@@ -32,6 +32,7 @@ export function DevPreviewModal({
                                     selectedPieceByPart,
                                 }: DevPreviewModalProps) {
     const [dayNumber, setDayNumber] = useState<number>(1);
+    const [revealMode, setRevealMode] = useState(false);
     const [config, setConfig] = useState({
         totalSeconds: 10.5,
         introStart: 0,
@@ -60,6 +61,7 @@ export function DevPreviewModal({
     const [showIntroText, setShowIntroText] = useState(false);
     const [showCTA, setShowCTA] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
+    const [revealProgress, setRevealProgress] = useState(0); // 0 to 1 for reveal animation
     const [selectedSlogan, setSelectedSlogan] = useState('');
     const [isClientState, setIsClientState] = useState(false);
 
@@ -258,6 +260,7 @@ export function DevPreviewModal({
         setRandomSelectedPieces(null);
         setShowCTA(false);
         setShowOutro(false);
+        setRevealProgress(0);
 
         // Cambiar eslogan al empezar
         if (slogans.length > 0) {
@@ -326,6 +329,7 @@ export function DevPreviewModal({
                 setShowIntroText(false);
                 setShowCTA(false);
                 setShowOutro(false);
+                setRevealProgress(0);
                 recorderRef.current = null;
             };
 
@@ -369,9 +373,22 @@ export function DevPreviewModal({
                     setShowOutro(shouldShowOutro);
                 }
 
-                // Randomización: controlada por config.legoStart y config.legoEnd
-                if (seconds >= config.legoStart && seconds <= config.legoEnd && !currentShowOutro && Math.floor(seconds * frameRate) % config.legoSpeed === 0) {
-                    randomizeLego();
+                // Animation logic based on mode
+                if (revealMode) {
+                    // Reveal mode: calculate progress from legoStart to legoEnd
+                    if (seconds >= config.legoStart && seconds <= config.legoEnd) {
+                        const prog = (seconds - config.legoStart) / (config.legoEnd - config.legoStart);
+                        setRevealProgress(prog);
+                    } else if (seconds > config.legoEnd) {
+                        setRevealProgress(1);
+                    } else {
+                        setRevealProgress(0);
+                    }
+                } else {
+                    // Randomization mode: existing logic
+                    if (seconds >= config.legoStart && seconds <= config.legoEnd && !currentShowOutro && Math.floor(seconds * frameRate) % config.legoSpeed === 0) {
+                        randomizeLego();
+                    }
                 }
 
                 // Capturar el estado actual del HTML al canvas
@@ -649,6 +666,17 @@ export function DevPreviewModal({
                                     title="Outro End"
                                 />
                             </div>
+
+                            <div className="flex items-center gap-1.5 ml-2">
+                                <span
+                                    className="text-[10px] uppercase font-bold text-gray-400">{t('devPreview.config.mode')}:</span>
+                                <input
+                                    type="checkbox"
+                                    checked={revealMode}
+                                    onChange={(e) => setRevealMode(e.target.checked)}
+                                    className="w-4 h-4 border border-gray-200 rounded focus:ring-1 focus:ring-yellow-500 accent-yellow-500"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -705,13 +733,18 @@ export function DevPreviewModal({
 
                         {/* User Original Image */}
                         <div
-                            className={`absolute overflow-hidden transition-all duration-500 ${
+                            className={`absolute overflow-hidden ${!revealMode ? 'transition-all duration-500' : ''} ${
                                 isRecording && showIntro
                                     ? 'inset-0 w-full h-full z-10'
                                     : (aspectRatio === '1:1'
                                         ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
                                         : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded')
-                            }`}>
+                            }`}
+                            style={revealMode && !showIntro ? {
+                                opacity: 1 - revealProgress,
+                                transform: `scale(${1 + revealProgress * 0.2})`
+                            } : {}}
+                        >
                             <img
                                 src={originalImage}
                                 className="w-full h-full object-cover"
@@ -764,11 +797,16 @@ export function DevPreviewModal({
                         )}
 
                         {/* Lego Character */}
-                        <div className={`absolute transition-all duration-300 ${
+                        <div className={`absolute ${!revealMode ? 'transition-all duration-300' : ''} ${
                             aspectRatio === '1:1'
                                 ? 'bottom-[-15%] right-[-5%] w-[62.66%]'
                                 : 'bottom-[5%] right-[-7%] w-[72%]'
-                        }`}>
+                        }`}
+                             style={revealMode ? {
+                                 transform: `translateY(${100 - (revealProgress * 100)}%)`,
+                                 opacity: revealProgress > 0 ? 1 : 0
+                             } : {}}
+                        >
                             <LegoComposite
                                 {...currentLegoProps}
                                 className="w-full"
@@ -794,7 +832,12 @@ export function DevPreviewModal({
 
                         {/* Selected Pieces List (Only for 9:16) */}
                         {aspectRatio === '9:16' && (
-                            <div className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2">
+                            <div className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2"
+                                 style={revealMode ? {
+                                     transform: `translateX(${100 - (revealProgress * 100)}%)`,
+                                     opacity: revealProgress > 0 ? 1 : 0
+                                 } : {}}
+                            >
                                 {Object.entries(currentSelectedPieces).map(([key, piece]: [string, any]) => {
                                     if (!piece) return null;
                                     const imgSrc = currentLegoProps.side === 'back' ? piece.imageBackUrl : piece.imageFrontUrl;
