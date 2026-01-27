@@ -522,7 +522,8 @@
       "speed": "Spd",
       "cta": "CTA",
       "outro": "Outro",
-      "mode": "Reveal Mode"
+      "mode": "Reveal Mode",
+      "revealSpeed": "Rev Spd"
     },
     "slogan": [
       "From photo to LEGO pieces",

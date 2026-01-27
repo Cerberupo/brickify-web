@@ -43,6 +43,9 @@ export type LegoCompositeProps = {
 
     /** Configuración de CORS para las imágenes */
     crossOrigin?: 'anonymous' | 'use-credentials' | '';
+
+    /** Progreso individual de revelado por parte (0 a 1) */
+    partsProgress?: Record<string, number>;
 };
 
 /**
@@ -66,6 +69,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                                                          onSideChange,
                                                          hideToggle = false,
                                                          crossOrigin,
+                                                         partsProgress,
                                                      }) => {
     const [internalUseBack, setInternalUseBack] = useState(false);
     const useBack = (side ? side === 'back' : internalUseBack);
@@ -119,6 +123,8 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                 const freshSrc = useBack ? data.back : data.front;
                 const alt = `${key}-${useBack ? 'back' : 'front'}`;
                 const pos = layout[key];
+                const progress = partsProgress?.[key] ?? 1;
+
                 const pieceStyle: React.CSSProperties = {
                     position: 'absolute',
                     width: `${pos.widthPct}%`,
@@ -128,6 +134,8 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                     zIndex: pos.zIndex,
                     objectFit: 'contain',
                     pointerEvents: 'none',
+                    opacity: progress > 0 ? 1 : 0,
+                    transform: partsProgress ? `translateY(${(1 - progress) * 20}%)` : undefined,
                 };
                 return (
                     <img

@@ -520,7 +520,8 @@
       "speed": "Vel",
       "cta": "CTA",
       "outro": "Outro",
-      "mode": "Modo Revelar"
+      "mode": "Modo Revelar",
+      "revealSpeed": "Vel Rev"
     },
     "slogan": [
       "De la foto a las piezas LEGO",

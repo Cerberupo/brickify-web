@@ -45,7 +45,8 @@ export function DevPreviewModal({
         ctaStart: 8,
         ctaEnd: 10.5,
         outroStart: 7.5,
-        outroEnd: 10.5
+        outroEnd: 10.5,
+        revealPartSpeed: 0.5 // Segundos que tarda en revelarse cada parte
     });
 
     const {t} = useTranslation();
@@ -62,6 +63,12 @@ export function DevPreviewModal({
     const [showCTA, setShowCTA] = useState(false);
     const [showOutro, setShowOutro] = useState(false);
     const [revealProgress, setRevealProgress] = useState(0); // 0 to 1 for reveal animation
+    const [revealPartsProgress, setRevealPartsProgress] = useState<Record<string, number>>({
+        wig: 0,
+        head: 0,
+        upperPart: 0,
+        lowerPart: 0
+    });
     const [selectedSlogan, setSelectedSlogan] = useState('');
     const [isClientState, setIsClientState] = useState(false);
 
@@ -261,6 +268,12 @@ export function DevPreviewModal({
         setShowCTA(false);
         setShowOutro(false);
         setRevealProgress(0);
+        setRevealPartsProgress({
+            wig: 0,
+            head: 0,
+            upperPart: 0,
+            lowerPart: 0
+        });
 
         // Cambiar eslogan al empezar
         if (slogans.length > 0) {
@@ -330,6 +343,12 @@ export function DevPreviewModal({
                 setShowCTA(false);
                 setShowOutro(false);
                 setRevealProgress(0);
+                setRevealPartsProgress({
+                    wig: 0,
+                    head: 0,
+                    upperPart: 0,
+                    lowerPart: 0
+                });
                 recorderRef.current = null;
             };
 
@@ -375,14 +394,36 @@ export function DevPreviewModal({
 
                 // Animation logic based on mode
                 if (revealMode) {
-                    // Reveal mode: calculate progress from legoStart to legoEnd
+                    // Reveal mode: sequential reveal of parts
                     if (seconds >= config.legoStart && seconds <= config.legoEnd) {
-                        const prog = (seconds - config.legoStart) / (config.legoEnd - config.legoStart);
+                        const totalRevealTime = config.legoEnd - config.legoStart;
+                        const partDuration = config.revealPartSpeed;
+                        const revealOrder = ['wig', 'head', 'upperPart', 'lowerPart'];
+
+                        const newPartsProgress: Record<string, number> = {};
+                        revealOrder.forEach((part, index) => {
+                            const partStart = config.legoStart + (index * partDuration);
+                            const partEnd = partStart + partDuration;
+
+                            if (seconds < partStart) {
+                                newPartsProgress[part] = 0;
+                            } else if (seconds > partEnd) {
+                                newPartsProgress[part] = 1;
+                            } else {
+                                newPartsProgress[part] = (seconds - partStart) / partDuration;
+                            }
+                        });
+                        setRevealPartsProgress(newPartsProgress);
+
+                        // Global progress for backward compatibility if needed
+                        const prog = (seconds - config.legoStart) / totalRevealTime;
                         setRevealProgress(prog);
                     } else if (seconds > config.legoEnd) {
                         setRevealProgress(1);
+                        setRevealPartsProgress({wig: 1, head: 1, upperPart: 1, lowerPart: 1});
                     } else {
                         setRevealProgress(0);
+                        setRevealPartsProgress({wig: 0, head: 0, upperPart: 0, lowerPart: 0});
                     }
                 } else {
                     // Randomization mode: existing logic
@@ -677,6 +718,21 @@ export function DevPreviewModal({
                                     className="w-4 h-4 border border-gray-200 rounded focus:ring-1 focus:ring-yellow-500 accent-yellow-500"
                                 />
                             </div>
+                            <div className="flex items-center gap-1.5 ml-2">
+                                <span
+                                    className="text-[10px] uppercase font-bold text-gray-400">{t('devPreview.config.revealSpeed')}:</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.revealPartSpeed}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        revealPartSpeed: parseFloat(e.target.value) || 0.1
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Reveal Part Speed"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -802,16 +858,13 @@ export function DevPreviewModal({
                                 ? 'bottom-[-15%] right-[-5%] w-[62.66%]'
                                 : 'bottom-[5%] right-[-7%] w-[72%]'
                         }`}
-                             style={revealMode ? {
-                                 transform: `translateY(${100 - (revealProgress * 100)}%)`,
-                                 opacity: revealProgress > 0 ? 1 : 0
-                             } : {}}
                         >
                             <LegoComposite
                                 {...currentLegoProps}
                                 className="w-full"
                                 hideToggle={true}
                                 crossOrigin={isRecording ? 'anonymous' : undefined}
+                                partsProgress={revealMode ? revealPartsProgress : undefined}
                             />
                         </div>
 
@@ -833,19 +886,22 @@ export function DevPreviewModal({
                         {/* Selected Pieces List (Only for 9:16) */}
                         {aspectRatio === '9:16' && (
                             <div className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2"
-                                 style={revealMode ? {
-                                     transform: `translateX(${100 - (revealProgress * 100)}%)`,
-                                     opacity: revealProgress > 0 ? 1 : 0
-                                 } : {}}
                             >
                                 {Object.entries(currentSelectedPieces).map(([key, piece]: [string, any]) => {
                                     if (!piece) return null;
                                     const imgSrc = currentLegoProps.side === 'back' ? piece.imageBackUrl : piece.imageFrontUrl;
                                     if (!imgSrc) return null;
 
+                                    const progress = revealMode ? revealPartsProgress[key] : 1;
+
                                     return (
                                         <div key={key}
-                                             className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm">
+                                             className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm transition-all duration-300"
+                                             style={revealMode ? {
+                                                 transform: `translateX(${(1 - progress) * 100}%)`,
+                                                 opacity: progress > 0 ? 1 : 0
+                                             } : {}}
+                                        >
                                             <div
                                                 className="w-14 h-14 flex-shrink-0 bg-white rounded-lg p-1.5 shadow-inner">
                                                 <img
