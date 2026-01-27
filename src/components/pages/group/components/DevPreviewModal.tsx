@@ -350,20 +350,30 @@ export function DevPreviewModal({
                     lowerPart: 0
                 });
                 recorderRef.current = null;
+                // Detener el intervalo explícitamente al parar el grabador por cualquier motivo
+                if (recordingIntervalRef.current) {
+                    clearInterval(recordingIntervalRef.current);
+                    recordingIntervalRef.current = null;
+                }
             };
 
             recorderRef.current = recorder;
             recorder.start();
 
+            let lastTimestamp = performance.now();
             let seconds = 0;
             let currentShowIntro = true;
             let currentShowIntroText = true;
             let currentShowCTA = false;
             let currentShowOutro = false;
-            const frameRate = 10; // capturar 10 veces por segundo el HTML al canvas
+            const frameRate = 60; // 60 FPS para mayor fluidez
 
             recordingIntervalRef.current = window.setInterval(async () => {
-                seconds += (1 / frameRate);
+                const now = performance.now();
+                const deltaTime = (now - lastTimestamp) / 1000;
+                lastTimestamp = now;
+
+                seconds += deltaTime;
                 setRecordingProgress((seconds / config.totalSeconds) * 100);
 
                 // Intro image
@@ -796,10 +806,6 @@ export function DevPreviewModal({
                                         ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
                                         : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded')
                             }`}
-                            style={revealMode && !showIntro ? {
-                                opacity: 1 - revealProgress,
-                                transform: `scale(${1 + revealProgress * 0.2})`
-                            } : {}}
                         >
                             <img
                                 src={originalImage}
@@ -898,7 +904,7 @@ export function DevPreviewModal({
                                         <div key={key}
                                              className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm transition-all duration-300"
                                              style={revealMode ? {
-                                                 transform: `translateX(${(1 - progress) * 100}%)`,
+                                                 transform: `translateX(${(1 - progress) * 200}%)`,
                                                  opacity: progress > 0 ? 1 : 0
                                              } : {}}
                                         >

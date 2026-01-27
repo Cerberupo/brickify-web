@@ -135,7 +135,7 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                     objectFit: 'contain',
                     pointerEvents: 'none',
                     opacity: progress > 0 ? 1 : 0,
-                    transform: partsProgress ? `translateY(${(1 - progress) * 20}%)` : undefined,
+                    transform: partsProgress ? `translateY(${(1 - progress) * 100}%)` : undefined,
                 };
                 return (
                     <img
