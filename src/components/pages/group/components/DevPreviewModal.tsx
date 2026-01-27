@@ -33,12 +33,16 @@ export function DevPreviewModal({
                                 }: DevPreviewModalProps) {
     const [dayNumber, setDayNumber] = useState<number>(1);
     const [config, setConfig] = useState({
-        totalSeconds: 14,
-        introDuration: 3,
-        outroDuration: 3,
-        ctaStart: 9.5,
-        legoDuration: 7, // Duración de la animación de piezas
-        legoSpeed: 5 // Cada cuántos frames cambiar pieza (frameRate=10, 5 = 0.5s)
+        totalSeconds: 10.5,
+        introStart: 0,
+        introEnd: 1.5,
+        legoStart: 1.5,
+        legoEnd: 7.5,
+        legoSpeed: 3, // Cada cuántos frames cambiar pieza (frameRate=10, 3 = 0.3s)
+        ctaStart: 8,
+        ctaEnd: 10.5,
+        outroStart: 7.5,
+        outroEnd: 10.5
     });
 
     const {t, i18n} = useTranslation();
@@ -336,25 +340,28 @@ export function DevPreviewModal({
                 setRecordingProgress((seconds / config.totalSeconds) * 100);
 
                 // Intro
-                if (seconds > config.introDuration && currentShowIntro) {
-                    currentShowIntro = false;
-                    setShowIntro(false);
+                const shouldShowIntro = seconds >= config.introStart && seconds <= config.introEnd;
+                if (shouldShowIntro !== currentShowIntro) {
+                    currentShowIntro = shouldShowIntro;
+                    setShowIntro(shouldShowIntro);
                 }
 
                 // CTA
-                if (seconds >= config.ctaStart && !currentShowCTA) {
-                    currentShowCTA = true;
-                    setShowCTA(true);
+                const shouldShowCTA = seconds >= config.ctaStart && seconds <= config.ctaEnd;
+                if (shouldShowCTA !== currentShowCTA) {
+                    currentShowCTA = shouldShowCTA;
+                    setShowCTA(shouldShowCTA);
                 }
 
                 // Outro
-                if (seconds >= (config.totalSeconds - config.outroDuration) && !currentShowOutro) {
-                    currentShowOutro = true;
-                    setShowOutro(true);
+                const shouldShowOutro = seconds >= config.outroStart && seconds <= config.outroEnd;
+                if (shouldShowOutro !== currentShowOutro) {
+                    currentShowOutro = shouldShowOutro;
+                    setShowOutro(shouldShowOutro);
                 }
 
-                // Randomización: empieza tras la intro y dura legoDuration
-                if (seconds > config.introDuration && seconds <= (config.introDuration + config.legoDuration) && !currentShowOutro && Math.floor(seconds * frameRate) % config.legoSpeed === 0) {
+                // Randomización: controlada por config.legoStart y config.legoEnd
+                if (seconds >= config.legoStart && seconds <= config.legoEnd && !currentShowOutro && Math.floor(seconds * frameRate) % config.legoSpeed === 0) {
                     randomizeLego();
                 }
 
@@ -474,32 +481,62 @@ export function DevPreviewModal({
                                     className="w-12 h-6 border border-gray-200 rounded px-1 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
                                 />
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">Intro(s):</span>
+
+                            {/* Intro config */}
+                            <div className="flex items-center gap-1 bg-blue-50/50 p-1 rounded">
+                                <span className="text-[9px] uppercase font-bold text-blue-400">Intro:</span>
                                 <input
                                     type="number"
-                                    value={config.introDuration}
+                                    step="0.1"
+                                    value={config.introStart}
                                     onChange={(e) => setConfig(prev => ({
                                         ...prev,
-                                        introDuration: parseFloat(e.target.value) || 0
+                                        introStart: parseFloat(e.target.value) || 0
                                     }))}
-                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Intro Start"
                                 />
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">Lego(s):</span>
+                                <span className="text-[10px] text-gray-400">-</span>
                                 <input
                                     type="number"
-                                    value={config.legoDuration}
+                                    step="0.1"
+                                    value={config.introEnd}
                                     onChange={(e) => setConfig(prev => ({
                                         ...prev,
-                                        legoDuration: parseFloat(e.target.value) || 0
+                                        introEnd: parseFloat(e.target.value) || 0
                                     }))}
-                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Intro End"
                                 />
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">L.Speed:</span>
+
+                            {/* Lego config */}
+                            <div className="flex items-center gap-1 bg-yellow-50/50 p-1 rounded">
+                                <span className="text-[9px] uppercase font-bold text-yellow-600">Lego:</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.legoStart}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        legoStart: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Lego Start"
+                                />
+                                <span className="text-[10px] text-gray-400">-</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.legoEnd}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        legoEnd: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Lego End"
+                                />
+                                <span className="text-[9px] uppercase font-bold text-gray-400 ml-1">Spd:</span>
                                 <input
                                     type="number"
                                     value={config.legoSpeed}
@@ -507,31 +544,64 @@ export function DevPreviewModal({
                                         ...prev,
                                         legoSpeed: parseInt(e.target.value) || 1
                                     }))}
-                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
+                                    className="w-8 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Lego Speed (frames)"
                                 />
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">CTA(s):</span>
+
+                            {/* CTA config */}
+                            <div className="flex items-center gap-1 bg-green-50/50 p-1 rounded">
+                                <span className="text-[9px] uppercase font-bold text-green-600">CTA:</span>
                                 <input
                                     type="number"
+                                    step="0.1"
                                     value={config.ctaStart}
                                     onChange={(e) => setConfig(prev => ({
                                         ...prev,
                                         ctaStart: parseFloat(e.target.value) || 0
                                     }))}
-                                    className="w-12 h-6 border border-gray-200 rounded px-1 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="CTA Start"
                                 />
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] uppercase font-bold text-gray-400">Outro(s):</span>
+                                <span className="text-[10px] text-gray-400">-</span>
                                 <input
                                     type="number"
-                                    value={config.outroDuration}
+                                    step="0.1"
+                                    value={config.ctaEnd}
                                     onChange={(e) => setConfig(prev => ({
                                         ...prev,
-                                        outroDuration: parseFloat(e.target.value) || 0
+                                        ctaEnd: parseFloat(e.target.value) || 0
                                     }))}
-                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-xs focus:outline-none focus:ring-1 focus:ring-yellow-500 text-black"
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="CTA End"
+                                />
+                            </div>
+
+                            {/* Outro config */}
+                            <div className="flex items-center gap-1 bg-purple-50/50 p-1 rounded">
+                                <span className="text-[9px] uppercase font-bold text-purple-600">Outro:</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.outroStart}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        outroStart: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Outro Start"
+                                />
+                                <span className="text-[10px] text-gray-400">-</span>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={config.outroEnd}
+                                    onChange={(e) => setConfig(prev => ({
+                                        ...prev,
+                                        outroEnd: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-10 h-6 border border-gray-200 rounded px-1 text-[10px] focus:outline-none text-black"
+                                    title="Outro End"
                                 />
                             </div>
                         </div>
@@ -557,7 +627,7 @@ export function DevPreviewModal({
                             ) : (
                                 <>
                                     <Play className="h-4 w-4 mr-2"/>
-                                    {t('devPreview.recordVideo', {s: config.totalSeconds})}
+                                    {t('devPreview.recordVideo', {s: Math.round(config.totalSeconds)})}
                                 </>
                             )}
                         </Button>
