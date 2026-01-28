@@ -136,13 +136,15 @@ const LegoComposite: React.FC<LegoCompositeProps> = ({
                     pointerEvents: 'none',
                     opacity: isRevealed ? 1 : 0,
                     transform: isRevealed ? 'translateY(0)' : 'translateY(100%)',
-                    transition: revealedParts ? 'transform 0.5s ease-out, opacity 0.5s ease-out' : undefined,
+                    transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
                 };
                 return (
                     <img
                         key={key}
                         src={getStableImageSrc(`${makeUrlKey(freshSrc)}::${alt}`, freshSrc) || freshSrc}
                         alt={alt}
+                        data-lego-part={key}
+                        data-lego-side={useBack ? 'back' : 'front'}
                         style={pieceStyle}
                         draggable={false}
                         crossOrigin={crossOrigin}

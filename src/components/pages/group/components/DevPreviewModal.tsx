@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dialog, DialogContent, DialogHeader, DialogTitle,} from '@/components/ui/dialog';
 import {Camera, Play, Square} from 'lucide-react';
@@ -55,22 +55,32 @@ export function DevPreviewModal({
 
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
     const [isRecording, setIsRecording] = useState(false);
-    const [recordingProgress, setRecordingProgress] = useState(0);
-    const [randomLegoProps, setRandomLegoProps] = useState<LegoCompositeProps | null>(null);
-    const [randomSelectedPieces, setRandomSelectedPieces] = useState<Record<string, any> | null>(null);
-    const [showIntro, setShowIntro] = useState(false);
-    const [showIntroText, setShowIntroText] = useState(false);
-    const [showCTA, setShowCTA] = useState(false);
-    const [showOutro, setShowOutro] = useState(false);
-    const [revealProgress, setRevealProgress] = useState(0); // 0 to 1 for reveal animation
-    const [revealedParts, setRevealedParts] = useState<Record<string, boolean>>({
+    const [selectedSlogan, setSelectedSlogan] = useState('');
+    const [isClientState, setIsClientState] = useState(false);
+
+    const introImageRef = useRef<HTMLDivElement | null>(null);
+    const introTextRef = useRef<HTMLDivElement | null>(null);
+    const ctaRef = useRef<HTMLDivElement | null>(null);
+    const outroRef = useRef<HTMLDivElement | null>(null);
+    const legoContainerRef = useRef<HTMLDivElement | null>(null);
+    const piecesListRef = useRef<HTMLDivElement | null>(null);
+    const recordLabelRef = useRef<HTMLSpanElement | null>(null);
+    const isRecordingRef = useRef(false);
+    const overlayStateRef = useRef({
+        showIntro: false,
+        showIntroText: false,
+        showCTA: false,
+        showOutro: false
+    });
+    const revealedPartsRef = useRef<Record<string, boolean>>({
         wig: false,
         head: false,
         upperPart: false,
         lowerPart: false
     });
-    const [selectedSlogan, setSelectedSlogan] = useState('');
-    const [isClientState, setIsClientState] = useState(false);
+    const selectedPiecesRef = useRef<Record<string, any>>({});
+    const configRef = useRef(config);
+    const revealModeRef = useRef(revealMode);
 
     const slogans = useMemo(() => {
         const s = t('devPreview.slogan', {returnObjects: true});
@@ -84,6 +94,18 @@ export function DevPreviewModal({
             setSelectedSlogan(randomSlogan);
         }
     }, [slogans]);
+
+    React.useEffect(() => {
+        configRef.current = config;
+    }, [config]);
+
+    React.useEffect(() => {
+        revealModeRef.current = revealMode;
+    }, [revealMode]);
+
+    React.useEffect(() => {
+        isRecordingRef.current = isRecording;
+    }, [isRecording]);
 
     const pieceUsageCounts = useRef<Record<string, Record<string, number>>>({
         wig: {},
@@ -108,8 +130,6 @@ export function DevPreviewModal({
     }, [person?.matches]);
 
     const currentSelectedPieces = useMemo(() => {
-        if (randomSelectedPieces) return randomSelectedPieces;
-
         const matches = person?.matches || {};
         const resolvePiece = (part: string) => {
             // Prioritize selection passed from PersonRow
@@ -142,7 +162,11 @@ export function DevPreviewModal({
             upperPart: resolvePiece('upperPart'),
             lowerPart: resolvePiece('lowerPart'),
         };
-    }, [randomSelectedPieces, person?.matches, selectedPieceByPart]);
+    }, [person?.matches, selectedPieceByPart]);
+
+    React.useEffect(() => {
+        selectedPiecesRef.current = currentSelectedPieces;
+    }, [currentSelectedPieces]);
 
     const partUsageCounts = useRef<Record<string, number>>({
         wig: 0,
@@ -150,7 +174,137 @@ export function DevPreviewModal({
         upperPart: 0,
         lowerPart: 0
     });
-    const randomizeLego = useCallback(() => {
+
+    const partKeys = ['wig', 'head', 'upperPart', 'lowerPart'] as const;
+
+    const getPieceSideImages = (part: string, piece: any) => {
+        if (!piece) return null;
+        const type = part === 'wig' ? 'hair' : part === 'upperPart' ? 'body' : part === 'lowerPart' ? 'pants' : 'head';
+        return toSideWithFallback(type, piece);
+    };
+
+    const updateLegoPartImage = (part: string, piece: any) => {
+        const legoRoot = legoContainerRef.current;
+        if (!legoRoot || !piece) return;
+
+        const img = legoRoot.querySelector<HTMLImageElement>(`img[data-lego-part="${part}"]`);
+        if (!img) return;
+
+        const sideImages = getPieceSideImages(part, piece);
+        if (!sideImages) return;
+
+        const side = img.dataset.legoSide === 'back' ? 'back' : 'front';
+        img.src = side === 'back' ? sideImages.back : sideImages.front;
+    };
+
+    const updatePieceEntry = (part: string, piece: any) => {
+        const container = piecesListRef.current?.querySelector<HTMLDivElement>(`[data-piece-entry="${part}"]`);
+        if (!container) return;
+
+        if (!piece) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.style.display = '';
+        const img = container.querySelector<HTMLImageElement>('img[data-piece-image]');
+        const nameEl = container.querySelector<HTMLElement>('[data-piece-name]');
+        const idEl = container.querySelector<HTMLElement>('[data-piece-id]');
+
+        if (img) {
+            const side = legoProps.side === 'back' ? 'back' : 'front';
+            const src =
+                side === 'back'
+                    ? piece.imageBackUrl || piece.imageFrontUrl || piece.imageUrl || ''
+                    : piece.imageFrontUrl || piece.imageUrl || '';
+            if (src) img.src = src;
+        }
+        if (nameEl) {
+            nameEl.textContent = piece.name || t('devPreview.legoPiece');
+        }
+        if (idEl) {
+            idEl.textContent = piece.elementId || piece.storePieceId || '-';
+        }
+    };
+
+    const syncPiecesDom = (pieces: Record<string, any>) => {
+        partKeys.forEach((part) => {
+            updatePieceEntry(part, pieces[part]);
+            updateLegoPartImage(part, pieces[part]);
+        });
+    };
+
+    const setOverlayVisible = (ref: React.MutableRefObject<HTMLDivElement | null>, visible: boolean) => {
+        const el = ref.current;
+        if (!el) return;
+        el.style.opacity = visible ? '1' : '0';
+        el.style.transform = visible ? 'translateZ(0) scale(1)' : 'translateZ(0) scale(0.98)';
+    };
+
+    const setOverlayState = (key: keyof typeof overlayStateRef.current, visible: boolean) => {
+        if (overlayStateRef.current[key] === visible) return;
+        overlayStateRef.current[key] = visible;
+
+        if (key === 'showIntro') {
+            applyIntroLayout(visible);
+            return;
+        }
+
+        const targetRef =
+            key === 'showIntroText'
+                ? introTextRef
+                : key === 'showCTA'
+                    ? ctaRef
+                    : outroRef;
+        setOverlayVisible(targetRef, visible);
+    };
+
+    const applyIntroLayout = (showIntro: boolean) => {
+        const el = introImageRef.current;
+        if (!el) return;
+        const isSquare = aspectRatio === '1:1';
+
+        const normalClasses = isSquare
+            ? ['top-[16%]', 'left-[19%]', 'w-[39%]', 'h-[52.5%]', 'rounded']
+            : ['top-[18%]', 'left-[15%]', 'w-[41.2%]', 'h-[31.2%]', 'rounded'];
+        const introClasses = ['inset-0', 'w-full', 'h-full', 'z-10'];
+
+        normalClasses.forEach((cls) => el.classList.toggle(cls, !showIntro));
+        introClasses.forEach((cls) => el.classList.toggle(cls, showIntro));
+    };
+
+    const setRevealPartVisible = (part: string, visible: boolean) => {
+        const legoRoot = legoContainerRef.current;
+        const pieceRow = piecesListRef.current?.querySelector<HTMLDivElement>(`[data-piece-entry="${part}"]`);
+
+        const img = legoRoot?.querySelector<HTMLImageElement>(`img[data-lego-part="${part}"]`);
+        if (img) {
+            img.style.opacity = visible ? '1' : '0';
+            img.style.transform = visible ? 'translateY(0)' : 'translateY(100%)';
+        }
+
+        if (pieceRow) {
+            pieceRow.style.opacity = visible ? '1' : '0';
+            pieceRow.style.transform = visible ? 'translateX(0)' : 'translateX(200%)';
+        }
+
+        revealedPartsRef.current[part] = visible;
+    };
+
+    const resetRevealState = () => {
+        partKeys.forEach((part) => setRevealPartVisible(part, true));
+    };
+
+    React.useEffect(() => {
+        if (!isOpen) return;
+        applyIntroLayout(overlayStateRef.current.showIntro);
+        setOverlayVisible(introTextRef, overlayStateRef.current.showIntroText);
+        setOverlayVisible(ctaRef, overlayStateRef.current.showCTA);
+        setOverlayVisible(outroRef, overlayStateRef.current.showOutro);
+        resetRevealState();
+        syncPiecesDom(currentSelectedPieces);
+    }, [isOpen, aspectRatio, currentSelectedPieces]);
+    const randomizeLego = () => {
         // 1. Decidir qué parte cambiar (la que tenga menor carga)
         const parts = ['wig', 'head', 'upperPart', 'lowerPart'];
         const minPartUsage = Math.min(...parts.map(p => partUsageCounts.current[p]));
@@ -181,36 +335,14 @@ export function DevPreviewModal({
         // Incrementar carga de la pieza
         pieceUsageCounts.current[selectedPart][getPieceId(selectedPiece)]++;
 
-        // 3. Actualizar el estado
-        setRandomSelectedPieces(prev => {
-            const current = prev || {...currentSelectedPieces};
-            return {
-                ...current,
-                [selectedPart]: selectedPiece
-            };
-        });
-
-        setRandomLegoProps(prev => {
-            const sideImages = toSideWithFallback(
-                selectedPart === 'wig' ? 'hair' : selectedPart === 'upperPart' ? 'body' : selectedPart === 'lowerPart' ? 'pants' : 'head',
-                selectedPiece
-            );
-
-            // Si es la primera vez, inicializamos con los props actuales
-            if (!prev) {
-                return {
-                    ...legoProps,
-                    [selectedPart]: sideImages,
-                    side: 'front'
-                };
-            }
-
-            return {
-                ...prev,
-                [selectedPart]: sideImages
-            };
-        });
-    }, [availablePieces, legoProps, currentSelectedPieces]);
+        const nextSelected = {
+            ...(selectedPiecesRef.current || currentSelectedPieces),
+            [selectedPart]: selectedPiece
+        };
+        selectedPiecesRef.current = nextSelected;
+        updatePieceEntry(selectedPart, selectedPiece);
+        updateLegoPartImage(selectedPart, selectedPiece);
+    };
 
     const getCappedDimensions = (width: number, height: number, maxRes: number = 1080) => {
         if (width <= maxRes && height <= maxRes) return {width, height};
@@ -263,17 +395,25 @@ export function DevPreviewModal({
         // Reset usage counts y estados
         partUsageCounts.current = {wig: 0, head: 0, upperPart: 0, lowerPart: 0};
         pieceUsageCounts.current = {wig: {}, head: {}, upperPart: {}, lowerPart: {}};
-        setRandomLegoProps(null);
-        setRandomSelectedPieces(null);
-        setShowCTA(false);
-        setShowOutro(false);
-        setRevealProgress(0);
-        setRevealedParts({
+        selectedPiecesRef.current = currentSelectedPieces;
+        revealedPartsRef.current = {
             wig: false,
             head: false,
             upperPart: false,
             lowerPart: false
-        });
+        };
+        if (revealModeRef.current) {
+            partKeys.forEach((part) => setRevealPartVisible(part, false));
+        } else {
+            resetRevealState();
+        }
+        syncPiecesDom(currentSelectedPieces);
+        overlayStateRef.current = {
+            showIntro: false,
+            showIntroText: false,
+            showCTA: false,
+            showOutro: false
+        };
 
         // Cambiar eslogan al empezar
         if (slogans.length > 0) {
@@ -282,10 +422,15 @@ export function DevPreviewModal({
         }
 
         // 1. Mostrar intro a pantalla completa ANTES de empezar a grabar
-        setShowIntro(true);
-        setShowIntroText(true);
         setIsRecording(true);
-        setRecordingProgress(0);
+        isRecordingRef.current = true;
+        setOverlayState('showIntro', true);
+        setOverlayState('showIntroText', true);
+        setOverlayState('showCTA', false);
+        setOverlayState('showOutro', false);
+        if (recordLabelRef.current) {
+            recordLabelRef.current.textContent = t('devPreview.recording', {progress: 0});
+        }
         chunksRef.current = [];
 
         // Pequeña espera para asegurar que el DOM se actualizó y la imagen está en grande
@@ -335,20 +480,14 @@ export function DevPreviewModal({
                 videoStream.getTracks().forEach(track => track.stop());
 
                 setIsRecording(false);
-                setRecordingProgress(0);
-                setRandomLegoProps(null);
-                setRandomSelectedPieces(null);
-                setShowIntro(false);
-                setShowIntroText(false);
-                setShowCTA(false);
-                setShowOutro(false);
-                setRevealProgress(0);
-                setRevealedParts({
-                    wig: false,
-                    head: false,
-                    upperPart: false,
-                    lowerPart: false
-                });
+                isRecordingRef.current = false;
+                setOverlayState('showIntro', false);
+                setOverlayState('showIntroText', false);
+                setOverlayState('showCTA', false);
+                setOverlayState('showOutro', false);
+                resetRevealState();
+                selectedPiecesRef.current = currentSelectedPieces;
+                syncPiecesDom(currentSelectedPieces);
                 recorderRef.current = null;
                 // Detener el intervalo explícitamente al parar el grabador por cualquier motivo
                 if (recordingIntervalRef.current) {
@@ -374,62 +513,56 @@ export function DevPreviewModal({
                 lastTimestamp = now;
 
                 seconds += deltaTime;
-                setRecordingProgress((seconds / config.totalSeconds) * 100);
+                const progress = Math.min((seconds / configRef.current.totalSeconds) * 100, 100);
+                if (recordLabelRef.current) {
+                    recordLabelRef.current.textContent = t('devPreview.recording', {progress: Math.round(progress)});
+                }
 
                 // Intro image
-                const shouldShowIntro = seconds >= config.introStart && seconds <= config.introEnd;
+                const shouldShowIntro = seconds >= configRef.current.introStart && seconds <= configRef.current.introEnd;
                 if (shouldShowIntro !== currentShowIntro) {
                     currentShowIntro = shouldShowIntro;
-                    setShowIntro(shouldShowIntro);
+                    setOverlayState('showIntro', shouldShowIntro);
                 }
 
                 // Intro text
-                const shouldShowIntroText = seconds >= config.introTextStart && seconds <= config.introTextEnd;
+                const shouldShowIntroText = seconds >= configRef.current.introTextStart && seconds <= configRef.current.introTextEnd;
                 if (shouldShowIntroText !== currentShowIntroText) {
                     currentShowIntroText = shouldShowIntroText;
-                    setShowIntroText(shouldShowIntroText);
+                    setOverlayState('showIntroText', shouldShowIntroText);
                 }
-                const shouldShowCTA = seconds >= config.ctaStart && seconds <= config.ctaEnd;
+                const shouldShowCTA = seconds >= configRef.current.ctaStart && seconds <= configRef.current.ctaEnd;
                 if (shouldShowCTA !== currentShowCTA) {
                     currentShowCTA = shouldShowCTA;
-                    setShowCTA(shouldShowCTA);
+                    setOverlayState('showCTA', shouldShowCTA);
                 }
 
                 // Outro
-                const shouldShowOutro = seconds >= config.outroStart && seconds <= config.outroEnd;
+                const shouldShowOutro = seconds >= configRef.current.outroStart && seconds <= configRef.current.outroEnd;
                 if (shouldShowOutro !== currentShowOutro) {
                     currentShowOutro = shouldShowOutro;
-                    setShowOutro(shouldShowOutro);
+                    setOverlayState('showOutro', shouldShowOutro);
                 }
 
                 // Animation logic based on mode
-                if (revealMode) {
+                if (revealModeRef.current) {
                     // Reveal mode: sequential reveal of parts
-                    if (seconds >= config.legoStart && seconds <= config.legoEnd) {
-                        const totalRevealTime = config.legoEnd - config.legoStart;
-                        const partDuration = config.revealPartSpeed;
+                    if (seconds >= configRef.current.legoStart && seconds <= configRef.current.legoEnd) {
+                        const partDuration = configRef.current.revealPartSpeed;
                         const revealOrder = ['wig', 'head', 'upperPart', 'lowerPart'];
 
-                        const newRevealedParts: Record<string, boolean> = {};
                         revealOrder.forEach((part, index) => {
-                            const partStart = config.legoStart + (index * partDuration);
-                            newRevealedParts[part] = seconds >= partStart;
+                            const partStart = configRef.current.legoStart + (index * partDuration);
+                            setRevealPartVisible(part, seconds >= partStart);
                         });
-                        setRevealedParts(newRevealedParts);
-
-                        // Global progress for backward compatibility if needed
-                        const prog = (seconds - config.legoStart) / totalRevealTime;
-                        setRevealProgress(prog);
-                    } else if (seconds > config.legoEnd) {
-                        setRevealProgress(1);
-                        setRevealedParts({wig: true, head: true, upperPart: true, lowerPart: true});
+                    } else if (seconds > configRef.current.legoEnd) {
+                        partKeys.forEach((part) => setRevealPartVisible(part, true));
                     } else {
-                        setRevealProgress(0);
-                        setRevealedParts({wig: false, head: false, upperPart: false, lowerPart: false});
+                        partKeys.forEach((part) => setRevealPartVisible(part, false));
                     }
                 } else {
                     // Randomization mode: existing logic
-                    if (seconds >= config.legoStart && seconds <= config.legoEnd && !currentShowOutro && Math.floor(seconds * frameRate) % config.legoSpeed === 0) {
+                    if (seconds >= configRef.current.legoStart && seconds <= configRef.current.legoEnd && !currentShowOutro && Math.floor(seconds * frameRate) % configRef.current.legoSpeed === 0) {
                         randomizeLego();
                     }
                 }
@@ -463,7 +596,7 @@ export function DevPreviewModal({
                     console.error('Error capturing frame:', e);
                 }
 
-                if (seconds >= config.totalSeconds) {
+                if (seconds >= configRef.current.totalSeconds) {
                     stopRecording();
                 }
             }, 1000 / frameRate);
@@ -471,6 +604,14 @@ export function DevPreviewModal({
         } catch (err) {
             console.error('Error starting recording:', err);
             setIsRecording(false);
+            isRecordingRef.current = false;
+            setOverlayState('showIntro', false);
+            setOverlayState('showIntroText', false);
+            setOverlayState('showCTA', false);
+            setOverlayState('showOutro', false);
+            resetRevealState();
+            selectedPiecesRef.current = currentSelectedPieces;
+            syncPiecesDom(currentSelectedPieces);
         }
     };
 
@@ -485,7 +626,7 @@ export function DevPreviewModal({
         }
     };
 
-    const currentLegoProps = randomLegoProps || legoProps;
+    const currentLegoProps = legoProps;
 
     if (!isOpen || !isClientState) return null;
 
@@ -753,7 +894,9 @@ export function DevPreviewModal({
                             {isRecording ? (
                                 <>
                                     <div className="h-2 w-2 rounded-full bg-white animate-pulse mr-2"/>
-                                    {t('devPreview.recording', {progress: Math.round(recordingProgress)})}
+                                    <span ref={recordLabelRef}>
+                                        {t('devPreview.recording', {progress: 0})}
+                                    </span>
                                 </>
                             ) : (
                                 <>
@@ -791,12 +934,11 @@ export function DevPreviewModal({
 
                         {/* User Original Image */}
                         <div
-                            className={`absolute overflow-hidden ${!revealMode ? 'transition-all duration-500' : ''} ${
-                                isRecording && showIntro
-                                    ? 'inset-0 w-full h-full z-10'
-                                    : (aspectRatio === '1:1'
-                                        ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
-                                        : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded')
+                            ref={introImageRef}
+                            className={`absolute overflow-hidden transition-all duration-500 ${
+                                aspectRatio === '1:1'
+                                    ? 'top-[16%] left-[19%] w-[39%] h-[52.5%] rounded'
+                                    : 'top-[18%] left-[15%] w-[41.2%] h-[31.2%] rounded'
                             }`}
                         >
                             <img
@@ -815,43 +957,49 @@ export function DevPreviewModal({
                         </div>
 
                         {/* Instagram Style Overlay */}
-                        {isRecording && showIntroText && (
-                            <div
-                                className="absolute inset-x-0 top-[10%] z-20 flex items-start justify-center p-8 pointer-events-none">
-                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
-                                    <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
-                                        {introText}
-                                    </p>
-                                </div>
+                        <div
+                            ref={introTextRef}
+                            className="absolute inset-x-0 top-[10%] z-20 flex items-start justify-center p-8 pointer-events-none transition-all duration-300"
+                            style={{opacity: 0, transform: 'translateZ(0) scale(0.98)'}}
+                        >
+                            <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
+                                <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
+                                    {introText}
+                                </p>
                             </div>
-                        )}
+                        </div>
 
                         {/* Outro Transition */}
-                        {isRecording && showOutro && (
-                            <div className="absolute inset-0 z-30 animate-in fade-in duration-500">
-                                <img
-                                    src="/social-logo-vertical.jpg"
-                                    className="w-full h-full object-cover"
-                                    alt="Brickify"
-                                    crossOrigin="anonymous"
-                                />
-                            </div>
-                        )}
+                        <div
+                            ref={outroRef}
+                            className="absolute inset-0 z-30 transition-all duration-500"
+                            style={{opacity: 0, pointerEvents: 'none', transform: 'translateZ(0) scale(0.98)'}}
+                        >
+                            <img
+                                src="/social-logo-vertical.jpg"
+                                className="w-full h-full object-cover"
+                                alt="Brickify"
+                                crossOrigin="anonymous"
+                            />
+                        </div>
 
                         {/* CTA Overlay */}
-                        {isRecording && showCTA && (
-                            <div
-                                className="absolute inset-x-0 top-[18%] z-40 flex items-start justify-center p-8 pointer-events-none animate-in zoom-in duration-300">
-                                <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
-                                    <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
-                                        {ctaText}
-                                    </p>
-                                </div>
+                        <div
+                            ref={ctaRef}
+                            className="absolute inset-x-0 top-[18%] z-40 flex items-start justify-center p-8 pointer-events-none transition-all duration-300"
+                            style={{opacity: 0, transform: 'translateZ(0) scale(0.98)'}}
+                        >
+                            <div className="bg-black/90 px-6 py-3 rounded-lg shadow-xl border border-white/10 mx-4">
+                                <p className="text-white text-3xl md:text-4xl font-bold tracking-tight text-center leading-tight">
+                                    {ctaText}
+                                </p>
                             </div>
-                        )}
+                        </div>
 
                         {/* Lego Character */}
-                        <div className={`absolute ${!revealMode ? 'transition-all duration-300' : ''} ${
+                        <div
+                            ref={legoContainerRef}
+                            className={`absolute ${!revealMode ? 'transition-all duration-300' : ''} ${
                             aspectRatio === '1:1'
                                 ? 'bottom-[-15%] right-[-5%] w-[62.66%]'
                                 : 'bottom-[5%] right-[-7%] w-[72%]'
@@ -862,7 +1010,6 @@ export function DevPreviewModal({
                                 className="w-full"
                                 hideToggle={true}
                                 crossOrigin={isRecording ? 'anonymous' : undefined}
-                                revealedParts={revealMode ? revealedParts : undefined}
                             />
                         </div>
 
@@ -883,46 +1030,51 @@ export function DevPreviewModal({
 
                         {/* Selected Pieces List (Only for 9:16) */}
                         {aspectRatio === '9:16' && (
-                            <div className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2"
+                            <div
+                                ref={piecesListRef}
+                                className="absolute top-[52%] left-[10%] w-[45%] flex flex-col gap-2"
                             >
-                                {Object.entries(currentSelectedPieces).map(([key, piece]: [string, any]) => {
-                                    if (!piece) return null;
-                                    const imgSrc = currentLegoProps.side === 'back' ? piece.imageBackUrl : piece.imageFrontUrl;
-                                    if (!imgSrc) return null;
-
-                                    const isRevealed = revealMode ? revealedParts[key] : true;
+                                {partKeys.map((key) => {
+                                    const piece = currentSelectedPieces[key];
+                                    const imgSrc = currentLegoProps.side === 'back' ? piece?.imageBackUrl : piece?.imageFrontUrl;
+                                    const hidden = !piece || !imgSrc;
 
                                     return (
-                                        <div key={key}
-                                             className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm transition-all duration-500"
-                                             style={revealMode ? {
-                                                 transform: isRevealed ? 'translateX(0)' : 'translateX(200%)',
-                                                 opacity: isRevealed ? 1 : 0
-                                             } : {}}
+                                        <div
+                                            key={key}
+                                            data-piece-entry={key}
+                                            className="flex items-center gap-3 bg-white/40 backdrop-blur-md rounded-xl p-2 border border-white/40 shadow-sm transition-all duration-500"
+                                            style={{
+                                                display: hidden ? 'none' : '',
+                                                transform: 'translateX(0)',
+                                                opacity: 1
+                                            }}
                                         >
-                                            <div
-                                                className="w-14 h-14 flex-shrink-0 bg-white rounded-lg p-1.5 shadow-inner">
+                                            <div className="w-14 h-14 flex-shrink-0 bg-white rounded-lg p-1.5 shadow-inner">
                                                 <img
-                                                    src={imgSrc}
-                                                    alt={piece.name || key}
+                                                    data-piece-image
+                                                    src={imgSrc || ''}
+                                                    alt={piece?.name || key}
                                                     className="w-full h-full object-contain"
                                                     crossOrigin={isRecording ? 'anonymous' : undefined}
                                                     onError={(e) => {
                                                         const target = e.currentTarget as HTMLImageElement;
                                                         if (target.getAttribute('crossorigin') === 'anonymous') {
                                                             target.removeAttribute('crossorigin');
-                                                            target.src = imgSrc;
+                                                            target.src = imgSrc || '';
                                                         }
                                                     }}
                                                 />
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <div
-                                                    className="text-[12px] font-bold text-gray-900 truncate leading-tight">
-                                                    {piece.name || t('devPreview.legoPiece')}
+                                                    data-piece-name
+                                                    className="text-[12px] font-bold text-gray-900 truncate leading-tight"
+                                                >
+                                                    {piece?.name || t('devPreview.legoPiece')}
                                                 </div>
-                                                <div className="text-[10px] font-medium text-gray-600 truncate">
-                                                    {piece.elementId || piece.storePieceId || '-'}
+                                                <div data-piece-id className="text-[10px] font-medium text-gray-600 truncate">
+                                                    {piece?.elementId || piece?.storePieceId || '-'}
                                                 </div>
                                             </div>
                                         </div>
