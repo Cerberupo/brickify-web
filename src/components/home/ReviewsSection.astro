@@ -119,12 +119,7 @@ const t = copies[locale];
 ---
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-element-bundle.min.js"></script>
 
-<!-- Swiper Web Components registered via ESM so Vite bundles it correctly -->
-<script type="module">
-    import {register} from 'swiper/element/bundle';
-
-    register();
-</script>
+<!-- Swiper Web Components registered via CDN bundle -->
 <!-- Carga no bloqueante del CSS de Swiper (equivalente a "defer" para estilos) -->
 <script>
     (function loadSwiperCSS() {
