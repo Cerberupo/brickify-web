@@ -56,9 +56,10 @@ export function LoginPage({initialSearch}: LoginPageProps) {
     return (
         <div className="grid place-items-center py-20 content-center">
             <Toaster position="top-right"/>
-            <a href={makeHomeHref()} className="mb-8 inline-flex items-center gap-2">
-                <img src="/logo.svg" alt={PROJECT_NAME} className="h-10 w-auto"/>
-                <span className="sr-only">{PROJECT_NAME}</span>
+            <a href={makeHomeHref()} className="mb-8 inline-flex items-center gap-2"
+               aria-label={PROJECT_NAME || 'Brickify'}>
+                <img src="/logo.svg" alt={PROJECT_NAME || 'Brickify'} className="h-10 w-auto"/>
+                <span className="sr-only">{PROJECT_NAME || 'Brickify'}</span>
             </a>
             <GoogleAuthProvider>
                 <LoginForm redirect={getParams().get('redirect') || undefined}/>

@@ -55,7 +55,7 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
             const origin = typeof window !== 'undefined' ? window.location.origin : '';
             const returnUrl = `${origin.replace(/\/$/, '')}/`;
             // La firma de createBillingPortalSession es (customerId?, returnUrl?)
-            const {url} = await createBillingPortalSession(undefined, returnUrl);
+            const {url} = await createBillingPortalSession(returnUrl);
             if (url) {
                 // Abrir el portal en una pestaña nueva siguiendo buenas prácticas de seguridad
                 window.open(url, '_blank', 'noopener,noreferrer');
@@ -205,9 +205,10 @@ export function Header({alternates}: { alternates?: Array<{ href: string; hrefLa
             <header className="bg-background border-b border-border sticky top-0 z-50">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div className="flex items-center">
-                        <a href={makeHomeHref(langNow)} className="flex items-center gap-2">
-                            <img src="/logo.svg" alt={PROJECT_NAME} className="h-5 w-auto"/>
-                            <span className="sr-only">{PROJECT_NAME}</span>
+                        <a href={makeHomeHref(langNow)} className="flex items-center gap-2"
+                           aria-label={PROJECT_NAME || 'Brickify'}>
+                            <img src="/logo.svg" alt={PROJECT_NAME || 'Brickify'} className="h-5 w-auto"/>
+                            <span className="sr-only">{PROJECT_NAME || 'Brickify'}</span>
                         </a>
                     </div>
                     <nav>
