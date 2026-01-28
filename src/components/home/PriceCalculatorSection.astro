@@ -90,9 +90,73 @@ const t = copies[locale];
     <script define:vars={{locale, tMinutes: t.minutes, tLabels: t, API_URL}}>
         async function getRechargeProducts() {
             try {
+                return [
+                    {
+                        "id": "prod_recharge_300",
+                        "credits": 300,
+                        "amount": 500,
+                        "currency": "usd",
+                        "bonus": 0,
+                        "name": "Explorer",
+                        "description": "Perfect for a small trial",
+                        "priceId": "price_1SpFKvFIUx31jlb7mxvLRxgo"
+                    },
+                    {
+                        "id": "prod_recharge_1100",
+                        "credits": 1100,
+                        "amount": 1500,
+                        "currency": "usd",
+                        "bonus": 0,
+                        "name": "Enthusiast",
+                        "description": "For those who want more",
+                        "priceId": "price_1SpFMoFIUx31jlb7KM5qCkKw"
+                    },
+                    {
+                        "id": "prod_recharge_2000",
+                        "credits": 2000,
+                        "amount": 2500,
+                        "currency": "usd",
+                        "bonus": 0,
+                        "name": "Collector",
+                        "description": "The perfect balance",
+                        "priceId": "price_1SpFQ7FIUx31jlb7kn1U691m"
+                    },
+                    {
+                        "id": "prod_recharge_4600",
+                        "credits": 4600,
+                        "amount": 5000,
+                        "currency": "usd",
+                        "bonus": 600,
+                        "name": "Master",
+                        "description": "Master your creations",
+                        "priceId": "price_1SpFR6FIUx31jlb7eVRvVO7d"
+                    },
+                    {
+                        "id": "prod_recharge_10000",
+                        "credits": 10000,
+                        "amount": 10000,
+                        "currency": "usd",
+                        "bonus": 2000,
+                        "name": "Legend",
+                        "description": "For ambitious projects",
+                        "priceId": "price_1SpFV3FIUx31jlb7UjPcyaoI"
+                    },
+                    {
+                        "id": "prod_recharge_21600",
+                        "credits": 21600,
+                        "amount": 20000,
+                        "currency": "usd",
+                        "bonus": 5600,
+                        "name": "Architect",
+                        "description": "The best value for money",
+                        "priceId": "price_1SpFWEFIUx31jlb7BpHI7f6k"
+                    }
+                ];
+                /*
                 const response = await fetch(`${API_URL}/payments/recharge-products?lang=${locale}`);
                 const payload = await response.json();
                 return payload.data || [];
+                 */
             } catch (error) {
                 console.error('Error fetching recharge products:', error);
                 return [];
