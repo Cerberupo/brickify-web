@@ -36,8 +36,14 @@ const t = copies[locale];
                 <!-- Left: single image from public/memory-highlight.png (full bleed) -->
                 <div class="relative md:col-span-6 h-full">
                     <figure class="relative h-full w-full overflow-hidden">
-                        <img src="/memory-highlight.jpg" alt={t.collageAria} class="w-full h-full object-cover"
-                             loading="lazy"/>
+                        <img
+                            src="/memory-highlight.jpg"
+                            srcset="/memory-highlight-small.jpg 600w, /memory-highlight.jpg 1200w"
+                            sizes="(max-width: 768px) 100vw, 1200px"
+                            alt={t.collageAria}
+                            class="w-full h-full object-cover"
+                            loading="lazy"
+                        />
                     </figure>
                 </div>
 
