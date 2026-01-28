@@ -40,9 +40,18 @@ const imageSchema = {
 <script type="application/ld+json" is:inline set:html={JSON.stringify(imageSchema)}/>
 
 <section aria-label={t.sectionAria} class="relative">
-    <div class={`relative h-[360px] md:h-[720px]`}
-         fetchpriority="high"
-         style="background-image: url('/banner-side-bg.svg'); background-repeat: no-repeat; background-position: right center; background-size: cover;">
+    <div class={`relative h-[360px] md:h-[720px]`}>
+        <img
+            src="/banner-side-bg.svg"
+            alt=""
+            aria-hidden="true"
+            width="1440"
+            height="720"
+            fetchpriority="high"
+            loading="eager"
+            decoding="async"
+            class="absolute inset-0 h-full w-full object-cover"
+        />
         <div class="md:col-start-7 md:col-span-6 order-2 md:order-none w-full h-full">
             <figure class="relative w-full h-full">
                 <img src="/piece-1.svg" width="398" height="135" alt={t.piece1Alt} fetchpriority="high"
