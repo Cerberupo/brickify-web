@@ -77,7 +77,7 @@ const t = copies[locale];
                 {t.badge}
             </span>
             <h2 class="text-3xl md:text-[32px] font-medium tracking-tight mt-4 mb-3">{t.title}</h2>
-            <p class="text-sm md:text-[16px] font-light text-muted-foreground">{t.description}</p>
+            <p class="text-sm md:text-[16px] font-light text-neutral-700">{t.description}</p>
         </div>
 
         <div class="flex flex-col items-center min-h-[400px]" id="price-calculator-container">
@@ -176,7 +176,7 @@ const t = copies[locale];
                 const tokenPacks = await getRechargeProducts();
 
                 if (!tokenPacks || tokenPacks.length === 0) {
-                    container.innerHTML = `<p class="text-muted-foreground">${tLabels.error_loading}</p>`;
+                    container.innerHTML = `<p class="text-neutral-700">${tLabels.error_loading}</p>`;
                     return;
                 }
 
@@ -201,7 +201,7 @@ const t = copies[locale];
                                         </div>
                                     ` : ''}
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-xs font-medium text-muted-foreground">
+                                        <span class="text-xs font-medium text-neutral-700">
                                             ${pack.name}
                                         </span>
                                         ${(() => {
@@ -225,10 +225,10 @@ const t = copies[locale];
                                     </div>
                                     
                                     <div class="mt-3 w-full border-t border-gray-100 pt-2 flex flex-col gap-1 text-[10px]">
-                                        <div class="flex items-center justify-center gap-1 text-muted-foreground">
+                                        <div class="flex items-center justify-center gap-1 text-neutral-700">
                                             <span>${base}</span>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-coins text-yellow-500/80 h-3 w-3"><circle cx="8" cy="8" r="6"></circle><path d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path d="M7 6h1v4"></path><path d="m16.71 13.88.7.71-2.82 2.82"></path></svg>
-                                            ${pack.bonus > 0 ? `<span class="font-bold text-green-600">+ ${pack.bonus} extra</span>` : `<span class="font-bold text-muted-foreground">+0 extra</span>`}
+                                            ${pack.bonus > 0 ? `<span class="font-bold text-green-700">+ ${pack.bonus} extra</span>` : `<span class="font-bold text-neutral-700">+0 extra</span>`}
                                         </div>
                                     </div>
                                 </button>
@@ -238,15 +238,15 @@ const t = copies[locale];
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="rounded-xl bg-[#F1EEFF] p-4 border border-[#E8C79E]/60 text-center">
-                                <p class="text-sm text-muted-foreground">${tLabels.perPerson}</p>
+                                <p class="text-sm text-neutral-700">${tLabels.perPerson}</p>
                                 <p class="text-2xl font-semibold" id="pc-unit-price"></p>
                             </div>
                             <div class="rounded-xl bg-[#FFF6E6] p-4 border border-[#E8C79E]/60 text-center flex flex-col items-center justify-center">
                                 <p class="text-sm font-bold text-primary uppercase tracking-wider mb-1">${tLabels.costPerPerson}</p>
-                                <p class="text-xs text-muted-foreground">${tLabels.costBreakdown}</p>
+                                <p class="text-xs text-neutral-700">${tLabels.costBreakdown}</p>
                             </div>
                             <div class="rounded-xl bg-[#E6F1FF] p-4 border border-[#B5D6FF] text-center">
-                                <p class="text-sm text-muted-foreground">${tLabels.total}</p>
+                                <p class="text-sm text-neutral-700">${tLabels.total}</p>
                                 <p class="text-2xl font-semibold" id="pc-total"></p>
                             </div>
                         </div>
@@ -296,7 +296,7 @@ const t = copies[locale];
 
             } catch (error) {
                 console.error('Error initializing price calculator:', error);
-                container.innerHTML = `<p class="text-muted-foreground text-center">${tLabels.error_loading}</p>`;
+                container.innerHTML = `<p class="text-neutral-700 text-center">${tLabels.error_loading}</p>`;
             }
         }
 
