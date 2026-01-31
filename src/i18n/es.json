@@ -149,6 +149,7 @@
       "pending": "Pendiente",
       "inProgress": "En Progreso",
       "in-process": "En proceso",
+      "processed": "Procesado",
       "completed": "Completado",
       "done": "Hecho",
       "error": "Error",

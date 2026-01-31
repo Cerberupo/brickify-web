@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Toaster} from '@/components/ui';
-import {Camera, Download, Pencil, Trash2} from 'lucide-react';
+import {Camera, ChevronDown, ChevronUp, Download, Pencil, Trash2} from 'lucide-react';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
 import type {MatchPart} from '@/lib/services/groups';
@@ -53,6 +53,7 @@ export function PersonRow({
     }, [person]);
 
     const [selectedByPart, setSelectedByPart] = useState<Record<string, string | null>>({});
+    const [isExpanded, setIsExpanded] = useState(false);
     const handlePartSelectedChange = useCallback((part: MatchPart, pieceId: string | null) => {
         setSelectedByPart(prev => ({...prev, [part]: pieceId}));
         if (onPartSelectedChange) onPartSelectedChange(person.id, part, pieceId);
@@ -90,12 +91,26 @@ export function PersonRow({
 
     const getStatusPillClasses = (s?: string) => {
         const norm = String(s || '').toLowerCase();
-        const base = 'px-2 py-0.5 rounded-full ';
+        const base = 'px-2 py-0.5 rounded-full text-xs ';
         if (norm === 'in-process') return base + 'bg-yellow-100 text-yellow-800';
+        if (norm === 'processed') return base + 'bg-green-100 text-green-700';
         if (norm === 'error') return base + 'bg-red-100 text-red-700';
         if (norm === 'done') return base + 'bg-green-100 text-green-700';
         return base + 'bg-gray-100 text-gray-700';
     };
+
+    const getStatusLabelKey = (s?: string) => {
+        const norm = String(s || '').toLowerCase();
+        return norm === 'processed' ? 'done' : norm;
+    };
+
+    const hasErrorInParts = React.useMemo(() => {
+        const matches = person?.matches && typeof person.matches === 'object' ? person.matches : null;
+        if (!matches) return false;
+        return Object.values(matches).some((m: any) => String(m?.status || '').toLowerCase() === 'error');
+    }, [person]);
+
+    const effectiveStatus = hasErrorInParts ? 'error' : person?.status;
 
     const normalizeId = (p: any): string | null => {
         if (!p) return null;
@@ -231,6 +246,70 @@ export function PersonRow({
         }
     }, []);
 
+    if (!isExpanded) {
+        return (
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+                <div className="flex items-center gap-3 min-w-0">
+                    <img
+                        className="w-10 h-10 border rounded shrink-0 object-cover"
+                        src={src || faviconUrl}
+                        alt={person?.name || ''}
+                        onError={(e) => {
+                            const target = e.currentTarget as HTMLImageElement;
+                            if (target.getAttribute('crossorigin') === 'anonymous') {
+                                target.removeAttribute('crossorigin');
+                                target.src = src || faviconUrl;
+                            }
+                        }}
+                    />
+                    <div className="min-w-0">
+                        <div className="font-medium leading-tight truncate" title={person?.name}>
+                            {person?.name}
+                        </div>
+                        {effectiveStatus && (
+                            <span className={getStatusPillClasses(effectiveStatus)}>
+                                {t(`dashboard.groupStatus.${getStatusLabelKey(effectiveStatus)}`)}
+                            </span>
+                        )}
+                    </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    {(showActions && person?.status === 'pending') && (
+                        <>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={handleEditClick}
+                            >
+                                <Pencil className="h-4 w-4"/>
+                                <span className="sr-only">{t('group.editMember')}</span>
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                onClick={handleDeleteClick}
+                            >
+                                <Trash2 className="h-4 w-4"/>
+                                <span className="sr-only">{t('group.deleteMember')}</span>
+                            </Button>
+                        </>
+                    )}
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setIsExpanded(true)}
+                        aria-label={t('group.expandMember', 'Expand member')}
+                    >
+                        <ChevronDown className="h-4 w-4"/>
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col sm:flex-row gap-3 rounded-md border p-3">
             <DevPreviewModal
@@ -292,7 +371,7 @@ export function PersonRow({
                             )}
                         </div>
                     )}
-                    {person?.status && person.status !== 'pending' && person?.matches && (
+                    {effectiveStatus && effectiveStatus !== 'pending' && person?.matches && (
                         <div className="pl-0 sm:pl-4 sm:border-l space-y-1 text-xs text-gray-600 flex-1 min-w-0">
                             {Object.entries(person.matches).map(([part, data]: any) => {
                                 const status = (data as any)?.status;
@@ -302,7 +381,7 @@ export function PersonRow({
                                             <span
                                                 className="font-medium text-gray-700">{t(`group.parts.${String(part)}`, String(part))}</span>
                                             <span className={getStatusPillClasses(status)}>
-                          {t(`dashboard.groupStatus.${String(status)}`)}
+                          {t(`dashboard.groupStatus.${getStatusLabelKey(status)}`)}
                         </span>
                                         </div>
                                         <PartPieces
@@ -418,7 +497,7 @@ export function PersonRow({
                     </div>
                 )}
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-start">
                 {(showActions && person?.status === 'pending') && (
                     <>
                         <Button
@@ -441,6 +520,15 @@ export function PersonRow({
                         </Button>
                     </>
                 )}
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setIsExpanded(false)}
+                    aria-label={t('group.collapseMember', 'Collapse member')}
+                >
+                    <ChevronUp className="h-4 w-4"/>
+                </Button>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, CardContent, Toaster} from "@/components/ui";
+import {Button, CardContent, Input, Toaster} from "@/components/ui";
 import {
     addUserToGroup,
     createReferencePersonGroup,
@@ -29,6 +29,7 @@ import {
     StickyOverlay
 } from './components';
 import {useAuthContext} from '@/lib/stores/authStore';
+import {buildEngraveFiles} from '@/lib/engrave/engraveFileBuilder';
 
 export function GroupPage() {
     const {t} = useTranslation();
@@ -65,6 +66,286 @@ export function GroupPage() {
     // Payment confirmation dialog state
     const [confirmPaymentOpen, setConfirmPaymentOpen] = useState(false);
     const [isPaying, setIsPaying] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isDownloadingEngrave, setIsDownloadingEngrave] = useState(false);
+
+    const ITEMS_PER_PAGE = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+        setSearchTerm('');
+    }, [groupId]);
+
+    const isPhotoMode = useMemo(() => {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            return params.has('photo');
+        } catch {
+            return false;
+        }
+    }, []);
+
+    const referenceJson = useMemo(() => ({
+        layers: [
+            {
+                "layerName": "C10",
+                "layerColor": "#FD4E75",
+                "materialName": "Parámetros manuales",
+                "detailId": "",
+                "combinationId": "",
+                "laserId": "219f5cf308be487fa8c56e36ecc2e1f5",
+                "engraveParamFlag": 0,
+                "thicknessParam": 0.0,
+                "elementType": 1,
+                "mode": 1,
+                "scan": 1,
+                "gasAssisted": 1,
+                "gasAssistNum": 10,
+                "bConstantPowerMode": false,
+                "processNum": 1,
+                "direction": 0,
+                "fillMode": 0,
+                "layerId": 10,
+                "lineSpace": 0.10000000149011612,
+                "startDown": 0.0,
+                "autoDown": 0.0,
+                "speed": 9999.9990234375,
+                "power": 77.0,
+                "output": true,
+                "show": true,
+                "cutFlag": false,
+                "embossFlag": false,
+                "cleanSpeed": 0.0,
+                "cleanPower": 0.0,
+                "overScanFlag": false,
+                "overScanPercent": 0.02500000037252903,
+                "lightSource": 1,
+                "lighSpotPower": 10,
+                "laserLevel": 0,
+                "lightSourceId": "cf957412a2e947299331709a9b498de2",
+                "isHandParams": true,
+                "redPower": 0.0,
+                "breakpointEnabled": false,
+                "breakpointCount": 0,
+                "breakpointLength": 0.30000001192092896
+            },
+            {
+                "layerName": "C17",
+                "layerColor": "#5E8AAD",
+                "materialName": "Parámetros manuales",
+                "detailId": "",
+                "combinationId": "",
+                "laserId": "219f5cf308be487fa8c56e36ecc2e1f5",
+                "engraveParamFlag": 0,
+                "thicknessParam": 0.0,
+                "elementType": 1,
+                "mode": 2,
+                "scan": 1,
+                "gasAssisted": 1,
+                "gasAssistNum": 10,
+                "bConstantPowerMode": false,
+                "processNum": 6,
+                "direction": 0,
+                "fillMode": 0,
+                "layerId": 17,
+                "lineSpace": 0.10000000149011612,
+                "startDown": 0.0,
+                "autoDown": 0.0,
+                "speed": 665.9999389648438,
+                "power": 80.0,
+                "output": true,
+                "show": true,
+                "cutFlag": false,
+                "embossFlag": false,
+                "cleanSpeed": 0.0,
+                "cleanPower": 0.0,
+                "overScanFlag": false,
+                "overScanPercent": 0.02500000037252903,
+                "lightSource": 1,
+                "lighSpotPower": 10,
+                "laserLevel": 0,
+                "lightSourceId": "cf957412a2e947299331709a9b498de2",
+                "isHandParams": true,
+                "redPower": 0.0,
+                "breakpointEnabled": false,
+                "breakpointCount": 0,
+                "breakpointLength": 0.30000001192092896
+            },
+            {
+                "layerName": "C18",
+                "layerColor": "#987A35",
+                "materialName": "Parámetros manuales",
+                "detailId": "",
+                "combinationId": "",
+                "laserId": "219f5cf308be487fa8c56e36ecc2e1f5",
+                "engraveParamFlag": 0,
+                "thicknessParam": 0.0,
+                "elementType": 1,
+                "mode": 1,
+                "scan": 1,
+                "gasAssisted": 1,
+                "gasAssistNum": 10,
+                "bConstantPowerMode": false,
+                "processNum": 1,
+                "direction": 0,
+                "fillMode": 0,
+                "layerId": 18,
+                "lineSpace": 0.10000000149011612,
+                "startDown": 0.0,
+                "autoDown": 0.0,
+                "speed": 9999.9990234375,
+                "power": 77.0,
+                "output": true,
+                "show": true,
+                "cutFlag": false,
+                "embossFlag": false,
+                "cleanSpeed": 0.0,
+                "cleanPower": 0.0,
+                "overScanFlag": false,
+                "overScanPercent": 0.02500000037252903,
+                "lightSource": 1,
+                "lighSpotPower": 10,
+                "laserLevel": 0,
+                "lightSourceId": "cf957412a2e947299331709a9b498de2",
+                "isHandParams": true,
+                "redPower": 0.0,
+                "breakpointEnabled": false,
+                "breakpointCount": 0,
+                "breakpointLength": 0.30000001192092896
+            }
+        ],
+        canvasName: 'Untitled',
+        version: 'V2.6.0',
+        engraveID: 'template-engrave-id',
+        platform: 3,
+        originCorner: 1,
+        items: [
+            {
+                id: 'template-1',
+                type: 65548,
+                x: 10,
+                y: 10,
+                z: 0,
+                angle: 0,
+                lastAngle: 0,
+                lineType: 1,
+                color: '#5E8AAD',
+                width: 90,
+                height: 50,
+                layer: 17,
+                engraveType: 2,
+                isFill: false,
+                fillColor: '#000000',
+                sceneY: 380,
+                pathArray: []
+            },
+            {
+                id: 'template-2',
+                type: 65548,
+                x: 10,
+                y: 10,
+                z: 1,
+                angle: 0,
+                lastAngle: 0,
+                lineType: 1,
+                color: '#987A35',
+                width: 90,
+                height: 50,
+                layer: 18,
+                engraveType: 1,
+                isFill: true,
+                fillColor: '#000000',
+                sceneY: 380,
+                pathArray: []
+            },
+            {
+                id: 'template-3',
+                type: 65546,
+                x: 20,
+                y: 25,
+                z: 1,
+                angle: 0,
+                lastAngle: 0,
+                lineType: 1,
+                color: '#FD4E75',
+                width: 48,
+                height: 12,
+                layer: 10,
+                engraveType: 1,
+                isFill: true,
+                fillColor: '#FD4E75',
+                text: 'Template Name',
+                lastText: 'Template Name',
+                fontSize: 21,
+                lastFontSize: 21,
+                initFontSize: 21,
+                fontFamily: 'Yu Gothic UI',
+                cmdArray: {},
+                sceneY: 380,
+                pathArray: []
+            }
+        ]
+    }), []);
+
+    const handleDownloadEngrave = async () => {
+        if (!group) return;
+        try {
+            setIsDownloadingEngrave(true);
+            const svgUrls = [
+                '/engrave-templates/cut.svg',
+                '/engrave-templates/engrave.svg',
+            ];
+            const files = await buildEngraveFiles(group.referencePeople as any, referenceJson, {
+                perRow: 4,
+                rowsPerFile: 7,
+                gapX: 8,
+                gapY: 2.5,
+                svgUrls,
+                curveSamples: 32
+            });
+            files.forEach((file, index) => {
+                const json = JSON.stringify(file, null, 2);
+                const blob = new Blob([json], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `engrave-${groupId}-${index + 1}.atom`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 0);
+            });
+        } catch (error) {
+            console.error('Error building engrave files:', error);
+            toast.error(t('group.errorBuildingEngrave', 'Failed to build engrave files.'));
+        } finally {
+            setIsDownloadingEngrave(false);
+        }
+    };
+
+    const matchesSearch = (entry: any, query: string) => {
+        if (!query) return true;
+        const q = query.toLowerCase();
+        const name = typeof entry?.name === 'string' ? entry.name.toLowerCase() : '';
+        if (name.includes(q)) return true;
+        if (entry?.type === 'group' && Array.isArray(entry.people)) {
+            return entry.people.some((p: any) => (p?.name || '').toLowerCase().includes(q));
+        }
+        return false;
+    };
+
+    const filteredEntries = (group?.referencePeople || []).filter((entry: any) => matchesSearch(entry, searchTerm));
+    const totalPages = Math.max(1, Math.ceil(filteredEntries.length / ITEMS_PER_PAGE));
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const pagedEntries = filteredEntries.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const shouldShowPagination = (group?.referencePeople?.length || 0) > ITEMS_PER_PAGE;
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
 
     useEffect(() => {
         const fetchGroup = async () => {
@@ -322,9 +603,67 @@ export function GroupPage() {
 
                     {group.referencePeople.length > 0 ? (
                         <div className="space-y-4">
+                            {(shouldShowPagination || isPhotoMode) && (
+                                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                                    {isPhotoMode && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={handleDownloadEngrave}
+                                            disabled={isDownloadingEngrave}
+                                        >
+                                            {isDownloadingEngrave
+                                                ? t('group.buildingEngrave', 'Building files...')
+                                                : t('group.downloadEngrave', 'Download engrave files')}
+                                        </Button>
+                                    )}
+                                    <Input
+                                        placeholder={t('group.searchMembers', 'Search members')}
+                                        value={searchTerm}
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                            setCurrentPage(1);
+                                        }}
+                                        className="sm:max-w-xs"
+                                    />
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                            disabled={currentPage === 1}
+                                            aria-label={t('group.prev', 'Previous page')}
+                                        >
+                                            ‹
+                                        </Button>
+                                        <div className="flex items-center gap-1">
+                                            {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
+                                                <Button
+                                                    key={page}
+                                                    variant={page === currentPage ? 'default' : 'outline'}
+                                                    size="sm"
+                                                    onClick={() => setCurrentPage(page)}
+                                                    aria-current={page === currentPage ? 'page' : undefined}
+                                                >
+                                                    {page}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                            disabled={currentPage === totalPages}
+                                            aria-label={t('group.next', 'Next page')}
+                                        >
+                                            ›
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                             <GroupedReferenceList
                                 groupId={groupId}
-                                entries={group.referencePeople as any}
+                                entries={pagedEntries as any}
                                 group={group}
                                 setGroup={setGroup}
                                 onEdit={(member) => {
@@ -376,6 +715,41 @@ export function GroupPage() {
                                     }
                                 }}
                             />
+                            {shouldShowPagination && (
+                                <div className="flex items-center justify-end gap-2 text-sm text-muted-foreground pt-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                        disabled={currentPage === 1}
+                                        aria-label={t('group.prev', 'Previous page')}
+                                    >
+                                        ‹
+                                    </Button>
+                                    <div className="flex items-center gap-1">
+                                        {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
+                                            <Button
+                                                key={page}
+                                                variant={page === currentPage ? 'default' : 'outline'}
+                                                size="sm"
+                                                onClick={() => setCurrentPage(page)}
+                                                aria-current={page === currentPage ? 'page' : undefined}
+                                            >
+                                                {page}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                        disabled={currentPage === totalPages}
+                                        aria-label={t('group.next', 'Next page')}
+                                    >
+                                        ›
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <>
