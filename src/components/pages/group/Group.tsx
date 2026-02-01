@@ -144,8 +144,8 @@ export function GroupPage() {
                 "scan": 1,
                 "gasAssisted": 1,
                 "gasAssistNum": 10,
-                "bConstantPowerMode": false,
-                "processNum": 6,
+                "bConstantPowerMode": true,
+                "processNum": 3,
                 "direction": 0,
                 "fillMode": 0,
                 "layerId": 17,
@@ -168,9 +168,9 @@ export function GroupPage() {
                 "lightSourceId": "cf957412a2e947299331709a9b498de2",
                 "isHandParams": true,
                 "redPower": 0.0,
-                "breakpointEnabled": false,
-                "breakpointCount": 0,
-                "breakpointLength": 0.30000001192092896
+                "breakpointEnabled": true,
+                "breakpointCount": 5,
+                "breakpointLength": 0.60000001192092896
             },
             {
                 "layerName": "C18",
