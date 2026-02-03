@@ -1,6 +1,16 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, CardContent, Input, Toaster} from "@/components/ui";
+import {
+    Button,
+    CardContent,
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    Input,
+    Toaster
+} from "@/components/ui";
 import {
     addUserToGroup,
     createReferencePersonGroup,
@@ -29,7 +39,7 @@ import {
     StickyOverlay
 } from './components';
 import {useAuthContext} from '@/lib/stores/authStore';
-import {buildEngraveFiles} from '@/lib/engrave/engraveFileBuilder';
+import {buildEngraveBackFiles, buildEngraveFiles} from '@/lib/engrave/engraveFileBuilder';
 
 export function GroupPage() {
     const {t} = useTranslation();
@@ -69,6 +79,10 @@ export function GroupPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [isDownloadingEngrave, setIsDownloadingEngrave] = useState(false);
+    const [isDownloadingEngraveBack, setIsDownloadingEngraveBack] = useState(false);
+    const [backDialogOpen, setBackDialogOpen] = useState(false);
+    const [coupleNames, setCoupleNames] = useState('Ana & Luis');
+    const [weddingDate, setWeddingDate] = useState('12/06/2026');
 
     const ITEMS_PER_PAGE = 10;
 
@@ -321,6 +335,44 @@ export function GroupPage() {
             toast.error(t('group.errorBuildingEngrave', 'Failed to build engrave files.'));
         } finally {
             setIsDownloadingEngrave(false);
+        }
+    };
+
+    const handleDownloadEngraveBack = async () => {
+        if (!group) return;
+        try {
+            setIsDownloadingEngraveBack(true);
+            const svgUrls = [
+                '/engrave-templates/engrave.svg',
+                '/engrave-templates/engrave.svg'
+            ];
+            const files = await buildEngraveBackFiles(group.referencePeople as any, referenceJson, {
+                perRow: 4,
+                rowsPerFile: 7,
+                gapX: 8,
+                gapY: 2.5,
+                svgUrls,
+                curveSamples: 32,
+                backNames: coupleNames,
+                backDate: weddingDate
+            });
+            files.forEach((file, index) => {
+                const json = JSON.stringify(file, null, 2);
+                const blob = new Blob([json], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `engrave-back-${groupId}-${index + 1}.atom`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 0);
+            });
+        } catch (error) {
+            console.error('Error building engrave back files:', error);
+            toast.error(t('group.errorBuildingEngrave', 'Failed to build engrave files.'));
+        } finally {
+            setIsDownloadingEngraveBack(false);
         }
     };
 
@@ -606,16 +658,26 @@ export function GroupPage() {
                             {(shouldShowPagination || isPhotoMode) && (
                                 <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
                                     {isPhotoMode && (
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={handleDownloadEngrave}
-                                            disabled={isDownloadingEngrave}
-                                        >
-                                            {isDownloadingEngrave
-                                                ? t('group.buildingEngrave', 'Building files...')
-                                                : t('group.downloadEngrave', 'Download engrave files')}
-                                        </Button>
+                                        <div className="flex flex-wrap gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={handleDownloadEngrave}
+                                                disabled={isDownloadingEngrave}
+                                            >
+                                                {isDownloadingEngrave
+                                                    ? t('group.buildingEngrave', 'Building files...')
+                                                    : t('group.downloadEngrave', 'Download engrave files')}
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setBackDialogOpen(true)}
+                                                disabled={isDownloadingEngraveBack}
+                                            >
+                                                {t('group.downloadEngraveBack', 'Download back')}
+                                            </Button>
+                                        </div>
                                     )}
                                     <Input
                                         placeholder={t('group.searchMembers', 'Search members')}
@@ -841,6 +903,42 @@ export function GroupPage() {
                 totalCost={totalMembers * 100}
                 currentBalance={user?.balance || 0}
             />
+
+            <Dialog open={backDialogOpen} onOpenChange={setBackDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('group.downloadEngraveBack', 'Download back')}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-3">
+                        <Input
+                            placeholder={t('group.coupleNames', 'Couple names')}
+                            value={coupleNames}
+                            onChange={(e) => setCoupleNames(e.target.value)}
+                        />
+                        <Input
+                            placeholder={t('group.weddingDate', 'Wedding date')}
+                            value={weddingDate}
+                            onChange={(e) => setWeddingDate(e.target.value)}
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setBackDialogOpen(false)}>
+                            {t('common.cancel', 'Cancel')}
+                        </Button>
+                        <Button
+                            onClick={async () => {
+                                await handleDownloadEngraveBack();
+                                setBackDialogOpen(false);
+                            }}
+                            disabled={isDownloadingEngraveBack}
+                        >
+                            {isDownloadingEngraveBack
+                                ? t('group.buildingEngrave', 'Building files...')
+                                : t('group.downloadEngraveBack', 'Download back')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

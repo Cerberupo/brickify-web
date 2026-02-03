@@ -24,6 +24,11 @@ type EngraveOptions = {
     groupLineGap?: number;
     groupSecondLayer?: number | null;
     textCharWidthFactor?: number;
+    textYShiftFactor?: number;
+    mirrorSvgX?: boolean;
+    backNames?: string;
+    backDate?: string;
+    backTextYOffset?: number;
 };
 
 function cloneJson<T>(value: T): T {
@@ -458,10 +463,39 @@ function createSvgModel(points: Array<{ x: number; y: number; t: number }>): Svg
     return {generate};
 }
 
+function getTextWidth(text: string, font: string) {
+    const canvas = (getTextWidth as any).canvas || ((getTextWidth as any).canvas = document.createElement('canvas'));
+    const context = canvas.getContext('2d');
+    if (!context) return 0;
+    context.font = font;
+    const metrics = context.measureText(text);
+    const px = metrics.width;
+    const mmPerPx = 25.4 / 72;
+    return px * mmPerPx;
+}
+
+function getTextHeight(text: string, font: string) {
+    const canvas = (getTextHeight as any).canvas || ((getTextHeight as any).canvas = document.createElement('canvas'));
+    const context = canvas.getContext('2d');
+    if (!context) return 0;
+    context.font = font;
+    const metrics = context.measureText(text);
+    const px = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+    const mmPerPx = 25.4 / 72;
+    return px * mmPerPx;
+}
+
+
 function estimateTextWidth(text: string, fontSize: number, factor: number) {
     if (typeof text !== 'string' || text.length === 0) return 0;
-    const ratio = typeof factor === 'number' ? factor : 0.55;
-    return text.length * fontSize * ratio;
+    const family = 'Yu Gothic UI';
+    return getTextWidth(text, `${fontSize}px "${family}"`);
+}
+
+function estimateTextHeight(text: string, fontSize: number, factor: number) {
+    if (typeof text !== 'string' || text.length === 0) return 0;
+    const family = 'Yu Gothic UI';
+    return getTextHeight(text, `${fontSize}px "${family}"`);
 }
 
 function positionSingleLineText(item: any, box: {
@@ -474,12 +508,16 @@ function positionSingleLineText(item: any, box: {
     const centerX = box.x + (box.width / 2);
     const centerY = box.y + (box.height / 2);
     const textWidth = estimateTextWidth(item.text || '', fontSize, factor);
-    const baselineOffset = fontSize * 0.23;
+    const textHeight = estimateTextHeight(item.text || '', fontSize, factor);
+    const baselineOffset = 0;
     if (textWidth > 0) {
         item.width = textWidth;
     }
+    if (textHeight > 0) {
+        item.height = textHeight;
+    }
     item.x = centerX - (textWidth / 2);
-    item.y = centerY + baselineOffset;
+    item.y = centerY + baselineOffset + 5 - textHeight;
 }
 
 function positionGroupLines(firstItem: any, secondItem: any, box: {
@@ -492,10 +530,12 @@ function positionGroupLines(firstItem: any, secondItem: any, box: {
     const centerX = box.x + (box.width / 2);
     const centerY = box.y + (box.height / 2);
     const gap = typeof lineGap === 'number' ? lineGap : (fontSize * 0.6);
-    const baselineOffset = fontSize * 0.23;
+    const baselineOffset = 0;
     const lineSpacing = gap;
     const firstWidth = estimateTextWidth(firstItem.text || '', fontSize, factor);
     const secondWidth = estimateTextWidth(secondItem.text || '', fontSize, factor);
+    const firstHeight = estimateTextHeight(firstItem.text || '', fontSize, factor);
+    const secondHeight = estimateTextHeight(secondItem.text || '', fontSize, factor);
     if (firstWidth > 0) {
         firstItem.width = firstWidth;
     }
@@ -504,8 +544,9 @@ function positionGroupLines(firstItem: any, secondItem: any, box: {
     }
     firstItem.x = centerX - (firstWidth / 2);
     secondItem.x = centerX - (secondWidth / 2);
-    firstItem.y = centerY + baselineOffset;
-    secondItem.y = firstItem.y - lineSpacing;
+    firstItem.y = centerY + baselineOffset + 5 - firstHeight;
+    secondItem.y = firstItem.y - lineSpacing + 5 - secondHeight;
+
 }
 
 function computePathBounds(pathArray: Array<{ x: number; y: number }>) {
@@ -671,5 +712,96 @@ export async function buildEngraveFiles(referencePeople: ReferencePersonEntry[],
         const file = await buildEngraveFile(chunk, referenceJson, options);
         out.push(file);
     }
+    return out;
+}
+
+export async function buildEngraveBackFiles(referencePeople: ReferencePersonEntry[], referenceJson: any, options: EngraveOptions = {}) {
+    const perRow = Number.isInteger(options.perRow) && options.perRow > 0 ? options.perRow : 1;
+    const rowsPerFile = Number.isInteger(options.rowsPerFile) && options.rowsPerFile > 0 ? options.rowsPerFile : 1;
+    const pageSize = perRow * rowsPerFile;
+    const people = normalizeReferencePeople(referencePeople);
+    const baseItems = referenceJson.items.slice(0, 3);
+    const bounds = computeBounds(baseItems);
+    const nameFontSize = 14;
+    const dateFontSize = 10;
+    const groupLineGap = typeof options.groupLineGap === 'number' ? options.groupLineGap : (nameFontSize * 0.3);
+    const textCharWidthFactor = typeof options.textCharWidthFactor === 'number' ? options.textCharWidthFactor : 0.166;
+    const textYShiftFactor = typeof options.textYShiftFactor === 'number' ? options.textYShiftFactor : 0.02;
+    const backTextYOffset = typeof options.backTextYOffset === 'number' ? options.backTextYOffset : 0;
+    const names = options.backNames || '';
+    const date = options.backDate || '';
+    const svgUrls = Array.isArray(options.svgUrls) ? options.svgUrls : [];
+    const svgModels: SvgModel[] = await Promise.all(svgUrls.map(async (source) => {
+        const svgText = await loadSvgSource(source);
+        const pathData = extractPathData(svgText);
+        const points: Array<{ x: number; y: number; t: number }> = [];
+        for (const d of pathData) {
+            points.push(...parsePathToPoints(d, {curveSamples: options.curveSamples}));
+        }
+        return createSvgModel(points);
+    }));
+    const refItemIndex = Math.max(0, baseItems.findIndex((item) => typeof item.text !== 'string'));
+    const textTemplate = baseItems.find((item) => typeof item?.text === 'string');
+
+    const out: any[] = [];
+    for (let i = 0; i < people.length; i += pageSize) {
+        const chunk = people.slice(i, i + pageSize);
+        const items: any[] = [];
+
+        for (let idx = 0; idx < chunk.length; idx++) {
+            const row = Math.floor(idx / perRow);
+            const col = idx % perRow;
+            const offsetX = col * (bounds.width + (options.gapX ?? 10));
+            const offsetY = row * (bounds.height + (options.gapY ?? 10));
+            const textBox = getTextBoxForPerson(baseItems, svgModels, refItemIndex, offsetX, offsetY);
+
+            for (let j = 0; j < baseItems.length; j++) {
+                const templateItem = baseItems[j];
+                if (typeof templateItem.text === 'string') continue;
+                if (templateItem.layer === 17) continue;
+                const item = cloneJson(templateItem);
+                item.id = (crypto?.randomUUID?.() || `${Math.random()}`).replace(/-/g, '');
+                applyOffset(item, offsetX, offsetY);
+                if (svgModels[j] && typeof item.width === 'number' && typeof item.height === 'number') {
+                    item.pathArray = svgModels[j].generate(item.width, item.height, {
+                        offsetX: item.x || 0,
+                        offsetY: item.y || 0,
+                        preserveAspect: true,
+                        mirrorX: true
+                    });
+                }
+                items.push(item);
+            }
+
+            if (textTemplate) {
+                const textItem = cloneJson(textTemplate);
+                const secondItem = cloneJson(textTemplate);
+                textItem.id = (crypto?.randomUUID?.() || `${Math.random()}`).replace(/-/g, '');
+                secondItem.id = (crypto?.randomUUID?.() || `${Math.random()}`).replace(/-/g, '');
+                textItem.text = names;
+                secondItem.text = date;
+                if (typeof textItem.fontSize === 'number') textItem.fontSize = nameFontSize;
+                if (typeof textItem.lastFontSize === 'number') textItem.lastFontSize = nameFontSize;
+                if (typeof textItem.initFontSize === 'number') textItem.initFontSize = nameFontSize;
+                if (typeof secondItem.fontSize === 'number') secondItem.fontSize = dateFontSize;
+                if (typeof secondItem.lastFontSize === 'number') secondItem.lastFontSize = dateFontSize;
+                if (typeof secondItem.initFontSize === 'number') secondItem.initFontSize = dateFontSize;
+                textItem.width = 0;
+                textItem.height = 0;
+                secondItem.width = 0;
+                secondItem.height = 0;
+                positionGroupLines(textItem, secondItem, textBox, nameFontSize, textCharWidthFactor, groupLineGap, textYShiftFactor, 'below');
+                textItem.y -= backTextYOffset;
+                secondItem.y -= backTextYOffset;
+                items.push(textItem, secondItem);
+            }
+        }
+
+        const result = cloneJson(referenceJson);
+        result.layers = cloneJson(referenceJson.layers).filter((layer: any) => layer.layerId !== 17);
+        result.items = items;
+        out.push(result);
+    }
+
     return out;
 }
