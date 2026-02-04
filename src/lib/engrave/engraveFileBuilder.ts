@@ -525,7 +525,7 @@ function positionGroupLines(firstItem: any, secondItem: any, box: {
     y: number;
     width: number;
     height: number
-}, fontSize: number, factor: number, lineGap: number) {
+}, fontSize: number, secondFontSize: number, factor: number, lineGap: number) {
     if (!firstItem || !secondItem || !box) return;
     const centerX = box.x + (box.width / 2);
     const centerY = box.y + (box.height / 2);
@@ -533,19 +533,20 @@ function positionGroupLines(firstItem: any, secondItem: any, box: {
     const baselineOffset = 0;
     const lineSpacing = gap;
     const firstWidth = estimateTextWidth(firstItem.text || '', fontSize, factor);
-    const secondWidth = estimateTextWidth(secondItem.text || '', fontSize, factor);
+    const secondWidth = estimateTextWidth(secondItem.text || '', secondFontSize, factor);
     const firstHeight = estimateTextHeight(firstItem.text || '', fontSize, factor);
-    const secondHeight = estimateTextHeight(secondItem.text || '', fontSize, factor);
+    const secondHeight = estimateTextHeight(secondItem.text || '', secondFontSize, factor);
     if (firstWidth > 0) {
         firstItem.width = firstWidth;
     }
     if (secondWidth > 0) {
         secondItem.width = secondWidth;
     }
+
     firstItem.x = centerX - (firstWidth / 2);
     secondItem.x = centerX - (secondWidth / 2);
     firstItem.y = centerY + baselineOffset + 5 - firstHeight;
-    secondItem.y = firstItem.y - lineSpacing + 5 - secondHeight;
+    secondItem.y = firstItem.y - lineSpacing + 2 - secondHeight;
 
 }
 
@@ -665,7 +666,7 @@ export async function buildEngraveFile(referencePeople: ReferencePersonEntry[], 
                     if (typeof secondItem.lastFontSize === 'number') secondItem.lastFontSize = textFontSize;
                     if (typeof secondItem.initFontSize === 'number') secondItem.initFontSize = textFontSize;
 
-                    positionGroupLines(item, secondItem, textBox, textFontSize, textCharWidthFactor, groupLineGap);
+                    positionGroupLines(item, secondItem, textBox, textFontSize, textFontSize, textCharWidthFactor, groupLineGap);
                     items.push(item, secondItem);
                     continue;
                 }
@@ -790,7 +791,7 @@ export async function buildEngraveBackFiles(referencePeople: ReferencePersonEntr
                 textItem.height = 0;
                 secondItem.width = 0;
                 secondItem.height = 0;
-                positionGroupLines(textItem, secondItem, textBox, nameFontSize, textCharWidthFactor, groupLineGap, textYShiftFactor, 'below');
+                positionGroupLines(textItem, secondItem, textBox, nameFontSize, dateFontSize, textCharWidthFactor, groupLineGap, textYShiftFactor, 'below');
                 textItem.y -= backTextYOffset;
                 secondItem.y -= backTextYOffset;
                 items.push(textItem, secondItem);

@@ -14,6 +14,17 @@ export function LoginPage({initialSearch}: LoginPageProps) {
     const {t} = useTranslation();
     const {user, isLoading: authLoading} = useAuth();
 
+    // Handle token from URL (for "impersonate" from BO)
+    useEffect(() => {
+        const params = getParams();
+        const token = params.get('token');
+        if (token && typeof window !== 'undefined') {
+            localStorage.setItem('authToken', token);
+            // Redirigir al dashboard para que el initAuth se encargue del resto
+            navigate(localizePath('/dashboard'));
+        }
+    }, [initialSearch]);
+
     // Separate params parsing to be reused
     const getParams = () => {
         const search = initialSearch ? initialSearch : (typeof window !== 'undefined' ? window.location.search : '');
