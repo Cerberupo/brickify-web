@@ -598,10 +598,14 @@ export function GroupPage() {
                         totalMembers={totalMembers}
                         entries={group.referencePeople as any[]}
                         actions={canEdit && addingMode === 'none' && !editingGroup && !memberToEdit && group.referencePeople.length > 0 ? (
-                            <>
-                                {/**/}
+                            <div className="flex gap-2">
+                                {user?.canAddUserGroups && (
+                                    <Button variant="outline" onClick={() => setAddingMode('pair')}>
+                                        {t('group.addPair')}
+                                    </Button>
+                                )}
                                 <Button onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
-                            </>
+                            </div>
                         ) : null}
                     />
                     {/** Precio por persona ahora se calcula directamente en el resumen inferior (OrderSummaryCard) */}
