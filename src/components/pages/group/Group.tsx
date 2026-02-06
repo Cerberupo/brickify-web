@@ -291,9 +291,9 @@ export function GroupPage() {
                 fillColor: '#FD4E75',
                 text: 'Template Name',
                 lastText: 'Template Name',
-                fontSize: 21,
-                lastFontSize: 21,
-                initFontSize: 21,
+                fontSize: 20,
+                lastFontSize: 20,
+                initFontSize: 20,
                 fontFamily: 'Yu Gothic UI',
                 cmdArray: {},
                 sceneY: 380,
@@ -301,6 +301,30 @@ export function GroupPage() {
             }
         ]
     }), []);
+
+    const individualReferenceJson = useMemo(() => {
+        const base = JSON.parse(JSON.stringify(referenceJson));
+        // Individual users use a smaller SVG template
+        // Original was 90x50, let's try 60x35
+        if (base.items[0]) {
+            base.items[0].width = 60;
+            base.items[0].height = 35;
+        }
+        if (base.items[1]) {
+            base.items[1].width = 60;
+            base.items[1].height = 35;
+        }
+        if (base.items[2]) {
+            // Adjust text template width as well
+            base.items[2].width = 40;
+            // Reduce font size for smaller template
+            base.items[2].fontSize = 14;
+            base.items[2].lastFontSize = 14;
+            base.items[2].initFontSize = 14;
+            // Adjust y position if needed, but the builder should handle it
+        }
+        return base;
+    }, [referenceJson]);
 
     const handleDownloadEngrave = async () => {
         if (!group) return;
@@ -310,26 +334,51 @@ export function GroupPage() {
                 '/engrave-templates/cut.svg',
                 '/engrave-templates/engrave.svg',
             ];
-            const files = await buildEngraveFiles(group.referencePeople as any, referenceJson, {
+
+            const individuals = (group.referencePeople as any[]).filter(p => p.type === 'person');
+            const groups_entries = (group.referencePeople as any[]).filter(p => p.type === 'group');
+
+            const downloadFiles = async (people: any[], template: any, namePrefix: string, opts: any) => {
+                if (people.length === 0) return;
+                const files = await buildEngraveFiles(people, template, {
+                    ...opts,
+                    svgUrls,
+                    curveSamples: 32
+                });
+                files.forEach((file, index) => {
+                    const json = JSON.stringify(file, null, 2);
+                    const blob = new Blob([json], {type: 'application/json'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${namePrefix}-${groupId}-${index + 1}.atom`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 0);
+                });
+            };
+
+            // Download groups (using original template)
+            await downloadFiles(groups_entries, referenceJson, 'engrave-groups', {
                 perRow: 4,
                 rowsPerFile: 7,
                 gapX: 8,
                 gapY: 2.5,
-                svgUrls,
-                curveSamples: 32
+                textYOffset: 3, // Manual adjustment to lift text
+                secondTextYOffset: 6
             });
-            files.forEach((file, index) => {
-                const json = JSON.stringify(file, null, 2);
-                const blob = new Blob([json], {type: 'application/json'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `engrave-${groupId}-${index + 1}.atom`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 0);
+
+            // Download individuals (using smaller template)
+            await downloadFiles(individuals, individualReferenceJson, 'engrave-individuals', {
+                perRow: 6, // We can fit more per row since they are smaller
+                rowsPerFile: 10,
+                gapX: 8,
+                gapY: 2.5,
+                textYOffset: -2, // Manual adjustment to lift text
+                secondTextYOffset: -2
             });
+
         } catch (error) {
             console.error('Error building engrave files:', error);
             toast.error(t('group.errorBuildingEngrave', 'Failed to build engrave files.'));
@@ -346,28 +395,51 @@ export function GroupPage() {
                 '/engrave-templates/engrave.svg',
                 '/engrave-templates/engrave.svg'
             ];
-            const files = await buildEngraveBackFiles(group.referencePeople as any, referenceJson, {
+
+            const individuals = (group.referencePeople as any[]).filter(p => p.type === 'person');
+            const groups_entries = (group.referencePeople as any[]).filter(p => p.type === 'group');
+
+            const downloadBackFiles = async (people: any[], template: any, namePrefix: string, opts: any) => {
+                if (people.length === 0) return;
+                const files = await buildEngraveBackFiles(people, template, {
+                    ...opts,
+                    svgUrls,
+                    curveSamples: 32,
+                    backNames: coupleNames,
+                    backDate: weddingDate
+                });
+                files.forEach((file, index) => {
+                    const json = JSON.stringify(file, null, 2);
+                    const blob = new Blob([json], {type: 'application/json'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${namePrefix}-${groupId}-${index + 1}.atom`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 0);
+                });
+            };
+
+            // Download groups back
+            await downloadBackFiles(groups_entries, referenceJson, 'engrave-back-groups', {
                 perRow: 4,
                 rowsPerFile: 7,
                 gapX: 8,
                 gapY: 2.5,
-                svgUrls,
-                curveSamples: 32,
-                backNames: coupleNames,
-                backDate: weddingDate
+                backTextYOffset: -1.5 // Consistent with front group offset if needed
             });
-            files.forEach((file, index) => {
-                const json = JSON.stringify(file, null, 2);
-                const blob = new Blob([json], {type: 'application/json'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `engrave-back-${groupId}-${index + 1}.atom`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 0);
+
+            // Download individuals back
+            await downloadBackFiles(individuals, individualReferenceJson, 'engrave-back-individuals', {
+                perRow: 6,
+                rowsPerFile: 10,
+                gapX: 8,
+                gapY: 2.5,
+                backTextYOffset: 1 // Consistent with front individual offset
             });
+
         } catch (error) {
             console.error('Error building engrave back files:', error);
             toast.error(t('group.errorBuildingEngrave', 'Failed to build engrave files.'));

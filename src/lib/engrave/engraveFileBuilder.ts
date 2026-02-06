@@ -25,6 +25,9 @@ type EngraveOptions = {
     groupSecondLayer?: number | null;
     textCharWidthFactor?: number;
     textYShiftFactor?: number;
+    textXOffset?: number;
+    textYOffset?: number;
+    secondTextYOffset?: number;
     mirrorSvgX?: boolean;
     backNames?: string;
     backDate?: string;
@@ -503,7 +506,7 @@ function positionSingleLineText(item: any, box: {
     y: number;
     width: number;
     height: number
-}, fontSize: number, factor: number) {
+}, fontSize: number, factor: number, offsetX: number = 0, offsetY: number = 0) {
     if (!item || !box) return;
     const centerX = box.x + (box.width / 2);
     const centerY = box.y + (box.height / 2);
@@ -516,8 +519,8 @@ function positionSingleLineText(item: any, box: {
     if (textHeight > 0) {
         item.height = textHeight;
     }
-    item.x = centerX - (textWidth / 2);
-    item.y = centerY + baselineOffset + 5 - textHeight;
+    item.x = centerX - (textWidth / 2) + offsetX;
+    item.y = centerY + baselineOffset + 5 - textHeight + offsetY;
 }
 
 function positionGroupLines(firstItem: any, secondItem: any, box: {
@@ -525,7 +528,7 @@ function positionGroupLines(firstItem: any, secondItem: any, box: {
     y: number;
     width: number;
     height: number
-}, fontSize: number, secondFontSize: number, factor: number, lineGap: number) {
+}, fontSize: number, secondFontSize: number, factor: number, lineGap: number, offsetX: number = 0, offsetY: number = 0, secondOffsetY: number = 0) {
     if (!firstItem || !secondItem || !box) return;
     const centerX = box.x + (box.width / 2);
     const centerY = box.y + (box.height / 2);
@@ -543,11 +546,10 @@ function positionGroupLines(firstItem: any, secondItem: any, box: {
         secondItem.width = secondWidth;
     }
 
-    firstItem.x = centerX - (firstWidth / 2);
-    secondItem.x = centerX - (secondWidth / 2);
-    firstItem.y = centerY + baselineOffset + 5 - firstHeight;
-    secondItem.y = firstItem.y - lineSpacing + 2 - secondHeight;
-
+    firstItem.x = centerX - (firstWidth / 2) + offsetX;
+    secondItem.x = centerX - (secondWidth / 2) + offsetX;
+    firstItem.y = centerY + baselineOffset + 5 - firstHeight + offsetY;
+    secondItem.y = firstItem.y - (lineSpacing > 0 ? lineSpacing : 0) + 2 - secondHeight + (secondOffsetY - offsetY);
 }
 
 function computePathBounds(pathArray: Array<{ x: number; y: number }>) {
@@ -605,12 +607,15 @@ export async function buildEngraveFile(referencePeople: ReferencePersonEntry[], 
     const gapX = typeof options.gapX === 'number' ? options.gapX : 10;
     const gapY = typeof options.gapY === 'number' ? options.gapY : 10;
     const bounds = computeBounds(baseItems);
-    const textFontSize = typeof options.textFontSize === 'number' ? options.textFontSize : 21;
+    const textTemplate = baseItems.find((item) => typeof item?.text === 'string');
+    const textFontSize = typeof options.textFontSize === 'number' ? options.textFontSize : (textTemplate?.fontSize ?? 20);
+    const textXOffset = typeof options.textXOffset === 'number' ? options.textXOffset : 0;
+    const textYOffset = typeof options.textYOffset === 'number' ? options.textYOffset : 0;
+    const secondTextYOffset = typeof options.secondTextYOffset === 'number' ? options.secondTextYOffset : textYOffset;
     const textScale = typeof options.textScale === 'number' ? options.textScale : 0.6;
     const groupLineGap = typeof options.groupLineGap === 'number' ? options.groupLineGap : (textFontSize * 0.3);
     const groupSecondLayer = typeof options.groupSecondLayer === 'number' ? options.groupSecondLayer : null;
     const textCharWidthFactor = typeof options.textCharWidthFactor === 'number' ? options.textCharWidthFactor : 0.166;
-    const textTemplate = baseItems.find((item) => typeof item?.text === 'string');
     const textBaseHeight = 0;
     const svgUrls = Array.isArray(options.svgUrls) ? options.svgUrls : [];
     const svgModels: SvgModel[] = await Promise.all(svgUrls.map(async (source) => {
@@ -666,7 +671,7 @@ export async function buildEngraveFile(referencePeople: ReferencePersonEntry[], 
                     if (typeof secondItem.lastFontSize === 'number') secondItem.lastFontSize = textFontSize;
                     if (typeof secondItem.initFontSize === 'number') secondItem.initFontSize = textFontSize;
 
-                    positionGroupLines(item, secondItem, textBox, textFontSize, textFontSize, textCharWidthFactor, groupLineGap);
+                    positionGroupLines(item, secondItem, textBox, textFontSize, textFontSize, textCharWidthFactor, groupLineGap, textXOffset, textYOffset, secondTextYOffset);
                     items.push(item, secondItem);
                     continue;
                 }
@@ -683,7 +688,7 @@ export async function buildEngraveFile(referencePeople: ReferencePersonEntry[], 
 
             applyOffset(item, offsetX, offsetY);
             if (typeof item.text === 'string') {
-                positionSingleLineText(item, textBox, textFontSize, textCharWidthFactor);
+                positionSingleLineText(item, textBox, textFontSize, textCharWidthFactor, textXOffset, textYOffset);
             }
             if (svgModels[j] && typeof item.width === 'number' && typeof item.height === 'number') {
                 item.pathArray = svgModels[j].generate(item.width, item.height, {
@@ -791,7 +796,7 @@ export async function buildEngraveBackFiles(referencePeople: ReferencePersonEntr
                 textItem.height = 0;
                 secondItem.width = 0;
                 secondItem.height = 0;
-                positionGroupLines(textItem, secondItem, textBox, nameFontSize, dateFontSize, textCharWidthFactor, groupLineGap, textYShiftFactor, 'below');
+                positionGroupLines(textItem, secondItem, textBox, nameFontSize, dateFontSize, textCharWidthFactor, groupLineGap, 0, textYShiftFactor, backTextYOffset);
                 textItem.y -= backTextYOffset;
                 secondItem.y -= backTextYOffset;
                 items.push(textItem, secondItem);

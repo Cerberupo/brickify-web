@@ -289,7 +289,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                             <div className="md:col-span-2">
                                 <Label htmlFor="name" className="block mb-1">{t('group.memberName')}</Label>
                                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)}
-                                       maxLength={25}
+                                       maxLength={13}
                                        placeholder={t('group.namePlaceholder')}/>
                             </div>
                             {/*
@@ -310,7 +310,7 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                             <div>
                                 <Label htmlFor="name" className="block mb-1">{t('group.memberName')}</Label>
                                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)}
-                                       maxLength={25}
+                                       maxLength={13}
                                        placeholder={t('group.namePlaceholder')}/>
                             </div>
                             {/*
