@@ -224,7 +224,7 @@ export function GroupedReferenceList({
                             <div className="flex items-center justify-between mb-2">
                                 <div className="font-semibold">{entry.name}</div>
                                 <div className="flex items-center gap-2">
-                                    {(typeof onEditGroup === 'function' && (entry?.status === 'pending' || entry?.status === undefined)) && (
+                                    {(typeof onEditGroup === 'function' && entry?.status === 'pending') && (
                                         <Button
                                             variant="outline"
                                             size="icon"
@@ -235,7 +235,7 @@ export function GroupedReferenceList({
                                             <span className="sr-only">{t('group.editGroup', 'Editar colección')}</span>
                                         </Button>
                                     )}
-                                    {(typeof onDeleteGroup === 'function' && (entry?.status === 'pending' || entry?.status === undefined)) && (
+                                    {(typeof onDeleteGroup === 'function' && entry?.status === 'pending') && (
                                         <Button
                                             variant="outline"
                                             size="icon"
