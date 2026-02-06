@@ -823,9 +823,10 @@ export function GroupPage() {
                                 <div className="text-center py-12">
                                     <p className="text-gray-500 mb-4">{t('group.addFirstMember')}</p>
                                     <div className="flex justify-center gap-2">
-                                        {/*<Button variant="outline"
-                                                onClick={() => setAddingMode('pair')}>{t('group.addTwoMembers')}</Button>
-                                        */}
+                                        {user?.canAddUserGroups && (
+                                            <Button variant="outline"
+                                                    onClick={() => setAddingMode('pair')}>{t('group.addTwoMembers')}</Button>
+                                        )}
                                         <Button
                                             onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
                                     </div>
