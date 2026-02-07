@@ -1,0 +1,261 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import HeroSection from "@/components/home/HeroSection.astro";
+import HowItWorks from "@/components/home/HowItWorks.astro";
+import MemoryHighlight from "@/components/home/MemoryHighlight.astro";
+import VisualShowcase from "@/components/home/VisualShowcase.astro";
+import FAQSection from "@/components/home/FAQSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+import {buttonVariants} from "@/components/ui/button";
+
+interface Props {
+    locale: SupportedLocale;
+}
+
+const {locale} = Astro.props as Props;
+
+const isEs = locale === 'es';
+
+const copies = {
+    en: {
+        title: 'LEGO® Wedding Favors — The Most Personalized Gift | Brickify',
+        description: 'Transform your wedding with personalized LEGO® minifigures for your guests. Premium service including AI matching, official assembly, custom engraving, and floating frames.',
+        heroTitle: 'The Most Personalized Gift for Your Wedding Guests',
+        heroDesc: 'We don\'t just find the LEGO® pieces that best match your guests using AI. You upload the photos and names to the web, and we take care of everything else: official purchase, custom engraving on wood, and professional presentation in a floating frame.',
+        ctaContact: 'Request a Quote',
+        memoryTitle: 'Much More Than Just a Figure',
+        memoryDesc: 'For weddings, we offer a comprehensive service. Once you have uploaded your guests\' photos and names, we manage the purchase of official LEGO® pieces, handle any shipping issues, and prepare a unique presentation. Each guest receives their assembled LEGO® next to a laser-engraved wooden piece in a high-quality floating frame.',
+        engravingTitle: 'Personalized Engraving',
+        engravingDesc: 'We engrave the guest\'s name on one side of a wooden piece, and the couple\'s names and wedding date on the other. Total personalization for a unique keepsake.',
+        frameTitle: 'Floating Frame & Stand',
+        frameDesc: 'Choose between black or white for the frame and stand. A minimalist and elegant design that highlights the figure and the engraved piece, ready to be displayed in any home.',
+        howTitle: 'Our Premium Service for Weddings',
+        steps: [
+            {
+                number: "01",
+                title: "AI Matching",
+                desc: "You upload the photos and names of the guests. Our AI finds the official LEGO® pieces that best represent them.",
+            },
+            {
+                number: "02",
+                title: "Procurement & Assembly",
+                desc: "We buy all official pieces and assemble each figure. No stress for you.",
+            },
+            {
+                number: "03",
+                title: "Custom Engraving",
+                desc: "Laser engraving on high-quality wood: guest name, couple names, and date.",
+            },
+            {
+                number: "04",
+                title: "Premium Presentation",
+                desc: "Each set is delivered in a floating frame with its stand, in the color of your choice.",
+            },
+        ]
+    },
+    es: {
+        title: 'Recuerdos de Boda LEGO® — El Regalo Más Personalizado | Brickify',
+        description: 'Transforma tu boda con minifiguras LEGO® personalizadas para tus invitados. Servicio premium que incluye matching por IA, montaje oficial, grabado personalizado y marcos flotantes.',
+        heroTitle: 'El Regalo Más Personalizado para los Invitados de tu Boda',
+        heroDesc: 'No solo buscamos las piezas LEGO® que más se parecen a tus invitados mediante IA. Vosotros subís las fotos y nombres a la web, y nosotros nos encargamos de todo lo demás: compra oficial, grabado personalizado en madera y presentación profesional en marco flotante.',
+        ctaContact: 'Pedir Presupuesto',
+        memoryTitle: 'Mucho más que una figura',
+        memoryDesc: 'Para bodas, ofrecemos un servicio integral. Una vez hayáis subido las fotos y nombres de vuestros invitados, gestionamos la compra de las piezas LEGO® oficiales, realizamos las reclamaciones necesarias si algo falta y preparamos una presentación única. Cada invitado recibe su LEGO montado junto a una pieza de madera grabada a láser en un marco flotante de alta calidad.',
+        engravingTitle: 'Grabado Personalizado',
+        engravingDesc: 'Grabamos el nombre de la persona por una cara de la pieza de madera, y los nombres de los novios junto a la fecha por la otra. Personalización total para un recuerdo único.',
+        frameTitle: 'Marco Flotante con Peana',
+        frameDesc: 'Elige entre blanco o negro para el marco y la peana. Un diseño minimalista y elegante que resalta la figura y la pieza grabada, listo para ser expuesto en cualquier hogar.',
+        howTitle: 'Nuestro Servicio Premium para Bodas',
+        steps: [
+            {
+                number: "01",
+                title: "Matching por IA",
+                desc: "Subís las fotos y nombres de los invitados. Nuestra IA encuentra las piezas LEGO® oficiales que mejor los representan.",
+            },
+            {
+                number: "02",
+                title: "Compra y Montaje",
+                desc: "Compramos todas las piezas oficiales y montamos cada figura. Sin preocupaciones para vosotros.",
+            },
+            {
+                number: "03",
+                title: "Grabado a Láser",
+                desc: "Grabado en madera de alta calidad: nombre del invitado, nombre de los novios y fecha.",
+            },
+            {
+                number: "04",
+                title: "Presentación VIP",
+                desc: "Entrega en marco flotante con su peana, en el color (blanco o negro) que elijáis.",
+            },
+        ]
+    }
+} as const;
+
+const t = copies[locale];
+
+const seo = {
+    title: t.title,
+    description: t.description,
+    canonical: isEs ? "/bodas" : "/en/weddings",
+    alternates: [
+        {href: "/bodas", hrefLang: "es"},
+        {href: "/en/weddings", hrefLang: "en"},
+    ],
+};
+---
+
+<Layout content={{title: t.title}} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+
+    <main class="relative overflow-x-hidden">
+        <!-- Hero Section Adaptada -->
+        <section class="py-12 md:py-24 bg-white">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+                    <div class="md:col-span-7">
+                        <h1 class="text-4xl md:text-[64px] font-medium tracking-tight mb-6 leading-tight">
+                            {t.heroTitle}
+                        </h1>
+                        <p class="text-lg md:text-[20px] font-light leading-relaxed max-w-prose mb-8 text-gray-600">
+                            {t.heroDesc}
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <a href="https://wa.me/34611848259" class={buttonVariants({size: "lg"})} target="_blank">
+                                {t.ctaContact}
+                            </a>
+                            <a href="#detalles" class={buttonVariants({size: "lg", variant: "outline"})}>
+                                {isEs ? 'Saber más' : 'Learn more'}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-5">
+                        <div class="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5] bg-gray-100 flex items-center justify-center">
+                            <!-- Aquí iría la imagen del producto final: LEGO + Madera + Marco Flotante -->
+                            <img
+                                    src="/wedding-product.jpg"
+                                    alt="LEGO Wedding Favor in Floating Frame"
+                                    class="w-full h-full object-cover"
+                                    onerror="this.src='https://placehold.co/600x800?text=Lego+Wedding+Product'"
+                            />
+                            <div class="absolute bottom-4 left-4 right-4 bg-white/80 backdrop-blur p-4 rounded-xl border border-white/20">
+                                <p class="text-sm font-medium text-center">{t.frameTitle}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Showcase enfocado a bodas -->
+        <div class="container mx-auto px-4 md:px-6">
+            <MemoryHighlight
+                    locale={locale}
+                    overline={isEs ? "UN DÍA INOLVIDABLE" : "AN UNFORGETTABLE DAY"}
+                    title={t.memoryTitle}
+                    description={t.memoryDesc}
+            />
+        </div>
+
+        <!-- Detalles del Servicio -->
+        <section id="detalles" class="py-16 md:py-24 bg-[#F1EEFF]">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl md:text-4xl font-medium mb-4">{t.howTitle}</h2>
+                    <p class="text-gray-600 mb-8">{isEs ? 'Nos encargamos de todo el proceso para que vosotros solo disfrutéis de vuestro día.' : 'We take care of the entire process so you can just enjoy your day.'}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {t.steps.map((step) => (
+                            <div class="bg-white p-8 rounded-2xl border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="text-primary font-bold text-xl mb-4">{step.number}</div>
+                                <h3 class="text-xl font-semibold mb-3">{step.title}</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
+                            </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Grabado y Marco -->
+        <section class="py-16 md:py-32 bg-white overflow-hidden">
+            <div class="container mx-auto px-4 md:px-6">
+                <!-- Grabado Personalizado -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center mb-24 md:mb-40">
+                    <div class="relative group">
+                        <div class="absolute -inset-4 bg-purple-50 rounded-[40px] -rotate-2 group-hover:rotate-0 transition-transform duration-500"></div>
+                        <img
+                                src="/wedding-engraving.jpg"
+                                alt="Custom laser engraving on wood"
+                                class="relative rounded-3xl shadow-2xl w-full z-10 transform transition-transform duration-500 group-hover:scale-[1.02]"
+                                onerror="this.src='https://placehold.co/800x600?text=Custom+Engraving'"
+                        />
+                        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+                    </div>
+                    <div class="relative z-20">
+                        <div class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-primary uppercase bg-purple-50 rounded-full">
+                            {isEs ? 'Artesanía Digital' : 'Digital Craftsmanship'}
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-medium mb-6 leading-tight">{t.engravingTitle}</h2>
+                        <div class="w-20 h-1.5 bg-primary mb-8 rounded-full"></div>
+                        <p class="text-xl text-gray-600 font-light leading-relaxed">
+                            {t.engravingDesc}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Marco Flotante -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+                    <div class="lg:order-2 relative group">
+                        <div class="absolute -inset-4 bg-gray-50 rounded-[40px] rotate-2 group-hover:rotate-0 transition-transform duration-500"></div>
+                        <img
+                                src="/wedding-frame.jpg"
+                                alt="Floating frame in black or white"
+                                class="relative rounded-3xl shadow-2xl w-full z-10 transform transition-transform duration-500 group-hover:scale-[1.02]"
+                                onerror="this.src='https://placehold.co/800x600?text=Floating+Frame'"
+                        />
+                        <div class="absolute -top-6 -left-6 w-32 h-32 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+                    </div>
+                    <div class="lg:order-1 relative z-20">
+                        <div class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-gray-500 uppercase bg-gray-50 rounded-full">
+                            {isEs ? 'Presentación Premium' : 'Premium Presentation'}
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-medium mb-6 leading-tight">{t.frameTitle}</h2>
+                        <div class="w-20 h-1.5 bg-gray-200 mb-8 rounded-full"></div>
+                        <p class="text-xl text-gray-600 font-light leading-relaxed">
+                            {t.frameDesc}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section class="py-20 bg-primary text-white text-center">
+            <div class="container mx-auto px-4 md:px-6">
+                <h2 class="text-3xl md:text-5xl font-medium mb-8">
+                    {isEs ? '¿Quieres un presupuesto personalizado para tu boda?' : 'Want a personalized quote for your wedding?'}
+                </h2>
+                <p class="text-xl mb-10 opacity-90 max-w-2xl mx-auto">
+                    {isEs ? 'Cuéntanos cuántos invitados sois y la fecha del evento. Te responderemos en menos de 24 horas.' : 'Tell us how many guests you have and the date of the event. We will get back to you in less than 24 hours.'}
+                </p>
+                <a href="https://wa.me/34611848259"
+                   class={buttonVariants({
+                       size: "lg",
+                       variant: "secondary"
+                   }) + " !bg-white !text-primary hover:!bg-gray-100 transition-colors font-semibold text-lg px-12 py-4 rounded-full shadow-xl h-auto"}
+                   target="_blank">
+                    {t.ctaContact}
+                </a>
+            </div>
+        </section>
+
+        <FAQSection locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>
+
+<style>
+    /* Estilos adicionales si fueran necesarios */
+</style>
