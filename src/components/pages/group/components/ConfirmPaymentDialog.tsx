@@ -8,9 +8,12 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
+    Alert,
+    AlertDescription,
+    AlertTitle,
     Button,
 } from '@/components/ui';
-import {Coins} from 'lucide-react';
+import {AlertTriangle, Coins} from 'lucide-react';
 
 interface ConfirmPaymentDialogProps {
     open: boolean;
@@ -92,6 +95,14 @@ export function ConfirmPaymentDialog({
                         </div>
                     </div>
                 </div>
+
+                <Alert className="mb-4 border-amber-200 bg-amber-50 text-amber-950">
+                    <AlertTriangle className="h-4 w-4"/>
+                    <AlertTitle>{t('checkout.confirm_payment.person_only_warning_title')}</AlertTitle>
+                    <AlertDescription className="text-amber-900">
+                        {t('checkout.confirm_payment.person_only_warning')}
+                    </AlertDescription>
+                </Alert>
 
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isProcessing}>

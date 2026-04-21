@@ -281,6 +281,9 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
                                        accept="image/*" onChange={handleFileChange}
                                        className="hidden"/>
                             </div>
+                            <p className="mt-2 text-xs leading-snug text-muted-foreground">
+                                {t('group.imageRequirements')}
+                            </p>
                         </div>
 
                         {/* Right: Name + Description stacked compactly */}
