@@ -1,0 +1,77 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "Custom LEGO Gifts for Couples | Anniversary Gift From a Photo | Brickify",
+    description: "Create a custom LEGO-style couple gift from a photo. Ideal for anniversaries, Valentine's Day and meaningful keepsakes.",
+    canonical: "/custom-lego-gifts-for-couples",
+    alternates: [
+        {href: "/custom-lego-gifts-for-couples", hrefLang: "x-default"},
+        {href: "/custom-lego-gifts-for-couples", hrefLang: "en"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "Custom LEGO Gifts for Couples", url: "/custom-lego-gifts-for-couples"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "A keepsake for two",
+    title: "Create a custom LEGO®-style gift for couples from a photo",
+    description: "Turn one or two photos into lookalike minifigs with official parts lists. A fun anniversary, Valentine's or just-because gift that feels personal.",
+    ctas: [
+        {label: "Sign in to process", href: "/login"},
+        {label: "See price per image", href: "/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Great for anniversaries", description: "Works as a meaningful gift without needing a huge budget."},
+    {title: "Looks like both of you", description: "Closest official hair, face, torso and legs chosen from the photo."},
+    {title: "Easy to shop", description: "Get part references and buy links without digging through catalogs."},
+    {title: "Easy to display", description: "Looks good on a desk, shelf, work setup or memory box."},
+];
+
+const steps = [
+    {title: "Choose your photo", description: "Pick a clear front-facing image of one person or a couple."},
+    {title: "We match the parts", description: "Closest official pieces are selected, with alternates when available."},
+    {title: "Receive the list", description: "Get the official part references you need to buy and build."},
+    {title: "Build your keepsake", description: "Assemble the minifigs and turn a photo into something tangible."},
+];
+
+const sections = [
+    {
+        heading: "Perfect for anniversaries, Valentine's Day and couple gifts",
+        body: "A lookalike minifig gift feels more personal than generic merch, and more playful than standard framed-photo gifts.",
+        bullets: [
+            {title: "Anniversary surprise", description: "Turn a meaningful photo into something fun and displayable."},
+            {title: "Long-distance gift", description: "A good way to send a small, personal keepsake to your partner."},
+            {title: "Couple memory", description: "Use travel, wedding or everyday photos to make it more personal."},
+        ],
+    },
+    {
+        heading: "From photo to official parts list in minutes",
+        body: "Instead of manually comparing heads, torsos and hair pieces, Brickify narrows it down for you so you can actually build the gift.",
+        bullets: [
+            {title: "Official parts", description: "Uses official LEGO® parts references and shopping links."},
+            {title: "Backups included", description: "Alternatives reduce friction if stock changes."},
+            {title: "Independent service", description: "Brickify is not affiliated with LEGO® or the LEGO Group."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

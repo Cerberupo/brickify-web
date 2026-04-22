@@ -1,0 +1,66 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "LEGO Birthday Gift Ideas That Feel Personal | Brickify",
+    description: "Birthday gift ideas using personalized LEGO-style minifigs from a photo, with official parts lists and practical ways to make the gift feel personal.",
+    canonical: "/blog/lego-birthday-gift-ideas",
+    alternates: [
+        {href: "/blog/lego-birthday-gift-ideas", hrefLang: "x-default"},
+        {href: "/blog/lego-birthday-gift-ideas", hrefLang: "en"},
+    ],
+};
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6 blog-prose">
+                <a href="/blog" class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4"><span aria-hidden="true">←</span>Back</a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Home', href: '/en'},
+                    {label: 'Blog', href: '/blog'},
+                    {label: 'LEGO birthday gift ideas'}
+                ]}/>
+                <h1 class="!mt-0">LEGO birthday gift ideas that feel personal</h1>
+                <p class="text-neutral-700">If you want a birthday gift that feels personal without defaulting to something generic, a lookalike minifig is a strong option. It is playful, displayable and easy to customize from a photo.</p>
+
+                <h2>Why a personalized minifig works for birthdays</h2>
+                <ul>
+                    <li>It feels custom instead of mass-produced.</li>
+                    <li>It is fun for LEGO fans, but still works for casual fans too.</li>
+                    <li>It turns a memory or selfie into something physical they can keep.</li>
+                </ul>
+
+                <h2>Good occasions for this type of gift</h2>
+                <ul>
+                    <li>Partner or spouse birthdays</li>
+                    <li>Friends who already collect LEGO sets</li>
+                    <li>Parents who appreciate quirky, personal gifts</li>
+                    <li>Kids and teenagers who want something unique</li>
+                </ul>
+
+                <h2>Use the best possible photo</h2>
+                <p>A clear, front-facing photo usually gives the best result. Good lighting and visible hair help a lot when matching the closest official pieces.</p>
+
+                <h2>Save time with an official parts list</h2>
+                <p>Instead of browsing dozens of heads, torsos and hairstyles manually, Brickify generates the closest official parts list and includes alternates if stock changes.</p>
+
+                <h2>Pair it with a message or small display</h2>
+                <p>You can make the gift feel even stronger by pairing the minifig with a small note, gift box or desk stand. The appeal is not just the parts list; it is the personal reveal.</p>
+
+                <div class="not-prose mt-10 flex flex-wrap gap-3">
+                    <a href="/lego-birthday-gift" class="inline-flex items-center justify-center rounded-full bg-white text-black border border-neutral-200 px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">See birthday gift page</a>
+                    <a href="/login" class="inline-flex items-center justify-center rounded-full bg-white text-black border border-neutral-200 px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">Sign in to process</a>
+                </div>
+            </div>
+        </article>
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

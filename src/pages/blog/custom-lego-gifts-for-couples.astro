@@ -1,0 +1,60 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import Breadcrumbs from "@/components/common/Breadcrumbs.astro";
+import FooterSection from "@/components/home/FooterSection.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "Custom LEGO Gifts for Couples and Anniversaries | Brickify",
+    description: "Ideas for using personalized LEGO-style minifigs as a couple gift or anniversary gift, built from a photo with official parts references.",
+    canonical: "/blog/custom-lego-gifts-for-couples",
+    alternates: [
+        {href: "/blog/custom-lego-gifts-for-couples", hrefLang: "x-default"},
+        {href: "/blog/custom-lego-gifts-for-couples", hrefLang: "en"},
+    ],
+};
+---
+
+<Layout content={{title: seo.title}} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <article class="py-14 md:py-20 bg-white">
+            <div class="container mx-auto px-4 md:px-6 blog-prose">
+                <a href="/blog" class="not-prose inline-flex items-center gap-1 text-sm text-neutral-600 hover:underline mb-4"><span aria-hidden="true">←</span>Back</a>
+                <Breadcrumbs class="mb-4" items={[
+                    {label: 'Home', href: '/en'},
+                    {label: 'Blog', href: '/blog'},
+                    {label: 'Custom LEGO gifts for couples'}
+                ]}/>
+                <h1 class="!mt-0">Custom LEGO gifts for couples and anniversaries</h1>
+                <p class="text-neutral-700">A couple gift works best when it feels personal, playful and easy to keep. A lookalike minifig made from a photo hits that balance really well.</p>
+
+                <h2>When this gift works best</h2>
+                <ul>
+                    <li>Anniversaries</li>
+                    <li>Valentine's Day</li>
+                    <li>Long-distance relationships</li>
+                    <li>Newly married couples</li>
+                    <li>Just-because gifts with a shared photo or memory</li>
+                </ul>
+
+                <h2>Choose a photo with character</h2>
+                <p>A wedding shot, travel photo or everyday picture with a clear face and hairstyle can all work. You do not need a studio photo, just something readable and front-facing.</p>
+
+                <h2>Why it beats a generic novelty gift</h2>
+                <p>It is not only a fun idea. It is also something they can display on a shelf or desk and associate with a real memory.</p>
+
+                <h2>Keep the process simple</h2>
+                <p>Instead of trying to manually identify heads, torsos and hairstyles, you can generate the closest official parts list automatically and build from there.</p>
+
+                <div class="not-prose mt-10 flex flex-wrap gap-3">
+                    <a href="/custom-lego-gifts-for-couples" class="inline-flex items-center justify-center rounded-full bg-white text-black border border-neutral-200 px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">See couples gift page</a>
+                    <a href="/login" class="inline-flex items-center justify-center rounded-full bg-white text-black border border-neutral-200 px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-md transition">Sign in to process</a>
+                </div>
+            </div>
+        </article>
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>
