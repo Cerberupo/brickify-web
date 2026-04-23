@@ -8,7 +8,7 @@ import type {SupportedLocale} from "@/lib/locale";
 const locale: SupportedLocale = 'en';
 const seo = {
     title: "Brickify Blog | Tips for personalized LEGO®-style gifts",
-    description: "Guides and ideas to turn photos into LEGO®-style minifigs for weddings, corporate gifts and personal surprises.",
+    description: "Guides and ideas to turn photos into LEGO®-style figures for weddings, corporate gifts and personal surprises.",
     canonical: "/blog",
     alternates: [
         {href: "/blog", hrefLang: "x-default"},
@@ -19,7 +19,21 @@ const seo = {
 
 const posts = [
     {
-        title: "How to turn a photo into a LEGO minifigure",
+        title: "LEGO birthday gift ideas that feel personal",
+        desc: "A practical guide to turning a photo into a personalized LEGO-style birthday gift that people actually keep.",
+        href: "/blog/lego-birthday-gift-ideas",
+        date: "2026-04-22",
+        readMin: 5,
+    },
+    {
+        title: "Custom LEGO gifts for couples and anniversaries",
+        desc: "How to use lookalike LEGO-style figures as a couple gift, anniversary surprise or meaningful keepsake.",
+        href: "/blog/custom-lego-gifts-for-couples",
+        date: "2026-04-22",
+        readMin: 5,
+    },
+    {
+        title: "How to turn a photo into a LEGO-style figure",
         desc: "Step-by-step to get the closest official parts list from a photo, with backups for stock.",
         href: "/blog/how-to-turn-a-photo-into-a-lego-minifigure",
         date: "2025-11-20",
@@ -27,14 +41,14 @@ const posts = [
     },
     {
         title: "Best LEGO gifts for weddings",
-        desc: "Ideas to wow guests and the wedding party with lookalike minifigs and clear pricing.",
+        desc: "Ideas to wow guests and the wedding party with lookalike LEGO-style figures and clear pricing.",
         href: "/blog/best-lego-gifts-for-weddings",
         date: "2025-11-22",
         readMin: 5,
     },
     {
         title: "LEGO gifts for coworkers and teams",
-        desc: "Corporate-friendly ways to use personalized minifigs for events, swag and onboarding.",
+        desc: "Corporate-friendly ways to use personalized LEGO-style figures for events, swag and onboarding.",
         href: "/blog/lego-gifts-for-coworkers",
         date: "2025-11-24",
         readMin: 5,
@@ -48,14 +62,14 @@ const posts = [
     },
     {
         title: "5 Gift Ideas with Custom LEGO Minifigures",
-        desc: "Discover unique and creative gift ideas using personalized LEGO-style minifigures from photos.",
+        desc: "Discover unique and creative gift ideas using personalized LEGO-style figures from photos.",
         href: "/blog/5-gift-ideas-with-custom-lego-minifigures",
         date: "2026-01-20",
         readMin: 5,
     },
     {
         title: "The Ultimate Guide to Combining LEGO Pieces",
-        desc: "Learn how to select and combine official LEGO parts to create a minifigure that matches your photo perfectly.",
+        desc: "Learn how to select and combine official LEGO parts to create a figure that matches your photo perfectly.",
         href: "/blog/ultimate-guide-to-combining-lego-pieces-from-photo",
         date: "2026-01-24",
         readMin: 7,
@@ -77,7 +91,15 @@ const formatDate = (iso: string) => new Intl.DateTimeFormat('en-US', {
                 <h1 class="text-3xl md:text-[40px] font-semibold leading-tight mb-3">Guides and ideas to create
                     LEGO®-style lookalikes</h1>
                 <p class="text-base md:text-lg text-neutral-700 max-w-3xl">Learn how to turn photos into lookalike
-                    minifigs and find wedding, corporate and gift ideas. Not affiliated with LEGO®.</p>
+                    figures and find wedding, corporate and gift ideas. Not affiliated with LEGO®.</p>
+                <div class="mt-6 flex flex-wrap gap-3 text-sm">
+                    <a href="/custom-lego-minifigure-photo" class="inline-flex rounded-full border border-neutral-300 px-3 py-1.5 hover:bg-white">Photo to LEGO-style figure</a>
+                    <a href="/personalized-lego-gift" class="inline-flex rounded-full border border-neutral-300 px-3 py-1.5 hover:bg-white">Personalized gift</a>
+                    <a href="/lego-wedding-favors" class="inline-flex rounded-full border border-neutral-300 px-3 py-1.5 hover:bg-white">Wedding favors</a>
+                    <a href="/corporate-lego-gifts" class="inline-flex rounded-full border border-neutral-300 px-3 py-1.5 hover:bg-white">Corporate gifts</a>
+                    <a href="/lego-birthday-gift" class="inline-flex rounded-full border border-neutral-300 px-3 py-1.5 hover:bg-white">Birthday gifts</a>
+                    <a href="/custom-lego-gifts-for-couples" class="inline-flex rounded-full border border-neutral-300 px-3 py-1.5 hover:bg-white">Couples & anniversaries</a>
+                </div>
             </div>
         </section>
 
