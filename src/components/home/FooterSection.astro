@@ -29,6 +29,7 @@ const copies = {
             gift: "Regalo",
             graduation: "Graduación",
             mothersDay: "Día de la Madre",
+            fathersDay: "Día del Padre",
         },
         legalRow: ["Política de privacidad", "Política de privacidad", "Política de privacidad", "Política de privacidad"],
         disclaimer:
@@ -57,6 +58,7 @@ const copies = {
             gift: "Personalized gift",
             graduation: "Graduation gift",
             mothersDay: "Mother's Day gift",
+            fathersDay: "Father's Day gift",
         },
         legalRow: ["Privacy policy", "Privacy policy", "Privacy policy", "Privacy policy"],
         disclaimer:
@@ -78,6 +80,7 @@ const corporateHref = locale === 'es' ? '/es/regalos-empresa-lego-personalizados
 const giftHref = locale === 'es' ? '/es/regalo-lego-personalizado' : '/personalized-lego-gift';
 const graduationHref = locale === 'es' ? '/es/regalo-graduacion-lego-personalizado' : '/lego-graduation-gift';
 const mothersDayHref = locale === 'es' ? '/es/regalo-lego-dia-de-la-madre' : '/mothers-day-lego-gift';
+const fathersDayHref = locale === 'es' ? '/es/regalo-lego-dia-del-padre' : '/fathers-day-lego-gift';
 ---
 <style is:global>
     @reference "../../styles/global.css";
@@ -133,6 +136,7 @@ const mothersDayHref = locale === 'es' ? '/es/regalo-lego-dia-de-la-madre' : '/m
                         <li><a href={giftHref} class="hover:underline">{t.links.gift}</a></li>
                         <li><a href={graduationHref} class="hover:underline">{t.links.graduation}</a></li>
                         <li><a href={mothersDayHref} class="hover:underline">{t.links.mothersDay}</a></li>
+                        <li><a href={fathersDayHref} class="hover:underline">{t.links.fathersDay}</a></li>
                     </ul>
                 </div>
 
