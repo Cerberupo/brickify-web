@@ -681,6 +681,9 @@ export function GroupPage() {
                         ) : null}
                     />
                     {/** Precio por persona ahora se calcula directamente en el resumen inferior (OrderSummaryCard) */}
+                    <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        {t('group.individualPhotosNote')}
+                    </div>
                 </div>
             </div>
 
