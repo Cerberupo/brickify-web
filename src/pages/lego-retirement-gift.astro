@@ -1,0 +1,87 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "LEGO®-style Retirement Gift from a Photo | Brickify",
+    description: "Turn a retirement photo into a personalized LEGO®-style gift. Get the closest official parts list in minutes for a funny, display-worthy retirement keepsake.",
+    canonical: "/lego-retirement-gift",
+    alternates: [
+        {href: "/lego-retirement-gift", hrefLang: "x-default"},
+        {href: "/lego-retirement-gift", hrefLang: "en"},
+        {href: "/es/regalo-jubilacion-lego-personalizado", hrefLang: "es"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "Retirement Gift", url: "/lego-retirement-gift"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "A retirement gift that feels personal, not generic",
+    title: "Create a LEGO®-style retirement gift from a favorite photo",
+    description: "Upload a clear photo and Brickify will match the closest official pieces for a lookalike figure. Great for retirement parties, coworker send-offs, and desk keepsakes that feel more thoughtful than a generic farewell gift.",
+    ctas: [
+        {label: "Sign in to process", href: "/login"},
+        {label: "See pricing", href: "/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Built from a real photo", description: "Use a portrait, office photo, event snapshot, or retirement-party picture that already means something."},
+    {title: "Ideal for coworker send-offs", description: "Works for team gifts, office goodbyes, and managers who want something more memorable than a standard card."},
+    {title: "Fast enough for party planning", description: "Most parts lists are ready in under a minute, which helps when retirement planning happens late."},
+    {title: "Official-part shopping list", description: "Get reference codes plus backup options so it is easier to source the final build."},
+];
+
+const steps = [
+    {title: "Choose a clear retirement photo", description: "Front-facing images with recognisable hair, glasses, and outfit details usually give the strongest match."},
+    {title: "We match the closest official parts", description: "Brickify selects the nearest hair, head, torso, and legs, with alternatives when several options work."},
+    {title: "Receive the shopping list", description: "You get ready-to-buy part references instead of searching piece catalogs manually."},
+    {title: "Build the keepsake", description: "Assemble the figure and use it as a retirement gift, desk piece, or party keepsake."},
+];
+
+const sections = [
+    {
+        heading: "Why this works especially well for retirement",
+        body: "Retirement gifts often drift toward mugs, plaques, or generic novelty items. A lookalike LEGO-style figure feels more personal because it starts from the actual person and can stay on display long after the party.",
+        bullets: [
+            {title: "Personal", description: "It reflects a real colleague, manager, teacher, or family member instead of a generic template."},
+            {title: "Lighthearted", description: "It lands well when you want something funny and warm without becoming cheesy."},
+            {title: "Display-worthy", description: "The finished figure works well on a shelf, office desk, or memory corner at home."},
+        ],
+    },
+    {
+        heading: "Best retirement use cases",
+        body: "This page targets retirement gift intent, but it also fits adjacent search journeys around farewell gifts, coworker gifts, and personalised office keepsakes.",
+        bullets: [
+            {title: "Coworker send-offs", description: "A stronger group-gift option when a team wants something more personal than a signed card."},
+            {title: "Managers and mentors", description: "A memorable way to mark the end of a long career or thank someone for years of support."},
+            {title: "Family celebrations", description: "Useful for retirement dinners and milestone celebrations where one photo says a lot."},
+        ],
+    },
+    {
+        heading: "Independent service, official-parts workflow",
+        body: "Brickify is an independent service that helps you find the closest official parts for a lookalike build. LEGO® is a trademark of the LEGO Group, which does not sponsor or endorse this service.",
+        bullets: [
+            {title: "No catalog digging", description: "Skip the slow search across heads, torsos, legs, hair pieces, and accessories."},
+            {title: "Stock-aware backups", description: "Alternatives reduce the chance of a retirement gift being delayed by one missing part."},
+            {title: "Photo-first process", description: "Start from the person you are celebrating and build from there."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

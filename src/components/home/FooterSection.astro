@@ -29,6 +29,7 @@ const copies = {
             gift: "Regalo",
             graduation: "Graduación",
             anniversary: "Aniversario",
+            retirement: "Jubilación",
             mothersDay: "Día de la Madre",
             fathersDay: "Día del Padre",
         },
@@ -59,6 +60,7 @@ const copies = {
             gift: "Personalized gift",
             graduation: "Graduation gift",
             anniversary: "Anniversary gift",
+            retirement: "Retirement gift",
             mothersDay: "Mother's Day gift",
             fathersDay: "Father's Day gift",
         },
@@ -82,6 +84,7 @@ const corporateHref = locale === 'es' ? '/es/regalos-empresa-lego-personalizados
 const giftHref = locale === 'es' ? '/es/regalo-lego-personalizado' : '/personalized-lego-gift';
 const graduationHref = locale === 'es' ? '/es/regalo-graduacion-lego-personalizado' : '/lego-graduation-gift';
 const anniversaryHref = locale === 'es' ? '/es/regalo-aniversario-lego-personalizado' : '/lego-anniversary-gift';
+const retirementHref = locale === 'es' ? '/es/regalo-jubilacion-lego-personalizado' : '/lego-retirement-gift';
 const mothersDayHref = locale === 'es' ? '/es/regalo-lego-dia-de-la-madre' : '/mothers-day-lego-gift';
 const fathersDayHref = locale === 'es' ? '/es/regalo-lego-dia-del-padre' : '/fathers-day-lego-gift';
 ---
@@ -139,6 +142,7 @@ const fathersDayHref = locale === 'es' ? '/es/regalo-lego-dia-del-padre' : '/fat
                         <li><a href={giftHref} class="hover:underline">{t.links.gift}</a></li>
                         <li><a href={graduationHref} class="hover:underline">{t.links.graduation}</a></li>
                         <li><a href={anniversaryHref} class="hover:underline">{t.links.anniversary}</a></li>
+                        <li><a href={retirementHref} class="hover:underline">{t.links.retirement}</a></li>
                         <li><a href={mothersDayHref} class="hover:underline">{t.links.mothersDay}</a></li>
                         <li><a href={fathersDayHref} class="hover:underline">{t.links.fathersDay}</a></li>
                     </ul>
