@@ -1,0 +1,87 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalo LEGO® de aniversario con foto | Brickify",
+    description: "Convierte una foto de pareja en un regalo estilo LEGO® personalizado para aniversario. Obtén en minutos la lista de piezas oficiales más parecida para un recuerdo con valor sentimental.",
+    canonical: "/es/regalo-aniversario-lego-personalizado",
+    alternates: [
+        {href: "/lego-anniversary-gift", hrefLang: "x-default"},
+        {href: "/en/lego-anniversary-gift", hrefLang: "en"},
+        {href: "/es/regalo-aniversario-lego-personalizado", hrefLang: "es"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Regalo de aniversario", url: "/es/regalo-aniversario-lego-personalizado"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "Un regalo de aniversario que sale de un recuerdo real",
+    title: "Crea un regalo estilo LEGO® para aniversario a partir de una foto especial",
+    description: "Sube una foto de pareja y Brickify buscará las piezas oficiales más parecidas para montar un recuerdo lookalike. Ideal para aniversarios, bodas y fechas importantes en las que un regalo genérico se queda corto.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precios", href: "/es/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Basado en una foto real de pareja", description: "Puedes usar una foto de boda, viaje, compromiso o una imagen cotidiana que tenga significado para ambos."},
+    {title: "Más personal que un regalo genérico", description: "Se siente cuidado y original sin necesidad de encargar una ilustración a medida ni gastar demasiado."},
+    {title: "Lista oficial lista para comprar", description: "Recibes referencias de piezas oficiales y alternativas cuando cambia el stock."},
+    {title: "Queda bien expuesto", description: "Funciona como recuerdo para estantería, escritorio o rincón de fotos después de la celebración."},
+];
+
+const steps = [
+    {title: "Elige una foto clara", description: "Las fotos frontales con pelo, cara y ropa reconocibles suelen dar el mejor resultado."},
+    {title: "Buscamos las piezas oficiales más cercanas", description: "Brickify selecciona pelo, cabeza, torso y piernas para cada persona, con alternativas cuando hay varias opciones buenas."},
+    {title: "Recibe la lista de piezas", description: "Obtienes referencias listas para comprar sin tener que revisar catálogos de piezas manualmente."},
+    {title: "Monta el recuerdo", description: "Construye las figuras y convierte una memoria compartida en un regalo que siga presente después del aniversario."},
+];
+
+const sections = [
+    {
+        heading: "Por qué la intención de búsqueda de aniversario es distinta",
+        body: "Quien busca un regalo de aniversario suele querer algo íntimo, reconocible y fácil de preparar. Un regalo lookalike estilo LEGO encaja bien porque parte de una foto compartida, no de una plantilla genérica.",
+        bullets: [
+            {title: "Significativo", description: "Puede representar un viaje, una boda, una cita o un momento cotidiano con valor sentimental."},
+            {title: "Original", description: "Se siente más creativo que los regalos grabados de siempre o el merchandising genérico."},
+            {title: "Para conservar", description: "La figura terminada se puede dejar en una balda, escritorio o rincón de recuerdos."},
+        ],
+    },
+    {
+        heading: "Mejores usos para este regalo",
+        body: "La landing está pensada para búsquedas de aniversario, pero también encaja con búsquedas cercanas sobre regalos para parejas, aniversarios de boda y recuerdos personalizados hechos desde una foto.",
+        bullets: [
+            {title: "Aniversarios de pareja", description: "Una forma sencilla de celebrar un año, cinco años o cualquier otra fecha importante."},
+            {title: "Aniversarios de boda", description: "Muy útil cuando quieres algo más personal que flores o una impresión enmarcada."},
+            {title: "Parejas a distancia", description: "Un recuerdo compacto que sigue estando conectado a una memoria real compartida."},
+        ],
+    },
+    {
+        heading: "Servicio independiente con flujo basado en piezas oficiales",
+        body: "Brickify es un servicio independiente que te ayuda a encontrar las piezas oficiales más cercanas para un lookalike. LEGO® es una marca del Grupo LEGO, que no patrocina ni respalda este servicio.",
+        bullets: [
+            {title: "Sin buscar en catálogos", description: "Evitas revisar manualmente cabezas, torsos, piernas y peinados."},
+            {title: "Con alternativas por stock", description: "Las opciones de respaldo reducen la posibilidad de retrasos por una pieza agotada."},
+            {title: "Proceso centrado en la foto", description: "Empiezas por el recuerdo que quieres celebrar y no por piezas sueltas."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>
