@@ -1,0 +1,87 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalo LEGO® para el Día de la Madre con Foto | Brickify",
+    description: "Convierte una foto de tu madre en un regalo estilo LEGO® personalizado para el Día de la Madre. Obtén la lista de piezas oficiales más parecida en minutos para un recuerdo realmente personal.",
+    canonical: "/es/regalo-lego-dia-de-la-madre",
+    alternates: [
+        {href: "/mothers-day-lego-gift", hrefLang: "x-default"},
+        {href: "/en/mothers-day-lego-gift", hrefLang: "en"},
+        {href: "/es/regalo-lego-dia-de-la-madre", hrefLang: "es"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Regalo Día de la Madre", url: "/es/regalo-lego-dia-de-la-madre"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "Un regalo del Día de la Madre que sí se siente personal",
+    title: "Crea un regalo estilo LEGO® para el Día de la Madre a partir de cualquier foto",
+    description: "Sube una foto clara y Brickify buscará las piezas oficiales más parecidas para montar una figura lookalike. Ideal para madres, abuelas y recuerdos familiares que duran más que un ramo.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precios", href: "/es/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Basado en una foto real", description: "Hacemos matching de pelo, cara, colores de ropa y detalles clave para que el resultado se reconozca."},
+    {title: "Pensado para regalar", description: "Una alternativa más original que los regalos genéricos del Día de la Madre, sobre todo en familias fans de LEGO."},
+    {title: "También vale para quien va tarde", description: "La mayoría de listas se preparan en menos de un minuto, útil si el Día de la Madre te pilla encima."},
+    {title: "Lista para comprar", description: "Recibes referencias oficiales y opciones alternativas para facilitar el montaje final."},
+];
+
+const steps = [
+    {title: "Sube una foto especial", description: "Elige una imagen frontal, bien iluminada y con el peinado o la ropa que quieras conservar en la figura."},
+    {title: "Buscamos las piezas oficiales más cercanas", description: "Brickify selecciona pelo, cabeza, torso y piernas, con alternativas cuando hay varias opciones buenas."},
+    {title: "Recibe la lista de piezas", description: "Obtienes referencias listas para comprar en marketplaces oficiales o compatibles."},
+    {title: "Móntalo y regálalo", description: "Construye la figura y conviértela en una sorpresa, recuerdo o detalle de escritorio para el Día de la Madre."},
+];
+
+const sections = [
+    {
+        heading: "Por qué funciona tan bien para el Día de la Madre",
+        body: "Muchos regalos del Día de la Madre se parecen demasiado entre sí. Una figura lookalike se siente más especial porque parte de un recuerdo real y lo convierte en algo digno de guardar.",
+        bullets: [
+            {title: "Emotivo", description: "Captura una cara conocida, un peinado o un look de una foto real."},
+            {title: "Para conservar", description: "Queda bien en una estantería, en una caja de recuerdos o junto a una tarjeta."},
+            {title: "Muy familiar", description: "Funciona para madres, abuelas o cualquier figura materna de la familia."},
+        ],
+    },
+    {
+        heading: "Mejores usos para esta idea",
+        body: "Esta landing está pensada para búsquedas con intención de regalo del Día de la Madre, pero también encaja con otras búsquedas de regalo personalizado para madres y recuerdos familiares.",
+        bullets: [
+            {title: "Hijos y parejas", description: "Una opción más cálida que los regalos de tienda o las flores de última hora."},
+            {title: "Abuelas", description: "Una figura personalizada que se siente especial sin encargar ilustración a medida."},
+            {title: "Recuerdos familiares", description: "Usa un retrato favorito, una foto de celebración o una imagen cotidiana que le represente bien."},
+        ],
+    },
+    {
+        heading: "Servicio independiente con enfoque en piezas oficiales",
+        body: "Brickify es un servicio independiente que te ayuda a encontrar las piezas oficiales más cercanas para un lookalike. LEGO® es una marca del Grupo LEGO, que no patrocina ni respalda este servicio.",
+        bullets: [
+            {title: "Sin buscar en catálogos", description: "Evitas recorrer manualmente cientos de cabezas, torsos y peinados."},
+            {title: "Con alternativas por stock", description: "Las opciones de respaldo reducen retrasos si una pieza se agota antes del regalo."},
+            {title: "Flujo centrado en la foto", description: "Empiezas por la persona, no por piezas al azar."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

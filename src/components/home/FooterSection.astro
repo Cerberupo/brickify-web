@@ -23,10 +23,15 @@ const copies = {
             privacy: "Política de privacidad",
             terms: "Términos de servicio",
             blog: "Blog",
-            customFig: "Minifig desde foto",
+            customFig: "Figura LEGO desde foto",
             wedding: "Bodas",
             corporate: "Empresa",
             gift: "Regalo",
+            graduation: "Graduación",
+            anniversary: "Aniversario",
+            retirement: "Jubilación",
+            mothersDay: "Día de la Madre",
+            fathersDay: "Día del Padre",
         },
         legalRow: ["Política de privacidad", "Política de privacidad", "Política de privacidad", "Política de privacidad"],
         disclaimer:
@@ -49,10 +54,15 @@ const copies = {
             privacy: "Privacy policy",
             terms: "Terms of Service",
             blog: "Blog",
-            customFig: "Custom minifig from photo",
+            customFig: "LEGO figure from photo",
             wedding: "Wedding favors",
             corporate: "Corporate gifts",
             gift: "Personalized gift",
+            graduation: "Graduation gift",
+            anniversary: "Anniversary gift",
+            retirement: "Retirement gift",
+            mothersDay: "Mother's Day gift",
+            fathersDay: "Father's Day gift",
         },
         legalRow: ["Privacy policy", "Privacy policy", "Privacy policy", "Privacy policy"],
         disclaimer:
@@ -72,6 +82,11 @@ const customHref = locale === 'es' ? '/es/minifig-lego-personalizada-foto' : '/c
 const weddingHref = locale === 'es' ? '/es/recuerdos-boda-lego-personalizados' : '/lego-wedding-favors';
 const corporateHref = locale === 'es' ? '/es/regalos-empresa-lego-personalizados' : '/corporate-lego-gifts';
 const giftHref = locale === 'es' ? '/es/regalo-lego-personalizado' : '/personalized-lego-gift';
+const graduationHref = locale === 'es' ? '/es/regalo-graduacion-lego-personalizado' : '/lego-graduation-gift';
+const anniversaryHref = locale === 'es' ? '/es/regalo-aniversario-lego-personalizado' : '/lego-anniversary-gift';
+const retirementHref = locale === 'es' ? '/es/regalo-jubilacion-lego-personalizado' : '/lego-retirement-gift';
+const mothersDayHref = locale === 'es' ? '/es/regalo-lego-dia-de-la-madre' : '/mothers-day-lego-gift';
+const fathersDayHref = locale === 'es' ? '/es/regalo-lego-dia-del-padre' : '/fathers-day-lego-gift';
 ---
 <style is:global>
     @reference "../../styles/global.css";
@@ -125,6 +140,11 @@ const giftHref = locale === 'es' ? '/es/regalo-lego-personalizado' : '/personali
                         <li><a href={weddingHref} class="hover:underline">{t.links.wedding}</a></li>
                         <li><a href={corporateHref} class="hover:underline">{t.links.corporate}</a></li>
                         <li><a href={giftHref} class="hover:underline">{t.links.gift}</a></li>
+                        <li><a href={graduationHref} class="hover:underline">{t.links.graduation}</a></li>
+                        <li><a href={anniversaryHref} class="hover:underline">{t.links.anniversary}</a></li>
+                        <li><a href={retirementHref} class="hover:underline">{t.links.retirement}</a></li>
+                        <li><a href={mothersDayHref} class="hover:underline">{t.links.mothersDay}</a></li>
+                        <li><a href={fathersDayHref} class="hover:underline">{t.links.fathersDay}</a></li>
                     </ul>
                 </div>
 

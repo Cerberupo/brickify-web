@@ -4,8 +4,8 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
-    title: "LEGO Figure From Photo | Personalized LEGO-Style Figure | Brickify",
-    description: "Turn a photo into a personalized LEGO-style figure with an official parts list, buying links, and stock-safe alternatives for each key piece.",
+    title: "LEGO Minifigure From Photo | One Person Per Photo | Brickify",
+    description: "Create a LEGO minifigure from a single-person photo with an official parts list, buying links, and stock-safe alternatives for each key piece.",
     canonical: "/custom-lego-minifigure-photo",
     alternates: [
         {href: "/custom-lego-minifigure-photo", hrefLang: "x-default"},
@@ -23,8 +23,8 @@ const seo = {
 
 const hero = {
     eyebrow: "From photo to exact parts list",
-    title: "Turn any photo into a LEGO®-style figure that actually looks like you",
-    description: "Upload your picture, we match the closest official pieces for hair, head, torso and legs, and send a ready-to-shop list with alternates in case stock changes.",
+    title: "Turn any photo into a LEGO®-style minifigure that actually looks like you",
+    description: "Upload a photo of one person, we match the closest official pieces for hair, head, torso and legs, and send a ready-to-shop list with alternates in case stock changes.",
     ctas: [
         {label: "Sign in to process", href: "/login"},
         {label: "See price per image", href: "/#precio", variant: "secondary"},
@@ -52,8 +52,8 @@ const highlights = [
 
 const steps = [
     {
-        title: "Upload a clear photo",
-        description: "Front-facing works best with good lighting."
+        title: "Upload a clear individual photo",
+        description: "Use one front-facing photo of one person only. Good lighting works best."
     },
     {
         title: "We match official pieces",
@@ -71,6 +71,7 @@ const sections = [
         heading: "Brickify does the heavy lifting for you",
         body: "Catalogs are massive and colors vary. We track availability, choose the closest parts, and give you a ready-to-buy list so you don’t waste hours.",
         bullets: [
+            {title: "One person per photo", description: "This flow works best with one individual photo. If you want several people, upload one separate photo for each person."},
             {title: "Ready fast", description: "Usually in less than a minute per person (24/7 service)."},
             {title: "Stock under control", description: "Alternates per piece so availability never stops you."},
             {
@@ -89,12 +90,12 @@ const sections = [
         ],
     },
     {
-        heading: "Useful next steps if you're comparing gift ideas",
-        body: "If you are planning a birthday surprise, wedding favor, or personalized present, these pages can help you choose the right angle before you upload photos.",
+        heading: "Useful next steps if you're comparing from-photo gift ideas",
+        body: "If you are planning a birthday surprise, wedding favor, or personalized present from a photo, these pages can help you choose the right angle before you upload images.",
         bullets: [
-            {title: "Birthday gifts", description: "See ideas on /lego-birthday-gift for one-person presents and quick wins."},
-            {title: "Personalized gifts", description: "Compare broader gift use cases on /personalized-lego-gift."},
-            {title: "Couples and anniversaries", description: "Use /custom-lego-gifts-for-couples for romantic or shared-photo ideas."},
+            {title: "Birthday gifts from a photo", description: "See one-person gift ideas and quick-win birthday angles.", href: "/lego-birthday-gift", linkLabel: "Explore birthday gift ideas"},
+            {title: "Personalized gifts from a photo", description: "Compare broader personalized gifting use cases before you upload.", href: "/personalized-lego-gift", linkLabel: "View personalized gift page"},
+            {title: "Couples and anniversaries from a photo", description: "Use the couples page for romantic, shared-photo and anniversary-friendly ideas.", href: "/custom-lego-gifts-for-couples", linkLabel: "See couples gift ideas"},
         ],
     },
 ];
