@@ -21,6 +21,7 @@ const copies = {
             contact: "Contacto",
             legalNotice: "Aviso legal",
             privacy: "Política de privacidad",
+            cookies: "Política de cookies",
             terms: "Términos de servicio",
             blog: "Blog",
             customFig: "Figura LEGO desde foto",
@@ -52,6 +53,7 @@ const copies = {
             contact: "Contact",
             legalNotice: "Legal notice",
             privacy: "Privacy policy",
+            cookies: "Cookie policy",
             terms: "Terms of Service",
             blog: "Blog",
             customFig: "LEGO figure from photo",
@@ -76,6 +78,7 @@ const aboutHref = locale === 'es' ? '/es/about' : '/en/about';
 const contactHref = locale === 'es' ? '/es/contact' : '/en/contact';
 const legalHref = locale === 'es' ? '/es/legal' : '/en/legal';
 const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
+const cookiesHref = locale === 'es' ? '/es/cookies' : '/en/cookies';
 const termsHref = locale === 'es' ? '/es/terms' : '/en/terms';
 const blogHref = locale === 'es' ? '/es/blog' : '/blog';
 const customHref = locale === 'es' ? '/es/minifig-lego-personalizada-foto' : '/custom-lego-minifigure-photo';
@@ -127,6 +130,7 @@ const fathersDayHref = locale === 'es' ? '/es/regalo-lego-dia-del-padre' : '/fat
                     <ul class="space-y-3 text-sm text-neutral-700">
                         <li><a href={legalHref} class="hover:underline">{t.links.legalNotice}</a></li>
                         <li><a href={privacyHref} class="hover:underline">{t.links.privacy}</a></li>
+                        <li><a href={cookiesHref} class="hover:underline">{t.links.cookies}</a></li>
                         <li><a href={termsHref} class="hover:underline">{t.links.terms}</a></li>
                     </ul>
                 </div>

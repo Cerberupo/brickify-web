@@ -17,6 +17,7 @@ const staticRoutes: RouteGroup[] = [
   { xDefault: '/about', en: '/en/about', es: '/es/about', changefreq: 'monthly', priority: 0.4 },
   { xDefault: '/contact', en: '/en/contact', es: '/es/contact', changefreq: 'monthly', priority: 0.4 },
   { xDefault: '/privacy', en: '/en/privacy', es: '/es/privacy', changefreq: 'yearly', priority: 0.2 },
+  { xDefault: '/cookies', en: '/en/cookies', es: '/es/cookies', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/terms-of-service', en: '/en/terms-of-service', es: '/es/terms', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/legal-notice', en: '/en/legal-notice', es: '/es/legal', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/refund-policy', en: '/en/refund-policy', es: '/es/refund-policy', changefreq: 'yearly', priority: 0.2 },
