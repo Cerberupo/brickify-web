@@ -1,0 +1,53 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import CookiesContent from "@/components/legal/CookiesContent.astro";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+const content = {title: locale === 'es' ? 'Brickify — Política de cookies' : 'Brickify — Cookie policy'};
+
+const descriptions = {
+    es: 'Consulta qué cookies usa Brickify, cuándo se activan y cómo cambiar tus preferencias de consentimiento.',
+    en: "Read which cookies Brickify uses, when they are activated, and how to change your consent preferences.",
+} as const;
+const keywords = {
+    es: 'cookies brickify, política de cookies, consentimiento cookies, google analytics cookies',
+    en: 'brickify cookies, cookie policy, cookie consent, google analytics cookies',
+} as const;
+
+const path = Astro.url?.pathname || '/cookies';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es/cookies' : (path.startsWith('/en') ? '/en/cookies' : '/cookies');
+const alternates = [
+    {href: '/cookies', hrefLang: 'x-default'},
+    {href: '/es/cookies', hrefLang: 'es'},
+    {href: '/en/cookies', hrefLang: 'en'},
+];
+const seo = {
+    title: content.title,
+    description: isEs ? descriptions.es : descriptions.en,
+    keywords: isEs ? keywords.es : keywords.en,
+    canonical,
+    alternates,
+    ogImage: '/social-logo.jpg',
+    ogAlt: isEs ? 'Logo de Brickify' : 'Brickify logo',
+    structuredData: {
+        organization: true,
+        website: true,
+        webpage: true,
+        breadcrumb: [
+            {name: isEs ? 'Inicio' : 'Home', url: isEs ? '/es' : '/'},
+            {name: isEs ? 'Cookies' : 'Cookies', url: canonical}
+        ]
+    },
+} as const;
+---
+<Layout content={content} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <CookiesContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

@@ -1,0 +1,38 @@
+---
+import Layout from "@/layouts/main.astro";
+import {Header} from "@/layouts/components/Header";
+import FooterSection from "@/components/home/FooterSection.astro";
+import CookiesContent from "@/components/legal/CookiesContent.astro";
+
+const locale = 'es';
+const content = {title: 'Brickify — Política de cookies'};
+const seo = {
+    title: content.title,
+    description: 'Consulta qué cookies usa Brickify, cuándo se activan y cómo cambiar tus preferencias de consentimiento.',
+    keywords: 'cookies brickify, política de cookies, consentimiento cookies, google analytics cookies',
+    canonical: '/es/cookies',
+    alternates: [
+        {href: '/cookies', hrefLang: 'x-default'},
+        {href: '/es/cookies', hrefLang: 'es'},
+        {href: '/en/cookies', hrefLang: 'en'},
+    ],
+    ogImage: '/social-logo.jpg',
+    ogAlt: 'Logo de Brickify',
+    structuredData: {
+        organization: true,
+        website: true,
+        webpage: true,
+        breadcrumb: [
+            {name: 'Inicio', url: '/es'},
+            {name: 'Cookies', url: '/es/cookies'}
+        ]
+    },
+} as const;
+---
+<Layout content={content} lang={locale} seo={seo}>
+    <Header alternates={seo.alternates} client:only="react"/>
+    <main class="relative overflow-x-hidden">
+        <CookiesContent locale={locale}/>
+        <FooterSection locale={locale}/>
+    </main>
+</Layout>

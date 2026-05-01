@@ -1,0 +1,102 @@
+---
+import type {SupportedLocale} from "@/lib/locale";
+
+interface Props {
+    locale: SupportedLocale;
+}
+
+const {locale} = Astro.props as Props;
+
+const copies = {
+    es: {
+        heroTitle: "Política de cookies",
+        intro: "Esta página explica qué cookies usa Brickify, para qué se usan y cómo puedes aceptar, rechazar o cambiar tus preferencias en cualquier momento.",
+        button: "Cambiar preferencias de cookies",
+        sections: [
+            {
+                t: "Qué cookies usamos",
+                d: "Actualmente Brickify solo utiliza cookies relacionadas con analítica cuando das tu consentimiento. En concreto, Google Analytics puede establecer cookies como _ga, _ga_* , _gid y _gat para medir el uso agregado del sitio.",
+            },
+            {
+                t: "Cuándo se cargan",
+                d: "Estas cookies no se cargan por defecto. Solo activamos Google Analytics si aceptas el banner de cookies. Si rechazas, la analítica permanece desactivada.",
+            },
+            {
+                t: "Para qué se usan",
+                d: "La finalidad es entender de forma agregada cómo se usa la web, detectar qué páginas funcionan mejor y mejorar la experiencia. No usamos estas cookies para vender datos personales.",
+            },
+            {
+                t: "Cómo gestionar tu consentimiento",
+                d: "Puedes aceptar o rechazar las cookies desde el banner inicial. Después, puedes cambiar tu decisión en cualquier momento con el botón de esta página.",
+            },
+            {
+                t: "Más información",
+                d: "Para más detalles sobre tratamiento de datos personales, consulta la política de privacidad de Brickify o escríbenos a contact@brickify.fun.",
+            },
+        ],
+    },
+    en: {
+        heroTitle: "Cookie policy",
+        intro: "This page explains which cookies Brickify uses, why they are used, and how you can accept, reject, or change your preferences at any time.",
+        button: "Change cookie preferences",
+        sections: [
+            {
+                t: "Which cookies we use",
+                d: "Brickify currently only uses analytics-related cookies when you give consent. Specifically, Google Analytics may set cookies such as _ga, _ga_*, _gid, and _gat to measure aggregated site usage.",
+            },
+            {
+                t: "When they load",
+                d: "These cookies are not loaded by default. We only activate Google Analytics if you accept the cookie banner. If you reject it, analytics stays disabled.",
+            },
+            {
+                t: "Why they are used",
+                d: "The purpose is to understand aggregated website usage, identify which pages perform better, and improve the experience. We do not use these cookies to sell personal data.",
+            },
+            {
+                t: "How to manage your consent",
+                d: "You can accept or reject cookies from the initial banner. After that, you can change your decision at any time using the button on this page.",
+            },
+            {
+                t: "More information",
+                d: "For more details about personal data processing, read Brickify's privacy policy or contact us at contact@brickify.fun.",
+            },
+        ],
+    },
+} as const;
+
+const t = copies[locale];
+const privacyHref = locale === 'es' ? '/es/privacy' : '/en/privacy';
+---
+<section class="relative w-full">
+    <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div class="flex items-center gap-4 mb-8 md:mb-10">
+            <img src="/piece-2.svg" alt="piece" class="w-10 md:w-16 -mb-4" loading="lazy"/>
+            <h1 class="text-3xl md:text-4xl font-bold">{t.heroTitle}</h1>
+        </div>
+
+        <div class="mb-6 flex flex-wrap gap-3">
+            <button
+                    class="text-sm px-3 py-2 rounded-lg border bg-white hover:bg-neutral-50"
+                    onclick="try{ if(window.Brickify && typeof window.Brickify.openCookieBanner==='function'){ window.Brickify.openCookieBanner(); } }catch(e){}"
+            >
+                {t.button}
+            </button>
+            <a href={privacyHref} class="text-sm px-3 py-2 rounded-lg border bg-white hover:bg-neutral-50">
+                {locale === 'es' ? 'Ver política de privacidad' : 'View privacy policy'}
+            </a>
+        </div>
+
+        <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+            <p class="text-neutral-700">{t.intro}</p>
+        </article>
+
+        <div class="grid grid-cols-1 gap-4 mt-6">
+            {t.sections.map((s) => (
+                    <article class="rounded-2xl bg-white/90 backdrop-blur-sm border shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-2">{s.t}</h2>
+                        <p class="text-neutral-700 leading-relaxed">{s.d}</p>
+                    </article>
+            ))}
+        </div>
+    </div>
+</section>

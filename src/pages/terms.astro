@@ -3,13 +3,16 @@ import Layout from "@/layouts/main.astro";
 import {Header} from "@/layouts/components/Header";
 import FooterSection from "@/components/home/FooterSection.astro";
 import TermsContent from "@/components/legal/TermsContent.astro";
-import type {SupportedLocale} from "@/lib/locale";
+import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
-const pathLang = Astro.url?.pathname?.startsWith('/es') ? 'es' : 'en';
-const locale: SupportedLocale = (pathLang === 'es' ? 'es' : 'en');
-const content = {title: pathLang === 'es' ? 'Brickify — Términos de servicio' : 'Brickify — Terms of Service'};
+const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
+const content = {title: locale === 'es' ? 'Brickify — Términos de servicio' : 'Brickify — Terms of Service'};
+const path = Astro.url?.pathname || '/terms';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es/terms' : (path.startsWith('/en') ? '/en/terms' : '/terms');
 const seo = {
     title: content.title,
+    canonical,
     alternates: [
         {href: '/terms', hrefLang: 'x-default'},
         {href: '/es/terms', hrefLang: 'es'},
