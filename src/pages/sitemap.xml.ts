@@ -19,7 +19,7 @@ const staticRoutes: RouteGroup[] = [
   { xDefault: '/privacy', en: '/en/privacy', es: '/es/privacy', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/cookies', en: '/en/cookies', es: '/es/cookies', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/terms-of-service', en: '/en/terms-of-service', es: '/es/terms', changefreq: 'yearly', priority: 0.2 },
-  { xDefault: '/legal-notice', en: '/en/legal-notice', es: '/es/legal', changefreq: 'yearly', priority: 0.2 },
+  { xDefault: '/legal', en: '/en/legal', es: '/es/legal', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/refund-policy', en: '/en/refund-policy', es: '/es/refund-policy', changefreq: 'yearly', priority: 0.2 },
   { xDefault: '/share', en: '/en/share', es: '/es/share', changefreq: 'weekly', priority: 0.5 },
   { xDefault: '/blog', en: '/en/blog', es: '/es/blog', changefreq: 'weekly', priority: 0.8 },
