@@ -7,16 +7,16 @@ import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 const content = {title: locale === 'es' ? 'Brickify — Términos de servicio' : 'Brickify — Terms of Service'};
-const path = Astro.url?.pathname || '/terms-of-service';
+const path = Astro.url?.pathname || '/terms';
 const isEs = locale === 'es' || path.startsWith('/es');
-const canonical = isEs ? '/es/terms' : (path.startsWith('/en') ? '/en/terms-of-service' : '/terms-of-service');
+const canonical = isEs ? '/es/terms' : (path.startsWith('/en') ? '/en/terms' : '/terms');
 const seo = {
     title: content.title,
     canonical,
     alternates: [
-        {href: '/terms-of-service', hrefLang: 'x-default'},
+        {href: '/terms', hrefLang: 'x-default'},
         {href: '/es/terms', hrefLang: 'es'},
-        {href: '/en/terms-of-service', hrefLang: 'en'},
+        {href: '/en/terms', hrefLang: 'en'},
     ],
 };
 ---
