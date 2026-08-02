@@ -16,14 +16,22 @@ export function RegisterForm({redirect}: { redirect?: string }) {
         defaultValues: {
             name: '',
             email: '',
-            password: ''
+            password: '',
+            marketingConsent: false
         }
     });
 
-    const handleRegister = async (data: { name: string; email: string; password: string }) => {
+    const privacyHref = i18n.language === 'es' ? '/es/privacy' : '/privacy';
+
+    const handleRegister = async (data: {
+        name: string;
+        email: string;
+        password: string;
+        marketingConsent: boolean
+    }) => {
         setIsLoading(true);
         try {
-            await registerUser(data.name, data.email, data.password, i18n.language);
+            await registerUser(data.name, data.email, data.password, i18n.language, data.marketingConsent === true);
             // Señalamos a la página de login que debe mostrar el aviso de verificación por email
             let loginUrl = `${makeLoginHref()}?checkEmail=1`;
             if (redirect) {
@@ -45,6 +53,9 @@ export function RegisterForm({redirect}: { redirect?: string }) {
             <CardHeader>
                 <CardTitle>{t('register.register')}</CardTitle>
                 <CardDescription>{t('register.createAccount')}</CardDescription>
+                <p className="text-sm bg-yellow-100 text-yellow-900 rounded-md px-3 py-2 mt-2">
+                    {t('register.freeCredits', '🎁 Your first minifigure is included: get 100 free credits when you verify your email.')}
+                </p>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit(handleRegister)}>
@@ -52,6 +63,20 @@ export function RegisterForm({redirect}: { redirect?: string }) {
                         <NameField register={register} errors={errors}/>
                         <EmailField register={register} errors={errors}/>
                         <PasswordField register={register} errors={errors}/>
+                        <label className="flex items-start gap-2 text-sm text-muted-foreground">
+                            <input
+                                type="checkbox"
+                                className="mt-1"
+                                {...register('marketingConsent')}
+                            />
+                            <span>
+                                {t('register.marketingConsent', 'I want to receive exclusive offers and discounts by email.')}{' '}
+                                <a href={privacyHref} className="text-blue-500 hover:underline" target="_blank"
+                                   rel="noopener noreferrer">
+                                    {t('register.privacyPolicy', 'Privacy Policy')}
+                                </a>
+                            </span>
+                        </label>
                     </div>
                     <div className="flex flex-col gap-2 mt-4">
                         <Button type="submit" isLoading={isLoading}>

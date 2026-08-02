@@ -11,7 +11,8 @@ const copies = {
         ctaPrimary: "Upload your photo",
         ctaPrimaryAria: "Upload your image and get started",
         ctaSecondary: "How it works",
-        ctaSecondaryAria: "How Brickify works"
+        ctaSecondaryAria: "How Brickify works",
+        freeTrial: "🎁 Your first minifigure is free when you sign up"
     },
     es: {
         title: "Crea tu Minifigura LEGO® Personalizada desde Foto con IA",
@@ -19,7 +20,8 @@ const copies = {
         ctaPrimary: "Sube tu imagen",
         ctaPrimaryAria: "Sube tu imagen y comienza",
         ctaSecondary: "Cómo funciona",
-        ctaSecondaryAria: "Cómo funciona Brickify"
+        ctaSecondaryAria: "Cómo funciona Brickify",
+        freeTrial: "🎁 Tu primera minifigura gratis al registrarte"
     }
 } as const;
 const t = copies[locale];
@@ -33,6 +35,9 @@ const title = titleProp ?? t.title;
             </h1>
             <p class="text-base md:text-[20px] font-light leading-relaxed max-w-prose mb-6"
                set:html={t.description}></p>
+            <p class="inline-block bg-yellow-100 text-yellow-900 rounded-full px-4 py-2 text-sm md:text-base font-medium mb-6">
+                {t.freeTrial}
+            </p>
             <div class="flex items-center gap-4">
                 <a href="#como-funciona" class={buttonVariants({size: "lg"})}
                    aria-label={t.ctaSecondaryAria}>

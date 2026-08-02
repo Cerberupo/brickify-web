@@ -107,6 +107,7 @@
     "viewSettings": "View Settings",
     "logout": "Logout",
     "myGroups": "My Collections",
+    "welcomeCreditsBanner": "🎁 You have your welcome credits available: create your first minifigure for free!",
     "usersCompleted": "{{completed}} / {{total}} users completed",
     "usersRemaining": "{{remaining}} / {{min}} users remaining to place order",
     "groupMembers": "Collection Members",
@@ -190,7 +191,10 @@
     "successMessage": "Registration successful! You can now log in.",
     "verifyEmailSent": "We've sent you an email to verify your account. Please check your inbox and follow the instructions.",
     "errorMessage": "Registration failed. Please try again.",
-    "registering": "Registering..."
+    "registering": "Registering...",
+    "freeCredits": "🎁 Your first minifigure is included: get 100 free credits when you verify your email.",
+    "marketingConsent": "I want to receive exclusive offers and discounts by email.",
+    "privacyPolicy": "Privacy Policy"
   },
   "recover": {
     "title": "Recover password",
@@ -344,6 +348,7 @@
   "verify": {
     "title": "Account Verification",
     "verifying": "Verifying your account...",
+    "welcomeCredits": "🎁 We have added 100 free credits to your account: your first minifigure is on us!",
     "verified": "Your account has been verified!",
     "failed": "Verification failed",
     "success": "Your account has been verified successfully!",

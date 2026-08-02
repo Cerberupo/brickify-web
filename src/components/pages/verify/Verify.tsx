@@ -117,6 +117,9 @@ export function VerifyPage({initialSearch}: VerifyPageProps) {
                         </div>
                     ) : isVerified ? (
                         <div className="text-center">
+                            <p className="text-sm bg-yellow-100 text-yellow-900 rounded-md px-3 py-2 mb-4">
+                                {t('verify.welcomeCredits', '🎁 We have added 100 free credits to your account: your first minifigure is on us!')}
+                            </p>
                             <p className="mb-4">{t('verify.successMessage', 'Your account has been successfully verified. You will be redirected to the login page shortly.')}</p>
                             <Button onClick={() => navigate(APP_ROUTES.LOGIN)}>
                                 {t('verify.login', 'Go to Login')}

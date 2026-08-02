@@ -107,6 +107,7 @@
     "viewSettings": "Ver configuración",
     "logout": "Cerrar sesión",
     "myGroups": "Mis Colecciones",
+    "welcomeCreditsBanner": "🎁 Tienes tus créditos de bienvenida disponibles: ¡crea tu primera minifigura gratis!",
     "usersCompleted": "{{completed}} / {{total}} usuarios completados",
     "usersRemaining": "{{remaining}} / {{min}} usuarios restantes para realizar el pedido",
     "groupMembers": "Miembros de la Colección",
@@ -188,7 +189,10 @@
     "successMessage": "¡Registro exitoso! Ahora puede iniciar sesión.",
     "verifyEmailSent": "Hemos enviado un email para verificar tu cuenta. Revisa tu bandeja de entrada y sigue las instrucciones.",
     "errorMessage": "Error al registrarse. Por favor, inténtelo de nuevo.",
-    "registering": "Registrando..."
+    "registering": "Registrando...",
+    "freeCredits": "🎁 Tu primera minifigura está incluida: consigue 100 créditos gratis al verificar tu email.",
+    "marketingConsent": "Quiero recibir ofertas y descuentos exclusivos por email.",
+    "privacyPolicy": "Política de Privacidad"
   },
   "recover": {
     "title": "Recuperar contraseña",
@@ -342,6 +346,7 @@
   "verify": {
     "title": "Verificación de Cuenta",
     "verifying": "Verificando su cuenta...",
+    "welcomeCredits": "🎁 Hemos añadido 100 créditos gratis a tu cuenta: ¡tu primera minifigura corre de nuestra parte!",
     "verified": "¡Su cuenta ha sido verificada!",
     "failed": "Verificación fallida",
     "success": "¡Su cuenta ha sido verificada con éxito!",

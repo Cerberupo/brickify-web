@@ -8,11 +8,19 @@ import {toast} from 'sonner';
 import type {Group} from '@/lib/types/group';
 import {MAX_PENDING_GROUPS} from '@/constants/uiConfig';
 import {hasGroupAlreadyPaidStatus} from "@/lib";
+import {useAuthContext} from '@/lib/stores/authStore';
 
 const ITEMS_PER_PAGE = 9;
 
 export function DashboardPage() {
     const {t} = useTranslation();
+    const {user} = useAuthContext();
+
+    // Show the welcome credits banner while the balance still comes only from the gift
+    // (gift granted and balance not above the welcome amount, i.e., no recharges yet)
+    const showWelcomeCreditsBanner = Boolean(
+        user?.welcomeCreditsGrantedAt && (user?.balance ?? 0) > 0 && (user?.balance ?? 0) <= 100
+    );
 
     // State for controlling the modal visibility
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -212,6 +220,11 @@ export function DashboardPage() {
     return (
         <div className="container mx-auto p-4 py-6">
             <Toaster position="top-right"/>
+            {showWelcomeCreditsBanner && (
+                <div className="bg-yellow-100 text-yellow-900 rounded-md px-4 py-3 mb-6 text-sm">
+                    {t('dashboard.welcomeCreditsBanner', '🎁 You have your welcome credits available: create your first minifigure for free!')}
+                </div>
+            )}
             <div className="mb-8">
                 {isInitialLoading ? (
                     <div className="flex justify-center py-12">
