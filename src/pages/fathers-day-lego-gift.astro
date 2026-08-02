@@ -1,0 +1,87 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "Father's Day LEGO®-style Gift from a Photo | Brickify",
+    description: "Turn a photo of your dad into a personalized LEGO®-style Father's Day gift. Get the closest official parts list in minutes for a keepsake that feels genuinely personal.",
+    canonical: "/fathers-day-lego-gift",
+    alternates: [
+        {href: "/fathers-day-lego-gift", hrefLang: "x-default"},
+        {href: "/fathers-day-lego-gift", hrefLang: "en"},
+        {href: "/es/regalo-lego-dia-del-padre", hrefLang: "es"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "Father's Day Gift", url: "/fathers-day-lego-gift"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "A Father's Day gift that feels personal",
+    title: "Create a LEGO®-style Father's Day gift from one photo",
+    description: "Upload a clear photo of your dad and Brickify will match the closest official pieces for a lookalike figure. Ideal for fathers, grandads and family keepsakes that last longer than the usual gift.",
+    ctas: [
+        {label: "Sign in to process", href: "/login"},
+        {label: "See pricing", href: "/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Based on one real photo", description: "We match hair, face, outfit colors and signature details from one person at a time so the result feels recognisable."},
+    {title: "Designed for gifting", description: "A playful alternative to generic Father's Day gifts, especially for dads who like LEGO-style builds and personal keepsakes."},
+    {title: "Fast enough for late planners", description: "Most part lists are ready in under a minute, which helps when Father's Day is suddenly close."},
+    {title: "Official-part shopping list", description: "Get reference codes so it's easier to source the final build."},
+];
+
+const steps = [
+    {title: "Upload one favourite photo", description: "Choose a clear front-facing image of one person with good lighting and the hairstyle or outfit details you want to preserve."},
+    {title: "We match the closest official parts", description: "Brickify selects hair, head, torso and legs to match the photo as closely as possible."},
+    {title: "Receive the parts list", description: "You get reference codes that are ready to shop on official or compatible marketplaces."},
+    {title: "Build and gift it", description: "Assemble the figure and turn it into a Father's Day surprise, keepsake or desk display."},
+];
+
+const sections = [
+    {
+        heading: "Why it works for Father's Day",
+        body: "Father's Day gifts often repeat the same patterns. A lookalike figure feels more thoughtful because it starts from a real memory and turns it into something display-worthy.",
+        bullets: [
+            {title: "Sentimental", description: "It captures a familiar face, hairstyle or outfit from one real photo."},
+            {title: "Keepsake-friendly", description: "It works well as a shelf piece, office desk item or companion to a card."},
+            {title: "Family-friendly", description: "Great for dads, grandads or any father figure in the family."},
+        ],
+    },
+    {
+        heading: "Best Father's Day use cases",
+        body: "This page targets Father's Day gift intent, but it also matches related search journeys around personalised gifts for dads and family keepsakes.",
+        bullets: [
+            {title: "Children and partners", description: "A warmer alternative to standard gift-shop items or last-minute gadgets."},
+            {title: "Grandads", description: "A custom figure that feels personal without needing commissioned artwork."},
+            {title: "Family moments", description: "Use a favourite portrait, celebration photo or everyday snapshot that feels like him."},
+        ],
+    },
+    {
+        heading: "Independent service, official parts approach",
+        body: "Brickify is an independent service that helps you find the closest official parts for a lookalike build. LEGO® is a trademark of the LEGO Group, which does not sponsor or endorse this service.",
+        bullets: [
+            {title: "No catalog digging", description: "Skip the manual search across hundreds of heads, torsos and hairstyles."},
+            {title: "Easy to prepare", description: "A clear parts list makes the Father's Day gift easier to prepare."},
+            {title: "Photo-first workflow", description: "Start from one person you love, not from random pieces."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

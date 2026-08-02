@@ -1,0 +1,87 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalo de graduación LEGO® personalizado con foto | Brickify",
+    description: "Convierte la foto de un graduado en un regalo estilo LEGO® personalizado. Obtén en minutos la lista de piezas oficiales más parecida para graduaciones y fiestas.",
+    canonical: "/es/regalo-graduacion-lego-personalizado",
+    alternates: [
+        {href: "/lego-graduation-gift", hrefLang: "x-default"},
+        {href: "/en/lego-graduation-gift", hrefLang: "en"},
+        {href: "/es/regalo-graduacion-lego-personalizado", hrefLang: "es"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Regalo de graduación", url: "/es/regalo-graduacion-lego-personalizado"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "Un regalo de graduación que se parece de verdad",
+    title: "Crea un regalo de graduación estilo LEGO® a partir de cualquier foto",
+    description: "Sube una foto clara del graduado y Brickify encuentra las piezas oficiales más parecidas para montar una figura lookalike. Ideal para sorprender el día de la graduación, decorar la fiesta o guardar un recuerdo duradero.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precios", href: "/es/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Parte de una foto real", description: "Ajustamos pelo, cara, colores de ropa y detalles clave para que el resultado se sienta personal."},
+    {title: "Perfecto para fiestas de graduación", description: "Funciona como regalo, detalle para la mesa dulce, rincón de recuerdos o sorpresa para la familia cercana."},
+    {title: "Preparado rápido", description: "La mayoría de listas salen en menos de un minuto, así que también sirve para planes de última hora."},
+    {title: "Lista de compra con piezas oficiales", description: "Recibes referencias exactas para montar el regalo con más facilidad."},
+];
+
+const steps = [
+    {title: "Sube una foto de graduación", description: "Mejor si es frontal y se ve el outfit o los colores que quieres recrear."},
+    {title: "Hacemos el matching", description: "Brickify selecciona pelo, cabeza, torso y piernas lo más parecidos posible."},
+    {title: "Recibe la lista de compra", description: "Te damos referencias listas para comprar en marketplaces compatibles o canales oficiales."},
+    {title: "Móntalo y regálalo", description: "Ensambla la figura y úsala como sorpresa de graduación, recuerdo o detalle para la fiesta."},
+];
+
+const sections = [
+    {
+        heading: "Por qué encaja tan bien en una graduación",
+        body: "Muchos regalos de graduación son genéricos. Una figura lookalike resulta más especial porque refleja la cara, el estilo y el momento del graduado de una forma divertida.",
+        bullets: [
+            {title: "Memorable", description: "Destaca más que un marco, una taza o un detalle genérico."},
+            {title: "Queda bien expuesto", description: "El graduado puede guardarlo en la estantería, escritorio o caja de recuerdos."},
+            {title: "Fácil de personalizar", description: "Puedes acercarte a colores del centro, traje, vestido o peinado característico."},
+        ],
+    },
+    {
+        heading: "Casos de uso con mejor intención de compra",
+        body: "Esta landing apunta a búsquedas claras de regalo de graduación, pero el mismo flujo también sirve para varios momentos y tipos de comprador.",
+        bullets: [
+            {title: "Padres y hermanos", description: "Un recuerdo emocional que se siente personalizado sin encargar arte a medida."},
+            {title: "Amigos y pareja", description: "Un regalo gracioso pero con intención para el día de la graduación o la celebración posterior."},
+            {title: "Grupos pequeños", description: "Puedes crear varias figuras para amigos cercanos o una celebración reducida."},
+        ],
+    },
+    {
+        heading: "Servicio independiente con piezas oficiales",
+        body: "Brickify es un servicio independiente que te ayuda a encontrar las piezas oficiales más parecidas para un lookalike. LEGO® es una marca del Grupo LEGO, que no patrocina ni respalda este servicio.",
+        bullets: [
+            {title: "Sin búsqueda manual", description: "Evita revisar catálogos enormes de cabezas, torsos y peinados por tu cuenta."},
+            {title: "Fácil de preparar", description: "Una lista clara ayuda a dejar el regalo listo justo antes de la graduación."},
+            {title: "Flujo centrado en la foto", description: "Se empieza por la persona, no por piezas aleatorias."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

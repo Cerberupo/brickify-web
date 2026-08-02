@@ -1,0 +1,87 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'es';
+const seo = {
+    title: "Regalo LEGO® de jubilación con foto | Brickify",
+    description: "Convierte una foto de jubilación en un regalo estilo LEGO® personalizado. Obtén en minutos la lista de piezas oficiales más parecida para un recuerdo original y duradero.",
+    canonical: "/es/regalo-jubilacion-lego-personalizado",
+    alternates: [
+        {href: "/lego-retirement-gift", hrefLang: "x-default"},
+        {href: "/en/lego-retirement-gift", hrefLang: "en"},
+        {href: "/es/regalo-jubilacion-lego-personalizado", hrefLang: "es"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Inicio", url: "/es"},
+            {name: "Regalo de jubilación", url: "/es/regalo-jubilacion-lego-personalizado"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "Un regalo de jubilación que no se siente genérico",
+    title: "Crea un regalo estilo LEGO® para jubilación a partir de una foto especial",
+    description: "Sube una foto clara y Brickify buscará las piezas oficiales más parecidas para una figura lookalike. Ideal para despedidas de trabajo, celebraciones de jubilación y recuerdos para escritorio que duran más que el típico detalle.",
+    ctas: [
+        {label: "Accede para procesar", href: "/es/login"},
+        {label: "Ver precios", href: "/es/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Basado en una foto real", description: "Puedes usar un retrato, una foto de oficina, una imagen de evento o una foto de la fiesta de jubilación con valor sentimental."},
+    {title: "Muy útil para despedidas de compañeros", description: "Encaja en regalos de equipo, despedidas de oficina y detalles para managers que quieren algo más memorable que una tarjeta."},
+    {title: "Rápido para quien va justo de tiempo", description: "La mayoría de listas salen en menos de un minuto, lo que ayuda cuando la organización va tarde."},
+    {title: "Lista oficial lista para comprar", description: "Recibes referencias exactas para facilitar la compra final."},
+];
+
+const steps = [
+    {title: "Elige una foto clara", description: "Las fotos frontales donde se reconozcan pelo, gafas y ropa suelen dar el mejor resultado."},
+    {title: "Buscamos las piezas oficiales más cercanas", description: "Brickify selecciona pelo, cabeza, torso y piernas lo más parecidos posible."},
+    {title: "Recibe la lista de compra", description: "Obtienes referencias listas para comprar sin tener que revisar catálogos manualmente."},
+    {title: "Monta el recuerdo", description: "Ensambla la figura y úsala como regalo de jubilación, detalle de escritorio o recuerdo de la fiesta."},
+];
+
+const sections = [
+    {
+        heading: "Por qué funciona tan bien para una jubilación",
+        body: "Muchos regalos de jubilación acaban siendo tazas, placas o detalles demasiado genéricos. Una figura lookalike estilo LEGO se siente más personal porque parte de la persona real y puede quedarse expuesta mucho después de la celebración.",
+        bullets: [
+            {title: "Personal", description: "Representa a un compañero, jefe, profesor o familiar real en lugar de una plantilla genérica."},
+            {title: "Cercano", description: "Funciona bien cuando quieres algo simpático y cálido sin caer en lo típico."},
+            {title: "Para conservar", description: "La figura terminada queda bien en una estantería, escritorio o rincón de recuerdos."},
+        ],
+    },
+    {
+        heading: "Mejores usos para este regalo",
+        body: "La landing está pensada para búsquedas de regalo de jubilación, pero también encaja con intenciones cercanas sobre regalos de despedida, regalos para compañeros y recuerdos personalizados de oficina.",
+        bullets: [
+            {title: "Despedidas de compañeros", description: "Una opción de regalo grupal mejor cuando el equipo quiere algo más personal que una tarjeta firmada."},
+            {title: "Jefes y mentores", description: "Una forma memorable de marcar el final de una carrera larga o agradecer años de apoyo."},
+            {title: "Celebraciones familiares", description: "Muy útil para cenas de jubilación y reuniones donde una sola foto ya cuenta mucho."},
+        ],
+    },
+    {
+        heading: "Servicio independiente con flujo basado en piezas oficiales",
+        body: "Brickify es un servicio independiente que te ayuda a encontrar las piezas oficiales más cercanas para un lookalike. LEGO® es una marca del Grupo LEGO, que no patrocina ni respalda este servicio.",
+        bullets: [
+            {title: "Sin buscar en catálogos", description: "Evitas la búsqueda lenta entre cabezas, torsos, piernas, peinados y accesorios."},
+            {title: "Fácil de preparar", description: "La lista queda clara para que preparar el regalo final sea más sencillo."},
+            {title: "Proceso centrado en la foto", description: "Empiezas por la persona a la que celebras y construyes desde ahí."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

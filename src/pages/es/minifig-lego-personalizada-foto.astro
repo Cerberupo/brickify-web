@@ -4,8 +4,8 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'es';
 const seo = {
-    title: "Minifigura LEGO Personalizada desde Foto | Generador LEGO Avatar | Brickify",
-    description: "Crea tu minifigura LEGO personalizada desde una foto online. Nuestra IA genera tu avatar LEGO y te da la lista de piezas oficiales. ¡Empieza ahora!",
+    title: "Minifig LEGO personalizada desde foto | Una persona por foto | Brickify",
+    description: "Convierte la foto de una sola persona en una minifig estilo LEGO personalizada con lista de piezas oficiales y enlaces de compra.",
     canonical: "/es/minifig-lego-personalizada-foto",
     alternates: [
         {href: "/custom-lego-minifigure-photo", hrefLang: "x-default"},
@@ -24,7 +24,7 @@ const seo = {
 const hero = {
     eyebrow: "De tu foto a la lista exacta de piezas",
     title: "Convierte cualquier foto en una minifig estilo LEGO® que sí se parezca",
-    description: "Sube tu imagen, elegimos las piezas oficiales más cercanas (pelo, cabeza, torso, piernas) y te enviamos una lista preparada para comprar con alternativas por si cambia el stock.",
+    description: "Sube la foto de una sola persona, elegimos las piezas oficiales más cercanas (pelo, cabeza, torso, piernas) y te enviamos una lista preparada para comprar.",
     ctas: [
         {label: "Accede para procesar", href: "/es/login"},
         {label: "Ver precio por imagen", href: "/es/#precio", variant: "secondary"},
@@ -41,8 +41,8 @@ const highlights = [
         description: "Haz upload y aprueba. Sin horas de catálogo ni dudas con colores o caras.",
     },
     {
-        title: "Listas seguras de stock",
-        description: "Cada pieza clave lleva 1–2 alternativas para no quedarte parado si cambia la disponibilidad.",
+        title: "Listas claras de piezas",
+        description: "Cada pieza clave queda organizada de forma clara para que comprar y montar sea más fácil.",
     },
     {
         title: "Mejor precio en volumen",
@@ -52,12 +52,12 @@ const highlights = [
 
 const steps = [
     {
-        title: "Sube una foto clara",
-        description: "Frontal mejor y con buena luz."
+        title: "Sube una foto individual clara",
+        description: "Usa una foto frontal de una sola persona. Con buena luz funciona mejor."
     },
     {
         title: "Hacemos el matching",
-        description: "Elegimos pelo, cabeza, torso y piernas más cercanos, con alternativos por stock."
+        description: "Elegimos pelo, cabeza, torso y piernas lo más cercanos posible."
     },
     {
         title: "Recibe tu lista",
@@ -69,12 +69,13 @@ const steps = [
 const sections = [
     {
         heading: "Brickify hace el trabajo duro por ti",
-        body: "Los catálogos son enormes y los colores varían. Seguimos disponibilidad, elegimos las piezas más cercanas y te damos una lista preparada para comprar para que no pierdas horas.",
+        body: "Los catálogos son enormes y los colores varían. Elegimos las piezas más cercanas y te damos una lista preparada para comprar para que no pierdas horas.",
         bullets: [
+            {title: "Una persona por foto", description: "Este flujo funciona mejor con una foto individual. Si quieres varias personas, sube una foto separada para cada una."},
             {title: "Lista rápida", description: "Normalmente en menos de un minuto por persona (servicio 24/7)."},
             {
-                title: "Stock bajo control",
-                description: "Alternativas por pieza para que no te frene la disponibilidad."
+                title: "Fácil de seguir",
+                description: "Un desglose claro por pieza hace que el montaje sea más sencillo."
             },
             {
                 title: "Servicio independiente",
@@ -84,11 +85,11 @@ const sections = [
     },
     {
         heading: "Listo para regalos, bodas y equipos",
-        body: "Las minifigs lookalike hacen que bodas, swag corporativo y regalos personales se sientan únicos. Sube varias fotos y baja el precio unitario.",
+        body: "Las figuras lookalike hacen que bodas, swag corporativo y regalos personales se sientan únicos. Sube varias fotos y baja el precio unitario.",
         bullets: [
-            {title: "Bodas", description: "Recuerdos lookalike para invitados o el cortejo."},
-            {title: "Corporativo", description: "Swag memorable para empleados, clientes o asistentes."},
-            {title: "Regalo único", description: "Cumpleaños, aniversarios, graduaciones o porque sí."},
+            {title: "Bodas", description: "Recuerdos lookalike para invitados o el cortejo.", href: "/es/recuerdos-boda-lego-personalizados", linkLabel: "Ver ideas para bodas"},
+            {title: "Corporativo", description: "Swag memorable para empleados, clientes o asistentes.", href: "/es/regalos-empresa-lego-personalizados", linkLabel: "Ver regalos corporativos"},
+            {title: "Regalo único", description: "Cumpleaños, aniversarios, graduaciones o porque sí.", href: "/es/regalo-lego-personalizado", linkLabel: "Ver regalo personalizado"},
         ],
     },
 ];

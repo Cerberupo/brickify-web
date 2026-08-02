@@ -4,8 +4,8 @@ import type {SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = 'en';
 const seo = {
-    title: "LEGO Minifigure From Photo | Personalized LEGO Minifigure | Brickify",
-    description: "Create a personalized LEGO minifigure from a photo online. Our AI generates your LEGO avatar and provides the official parts list. Start now!",
+    title: "LEGO Minifigure From Photo | One Person Per Photo | Brickify",
+    description: "Create a LEGO minifigure from a single-person photo with an official parts list and buying links for each key piece.",
     canonical: "/custom-lego-minifigure-photo",
     alternates: [
         {href: "/custom-lego-minifigure-photo", hrefLang: "x-default"},
@@ -23,8 +23,8 @@ const seo = {
 
 const hero = {
     eyebrow: "From photo to exact parts list",
-    title: "Turn any photo into a LEGO®-style minifig that actually looks like you",
-    description: "Drop your picture, we pick the closest official bricks (hair, head, torso, legs) and send you a ready-to-shop list with alternates in case stock changes.",
+    title: "Turn any photo into a LEGO®-style minifigure that actually looks like you",
+    description: "Upload a photo of one person, we match the closest official pieces for hair, head, torso and legs, and send a ready-to-shop list.",
     ctas: [
         {label: "Sign in to process", href: "/login"},
         {label: "See price per image", href: "/#precio", variant: "secondary"},
@@ -41,8 +41,8 @@ const highlights = [
         description: "Just upload and approve. No catalog hours or doubts about colors or faces.",
     },
     {
-        title: "Stock-safe lists",
-        description: "Each key piece includes 1–2 alternates so you never get stuck by availability.",
+        title: "Clear part lists",
+        description: "Each key piece is grouped clearly so you can shop and assemble more easily.",
     },
     {
         title: "Best price in volume",
@@ -52,12 +52,12 @@ const highlights = [
 
 const steps = [
     {
-        title: "Upload a clear photo",
-        description: "Front-facing works best with good lighting."
+        title: "Upload a clear individual photo",
+        description: "Use one front-facing photo of one person only. Good lighting works best."
     },
     {
         title: "We match official pieces",
-        description: "Closest hair, head, torso and legs picked for you, plus backups for stock shifts."
+        description: "Closest hair, head, torso and legs picked for you."
     },
     {
         title: "Receive your list",
@@ -71,8 +71,9 @@ const sections = [
         heading: "Brickify does the heavy lifting for you",
         body: "Catalogs are massive and colors vary. We track availability, choose the closest parts, and give you a ready-to-buy list so you don’t waste hours.",
         bullets: [
+            {title: "One person per photo", description: "This flow works best with one individual photo. If you want several people, upload one separate photo for each person."},
             {title: "Ready fast", description: "Usually in less than a minute per person (24/7 service)."},
-            {title: "Stock under control", description: "Alternates per piece so availability never stops you."},
+            {title: "Simple to follow", description: "A clear per-piece breakdown keeps the build easy to follow."},
             {
                 title: "Independent service",
                 description: "Not affiliated with LEGO®; we use official bricks responsibly."
@@ -81,11 +82,11 @@ const sections = [
     },
     {
         heading: "Ready for gifts, weddings and teams",
-        body: "Lookalike minifigs make weddings, corporate swag and personal gifts feel unique. Upload several photos and lower the unit price.",
+        body: "Lookalike figures make weddings, corporate swag and personal gifts feel unique. Upload several photos and lower the unit price.",
         bullets: [
-            {title: "Weddings", description: "Lookalike favors for your wedding party or guests."},
-            {title: "Corporate", description: "Memorable swag for employees, clients or event attendees."},
-            {title: "Personal gifts", description: "Birthdays, anniversaries, graduations or just because."},
+            {title: "Weddings", description: "Lookalike favors for your wedding party or guests.", href: "/lego-wedding-favors", linkLabel: "See wedding favor page"},
+            {title: "Corporate", description: "Memorable swag for employees, clients or event attendees.", href: "/corporate-lego-gifts", linkLabel: "Explore corporate gift ideas"},
+            {title: "Personal gifts", description: "Birthdays, anniversaries, graduations or just because.", href: "/personalized-lego-gift", linkLabel: "View personalized gift page"},
         ],
     },
 ];

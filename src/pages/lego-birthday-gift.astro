@@ -1,0 +1,77 @@
+---
+import MarketingPage from "@/components/marketing/MarketingPage.astro";
+import type {SupportedLocale} from "@/lib/locale";
+
+const locale: SupportedLocale = 'en';
+const seo = {
+    title: "LEGO Birthday Gift From a Photo | LEGO Minifigure Gift | Brickify",
+    description: "Turn a photo into a LEGO-style birthday gift with the closest official parts list for a personalized lookalike minifigure in minutes.",
+    canonical: "/lego-birthday-gift",
+    alternates: [
+        {href: "/lego-birthday-gift", hrefLang: "x-default"},
+        {href: "/lego-birthday-gift", hrefLang: "en"},
+    ],
+    structuredData: {
+        webpage: true,
+        breadcrumb: [
+            {name: "Home", url: "/en"},
+            {name: "LEGO Birthday Gift", url: "/lego-birthday-gift"},
+        ]
+    }
+};
+
+const hero = {
+    eyebrow: "A birthday gift they won't forget",
+    title: "Turn a photo into a personalized LEGO®-style birthday gift",
+    description: "Upload a picture and get a ready-to-shop list of official parts to build a lookalike figure. Fast, funny and personal without spending hours browsing catalogs.",
+    ctas: [
+        {label: "Sign in to process", href: "/login"},
+        {label: "See price per image", href: "/#precio", variant: "secondary"},
+    ],
+};
+
+const highlights = [
+    {title: "Feels personal", description: "The figure actually resembles the person in the photo."},
+    {title: "Quick to prepare", description: "Most parts lists are ready in less than a minute per person."},
+    {title: "Easy to buy", description: "Includes official part SKUs and links so you can shop fast."},
+    {title: "Works for any age", description: "A fun gift for kids, partners, friends, parents and LEGO fans."},
+];
+
+const steps = [
+    {title: "Upload a clear photo", description: "Front-facing and well-lit gives the best result."},
+    {title: "We match official parts", description: "Hair, head, torso and legs selected to resemble the photo."},
+    {title: "Receive the list", description: "Get SKUs and a clear parts list for the final build."},
+    {title: "Build the gift", description: "Buy the parts and assemble a birthday gift that feels custom."},
+];
+
+const sections = [
+    {
+        heading: "Why it works so well as a birthday gift",
+        body: "It combines surprise, personalization and something they can keep on a desk or shelf. Much stronger than a generic novelty gift.",
+        bullets: [
+            {title: "For LEGO fans", description: "Especially good when the recipient already loves LEGO sets or collectible figures."},
+            {title: "For hard-to-buy-for people", description: "A fresh idea when you want something personal but not cheesy."},
+            {title: "For groups too", description: "Create several at once for a birthday dinner, party or family gift."},
+        ],
+    },
+    {
+        heading: "No need to search piece catalogs by hand",
+        body: "Brickify saves time by matching the closest official pieces for you and organizing them clearly for the build.",
+        bullets: [
+            {title: "Official parts only", description: "Designed around official LEGO® elements and buy links."},
+            {title: "Clear build guide", description: "A per-piece breakdown helps you keep the birthday gift moving."},
+            {title: "Independent service", description: "Brickify is not affiliated with LEGO® or the LEGO Group."},
+        ],
+    },
+];
+---
+
+<MarketingPage
+        locale={locale}
+        seo={seo}
+        hero={hero}
+        highlights={highlights}
+        steps={steps}
+        sections={sections}
+        showPriceCalculator={true}
+/>

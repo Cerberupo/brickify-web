@@ -7,8 +7,12 @@ import {normalizeLocale, type SupportedLocale} from "@/lib/locale";
 
 const locale: SupportedLocale = normalizeLocale(Astro.currentLocale as string | undefined);
 const content = {title: locale === 'es' ? 'Brickify — Aviso legal' : 'Brickify — Legal notice'};
+const path = Astro.url?.pathname || '/legal';
+const isEs = locale === 'es' || path.startsWith('/es');
+const canonical = isEs ? '/es/legal' : (path.startsWith('/en') ? '/en/legal' : '/legal');
 const seo = {
     title: content.title,
+    canonical,
     alternates: [
         {href: '/legal', hrefLang: 'x-default'},
         {href: '/es/legal', hrefLang: 'es'},
