@@ -98,11 +98,19 @@ export async function login(email: string, password: string): Promise<LoginRespo
  * @param marketingConsent - Whether the user opted in to promotional emails
  * @returns A promise that resolves to the login response from the server
  */
-export async function register(name: string, email: string, password: string, language: string, marketingConsent: boolean = false): Promise<LoginResponse> {
+export async function register(
+    name: string,
+    email: string,
+    password: string,
+    language: string,
+    marketingConsent: boolean = false,
+    website?: string,
+    captchaToken?: string
+): Promise<LoginResponse> {
     try {
         const response = await fetchApi<LoginResponse>('/auth/register', {
             method: 'POST',
-            body: {name, email, password, language, marketingConsent},
+            body: {name, email, password, language, marketingConsent, website, captchaToken},
             withCredentials: true,
         });
 

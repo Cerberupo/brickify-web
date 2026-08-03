@@ -31,6 +31,7 @@ jobs:
       PUBLIC_PROJECT_NAME: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_PROJECT_NAME || secrets.PROD_PUBLIC_PROJECT_NAME }}
       PUBLIC_GOOGLE_CLIENT_ID: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_GOOGLE_CLIENT_ID || secrets.PROD_PUBLIC_GOOGLE_CLIENT_ID }}
       PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ (inputs.env || 'dev') == 'dev' && secrets.DEV_PUBLIC_STRIPE_PUBLISHABLE_KEY || secrets.PROD_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+      PUBLIC_TURNSTILE_SITE_KEY: ${{ (inputs.env || 'dev') == 'dev' && (secrets.DEV_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAEFg4oQVL_JDuYjS') || (secrets.PROD_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAEFg4oQVL_JDuYjS') }}
       # Public site URL to build absolute canonical/OG URLs
       PUBLIC_SITE_URL: ${{ (inputs.env || 'dev') == 'dev' && 'https://dev.brickify.fun' || 'https://brickify.fun' }}
 

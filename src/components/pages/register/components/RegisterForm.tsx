@@ -8,10 +8,12 @@ import {toast} from 'sonner';
 import {APP_ROUTES} from '@/constants/routes';
 import {navigate} from '@/lib/utils';
 import {loginHref as makeLoginHref} from '@/lib/localeLinks';
+import {TurnstileWidget} from '@/components/TurnstileWidget';
 
 export function RegisterForm({redirect}: { redirect?: string }) {
     const {t, i18n} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState<string>('');
     const {register, handleSubmit, formState: {errors}} = useForm({
         defaultValues: {
             name: '',
@@ -27,11 +29,12 @@ export function RegisterForm({redirect}: { redirect?: string }) {
         name: string;
         email: string;
         password: string;
-        marketingConsent: boolean
+        marketingConsent: boolean;
+        website?: string;
     }) => {
         setIsLoading(true);
         try {
-            await registerUser(data.name, data.email, data.password, i18n.language, data.marketingConsent === true);
+            await registerUser(data.name, data.email, data.password, i18n.language, data.marketingConsent === true, data.website, captchaToken);
             // Señalamos a la página de login que debe mostrar el aviso de verificación por email
             let loginUrl = `${makeLoginHref()}?checkEmail=1`;
             if (redirect) {
@@ -60,6 +63,14 @@ export function RegisterForm({redirect}: { redirect?: string }) {
             <CardContent>
                 <form onSubmit={handleSubmit(handleRegister)}>
                     <div className="grid w-full items-center gap-4">
+                        {/* Honeypot field (hidden from real users, filled by bots) */}
+                        <input
+                            type="text"
+                            autoComplete="off"
+                            tabIndex={-1}
+                            style={{display: 'none', position: 'absolute', left: '-9999px'}}
+                            {...register('website')}
+                        />
                         <NameField register={register} errors={errors}/>
                         <EmailField register={register} errors={errors}/>
                         <PasswordField register={register} errors={errors}/>
@@ -78,6 +89,7 @@ export function RegisterForm({redirect}: { redirect?: string }) {
                             </span>
                         </label>
                     </div>
+                    <TurnstileWidget onVerify={setCaptchaToken} />
                     <div className="flex flex-col gap-2 mt-4">
                         <Button type="submit" isLoading={isLoading}>
                             {isLoading ? t('register.registering', 'Registering...') : t('register.register')}
