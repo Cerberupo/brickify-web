@@ -44,7 +44,7 @@ export function ConfirmPaymentDialog({
             if (isProcessing) return;
             onOpenChange(nextOpen);
         }}>
-            <AlertDialogContent className="max-w-md">
+            <AlertDialogContent className="max-w-md" id="tour-confirm-payment-dialog">
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('checkout.confirm_payment.title')}</AlertDialogTitle>
                     <AlertDialogDescription>

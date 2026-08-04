@@ -9,12 +9,15 @@ import type {Group} from '@/lib/types/group';
 import {MAX_PENDING_GROUPS} from '@/constants/uiConfig';
 import {hasGroupAlreadyPaidStatus} from "@/lib";
 import {useAuthContext} from '@/lib/stores/authStore';
+import {useOnboarding} from '@/lib/hooks/useOnboarding';
+import {OnboardingTooltip} from '@/components/common/OnboardingTooltip';
 
 const ITEMS_PER_PAGE = 9;
 
 export function DashboardPage() {
     const {t} = useTranslation();
     const {user} = useAuthContext();
+    const onboarding = useOnboarding();
 
     // Show the welcome credits banner while the balance still comes only from the gift
     // (gift granted and balance not above the welcome amount, i.e., no recharges yet)
@@ -51,6 +54,9 @@ export function DashboardPage() {
     const handleOpenModal = () => {
         setSelectedGroup(null);
         setIsModalOpen(true);
+        if (onboarding.active && onboarding.step === 1) {
+            onboarding.setTourStep(2);
+        }
     };
 
     const handleOpenEditModal = (group: Group) => {
@@ -77,6 +83,18 @@ export function DashboardPage() {
             setGroups(response.groups);
             setTotalGroups(response.total);
             setTotalPages(response.pages);
+
+            if (typeof window !== 'undefined') {
+                const isCompleted = localStorage.getItem('brickify_onboarding_completed') === 'true';
+                const isActive = localStorage.getItem('brickify_onboarding_active') === 'true';
+                if (response.groups.length > 0) {
+                    if (!isCompleted && !isActive) {
+                        localStorage.setItem('brickify_onboarding_completed', 'true');
+                    }
+                } else if (response.groups.length === 0 && !isCompleted && !isActive) {
+                    onboarding.startTour();
+                }
+            }
         } catch (error) {
             console.error('Error fetching groups:', error);
             toast.error(t('dashboard.errorFetchingGroups'));
@@ -114,6 +132,10 @@ export function DashboardPage() {
 
             // Close the modal after submission
             handleCloseModal();
+
+            if (onboarding.active && onboarding.step === 2) {
+                onboarding.setTourStep(3);
+            }
         } catch (error) {
             console.error('Error creating group:', error);
             toast.error(t('dashboard.errorCreatingGroup'));
@@ -238,6 +260,7 @@ export function DashboardPage() {
                                 <TooltipTrigger asChild>
                                     <div>
                                         <Button
+                                            id="tour-create-group-btn"
                                             className="flex items-center gap-2"
                                             onClick={handleOpenModal}
                                             disabled={isCreateButtonDisabled}
@@ -255,8 +278,8 @@ export function DashboardPage() {
                             </Tooltip>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {groups.map(group => (
-                                <GroupCard key={group.id} group={group} onEdit={handleOpenEditModal}/>
+                            {groups.map((group, index) => (
+                                <GroupCard key={group.id} group={group} onEdit={handleOpenEditModal} isFirst={index === 0}/>
                             ))}
                         </div>
                         {renderPagination()}
@@ -274,6 +297,7 @@ export function DashboardPage() {
                             <TooltipTrigger asChild>
                                 <div>
                                     <Button
+                                        id="tour-create-group-btn"
                                         className="flex items-center gap-2"
                                         onClick={handleOpenModal}
                                         disabled={isCreateButtonDisabled}
@@ -307,6 +331,45 @@ export function DashboardPage() {
                 } : undefined}
                 onSubmitEdit={handleEditSubmit}
             />
+
+            {onboarding.active && onboarding.step === 1 && (
+                <OnboardingTooltip
+                    targetSelector="#tour-create-group-btn"
+                    step={1}
+                    totalSteps={6}
+                    content={t('onboarding.step1', '¡Bienvenido a Brickify! Crea tu primera colección para organizar tus pedidos en grupos (ya sea para tus familiares, amigos, etc.). Haz clic aquí para comenzar.')}
+                    placement="bottom"
+                    onNext={onboarding.nextStep}
+                    onBack={onboarding.prevStep}
+                    onSkip={onboarding.stopTour}
+                />
+            )}
+
+            {onboarding.active && onboarding.step === 2 && (
+                <OnboardingTooltip
+                    targetSelector="#tour-group-modal-fields"
+                    step={2}
+                    totalSteps={6}
+                    content={t('onboarding.step2', 'Añade un título descriptivo y una breve descripción para identificar fácilmente este grupo.')}
+                    placement="bottom"
+                    onNext={onboarding.nextStep}
+                    onBack={onboarding.prevStep}
+                    onSkip={onboarding.stopTour}
+                />
+            )}
+
+            {onboarding.active && onboarding.step === 3 && (
+                <OnboardingTooltip
+                    targetSelector="#tour-group-card-first"
+                    step={3}
+                    totalSteps={6}
+                    content={t('onboarding.step3', '¡Excelente! Tu colección se ha creado. Haz clic en la tarjeta para entrar a ver los detalles y empezar a organizar los miembros.')}
+                    placement="bottom"
+                    onNext={onboarding.nextStep}
+                    onBack={onboarding.prevStep}
+                    onSkip={onboarding.stopTour}
+                />
+            )}
         </div>
     );
 }

@@ -541,5 +541,18 @@
       "La magia de los bricks en tu foto",
       "Reimagina tu mundo en miniatura"
     ]
+  },
+  "onboarding": {
+    "step": "Tutorial",
+    "skip": "Omitir",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "step1": "¡Bienvenido a Brickify! Crea tu primera colección para organizar tus pedidos en grupos (ya sea para tus familiares, amigos, etc.). Haz clic aquí para comenzar.",
+    "step2": "Añade un título descriptivo y una breve descripción para identificar fácilmente este grupo.",
+    "step3": "¡Excelente! Tu colección se ha creado. Haz clic en la tarjeta para entrar a ver los detalles y empezar a organizar los miembros.",
+    "step4": "En esta pantalla puedes añadir a los miembros del grupo (familiares, amigos) y configurar sus minifiguras para organizar tu pedido.",
+    "step5": "¡Listo! Una vez que hayas añadido a los miembros del grupo, haz clic en este botón para abrir la vista previa y resumen de tu pedido.",
+    "step6": "Este es el resumen de tu pedido. Aquí verás la cantidad, el coste total en créditos y tu saldo. Al confirmar, tu pedido estará listo. ¡Eso es todo!"
   }
 }

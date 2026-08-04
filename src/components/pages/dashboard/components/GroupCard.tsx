@@ -12,7 +12,7 @@ import {toast} from 'sonner';
 import ReferencePeopleAvatars from '@/components/common/ReferencePeopleAvatars';
 
 
-export function GroupCard({group, onEdit}: GroupCardProps) {
+export function GroupCard({group, onEdit, isFirst}: GroupCardProps & { isFirst?: boolean }) {
     const {t} = useTranslation();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -85,7 +85,7 @@ export function GroupCard({group, onEdit}: GroupCardProps) {
 
 
     return (
-        <div>
+        <div id={isFirst ? "tour-group-card-first" : undefined}>
             <Toaster position="top-right"/>
             <Card
                 className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.01] hover:-translate-y-1"

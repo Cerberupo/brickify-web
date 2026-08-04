@@ -138,7 +138,7 @@ export function OrderSummaryCard(props: {
 
                     {canEdit && onCheckout ? (
                         <div className="flex justify-end mt-4">
-                            <Button onClick={onCheckout} className="w-full sm:w-auto">
+                            <Button id="tour-checkout-btn" onClick={onCheckout} className="w-full sm:w-auto">
                                 {labels.checkout || 'Process'}
                             </Button>
                         </div>

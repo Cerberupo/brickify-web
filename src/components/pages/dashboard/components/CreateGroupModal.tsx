@@ -94,7 +94,7 @@ export function CreateGroupModal({
                     <DialogTitle>{mode === 'edit' ? t('dashboard.editGroup', 'Edit Group') : t('dashboard.createGroup')}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmitForm)}>
-                    <div className="grid gap-4 py-4">
+                    <div id="tour-group-modal-fields" className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label htmlFor="name">{t('dashboard.groupName')}*</Label>
                             <Input
