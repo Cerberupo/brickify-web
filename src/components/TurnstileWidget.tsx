@@ -55,7 +55,7 @@ export function TurnstileWidget({ onVerify, onExpire, onError }: TurnstileWidget
                     'error-callback': (err: any) => {
                         if (isMounted && onError) onError(err);
                     },
-                    theme: 'auto'
+                    theme: 'light'
                 });
             } catch (err) {
                 console.error('[TurnstileWidget] Error rendering widget:', err);
@@ -102,6 +102,7 @@ export function TurnstileWidget({ onVerify, onExpire, onError }: TurnstileWidget
             className="cf-turnstile my-2 flex justify-center"
             data-sitekey={siteKey}
             data-action="turnstile-spin-v2"
+            data-theme="light"
         />
     );
 }
