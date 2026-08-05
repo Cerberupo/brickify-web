@@ -13,6 +13,13 @@ interface OnboardingTooltipProps {
     onSkip: () => void;
 }
 
+interface TargetDimensions {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+}
+
 export function OnboardingTooltip({
     targetSelector,
     step,
@@ -26,6 +33,7 @@ export function OnboardingTooltip({
     const { t } = useTranslation();
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+    const [targetRect, setTargetRect] = useState<TargetDimensions | null>(null);
     const [targetFound, setTargetFound] = useState(false);
 
     const updatePosition = () => {
@@ -36,9 +44,17 @@ export function OnboardingTooltip({
         }
 
         setTargetFound(true);
-        const targetRect = target.getBoundingClientRect();
+        const rect = target.getBoundingClientRect();
         const scrollY = window.scrollY;
         const scrollX = window.scrollX;
+
+        // Store the target's absolute dimensions for the spotlight mask
+        setTargetRect({
+            top: rect.top + scrollY,
+            left: rect.left + scrollX,
+            width: rect.width,
+            height: rect.height
+        });
 
         let tooltipTop = 0;
         let tooltipLeft = 0;
@@ -50,17 +66,17 @@ export function OnboardingTooltip({
         const tooltipHeight = tooltipRef.current?.offsetHeight || 150;
 
         if (placement === 'bottom') {
-            tooltipTop = targetRect.bottom + scrollY + gap;
-            tooltipLeft = targetRect.left + scrollX + (targetRect.width - tooltipWidth) / 2;
+            tooltipTop = rect.bottom + scrollY + gap;
+            tooltipLeft = rect.left + scrollX + (rect.width - tooltipWidth) / 2;
         } else if (placement === 'top') {
-            tooltipTop = targetRect.top + scrollY - tooltipHeight - gap;
-            tooltipLeft = targetRect.left + scrollX + (targetRect.width - tooltipWidth) / 2;
+            tooltipTop = rect.top + scrollY - tooltipHeight - gap;
+            tooltipLeft = rect.left + scrollX + (rect.width - tooltipWidth) / 2;
         } else if (placement === 'left') {
-            tooltipTop = targetRect.top + scrollY + (targetRect.height - tooltipHeight) / 2;
-            tooltipLeft = targetRect.left + scrollX - tooltipWidth - gap;
+            tooltipTop = rect.top + scrollY + (rect.height - tooltipHeight) / 2;
+            tooltipLeft = rect.left + scrollX - tooltipWidth - gap;
         } else if (placement === 'right') {
-            tooltipTop = targetRect.top + scrollY + (targetRect.height - tooltipHeight) / 2;
-            tooltipLeft = targetRect.right + scrollX + gap;
+            tooltipTop = rect.top + scrollY + (rect.height - tooltipHeight) / 2;
+            tooltipLeft = rect.right + scrollX + gap;
         }
 
         // Keep inside screen bounds
@@ -73,12 +89,12 @@ export function OnboardingTooltip({
 
         // Scroll to target if not fully visible
         const isElementInViewport = (el: Element) => {
-            const rect = el.getBoundingClientRect();
+            const r = el.getBoundingClientRect();
             return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                r.top >= 0 &&
+                r.left >= 0 &&
+                r.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                r.right <= (window.innerWidth || document.documentElement.clientWidth)
             );
         };
 
@@ -105,16 +121,25 @@ export function OnboardingTooltip({
         };
     }, [targetSelector, placement, content]);
 
-    if (!targetFound || !coords) {
+    if (!targetFound || !coords || !targetRect) {
         return null;
     }
 
     return (
         <>
-            {/* Spotlight overlay effect highlight */}
+            {/* Spotlight Focus Overlay - Uses massive box shadow to darken everything except target element */}
             <div
-                className="fixed inset-0 pointer-events-none z-[9998] transition-opacity duration-300 bg-black/30"
-                style={{ mixBlendMode: 'multiply' }}
+                style={{
+                    position: 'absolute',
+                    top: `${targetRect.top}px`,
+                    left: `${targetRect.left}px`,
+                    width: `${targetRect.width}px`,
+                    height: `${targetRect.height}px`,
+                    boxShadow: '0 0 0 9999px rgba(15, 23, 42, 0.75)',
+                    borderRadius: '8px',
+                    transition: 'all 0.15s ease-out',
+                }}
+                className="z-[9990] pointer-events-none ring-4 ring-primary ring-offset-2 ring-offset-slate-900 shadow-inner animate-pulse"
             />
 
             {/* Floating Tooltip Bubble */}
@@ -124,7 +149,7 @@ export function OnboardingTooltip({
                     position: 'absolute',
                     top: `${coords.top}px`,
                     left: `${coords.left}px`,
-                    transition: 'top 0.2s ease, left 0.2s ease',
+                    transition: 'top 0.15s ease-out, left 0.15s ease-out',
                 }}
                 className="z-[9999] w-[320px] bg-white text-slate-900 rounded-xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200"
             >
