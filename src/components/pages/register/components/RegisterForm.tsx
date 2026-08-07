@@ -19,7 +19,8 @@ export function RegisterForm({redirect}: { redirect?: string }) {
             name: '',
             email: '',
             password: '',
-            marketingConsent: false
+            marketingConsent: false,
+            website: ''
         }
     });
 
@@ -34,7 +35,7 @@ export function RegisterForm({redirect}: { redirect?: string }) {
     }) => {
         setIsLoading(true);
         try {
-            await registerUser(data.name, data.email, data.password, i18n.language, data.marketingConsent === true, data.website, captchaToken);
+            await registerUser(data.name, data.email, data.password, i18n.language, data.marketingConsent, data.website, captchaToken);
             // Señalamos a la página de login que debe mostrar el aviso de verificación por email
             let loginUrl = `${makeLoginHref()}?checkEmail=1`;
             if (redirect) {
@@ -89,7 +90,7 @@ export function RegisterForm({redirect}: { redirect?: string }) {
                             </span>
                         </label>
                     </div>
-                    <TurnstileWidget onVerify={setCaptchaToken} />
+                    <TurnstileWidget onVerify={setCaptchaToken}/>
                     <div className="flex flex-col gap-2 mt-4">
                         <Button type="submit" isLoading={isLoading}>
                             {isLoading ? t('register.registering', 'Registering...') : t('register.register')}

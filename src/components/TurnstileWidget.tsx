@@ -13,6 +13,7 @@ declare global {
                 container: HTMLElement | string,
                 options: {
                     sitekey: string;
+                    action?: string;
                     callback: (token: string) => void;
                     'expired-callback'?: () => void;
                     'error-callback'?: (error: any) => void;

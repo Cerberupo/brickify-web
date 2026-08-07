@@ -608,8 +608,8 @@ export function GroupPage() {
 
             toast.success(t('group.memberAdded'));
 
-            if (onboarding.active && onboarding.step === 4) {
-                onboarding.setTourStep(5);
+            if (onboarding.active && onboarding.step === 5) {
+                onboarding.setTourStep(6);
             }
         } catch (error) {
             console.error('Error adding member:', error);
@@ -689,7 +689,12 @@ export function GroupPage() {
                                         {t('group.addPair')}
                                     </Button>
                                 )}
-                                <Button id="tour-add-member-btn" onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
+                                <Button id="tour-add-member-btn" onClick={() => {
+                                    setAddingMode('single');
+                                    if (onboarding.active && onboarding.step === 4) {
+                                        onboarding.setTourStep(5);
+                                    }
+                                }}>{t('group.addMember')}</Button>
                             </div>
                         ) : null}
                     />
@@ -708,14 +713,16 @@ export function GroupPage() {
                     {/* Inline editors for add modes */}
                     {canEdit && addingMode === 'single' && !editingGroup && (
                         <StickyOverlay>
-                            <InlineMemberEditor
-                                mode="add"
-                                onCancel={() => setAddingMode('none')}
-                                onSaveAdd={async (data) => {
-                                    await handleAddMember(data);
-                                    setAddingMode('none');
-                                }}
-                            />
+                            <div id="tour-add-member-form">
+                                <InlineMemberEditor
+                                    mode="add"
+                                    onCancel={() => setAddingMode('none')}
+                                    onSaveAdd={async (data) => {
+                                        await handleAddMember(data);
+                                        setAddingMode('none');
+                                    }}
+                                />
+                            </div>
                         </StickyOverlay>
                     )}
                     {addingMode === 'pair' && !editingGroup && (
@@ -917,7 +924,12 @@ export function GroupPage() {
                                         )}
                                         <Button
                                             id="tour-add-member-btn"
-                                            onClick={() => setAddingMode('single')}>{t('group.addMember')}</Button>
+                                            onClick={() => {
+                                                setAddingMode('single');
+                                                if (onboarding.active && onboarding.step === 4) {
+                                                    onboarding.setTourStep(5);
+                                                }
+                                            }}>{t('group.addMember')}</Button>
                                     </div>
                                 </div>
                             )}
@@ -932,8 +944,8 @@ export function GroupPage() {
                     canEdit={canEdit}
                     onCheckout={() => {
                         setConfirmPaymentOpen(true);
-                        if (onboarding.active && onboarding.step === 5) {
-                            onboarding.setTourStep(6);
+                        if (onboarding.active && onboarding.step === 6) {
+                            onboarding.setTourStep(7);
                         }
                     }}
                     labels={{
@@ -1001,6 +1013,7 @@ export function GroupPage() {
                 costPerMember={100}
                 totalCost={totalMembers * 100}
                 currentBalance={user?.balance || 0}
+                onboardingActive={onboarding.active}
             />
 
             <Dialog open={backDialogOpen} onOpenChange={setBackDialogOpen}>
@@ -1043,8 +1056,8 @@ export function GroupPage() {
                 <OnboardingTooltip
                     targetSelector="#tour-add-member-btn"
                     step={4}
-                    totalSteps={6}
-                    content={t('onboarding.step4', 'En esta pantalla puedes añadir a los miembros del grupo (familiares, amigos) y configurar sus minifiguras para organizar tu pedido.')}
+                    totalSteps={7}
+                    content={t('onboarding.step4', 'Haz clic en el botón \'Añadir miembro\' para abrir el formulario de configuración.')}
                     placement="bottom"
                     onNext={onboarding.nextStep}
                     onBack={onboarding.prevStep}
@@ -1054,11 +1067,11 @@ export function GroupPage() {
 
             {onboarding.active && onboarding.step === 5 && (
                 <OnboardingTooltip
-                    targetSelector="#tour-checkout-btn"
+                    targetSelector="#tour-add-member-form"
                     step={5}
-                    totalSteps={6}
-                    content={t('onboarding.step5', '¡Listo! Una vez que hayas añadido a los miembros del grupo, haz clic en este botón para abrir la vista previa y resumen de tu pedido.')}
-                    placement="top"
+                    totalSteps={7}
+                    content={t('onboarding.step5', 'Rellena los datos de la persona (nombre, descripción, etc.) y sube una foto para personalizar la minifigura. Al terminar, haz clic en \'Guardar\'.')}
+                    placement="bottom"
                     onNext={onboarding.nextStep}
                     onBack={onboarding.prevStep}
                     onSkip={onboarding.stopTour}
@@ -1067,10 +1080,23 @@ export function GroupPage() {
 
             {onboarding.active && onboarding.step === 6 && (
                 <OnboardingTooltip
-                    targetSelector="#tour-confirm-payment-dialog"
+                    targetSelector="#tour-checkout-btn"
                     step={6}
-                    totalSteps={6}
-                    content={t('onboarding.step6', 'Este es el resumen de tu pedido. Aquí verás la cantidad, el coste total en créditos y tu saldo. Al confirmar, tu pedido estará listo. ¡Eso es todo!')}
+                    totalSteps={7}
+                    content={t('onboarding.step6', '¡Listo! Una vez que hayas añadido a los miembros del grupo, haz clic en este botón de Checkout para abrir la vista previa y resumen de tu pedido.')}
+                    placement="top"
+                    onNext={onboarding.nextStep}
+                    onBack={onboarding.prevStep}
+                    onSkip={onboarding.stopTour}
+                />
+            )}
+
+            {onboarding.active && onboarding.step === 7 && (
+                <OnboardingTooltip
+                    targetSelector="#tour-confirm-payment-dialog"
+                    step={7}
+                    totalSteps={7}
+                    content={t('onboarding.step7', 'Este es el resumen de tu pedido. Aquí verás la cantidad, el coste total en créditos y tu saldo. Al confirmar, tu pedido estará listo. ¡Eso es todo!')}
                     placement="bottom"
                     onNext={onboarding.stopTour}
                     onBack={onboarding.prevStep}

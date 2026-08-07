@@ -21,4 +21,5 @@ export interface CreateGroupModalProps {
     mode?: 'create' | 'edit';
     initialValues?: { id?: string; name: string; description: string, groupType: GroupType };
     onSubmitEdit?: (id: string, name: string, description: string) => void;
+    onboardingActive?: boolean;
 }

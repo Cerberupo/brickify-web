@@ -24,6 +24,7 @@ interface ConfirmPaymentDialogProps {
     costPerMember: number;
     totalCost: number;
     currentBalance: number;
+    onboardingActive?: boolean;
 }
 
 export function ConfirmPaymentDialog({
@@ -35,16 +36,22 @@ export function ConfirmPaymentDialog({
                                          costPerMember,
                                          totalCost,
                                          currentBalance,
+                                         onboardingActive,
                                      }: ConfirmPaymentDialogProps) {
     const {t} = useTranslation();
     const remainingBalance = currentBalance - totalCost;
 
     return (
-        <AlertDialog open={open} onOpenChange={(nextOpen) => {
+        <AlertDialog modal={!onboardingActive} open={open} onOpenChange={(nextOpen) => {
             if (isProcessing) return;
             onOpenChange(nextOpen);
         }}>
-            <AlertDialogContent className="max-w-md" id="tour-confirm-payment-dialog">
+            <AlertDialogContent
+                className="max-w-md"
+                id="tour-confirm-payment-dialog"
+                onPointerDownOutside={(e) => onboardingActive && e.preventDefault()}
+                onInteractOutside={(e) => onboardingActive && e.preventDefault()}
+            >
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('checkout.confirm_payment.title')}</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -121,3 +128,5 @@ export function ConfirmPaymentDialog({
         </AlertDialog>
     );
 }
+
+export default ConfirmPaymentDialog;

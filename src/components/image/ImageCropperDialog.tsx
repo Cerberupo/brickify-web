@@ -80,7 +80,7 @@ export const ImageCropperDialog: React.FC<ImageCropperDialogProps> = ({open, src
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <DialogContent className="max-w-[92vw] md:max-w-3xl">
+      <DialogContent id="tour-image-cropper-dialog" className="max-w-[92vw] md:max-w-3xl">
         <DialogHeader>
           <DialogTitle>{t('cropper.title', 'Adjust your photo')}</DialogTitle>
         </DialogHeader>

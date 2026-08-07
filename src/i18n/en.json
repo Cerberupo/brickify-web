@@ -553,8 +553,9 @@
     "step1": "Welcome to Brickify! Create your first collection to organize your orders in groups (for family members, friends, etc.). Click here to start.",
     "step2": "Add a descriptive title and a brief description to easily identify this group.",
     "step3": "Great! Your collection has been created. Click on the card to see the details and start organizing members.",
-    "step4": "On this screen, you can add group members (family, friends) and configure their minifigures to organize your order.",
-    "step5": "Perfect! Once you have added members, click this button to open the preview and order summary.",
-    "step6": "This is your order summary. Here you will see the total quantity, credit cost, and your balance. Once you confirm, your order is ready! That's it!"
+    "step4": "Click the 'Add member' button to open the configuration form.",
+    "step5": "Enter the person's name to identify them and upload their photo to customize the minifigure. When finished, click 'Save'.",
+    "step6": "Perfect! Once you have added members, click this Checkout button to open the preview and order summary.",
+    "step7": "This is your order summary. Here you will see the total quantity, credit cost, and your balance. Once you confirm, your order is ready! That's it!"
   }
 }

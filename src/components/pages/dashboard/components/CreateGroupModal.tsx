@@ -33,7 +33,8 @@ export function CreateGroupModal({
                                      onSubmit,
                                      mode = 'create',
                                      initialValues,
-                                     onSubmitEdit
+                                     onSubmitEdit,
+                                     onboardingActive
                                  }: CreateGroupModalProps) {
     const {t} = useTranslation();
 
@@ -88,8 +89,12 @@ export function CreateGroupModal({
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent>
+        <Dialog modal={!onboardingActive} open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+            <DialogContent
+                id="tour-group-modal-content"
+                onPointerDownOutside={(e) => onboardingActive && e.preventDefault()}
+                onInteractOutside={(e) => onboardingActive && e.preventDefault()}
+            >
                 <DialogHeader>
                     <DialogTitle>{mode === 'edit' ? t('dashboard.editGroup', 'Edit Group') : t('dashboard.createGroup')}</DialogTitle>
                 </DialogHeader>
@@ -137,7 +142,7 @@ export function CreateGroupModal({
                                                    className="w-full">
                                         <SelectValue placeholder={t('dashboard.groupTypePlaceholder')}/>
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent side="top">
                                         {GROUP_TYPE_LIST.map((value) => {
                                             return (
                                                 <SelectItem key={value} value={value}>

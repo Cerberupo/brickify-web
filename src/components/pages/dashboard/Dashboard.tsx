@@ -35,7 +35,6 @@ export function DashboardPage() {
     // Pagination state
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [totalGroups, setTotalGroups] = useState(0);
 
     // State for loading status
     const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +80,6 @@ export function DashboardPage() {
 
             const response = await getGroups(pageNumber, ITEMS_PER_PAGE);
             setGroups(response.groups);
-            setTotalGroups(response.total);
             setTotalPages(response.pages);
 
             if (typeof window !== 'undefined') {
@@ -118,7 +116,7 @@ export function DashboardPage() {
             setIsLoading(true);
 
             // Call the API to create the group
-            const response = await createGroup({name, description, groupType});
+            await createGroup({name, description, groupType});
 
             // Show success message
             toast.success(t('dashboard.groupCreated'));
@@ -279,7 +277,8 @@ export function DashboardPage() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {groups.map((group, index) => (
-                                <GroupCard key={group.id} group={group} onEdit={handleOpenEditModal} isFirst={index === 0}/>
+                                <GroupCard key={group.id} group={group} onEdit={handleOpenEditModal}
+                                           isFirst={index === 0}/>
                             ))}
                         </div>
                         {renderPagination()}
@@ -330,13 +329,14 @@ export function DashboardPage() {
                     groupType: selectedGroup.groupType,
                 } : undefined}
                 onSubmitEdit={handleEditSubmit}
+                onboardingActive={onboarding.active}
             />
 
             {onboarding.active && onboarding.step === 1 && (
                 <OnboardingTooltip
                     targetSelector="#tour-create-group-btn"
                     step={1}
-                    totalSteps={6}
+                    totalSteps={7}
                     content={t('onboarding.step1', '¡Bienvenido a Brickify! Crea tu primera colección para organizar tus pedidos en grupos (ya sea para tus familiares, amigos, etc.). Haz clic aquí para comenzar.')}
                     placement="bottom"
                     onNext={onboarding.nextStep}
@@ -347,9 +347,9 @@ export function DashboardPage() {
 
             {onboarding.active && onboarding.step === 2 && (
                 <OnboardingTooltip
-                    targetSelector="#tour-group-modal-fields"
+                    targetSelector="#tour-group-modal-content"
                     step={2}
-                    totalSteps={6}
+                    totalSteps={7}
                     content={t('onboarding.step2', 'Añade un título descriptivo y una breve descripción para identificar fácilmente este grupo.')}
                     placement="bottom"
                     onNext={onboarding.nextStep}
@@ -362,7 +362,7 @@ export function DashboardPage() {
                 <OnboardingTooltip
                     targetSelector="#tour-group-card-first"
                     step={3}
-                    totalSteps={6}
+                    totalSteps={7}
                     content={t('onboarding.step3', '¡Excelente! Tu colección se ha creado. Haz clic en la tarjeta para entrar a ver los detalles y empezar a organizar los miembros.')}
                     placement="bottom"
                     onNext={onboarding.nextStep}

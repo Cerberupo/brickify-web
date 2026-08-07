@@ -551,8 +551,9 @@
     "step1": "¡Bienvenido a Brickify! Crea tu primera colección para organizar tus pedidos en grupos (ya sea para tus familiares, amigos, etc.). Haz clic aquí para comenzar.",
     "step2": "Añade un título descriptivo y una breve descripción para identificar fácilmente este grupo.",
     "step3": "¡Excelente! Tu colección se ha creado. Haz clic en la tarjeta para entrar a ver los detalles y empezar a organizar los miembros.",
-    "step4": "En esta pantalla puedes añadir a los miembros del grupo (familiares, amigos) y configurar sus minifiguras para organizar tu pedido.",
-    "step5": "¡Listo! Una vez que hayas añadido a los miembros del grupo, haz clic en este botón para abrir la vista previa y resumen de tu pedido.",
-    "step6": "Este es el resumen de tu pedido. Aquí verás la cantidad, el coste total en créditos y tu saldo. Al confirmar, tu pedido estará listo. ¡Eso es todo!"
+    "step4": "Haz clic en el botón 'Añadir miembro' para abrir el formulario de configuración.",
+    "step5": "Escribe el nombre de la persona para identificarla y sube su foto para personalizar la minifigura. Al terminar, haz clic en 'Guardar'.",
+    "step6": "¡Listo! Una vez que hayas añadido a los miembros del grupo, haz clic en este botón de Checkout para abrir la vista previa y resumen de tu pedido.",
+    "step7": "Este es el resumen de tu pedido. Aquí verás la cantidad, el coste total en créditos y tu saldo. Al confirmar, tu pedido estará listo. ¡Eso es todo!"
   }
 }

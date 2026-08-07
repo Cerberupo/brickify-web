@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 
@@ -9,7 +10,7 @@ interface OnboardingTooltipProps {
     content: string;
     placement?: 'top' | 'bottom' | 'left' | 'right';
     onNext: () => void;
-    onBack: () => void;
+    onBack?: () => void;
     onSkip: () => void;
 }
 
@@ -27,7 +28,6 @@ export function OnboardingTooltip({
     content,
     placement = 'bottom',
     onNext,
-    onBack,
     onSkip
 }: OnboardingTooltipProps) {
     const { t } = useTranslation();
@@ -37,7 +37,12 @@ export function OnboardingTooltip({
     const [targetFound, setTargetFound] = useState(false);
 
     const updatePosition = () => {
-        const target = document.querySelector(targetSelector);
+        let selector = targetSelector;
+        // Si el formulario de añadir miembro está activo pero se abre la modal de recortar imagen, reenfocar el spotlight a esa modal
+        if (selector === '#tour-add-member-form' && document.querySelector('#tour-image-cropper-dialog')) {
+            selector = '#tour-image-cropper-dialog';
+        }
+        const target = document.querySelector(selector);
         if (!target) {
             setTargetFound(false);
             return;
@@ -125,9 +130,9 @@ export function OnboardingTooltip({
         return null;
     }
 
-    return (
+    return createPortal(
         <>
-            {/* Spotlight Focus Overlay - Uses massive box shadow to darken everything except target element */}
+            {/* Spotlight Focus Overlay - Static dark background mask */}
             <div
                 style={{
                     position: 'absolute',
@@ -139,7 +144,21 @@ export function OnboardingTooltip({
                     borderRadius: '8px',
                     transition: 'all 0.15s ease-out',
                 }}
-                className="z-[9990] pointer-events-none ring-4 ring-primary ring-offset-2 ring-offset-slate-900 shadow-inner animate-pulse"
+                className="z-[9990] pointer-events-none"
+            />
+
+            {/* Spotlight Highlight Ring - Pulsing outline without fading the background overlay */}
+            <div
+                style={{
+                    position: 'absolute',
+                    top: `${targetRect.top}px`,
+                    left: `${targetRect.left}px`,
+                    width: `${targetRect.width}px`,
+                    height: `${targetRect.height}px`,
+                    borderRadius: '8px',
+                    transition: 'all 0.15s ease-out',
+                }}
+                className="z-[9991] pointer-events-none ring-4 ring-primary ring-offset-2 ring-offset-slate-900 animate-pulse"
             />
 
             {/* Floating Tooltip Bubble */}
@@ -151,7 +170,9 @@ export function OnboardingTooltip({
                     left: `${coords.left}px`,
                     transition: 'top 0.15s ease-out, left 0.15s ease-out',
                 }}
-                className="z-[9999] w-[320px] bg-white text-slate-900 rounded-xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200"
+                className="z-[9999] w-[320px] bg-white text-slate-900 rounded-xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 pointer-events-auto"
+                onPointerDownCapture={(e) => e.stopPropagation()}
+                onMouseDownCapture={(e) => e.stopPropagation()}
             >
                 {/* Header / Step indicator */}
                 <div className="flex justify-between items-center border-b pb-2">
@@ -159,6 +180,7 @@ export function OnboardingTooltip({
                         {t('onboarding.step', 'Tutorial')} {step} / {totalSteps}
                     </span>
                     <button
+                        type="button"
                         onClick={onSkip}
                         className="text-xs text-muted-foreground hover:text-slate-900 transition-colors"
                     >
@@ -171,22 +193,16 @@ export function OnboardingTooltip({
                     {content}
                 </p>
 
-                {/* Action buttons */}
-                <div className="flex justify-between items-center mt-2">
-                    <div>
-                        {step > 1 && (
-                            <Button variant="outline" size="sm" onClick={onBack}>
-                                {t('onboarding.back', 'Atrás')}
-                            </Button>
-                        )}
-                    </div>
-                    <div>
-                        <Button size="sm" onClick={onNext}>
-                            {step === totalSteps ? t('onboarding.finish', 'Finalizar') : t('onboarding.next', 'Siguiente')}
+                {/* Action buttons - Only show "Finalizar" on the final step */}
+                {step === totalSteps && (
+                    <div className="flex justify-end items-center mt-2">
+                        <Button type="button" size="sm" onClick={onNext}>
+                            {t('onboarding.finish', 'Finalizar')}
                         </Button>
                     </div>
-                </div>
+                )}
             </div>
-        </>
+        </>,
+        document.body
     );
 }
