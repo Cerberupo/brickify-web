@@ -85,11 +85,11 @@ export function DashboardPage() {
             if (typeof window !== 'undefined') {
                 const isCompleted = localStorage.getItem('brickify_onboarding_completed') === 'true';
                 const isActive = localStorage.getItem('brickify_onboarding_active') === 'true';
-                if (response.groups.length > 0) {
-                    if (!isCompleted && !isActive) {
-                        localStorage.setItem('brickify_onboarding_completed', 'true');
+                if (response.total > 0) {
+                    if (isActive || !isCompleted) {
+                        onboarding.stopTour();
                     }
-                } else if (response.groups.length === 0 && !isCompleted && !isActive) {
+                } else if (response.total === 0 && !isCompleted && !isActive) {
                     onboarding.startTour();
                 }
             }
