@@ -2,8 +2,8 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {CreateGroupModal, GroupCard, Toaster} from '@/components';
 import {Button, Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui';
-import {ChevronLeft, ChevronRight, Plus, UsersRound} from 'lucide-react';
-import {createGroup, getGroups, updateGroup} from '@/lib/services';
+import {ChevronLeft, ChevronRight, Plus, UsersRound, Sparkles, Mail} from 'lucide-react';
+import {createGroup, getGroups, updateGroup, updateMarketingConsent} from '@/lib/services';
 import {toast} from 'sonner';
 import type {Group} from '@/lib/types/group';
 import {MAX_PENDING_GROUPS} from '@/constants/uiConfig';
@@ -39,6 +39,39 @@ export function DashboardPage() {
     // State for loading status
     const [isLoading, setIsLoading] = useState(false);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+    // State for marketing consent banner
+    const [isBannerDismissed, setIsBannerDismissed] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('brickify_marketing_banner_dismissed') === 'true';
+        }
+        return false;
+    });
+    const [isConsentLoading, setIsConsentLoading] = useState(false);
+
+    const showPromoConsentBanner = Boolean(
+        user && !user.marketingConsent && !isBannerDismissed
+    );
+
+    const handleAcceptPromoConsent = async () => {
+        setIsConsentLoading(true);
+        try {
+            await updateMarketingConsent(true);
+            toast.success(t('dashboard.promo_banner_success', {defaultValue: '¡Notificaciones activadas con éxito!'}));
+        } catch (error) {
+            console.error('Error updating consent:', error);
+            toast.error(t('dashboard.promo_banner_error', {defaultValue: 'Error al activar las notificaciones. Inténtalo de nuevo.'}));
+        } finally {
+            setIsConsentLoading(false);
+        }
+    };
+
+    const handleDismissPromoBanner = () => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('brickify_marketing_banner_dismissed', 'true');
+        }
+        setIsBannerDismissed(true);
+    };
 
     // Count groups that have not paid yet
     const pendingGroupsCount = useMemo(() => {
@@ -243,6 +276,44 @@ export function DashboardPage() {
             {showWelcomeCreditsBanner && (
                 <div className="bg-yellow-100 text-yellow-900 rounded-md px-4 py-3 mb-6 text-sm">
                     {t('dashboard.welcomeCreditsBanner', '🎁 You have your welcome credits available: create your first minifigure for free!')}
+                </div>
+            )}
+            {showPromoConsentBanner && (
+                <div className="relative overflow-hidden mb-6 rounded-2xl bg-gradient-to-r from-blue-500/10 via-indigo-500/5 to-purple-500/10 border border-indigo-200/40 p-5 md:p-6 shadow-sm backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                            <div className="bg-indigo-600/10 p-3 rounded-xl text-indigo-600 hidden sm:block">
+                                <Mail className="h-6 w-6 animate-pulse" />
+                            </div>
+                            <div className="space-y-1">
+                                <h4 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                                    <span>✉️ {t('dashboard.promo_banner_title', {defaultValue: '¿Quieres recibir ofertas y novedades?'})}</span>
+                                </h4>
+                                <p className="text-sm text-gray-600 max-w-2xl leading-relaxed">
+                                    {t('dashboard.promo_banner_desc', {defaultValue: 'Activa las notificaciones por correo para estar al tanto de nuevos estilos de minifiguras, actualizaciones del creador y promociones exclusivas.'})}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
+                            <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
+                                onClick={handleDismissPromoBanner}
+                            >
+                                {t('dashboard.promo_banner_dismiss', {defaultValue: 'Más tarde'})}
+                            </Button>
+                            <Button 
+                                size="sm" 
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5"
+                                onClick={handleAcceptPromoConsent}
+                                isLoading={isConsentLoading}
+                            >
+                                <Mail size={14} />
+                                {t('dashboard.promo_banner_accept', {defaultValue: 'Activar notificaciones'})}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
             <div className="mb-8">

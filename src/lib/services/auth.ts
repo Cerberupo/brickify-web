@@ -248,3 +248,22 @@ export async function resetPassword(
         throw error;
     }
 }
+
+/**
+ * Update user's marketing/promotional email consent
+ */
+export async function updateMarketingConsent(marketingConsent: boolean): Promise<any> {
+    try {
+        const response = await fetchApi<{ status: string; user: any }>('/auth/marketing-consent', {
+            method: 'PATCH',
+            body: {marketingConsent},
+        });
+        if (response.user) {
+            setUser(response.user);
+        }
+        return response;
+    } catch (error) {
+        console.error('Update marketing consent error:', error);
+        throw error;
+    }
+}
