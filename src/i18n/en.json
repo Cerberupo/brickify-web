@@ -453,6 +453,9 @@
     "subgroupName": "Subgroup name",
     "imageTooLarge": "The selected image is too large. Maximum allowed is 2MB.",
     "downloadPieces": "Download pieces",
+    "downloadImage": "Download image",
+    "imageDownloaded": "Image downloaded successfully!",
+    "errorDownloadingImage": "Error generating image. Please try again.",
     "downloadAllPieces": "Download all pieces",
     "editGroup": "Edit collection",
     "deleteGroup": "Delete collection"

@@ -8,9 +8,18 @@ import type {MatchPart} from '@/lib/services/groups';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
 import {toSideWithFallback} from '@/lib/lego/parts';
+import {generateCompositeImage, generateComparisonImage} from '@/lib/lego/imageComposer';
 import {DevPreviewModal} from './DevPreviewModal';
+import {toast} from 'sonner';
 
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
+
+const normalizeId = (p: any): string | null => {
+    if (!p) return null;
+    if (typeof p === 'string') return p;
+    const id = p.id || p._id || p.pieceId;
+    return id ? String(id) : null;
+};
 
 export interface PersonRowProps {
     person: any;
@@ -54,10 +63,62 @@ export function PersonRow({
 
     const [selectedByPart, setSelectedByPart] = useState<Record<string, string | null>>({});
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isDownloadingImage, setIsDownloadingImage] = useState(false);
+    const [side, setSide] = useState<'front' | 'back'>('front');
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const handlePartSelectedChange = useCallback((part: MatchPart, pieceId: string | null) => {
         setSelectedByPart(prev => ({...prev, [part]: pieceId}));
         if (onPartSelectedChange) onPartSelectedChange(person.id, part, pieceId);
     }, [onPartSelectedChange, person.id]);
+
+    // Mapear MatchPart a categoría UI para aplicar fallbacks reutilizables
+    const partToCategory = (part: MatchPart): 'hair' | 'head' | 'body' | 'pants' => {
+        switch (part) {
+            case 'wig':
+                return 'hair';
+            case 'head':
+                return 'head';
+            case 'upperPart':
+                return 'body';
+            case 'lowerPart':
+                return 'pants';
+            default:
+                return 'head';
+        }
+    };
+
+    // Construir selección actual por parte y mapping a imágenes front/back
+    const selectedPieceByPart: Partial<Record<MatchPart, any>> = useMemo(() => {
+        const out: Partial<Record<MatchPart, any>> = {};
+        const matches = (person as any)?.matches || {};
+        (['wig', 'head', 'upperPart', 'lowerPart'] as MatchPart[]).forEach((part) => {
+            const data = matches?.[part];
+            if (!data) return;
+            const arr: any[] = Array.isArray(data?.matchedPieceIds) ? data.matchedPieceIds : [];
+            if (arr.length === 0) return;
+            const localSelId = selectedByPart[part] || null;
+            const serverSel = data?.selectedPiece;
+            const serverSelId = typeof serverSel === 'string' ? serverSel : normalizeId(serverSel);
+            const selId = localSelId || serverSelId || normalizeId(arr[0]);
+            const found = arr.find((p: any) => normalizeId(p) === selId) || arr[0];
+            if (found) out[part] = found;
+        });
+        return out;
+    }, [person, selectedByPart]);
+
+    const compositeProps = useMemo(() => {
+        const wig = toSideWithFallback(partToCategory('wig'), selectedPieceByPart.wig);
+        const head = toSideWithFallback(partToCategory('head'), selectedPieceByPart.head);
+        const upperPart = toSideWithFallback(partToCategory('upperPart'), selectedPieceByPart.upperPart);
+        const lowerPart = toSideWithFallback(partToCategory('lowerPart'), selectedPieceByPart.lowerPart);
+        const hasAny = Boolean(
+            selectedPieceByPart.wig ||
+            selectedPieceByPart.head ||
+            selectedPieceByPart.upperPart ||
+            selectedPieceByPart.lowerPart
+        );
+        return {wig, head, upperPart, lowerPart, hasAny};
+    }, [selectedPieceByPart]);
 
     const splitParagraphs = (txt?: string) => {
         if (!txt) return [] as string[];
@@ -112,13 +173,6 @@ export function PersonRow({
 
     const effectiveStatus = hasErrorInParts ? 'error' : person?.status;
 
-    const normalizeId = (p: any): string | null => {
-        if (!p) return null;
-        if (typeof p === 'string') return p;
-        const id = p.id || p._id || p.pieceId;
-        return id ? String(id) : null;
-    };
-
     const handleDownloadClick = useCallback(() => {
         const elementIds: string[] = [];
         if (person?.matches && typeof person.matches === 'object') {
@@ -151,6 +205,56 @@ export function PersonRow({
         setTimeout(() => URL.revokeObjectURL(url), 0);
     }, [person, selectedByPart]);
 
+    const handleDownloadImageClick = useCallback(async () => {
+        setIsDownloadingImage(true);
+        try {
+            const wigUrl = selectedPieceByPart.wig?.imageFrontUrl;
+            const headUrl = selectedPieceByPart.head?.imageFrontUrl;
+            const upperPartUrl = selectedPieceByPart.upperPart?.imageFrontUrl;
+            const lowerPartUrl = selectedPieceByPart.lowerPart?.imageFrontUrl;
+
+            const compositePayload = {
+                wig: side === 'back' ? selectedPieceByPart.wig?.imageBackUrl || wigUrl : wigUrl,
+                head: side === 'back' ? selectedPieceByPart.head?.imageBackUrl || headUrl : headUrl,
+                upperPart: side === 'back' ? selectedPieceByPart.upperPart?.imageBackUrl || upperPartUrl : upperPartUrl,
+                lowerPart: side === 'back' ? selectedPieceByPart.lowerPart?.imageBackUrl || lowerPartUrl : lowerPartUrl,
+            };
+
+            const dataUrl = await generateCompositeImage(compositePayload);
+            const safeName = (person?.name || 'minifigure').toString().trim().replace(/\s+/g, '-');
+
+            // 1. Descargar la imagen del LEGO individual
+            const a1 = document.createElement('a');
+            a1.href = dataUrl;
+            a1.download = `${safeName}-${side === 'back' ? 'back' : 'front'}.png`;
+            document.body.appendChild(a1);
+            a1.click();
+            a1.remove();
+
+            // 2. Descargar la imagen comparativa lado a lado si el usuario subió una foto original
+            if (src) {
+                try {
+                    const comparisonDataUrl = await generateComparisonImage(src, compositePayload);
+                    const a2 = document.createElement('a');
+                    a2.href = comparisonDataUrl;
+                    a2.download = `${safeName}-comparison.png`;
+                    document.body.appendChild(a2);
+                    a2.click();
+                    a2.remove();
+                } catch (compErr) {
+                    console.error('Error generating comparison image:', compErr);
+                }
+            }
+
+            toast.success(t('group.imageDownloaded', {defaultValue: '¡Imagen descargada con éxito!'}));
+        } catch (e) {
+            console.error('Error generating image:', e);
+            toast.error(t('group.errorDownloadingImage', {defaultValue: 'Error al generar la imagen. Por favor, inténtelo de nuevo.'}));
+        } finally {
+            setIsDownloadingImage(false);
+        }
+    }, [selectedPieceByPart, side, person, src, t]);
+
     const handleEditClick = useCallback(() => {
         onEdit({
             id: person.id,
@@ -179,59 +283,6 @@ export function PersonRow({
         }
     }, []);
 
-    // Construir selección actual por parte y mapping a imágenes front/back
-    const selectedPieceByPart: Partial<Record<MatchPart, any>> = useMemo(() => {
-        const out: Partial<Record<MatchPart, any>> = {};
-        const matches = (person as any)?.matches || {};
-        (['wig', 'head', 'upperPart', 'lowerPart'] as MatchPart[]).forEach((part) => {
-            const data = matches?.[part];
-            if (!data) return;
-            const arr: any[] = Array.isArray(data?.matchedPieceIds) ? data.matchedPieceIds : [];
-            if (arr.length === 0) return;
-            const localSelId = selectedByPart[part] || null;
-            const serverSel = data?.selectedPiece;
-            const serverSelId = typeof serverSel === 'string' ? serverSel : normalizeId(serverSel);
-            const selId = localSelId || serverSelId || normalizeId(arr[0]);
-            const found = arr.find((p: any) => normalizeId(p) === selId) || arr[0];
-            if (found) out[part] = found;
-        });
-        return out;
-    }, [person, selectedByPart]);
-
-    // Mapear MatchPart a categoría UI para aplicar fallbacks reutilizables
-    const partToCategory = (part: MatchPart): 'hair' | 'head' | 'body' | 'pants' => {
-        switch (part) {
-            case 'wig':
-                return 'hair';
-            case 'head':
-                return 'head';
-            case 'upperPart':
-                return 'body';
-            case 'lowerPart':
-                return 'pants';
-            default:
-                return 'head';
-        }
-    };
-
-    const compositeProps = useMemo(() => {
-        const wig = toSideWithFallback(partToCategory('wig'), selectedPieceByPart.wig);
-        const head = toSideWithFallback(partToCategory('head'), selectedPieceByPart.head);
-        const upperPart = toSideWithFallback(partToCategory('upperPart'), selectedPieceByPart.upperPart);
-        const lowerPart = toSideWithFallback(partToCategory('lowerPart'), selectedPieceByPart.lowerPart);
-        const hasAny = Boolean(
-            selectedPieceByPart.wig ||
-            selectedPieceByPart.head ||
-            selectedPieceByPart.upperPart ||
-            selectedPieceByPart.lowerPart
-        );
-        return {wig, head, upperPart, lowerPart, hasAny};
-    }, [selectedPieceByPart]);
-
-    // Control del lado (front/back) sincronizado entre composite y miniaturas
-    const [side, setSide] = useState<'front' | 'back'>('front');
-
-    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import.meta.env.PROD ? 'prod' : 'dev');
     const isDev = appEnv === 'dev';
 
@@ -436,6 +487,14 @@ export function PersonRow({
                             onClick={handleDownloadClick}
                         >
                             <Download className="h-4 w-4 mr-1"/> {t('group.downloadPieces', 'Descargar piezas')}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleDownloadImageClick}
+                            isLoading={isDownloadingImage}
+                        >
+                            <Camera className="h-4 w-4 mr-1"/> {t('group.downloadImage', 'Descargar imagen')}
                         </Button>
                         {showSocialPreview && (
                             <Button

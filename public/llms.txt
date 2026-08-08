@@ -1,0 +1,15 @@
+# Brickify
+
+Brickify is an AI-powered SaaS tool that analyzes photos of people to automatically match them to the closest official LEGO® minifigure parts (hair, head/face, torso, and legs). It provides builders and gift-givers with a precise parts list and direct shop links (to LEGO® Pick a Brick and others) to easily build custom LEGO® minifigures.
+
+## Core Features
+- **AI Photo Matching**: Upload a photo, and our system automatically finds the closest official LEGO® parts matching the person's face, hair, and clothing.
+- **Custom Collections / Groups**: Organize your minifigures into groups (e.g., weddings, families, or corporate teams) to easily manage orders.
+- **Ready-to-Shop Blueprint**: Get standard LEGO® part IDs (SKUs) and direct links to purchase the individual pieces.
+- **Downloadable BLUEPRINT JSON**: Download a JSON files containing your parts list to easily buy them or keep.
+
+## Useful Pages
+- [Homepage](https://brickify.fun/) - Start matching photos and learning about the service.
+- [Personalized LEGO Gift Guide](https://brickify.fun/personalized-lego-gift) - How to turn a photo into a custom LEGO minifigure gift.
+- [LEGO Wedding Favors Guide](https://brickify.fun/lego-wedding-favors) - Custom LEGO guest favors for weddings and events.
+- [LEGO Anniversary Gift Guide](https://brickify.fun/lego-anniversary-gift) - Personalized anniversary gift guides.
