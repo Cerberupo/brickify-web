@@ -1,6 +1,9 @@
 # robots.txt para producción
 # Permitimos el rastreo global y referenciamos el sitemap de producción.
 
+User-agent: *
+Allow: /
+
 # Rutas internas y flujos de usuario que no deberían ser rastreados
 Disallow: /api/
 Disallow: /admin/
@@ -30,9 +33,6 @@ Disallow: /es/transactions
 Disallow: /verify
 Disallow: /en/verify
 Disallow: /es/verify
-
-User-agent: *
-Allow: /
 
 # AI Crawlers
 User-agent: GPTBot
