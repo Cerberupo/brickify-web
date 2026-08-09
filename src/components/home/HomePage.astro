@@ -23,12 +23,12 @@ const {locale, enableRedirect = false} = Astro.props as Props;
 
 const copies = {
     en: {
-        title: 'Brickify — Turn your photo into LEGO®',
+        title: 'Brickify — LEGO®-Style Minifigure From Photo',
         howTitle: 'How Brickify works',
         howDesc: 'Upload an image, our AI recommends official LEGO® parts that best match you, and we deliver a list with the codes for each piece.'
     },
     es: {
-        title: 'Brickify — Convierte tu foto en LEGO®',
+        title: 'Brickify — Minifig estilo LEGO® desde foto',
         howTitle: 'Cómo funciona Brickify',
         howDesc: 'Sube una imagen, nuestra IA te recomienda piezas oficiales de LEGO que más se parecen a ti y te entregamos el listado con códigos de cada pieza.'
     }
@@ -39,12 +39,12 @@ const content = {title: t.title};
 
 // SEO
 const descriptions = {
-    en: "Transform your photos into custom LEGO®-style minifigures with AI. Get the exact official parts list and codes to build your own personalized gift.",
-    es: "Convierte tus fotos en minifiguras estilo LEGO® personalizadas con IA. Obtén la lista exacta de piezas oficiales y códigos para crear tu regalo perfecto."
+    en: "Turn a photo into a custom LEGO®-style minifigure with the closest official parts list, reference codes, and a ready-to-build personalized gift idea.",
+    es: "Convierte una foto en una minifig estilo LEGO® personalizada con la lista de piezas oficiales más parecidas, códigos de referencia y una idea de regalo lista para montar."
 } as const;
 const keywords = {
-    en: "custom lego minifigure, personalized lego gift, lego from photo, lego parts list, brickify, ai lego generator, custom brick portraits",
-    es: "lego personalizado foto, regalo lego personalizado, minifigura lego personalizada, lista piezas lego, brickify, generador lego ia, retratos lego"
+    en: "lego style minifigure from photo, custom lego minifigure, personalized lego gift, lego parts list, brickify, ai lego generator, custom brick portraits",
+    es: "minifig estilo lego desde foto, lego personalizado foto, regalo lego personalizado, minifigura lego personalizada, lista piezas lego, brickify, generador lego ia"
 } as const;
 
 const path = Astro.url?.pathname || '/';
