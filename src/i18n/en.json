@@ -430,6 +430,13 @@
       "upperPart": "Torso",
       "lowerPart": "Legs"
     },
+    "rematchBtn": "Re-match AI (30 cr.)",
+    "rematchSuccess": "AI Re-match completed successfully!",
+    "confirmRematchTitle": "Re-match piece with AI",
+    "confirmRematchDesc1": "Are you sure you want to rematch this piece using Artificial Intelligence?",
+    "confirmRematchWarning": "Note: The AI will analyze the photo again for this category, but it could end up suggesting the same pieces if it considers them the best options available in the catalog.",
+    "confirmRematchCost": "Cost of operation: 30 credits",
+    "confirmRematchBtn": "Confirm and Pay",
     "deleteConfirmation": {
       "title": "Delete Member",
       "description": "Are you sure you want to delete this member? This action cannot be undone.",

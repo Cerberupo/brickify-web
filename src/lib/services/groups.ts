@@ -349,3 +349,27 @@ export async function disableMemberShare(groupId: string, personId: string, gues
     const url = `/groups/${encodeURIComponent(groupId)}/members/${encodeURIComponent(personId)}/share/disable${guestKey ? `?guest_key=${encodeURIComponent(guestKey)}` : ''}`;
     await fetchApi(url, {method: 'POST'});
 }
+
+/**
+ * Rematches a specific part for a reference person by running the AI matcher.
+ * Costs 30 credits.
+ * POST /people/:id/rematch/:part?groupId=...
+ * @returns The updated reference person and new user balance
+ */
+export async function rematchPart(
+    groupId: string,
+    referencePersonId: string,
+    part: MatchPart
+): Promise<{ referencePerson: any; balance: number }> {
+    const url = `/people/${encodeURIComponent(referencePersonId)}/rematch/${encodeURIComponent(part)}?groupId=${encodeURIComponent(groupId)}`;
+    const response = await fetchApi<{
+        status: string;
+        data: {
+            referencePerson: any;
+            balance: number;
+        };
+    }>(url, {
+        method: 'POST'
+    });
+    return response.data;
+}

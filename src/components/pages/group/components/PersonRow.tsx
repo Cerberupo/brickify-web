@@ -1,10 +1,11 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Toaster} from '@/components/ui';
-import {Camera, ChevronDown, ChevronUp, Download, Pencil, Trash2} from 'lucide-react';
+import {Button, Toaster, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription} from '@/components/ui';
+import {Camera, ChevronDown, ChevronUp, Download, Pencil, Trash2, RefreshCw} from 'lucide-react';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
-import type {MatchPart} from '@/lib/services/groups';
+import {rematchPart, type MatchPart} from '@/lib/services/groups';
+import {userAtom, setUser} from '@/lib/stores/authStore';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
 import {toSideWithFallback} from '@/lib/lego/parts';
@@ -70,6 +71,61 @@ export function PersonRow({
         setSelectedByPart(prev => ({...prev, [part]: pieceId}));
         if (onPartSelectedChange) onPartSelectedChange(person.id, part, pieceId);
     }, [onPartSelectedChange, person.id]);
+
+    const [isRematching, setIsRematching] = useState<Record<string, boolean>>({});
+    const [rematchPartToConfirm, setRematchPartToConfirm] = useState<MatchPart | null>(null);
+
+    const handleRematch = useCallback(async (part: MatchPart) => {
+        if (!groupId || !person?.id) return;
+        setIsRematching(prev => ({...prev, [part]: true}));
+        try {
+            const result = await rematchPart(groupId, person.id, part);
+            toast.success(t('group.rematchSuccess', 'AI Re-match completed successfully!'));
+
+            if (setGroup && group) {
+                setGroup((prev: any) => {
+                    const base = prev || group;
+                    const targetId = String(person?.id || person?._id);
+                    const applyToPerson = (p: any) => {
+                        const pId = String(p?.id || p?._id);
+                        if (pId !== targetId) return p;
+                        return {
+                            ...p,
+                            matches: result.referencePerson.matches
+                        };
+                    };
+                    const updatedReferencePeople = Array.isArray(base?.referencePeople)
+                        ? base.referencePeople.map((entry: any) => {
+                            if (entry?.type === 'group' && Array.isArray(entry.people)) {
+                                return {...entry, people: entry.people.map(applyToPerson)};
+                            }
+                            const entryId = String(entry?.id || entry?._id);
+                            return entryId === targetId ? applyToPerson(entry) : entry;
+                        })
+                        : base?.referencePeople;
+
+                    return {
+                        ...base,
+                        referencePeople: updatedReferencePeople
+                    };
+                });
+            }
+
+            const current = userAtom.get();
+            if (current) {
+                setUser({
+                    ...current,
+                    balance: result.balance
+                });
+            }
+        } catch (error: any) {
+            console.error('Error during rematch:', error);
+            const errMsg = error?.message || t('group.rematchError', 'Failed to rematch. Please try again.');
+            toast.error(errMsg);
+        } finally {
+            setIsRematching(prev => ({...prev, [part]: false}));
+        }
+    }, [groupId, person?.id, setGroup, group, t]);
 
     // Mapear MatchPart a categoría UI para aplicar fallbacks reutilizables
     const partToCategory = (part: MatchPart): 'hair' | 'head' | 'body' | 'pants' => {
@@ -372,6 +428,47 @@ export function PersonRow({
                 legoProps={{...compositeProps, side, onSideChange: (s) => setSide(s)}}
                 selectedPieceByPart={selectedPieceByPart}
             />
+            <Dialog open={rematchPartToConfirm !== null} onOpenChange={(open) => { if (!open) setRematchPartToConfirm(null); }}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <RefreshCw className="h-5 w-5 text-primary animate-pulse" />
+                            {t('group.confirmRematchTitle', 'Re-emparejar pieza con IA')}
+                        </DialogTitle>
+                        <DialogDescription className="space-y-3 pt-2">
+                            <p>
+                                {t('group.confirmRematchDesc1', '¿Estás seguro de que quieres volver a emparejar esta pieza con Inteligencia Artificial?')}
+                            </p>
+                            <p className="text-yellow-600 font-medium border-l-2 border-yellow-500 pl-3 py-1 bg-yellow-50/50 rounded-r-md">
+                                ⚠️ {t('group.confirmRematchWarning', 'Nota: La IA analizará la foto de nuevo para esta categoría, pero podría llegar a sugerir las mismas piezas si considera que son la mejor opción disponible en el catálogo.')}
+                            </p>
+                            <p className="text-sm font-semibold text-gray-800">
+                                💰 {t('group.confirmRematchCost', 'Coste de la operación: 30 créditos')}
+                            </p>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="sm:justify-end gap-2 pt-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => setRematchPartToConfirm(null)}
+                        >
+                            {t('common.cancel', 'Cancelar')}
+                        </Button>
+                        <Button
+                            variant="default"
+                            onClick={async () => {
+                                const part = rematchPartToConfirm;
+                                setRematchPartToConfirm(null);
+                                if (part) {
+                                    await handleRematch(part);
+                                }
+                            }}
+                        >
+                            {t('group.confirmRematchBtn', 'Confirmar y Pagar')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <Toaster position="top-right"/>
             <div className="flex flex-col gap-3 flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row items-start sm:items-start gap-3">
@@ -428,12 +525,28 @@ export function PersonRow({
                                 const status = (data as any)?.status;
                                 return (
                                     <div key={String(part)} className="space-y-2">
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 w-full">
                                             <span
                                                 className="font-medium text-gray-700">{t(`group.parts.${String(part)}`, String(part))}</span>
                                             <span className={getStatusPillClasses(status)}>
-                          {t(`dashboard.groupStatus.${getStatusLabelKey(status)}`)}
-                        </span>
+                                                {t(`dashboard.groupStatus.${getStatusLabelKey(status)}`)}
+                                            </span>
+                                            {showActions && status === 'done' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 text-xs px-2 text-primary hover:text-primary/80 hover:bg-primary/5 flex items-center gap-1"
+                                                    onClick={() => setRematchPartToConfirm(part as MatchPart)}
+                                                    disabled={isRematching[part] || isDownloadingImage}
+                                                >
+                                                    {isRematching[part] ? (
+                                                        <span className="animate-spin h-3.5 w-3.5 border-2 border-primary border-t-transparent rounded-full" />
+                                                    ) : (
+                                                        <RefreshCw className="h-3.5 w-3.5" />
+                                                    )}
+                                                    {t('group.rematchBtn', 'Re-match (30 credits)')}
+                                                </Button>
+                                            )}
                                         </div>
                                         <PartPieces
                                             groupId={groupId}

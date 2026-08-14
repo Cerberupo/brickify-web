@@ -456,7 +456,14 @@
       "head": "Cabeza",
       "upperPart": "Torso",
       "lowerPart": "Piernas"
-    }
+    },
+    "rematchBtn": "Re-emparejar IA (30 cr.)",
+    "rematchSuccess": "¡Búsqueda IA relanzada con éxito!",
+    "confirmRematchTitle": "Re-emparejar pieza con IA",
+    "confirmRematchDesc1": "¿Estás seguro de que quieres volver a emparejar esta pieza con Inteligencia Artificial?",
+    "confirmRematchWarning": "Nota: La IA analizará la foto de nuevo para esta categoría, pero podría llegar a sugerir las mismas piezas si considera que son la mejor opción disponible en el catálogo.",
+    "confirmRematchCost": "Coste de la operación: 30 créditos",
+    "confirmRematchBtn": "Confirmar y Pagar"
   },
   "checkout": {
     "title": "Finalizar compra",
