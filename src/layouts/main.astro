@@ -53,9 +53,10 @@ const currentUrl = `${baseOrigin}${path}`;
 const canonicalUrl = seo?.canonical
     ? (seo.canonical.startsWith('http') ? seo.canonical : `${baseOrigin}${seo.canonical}`)
     : currentUrl;
+const defaultBrandImage = `${baseOrigin}/search-result-brand.jpg`;
 const ogImageUrl = seo?.ogImage
     ? (seo.ogImage.startsWith('http') ? seo.ogImage : `${baseOrigin}${seo.ogImage}`)
-    : `${baseOrigin}/social-logo.jpg`;
+    : defaultBrandImage;
 const robotsContent = seo?.noindex ? 'noindex,nofollow' : (seo?.robots ?? 'index,follow');
 const themeColor = seo?.themeColor ?? '#F3EFE6';
 const manifestHref = seo?.manifest ?? '/site.webmanifest';
@@ -131,7 +132,8 @@ const appEnv = (import.meta.env.PUBLIC_APP_ENV as string | undefined) || (import
             "@type": "Organization",
             "name": PROJECT_NAME,
             "url": baseOrigin || "/",
-            "logo": `${baseOrigin}/favicon.png`,
+            "logo": `${baseOrigin}/app-logo-big.jpg`,
+            "image": defaultBrandImage,
             "sameAs": [
                 "https://x.com/BrickifyFun",
                 "https://www.tiktok.com/@brickifyfun",

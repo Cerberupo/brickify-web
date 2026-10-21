@@ -18,27 +18,7 @@ const copies = {
 } as const;
 const t = copies[locale];
 
-// Structured Data for Images
-const imageSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-        {
-            "@type": "ImageObject",
-            "contentUrl": "/people-1.png",
-            "description": t.img2Alt,
-            "name": locale === 'es' ? "Niña LEGO personalizada" : "Personalized LEGO girl"
-        },
-        {
-            "@type": "ImageObject",
-            "contentUrl": "/people-2.png",
-            "description": t.img1Alt,
-            "name": locale === 'es' ? "Retrato LEGO personalizado" : "Custom LEGO portrait"
-        }
-    ]
-};
 ---
-<script type="application/ld+json" is:inline set:html={JSON.stringify(imageSchema)}/>
-
 <section aria-label={t.sectionAria} class="relative">
     <div class={`relative h-[360px] md:h-[720px]`}>
         <img
