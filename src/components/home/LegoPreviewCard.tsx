@@ -104,7 +104,6 @@ export default function LegoPreviewCard({
                 isFetchingRef.current = true;
                 try {
                     const group = await getGroupById(groupId, {guestKey});
-                    console.log('Fetched guest group details:', group);
                     setGuestGroupDetails(group as any);
                     try {
                         const rp = (group as any)?.referencePeople?.[0];
