@@ -9,12 +9,21 @@ import type {Group} from '@/lib/types/group';
 import {MAX_PENDING_GROUPS} from '@/constants/uiConfig';
 import {hasGroupAlreadyPaidStatus} from "@/lib";
 import {useAuthContext} from '@/lib/stores/authStore';
+import {RequireAuth} from '@/components/common/RequireAuth';
 import {useOnboarding} from '@/lib/hooks/useOnboarding';
 import {OnboardingTooltip} from '@/components/common/OnboardingTooltip';
 
 const ITEMS_PER_PAGE = 9;
 
 export function DashboardPage() {
+    return (
+        <RequireAuth>
+            <DashboardContent/>
+        </RequireAuth>
+    );
+}
+
+function DashboardContent() {
     const {t} = useTranslation();
     const {user} = useAuthContext();
     const onboarding = useOnboarding();
@@ -128,6 +137,8 @@ export function DashboardPage() {
             }
         } catch (error) {
             console.error('Error fetching groups:', error);
+            // RequireAuth is already taking the user to the login page
+            if ((error as any)?.status === 401) return;
             toast.error(t('dashboard.errorFetchingGroups'));
         } finally {
             setIsInitialLoading(false);

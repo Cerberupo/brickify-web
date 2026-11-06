@@ -7,8 +7,17 @@ import {Button} from '@/components/ui/button';
 import {ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, Coins, History} from 'lucide-react';
 import {format} from 'date-fns';
 import {useAuthContext} from "@/lib/stores/authStore";
+import {RequireAuth} from '@/components/common/RequireAuth';
 
 export function TransactionsList() {
+    return (
+        <RequireAuth>
+            <TransactionsContent/>
+        </RequireAuth>
+    );
+}
+
+function TransactionsContent() {
     const {t, i18n} = useTranslation();
     const {user} = useAuthContext();
     const [data, setData] = useState<any>(null);

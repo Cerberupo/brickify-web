@@ -178,6 +178,7 @@
     "title": "Iniciar sesión - Brickify",
     "login": "Iniciar sesión",
     "enterCredentials": "Ingrese sus credenciales para acceder a su cuenta",
+    "sessionExpired": "Tu sesión ha caducado. Vuelve a iniciar sesión para ver tus colecciones.",
     "loginWithGoogle": "Iniciar sesión con Google",
     "noAccount": "¿No tiene una cuenta?",
     "register": "Registrarse",

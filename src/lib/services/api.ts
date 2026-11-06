@@ -5,6 +5,9 @@ import axios from 'axios';
 import '@/lib/i18n';
 import i18n from 'i18next';
 
+/** Fired when the API rejects the saved token: it expired, or the signing secret changed. */
+export const SESSION_EXPIRED_EVENT = 'brickify:session-expired';
+
 /**
  * Interface for the options to be passed to the fetchApi function
  */
@@ -75,6 +78,12 @@ export async function fetchApi<T>(endpoint: string, options: ApiOptions = {}): P
         // Handle axios errors
         if (axios.isAxiosError(error) && error.response) {
             const errorData = error.response.data || {};
+
+            // Sign-in routes answer about the credentials being sent, not about the saved token
+            const checksSavedToken = !endpoint.startsWith('/auth/') || endpoint.startsWith('/auth/profile');
+            if (error.response.status === 401 && token && checksSavedToken) {
+                window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+            }
 
             // Detect specific email-related errors and attach a translated message to the thrown error
             // so that callers can decide if/when to show a single toast.
