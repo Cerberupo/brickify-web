@@ -49,17 +49,22 @@ export function LoginPage({initialSearch}: LoginPageProps) {
         const params = getParams();
         const checkEmail = params.get('checkEmail');
         const resetSuccess = params.get('resetSuccess');
+        const sessionExpired = params.get('sessionExpired');
         if (checkEmail) {
             toast.success(t('register.verifyEmailSent', "We've sent you an email to verify your account. Please check your inbox and follow the instructions."));
         }
         if (resetSuccess) {
             toast.success(t('reset.successMessage', 'Your password has been reset successfully. You can now sign in.'));
         }
+        if (sessionExpired) {
+            toast.info(t('login.sessionExpired', 'Your session has expired. Please sign in again.'));
+        }
         // Limpiar los query params para evitar mostrarlo de nuevo si el usuario recarga
-        if ((checkEmail || resetSuccess) && typeof window !== 'undefined') {
+        if ((checkEmail || resetSuccess || sessionExpired) && typeof window !== 'undefined') {
             const url = new URL(window.location.href);
             if (checkEmail) url.searchParams.delete('checkEmail');
             if (resetSuccess) url.searchParams.delete('resetSuccess');
+            if (sessionExpired) url.searchParams.delete('sessionExpired');
             window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
         }
     }, [initialSearch, t]);

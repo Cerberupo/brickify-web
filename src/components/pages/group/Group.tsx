@@ -39,11 +39,20 @@ import {
     StickyOverlay
 } from './components';
 import {useAuthContext} from '@/lib/stores/authStore';
+import {RequireAuth} from '@/components/common/RequireAuth';
 import {buildEngraveBackFiles, buildEngraveFiles} from '@/lib/engrave/engraveFileBuilder';
 import {useOnboarding} from '@/lib/hooks/useOnboarding';
 import {OnboardingTooltip} from '@/components/common/OnboardingTooltip';
 
 export function GroupPage() {
+    return (
+        <RequireAuth>
+            <GroupContent/>
+        </RequireAuth>
+    );
+}
+
+function GroupContent() {
     const {t} = useTranslation();
     const {user} = useAuthContext();
     const onboarding = useOnboarding();
@@ -501,6 +510,8 @@ export function GroupPage() {
                 setGroup(fetchedGroup);
             } catch (error) {
                 console.error('Error fetching group:', error);
+                // RequireAuth is already taking the user to the login page, and back here afterwards
+                if ((error as any)?.status === 401) return;
                 toast.error(t('group.errorFetchingGroup'));
                 // Redirect to dashboard on error
                 navigate(APP_ROUTES.DASHBOARD);

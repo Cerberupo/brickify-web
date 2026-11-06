@@ -1,4 +1,5 @@
 import {getProfile as fetchProfile} from '../services/auth';
+import {SESSION_EXPIRED_EVENT} from '../services/api';
 import i18n from 'i18next';
 import React from 'react';
 import {atom} from 'nanostores';
@@ -44,6 +45,10 @@ function setUserInStorage(user: User | null): void {
 // Create atoms for auth state
 export const userAtom = atom<User | null>(getUserFromStorage());
 export const isLoadingAtom = atom<boolean>(true);
+// The user pressed "log out": protected pages must let the logout finish instead of sending them to the login page
+export const loggingOutAtom = atom<boolean>(false);
+// The API stopped accepting the saved session, so the login page can explain why it is asking again
+export const sessionExpiredAtom = atom<boolean>(false);
 
 // Initialize auth state by checking for token and fetching user profile
 export async function initAuth(): Promise<User | null> {
@@ -113,10 +118,20 @@ export function setUser(user: User | null) {
 
 // Clear user (used for logout)
 export function clearUser() {
+    loggingOutAtom.set(true);
     // Clear both the atom and storage
     userAtom.set(null);
     setUserInStorage(null);
     localStorage.removeItem('authToken');
+}
+
+if (typeof window !== 'undefined') {
+    window.addEventListener(SESSION_EXPIRED_EVENT, () => {
+        sessionExpiredAtom.set(true);
+        userAtom.set(null);
+        setUserInStorage(null);
+        localStorage.removeItem('authToken');
+    });
 }
 
 // Global flag to track if auth has been initialized

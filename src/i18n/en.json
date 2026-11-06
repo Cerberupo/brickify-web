@@ -178,6 +178,7 @@
     "title": "Login - Brickify",
     "login": "Login",
     "enterCredentials": "Enter your credentials to access your account",
+    "sessionExpired": "Your session has expired. Sign in again to see your collections.",
     "loginWithGoogle": "Login with Google",
     "noAccount": "Don't have an account?",
     "register": "Register",
