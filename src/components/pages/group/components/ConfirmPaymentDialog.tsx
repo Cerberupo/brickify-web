@@ -14,6 +14,8 @@ import {
     Button,
 } from '@/components/ui';
 import {AlertTriangle, Coins} from 'lucide-react';
+import {navigate} from '@/lib/utils';
+import {localizePath} from '@/lib/localeLinks';
 
 interface ConfirmPaymentDialogProps {
     open: boolean;
@@ -40,6 +42,7 @@ export function ConfirmPaymentDialog({
                                      }: ConfirmPaymentDialogProps) {
     const {t} = useTranslation();
     const remainingBalance = currentBalance - totalCost;
+    const hasEnoughCredits = remainingBalance >= 0;
 
     return (
         <AlertDialog modal={!onboardingActive} open={open} onOpenChange={(nextOpen) => {
@@ -111,18 +114,33 @@ export function ConfirmPaymentDialog({
                     </AlertDescription>
                 </Alert>
 
+                {!hasEnoughCredits && (
+                    <p className="mb-4 text-sm font-medium text-red-600">
+                        {t('checkout.confirm_payment.insufficient_credits', {missing: -remainingBalance})}
+                    </p>
+                )}
+
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isProcessing}>
                         {t('checkout.confirm_payment.cancel')}
                     </AlertDialogCancel>
-                    <Button
-                        onClick={onConfirm}
-                        disabled={isProcessing || remainingBalance < 0}
-                        isLoading={isProcessing}
-                        className="min-w-[120px]"
-                    >
-                        {t('checkout.confirm_payment.confirm')}
-                    </Button>
+                    {hasEnoughCredits ? (
+                        <Button
+                            onClick={onConfirm}
+                            disabled={isProcessing}
+                            isLoading={isProcessing}
+                            className="min-w-[120px]"
+                        >
+                            {t('checkout.confirm_payment.confirm')}
+                        </Button>
+                    ) : (
+                        <Button
+                            onClick={() => navigate(localizePath('/recharge'))}
+                            className="min-w-[120px]"
+                        >
+                            {t('checkout.confirm_payment.buy_credits')}
+                        </Button>
+                    )}
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

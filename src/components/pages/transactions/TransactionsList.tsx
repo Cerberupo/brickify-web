@@ -93,13 +93,13 @@ export function TransactionsList() {
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center">
-                                                {tx.type === 'recharge' ? (
+                                                {tx.type === 'recharge' || tx.type === 'refund' ? (
                                                     <ArrowUpRight className="mr-1 h-4 w-4 text-green-500"/>
                                                 ) : (
                                                     <ArrowDownLeft className="mr-1 h-4 w-4 text-red-500"/>
                                                 )}
                                                 <span className="capitalize">
-                            {tx.type === 'recharge' ? t('transactions.type_recharge', {defaultValue: 'Recharge'}) : t('transactions.type_spend', {defaultValue: 'Spend'})}
+                            {t(`transactions.type_${tx.type === 'recharge' || tx.type === 'refund' ? tx.type : 'spend'}`)}
                         </span>
                                             </div>
                                         </TableCell>

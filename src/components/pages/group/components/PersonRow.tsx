@@ -1,10 +1,10 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Toaster, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription} from '@/components/ui';
 import {Camera, ChevronDown, ChevronUp, Download, Pencil, Trash2, RefreshCw} from 'lucide-react';
 import favicon from '@/images/favicon.png';
 import {PartPieces} from './PartPieces';
-import {rematchPart, type MatchPart} from '@/lib/services/groups';
+import {getRematchJob, rematchPart, type ActiveRematch, type MatchPart, type RematchJobStatus} from '@/lib/services/groups';
 import {userAtom, setUser} from '@/lib/stores/authStore';
 import ShareActions from '@/components/common/ShareActions';
 import {LegoComposite} from '@/components';
@@ -15,11 +15,28 @@ import {toast} from 'sonner';
 
 const faviconUrl: string = typeof favicon === 'string' ? favicon : (favicon as any).src;
 
+const REMATCH_POLL_MS = 4000;
+const REMATCH_COST = 30;
+const RETRY_REFUNDED_COST = 25;
+
 const normalizeId = (p: any): string | null => {
     if (!p) return null;
     if (typeof p === 'string') return p;
     const id = p.id || p._id || p.pieceId;
     return id ? String(id) : null;
+};
+
+// Cambia un miembro dentro del grupo guardado en memoria (también dentro de las parejas)
+const updatePersonInGroup = (base: any, personKey: string, update: (person: any) => any) => {
+    const applyToPerson = (p: any) => (String(p?.id || p?._id) === personKey ? update(p) : p);
+    return Array.isArray(base?.referencePeople)
+        ? base.referencePeople.map((entry: any) => {
+            if (entry?.type === 'group' && Array.isArray(entry.people)) {
+                return {...entry, people: entry.people.map(applyToPerson)};
+            }
+            return applyToPerson(entry);
+        })
+        : base?.referencePeople;
 };
 
 export interface PersonRowProps {
@@ -72,60 +89,144 @@ export function PersonRow({
         if (onPartSelectedChange) onPartSelectedChange(person.id, part, pieceId);
     }, [onPartSelectedChange, person.id]);
 
-    const [isRematching, setIsRematching] = useState<Record<string, boolean>>({});
+    // Al plegar o cambiar de página la fila se vuelve a montar con los datos del grupo: deben tener la pieza elegida
+    const handleSelectionSaved = useCallback((part: MatchPart, pieceId: string) => {
+        if (!setGroup) return;
+        const key = String(person?.id || person?._id);
+        setGroup((prev: any) => {
+            const base = prev || group;
+            return {
+                ...base,
+                referencePeople: updatePersonInGroup(base, key, (p: any) => ({
+                    ...p,
+                    matches: {...p.matches, [part]: {...p.matches?.[part], selectedPiece: pieceId}}
+                }))
+            };
+        });
+    }, [setGroup, group, person?.id, person?._id]);
+
+    const [sendingRematch, setSendingRematch] = useState<Record<string, boolean>>({});
     const [rematchPartToConfirm, setRematchPartToConfirm] = useState<MatchPart | null>(null);
+
+    const personKey = String(person?.id || person?._id);
+
+    // Kept in the group, so the search is still shown after changing page or reloading
+    const activeJobs: ActiveRematch[] = useMemo(() => {
+        const all: ActiveRematch[] = Array.isArray(group?.activeRematches) ? group.activeRematches : [];
+        return all.filter(job => String(job.personId) === personKey);
+    }, [group?.activeRematches, personKey]);
+
+    const isRematching: Record<string, boolean> = useMemo(() => {
+        const out: Record<string, boolean> = {...sendingRematch};
+        activeJobs.forEach((job) => { out[job.part] = true; });
+        return out;
+    }, [sendingRematch, activeJobs]);
+
+    const getRematchCost = (part: MatchPart): number => {
+        const data = person?.matches?.[part];
+        if (data?.status !== 'error') return REMATCH_COST;
+        return data?.refundedAt ? RETRY_REFUNDED_COST : 0;
+    };
+
+    const applyBalance = (balance?: number) => {
+        const current = userAtom.get();
+        if (current && typeof balance === 'number') {
+            setUser({...current, balance});
+        }
+    };
 
     const handleRematch = useCallback(async (part: MatchPart) => {
         if (!groupId || !person?.id) return;
-        setIsRematching(prev => ({...prev, [part]: true}));
+        setSendingRematch(prev => ({...prev, [part]: true}));
         try {
             const result = await rematchPart(groupId, person.id, part);
-            toast.success(t('group.rematchSuccess', 'AI Re-match completed successfully!'));
-
-            if (setGroup && group) {
+            if (setGroup) {
                 setGroup((prev: any) => {
                     const base = prev || group;
-                    const targetId = String(person?.id || person?._id);
-                    const applyToPerson = (p: any) => {
-                        const pId = String(p?.id || p?._id);
-                        if (pId !== targetId) return p;
-                        return {
-                            ...p,
-                            matches: result.referencePerson.matches
-                        };
-                    };
-                    const updatedReferencePeople = Array.isArray(base?.referencePeople)
-                        ? base.referencePeople.map((entry: any) => {
-                            if (entry?.type === 'group' && Array.isArray(entry.people)) {
-                                return {...entry, people: entry.people.map(applyToPerson)};
-                            }
-                            const entryId = String(entry?.id || entry?._id);
-                            return entryId === targetId ? applyToPerson(entry) : entry;
-                        })
-                        : base?.referencePeople;
-
                     return {
                         ...base,
-                        referencePeople: updatedReferencePeople
+                        activeRematches: [
+                            ...(base?.activeRematches || []),
+                            {jobId: result.jobId, personId: personKey, part}
+                        ]
                     };
                 });
             }
-
-            const current = userAtom.get();
-            if (current) {
-                setUser({
-                    ...current,
-                    balance: result.balance
-                });
-            }
+            applyBalance(result.balance);
+            toast.info(t('group.rematchStarted'));
         } catch (error: any) {
             console.error('Error during rematch:', error);
-            const errMsg = error?.message || t('group.rematchError', 'Failed to rematch. Please try again.');
-            toast.error(errMsg);
+            toast.error(t(`group.rematchErrors.${error?.code}`, {
+                defaultValue: error?.message || t('group.rematchError')
+            }));
         } finally {
-            setIsRematching(prev => ({...prev, [part]: false}));
+            setSendingRematch(prev => ({...prev, [part]: false}));
         }
-    }, [groupId, person?.id, setGroup, group, t]);
+    }, [groupId, person?.id, personKey, setGroup, group, t]);
+
+    const finishRematch = (job: ActiveRematch, result: RematchJobStatus) => {
+        if (setGroup) {
+            setGroup((prev: any) => {
+                const base = prev || group;
+                const referencePeople = result.referencePerson
+                    ? updatePersonInGroup(base, personKey, (p: any) => ({
+                        ...p,
+                        matches: result.referencePerson?.matches,
+                        status: result.referencePerson?.status
+                    }))
+                    : base?.referencePeople;
+                return {
+                    ...base,
+                    referencePeople,
+                    status: result.groupStatus || base?.status,
+                    activeRematches: (base?.activeRematches || []).filter((j: ActiveRematch) => j.jobId !== job.jobId)
+                };
+            });
+        }
+        applyBalance(result.balance);
+
+        if (result.status === 'done') {
+            // The previous selection belongs to the pieces that have just been replaced
+            handlePartSelectedChange(job.part, null);
+            toast.success(t('group.rematchSuccess'));
+        } else if (result.failureCode === 'catalog_exhausted') {
+            toast.error(t('group.rematchCatalogExhausted'));
+        } else {
+            toast.error(t('group.rematchFailed'));
+        }
+    };
+    const finishRematchRef = useRef(finishRematch);
+    finishRematchRef.current = finishRematch;
+
+    const activeJobsKey = activeJobs.map(job => job.jobId).join(',');
+    useEffect(() => {
+        if (!activeJobsKey) return undefined;
+        let stopped = false;
+        let checking = false;
+        const check = async () => {
+            if (checking) return;
+            checking = true;
+            try {
+                for (const job of activeJobs) {
+                    const result = await getRematchJob(job.jobId);
+                    if (stopped) return;
+                    if (result.status === 'done' || result.status === 'failed') {
+                        finishRematchRef.current(job, result);
+                    }
+                }
+            } catch (error) {
+                // A network error must not lose the search: the next check tries again
+                console.error('Error checking rematch:', error);
+            } finally {
+                checking = false;
+            }
+        };
+        const timer = setInterval(check, REMATCH_POLL_MS);
+        return () => {
+            stopped = true;
+            clearInterval(timer);
+        };
+    }, [activeJobsKey]);
 
     // Mapear MatchPart a categoría UI para aplicar fallbacks reutilizables
     const partToCategory = (part: MatchPart): 'hair' | 'head' | 'body' | 'pants' => {
@@ -353,6 +454,10 @@ export function PersonRow({
         }
     }, []);
 
+    // The first search must finish before searching a part again
+    const canRematchNow = !['inProcess', 'inAssembly'].includes(String(group?.status || ''));
+    const confirmRematchCost = rematchPartToConfirm ? getRematchCost(rematchPartToConfirm) : 0;
+
     if (!isExpanded) {
         return (
             <div className="flex items-center justify-between rounded-md border px-3 py-2">
@@ -440,10 +545,12 @@ export function PersonRow({
                                 {t('group.confirmRematchDesc1', '¿Estás seguro de que quieres volver a emparejar esta pieza con Inteligencia Artificial?')}
                             </p>
                             <p className="text-yellow-600 font-medium border-l-2 border-yellow-500 pl-3 py-1 bg-yellow-50/50 rounded-r-md">
-                                ⚠️ {t('group.confirmRematchWarning', 'Nota: La IA analizará la foto de nuevo para esta categoría, pero podría llegar a sugerir las mismas piezas si considera que son la mejor opción disponible en el catálogo.')}
+                                {t('group.confirmRematchWarning')}
                             </p>
                             <p className="text-sm font-semibold text-gray-800">
-                                💰 {t('group.confirmRematchCost', 'Coste de la operación: 30 créditos')}
+                                💰 {confirmRematchCost > 0
+                                    ? t('group.confirmRematchCost', {cost: confirmRematchCost})
+                                    : t('group.confirmRematchFree')}
                             </p>
                         </DialogDescription>
                     </DialogHeader>
@@ -464,7 +571,7 @@ export function PersonRow({
                                 }
                             }}
                         >
-                            {t('group.confirmRematchBtn', 'Confirmar y Pagar')}
+                            {confirmRematchCost > 0 ? t('group.confirmRematchBtn') : t('group.confirmRematchFreeBtn')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -531,7 +638,7 @@ export function PersonRow({
                                             <span className={getStatusPillClasses(status)}>
                                                 {t(`dashboard.groupStatus.${getStatusLabelKey(status)}`)}
                                             </span>
-                                            {showActions && status === 'done' && (
+                                            {canRematchNow && ((showActions && status === 'done') || status === 'error') && (
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
@@ -544,7 +651,11 @@ export function PersonRow({
                                                     ) : (
                                                         <RefreshCw className="h-3.5 w-3.5" />
                                                     )}
-                                                    {t('group.rematchBtn', 'Re-match (30 credits)')}
+                                                    {isRematching[part] && t('group.rematchSearching')}
+                                                    {!isRematching[part] && status === 'done' && t('group.rematchBtn')}
+                                                    {!isRematching[part] && status === 'error' && (getRematchCost(part as MatchPart) > 0
+                                                        ? t('group.retryBtn', {cost: getRematchCost(part as MatchPart)})
+                                                        : t('group.retryFreeBtn'))}
                                                 </Button>
                                             )}
                                         </div>
@@ -554,6 +665,7 @@ export function PersonRow({
                                             part={part as MatchPart}
                                             data={data}
                                             onSelectedChange={handlePartSelectedChange}
+                                            onSelectionSaved={handleSelectionSaved}
                                             side={side}
                                         />
                                     </div>

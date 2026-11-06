@@ -5,6 +5,7 @@ import {setSelectedPiece} from '@/lib/services/groups';
 import {getStableImageSrc, invalidateImage, makePieceKey} from '@/lib/lego/imageCache';
 import {buildPickABrickUrl} from '@/lib/lego/pab';
 import {getCurrentLocale} from '@/lib/localeLinks';
+import {toast} from 'sonner';
 
 const faviconUrl: string = '/favicon.png';
 
@@ -14,15 +15,18 @@ export interface PartPiecesProps {
     part: MatchPart;
     data: any;
     onSelectedChange?: (part: MatchPart, pieceId: string | null) => void;
+    /** El servidor ya tiene guardada esta pieza. */
+    onSelectionSaved?: (part: MatchPart, pieceId: string) => void;
     /** Lado a mostrar para las imágenes (frontal/trasera). Default: 'front' */
     side?: 'front' | 'back';
 }
 
-export function PartPieces({groupId, personId, part, data, onSelectedChange, side = 'front'}: PartPiecesProps) {
-    useTranslation();
+export function PartPieces({groupId, personId, part, data, onSelectedChange, onSelectionSaved, side = 'front'}: PartPiecesProps) {
+    const {t} = useTranslation();
     const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
     const initializedRef = useRef(false);
     const savingRef = useRef(false);
+    const latestChoiceRef = useRef<string | null>(null);
     const pieces = Array.isArray((data as any)?.matchedPieceIds) ? (data as any).matchedPieceIds : [];
     const status = String((data as any)?.status || '').toLowerCase();
 
@@ -62,21 +66,32 @@ export function PartPieces({groupId, personId, part, data, onSelectedChange, sid
         if (pid === selectedPieceId) return;
         setSelectedPieceId(pid);
         if (onSelectedChange) onSelectedChange(part, pid);
+        latestChoiceRef.current = pid;
+        // Ya hay un guardado en marcha: al terminar guardará esta última elección
+        if (savingRef.current) return;
+        savingRef.current = true;
         // Realizar la llamada al backend en el onClick, no en efectos/parent
         (async () => {
-            if (savingRef.current) return;
-            savingRef.current = true;
+            let saved = serverSelectedId;
             try {
-                await setSelectedPiece(groupId, personId, part, pid);
+                while (latestChoiceRef.current && saved !== latestChoiceRef.current) {
+                    const next: string = latestChoiceRef.current;
+                    await setSelectedPiece(groupId, personId, part, next);
+                    saved = next;
+                }
             } catch (e) {
-                // Silenciar error para no molestar; la UI mantiene la selección local.
-                // Puedes reemplazar por un toast si se desea notificar.
-                // console.error('No se pudo guardar la pieza seleccionada', e);
+                // Mostrar lo que tiene el servidor, para que pantalla y descarga no digan cosas distintas
+                const fallback = saved || normalizeId(pieces[0]);
+                latestChoiceRef.current = fallback;
+                setSelectedPieceId(fallback);
+                if (onSelectedChange) onSelectedChange(part, fallback);
+                toast.error(t('group.selectPieceError'));
             } finally {
                 savingRef.current = false;
             }
+            if (saved && onSelectionSaved) onSelectionSaved(part, saved);
         })();
-    }, [groupId, personId, part, onSelectedChange, selectedPieceId]);
+    }, [groupId, personId, part, onSelectedChange, onSelectionSaved, selectedPieceId, serverSelectedId, pieces, t]);
 
     if (status !== 'done' || pieces.length === 0) return null;
 

@@ -21,6 +21,8 @@ export interface Group {
         hairDescription?: string;
         faceDescription?: string;
     }[];
+    // Searches for new pieces that have not finished yet
+    activeRematches?: { jobId: string; personId: string; part: 'wig' | 'head' | 'upperPart' | 'lowerPart' }[];
     status:
         | 'needsMoreUsers'       // Needs more users
         | 'readyForPayment'      // Ready to place order

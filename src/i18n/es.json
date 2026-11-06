@@ -60,6 +60,7 @@
     "no_transactions": "No se encontraron transacciones",
     "type_recharge": "Recarga",
     "type_spend": "Gasto",
+    "type_refund": "Reembolso",
     "status_completed": "Completado",
     "status_pending": "Pendiente",
     "status_failed": "Fallido"
@@ -166,11 +167,11 @@
       "inProcess": "Seleccionando Piezas",
       "waitingForApproval": "Esperando Aprobación",
       "orderPlaced": "Pedido Realizado",
-      "orderIncomplete": "Pedido Incompleto",
+      "orderIncomplete": "Con errores",
       "inReview": "Verificando Piezas",
       "inAssembly": "En Montaje",
       "readyForShipment": "Listo para Envío",
-      "shipped": "Enviado"
+      "shipped": "Lista"
     }
   },
   "login": {
@@ -458,11 +459,27 @@
       "lowerPart": "Piernas"
     },
     "rematchBtn": "Re-emparejar IA (30 cr.)",
-    "rematchSuccess": "¡Búsqueda IA relanzada con éxito!",
+    "selectPieceError": "No se ha podido guardar la pieza elegida. Inténtalo de nuevo.",
+    "rematchSuccess": "¡Ya tienes piezas nuevas!",
+    "confirmRematchFree": "Esta vez no tiene coste",
+    "confirmRematchFreeBtn": "Reintentar gratis",
+    "rematchStarted": "Buscando piezas nuevas. Puede tardar unos minutos y puedes salir de esta página.",
+    "rematchSearching": "Buscando…",
+    "rematchFailed": "No hemos podido encontrar piezas nuevas. No se te ha cobrado.",
+    "rematchCatalogExhausted": "Ya has visto todas las piezas disponibles para esta parte. No se te ha cobrado.",
+    "rematchError": "No se ha podido iniciar la búsqueda. Inténtalo de nuevo.",
+    "retryBtn": "Reintentar ({{cost}} cr.)",
+    "retryFreeBtn": "Reintentar gratis",
+    "rematchErrors": {
+      "INSUFFICIENT_BALANCE": "No tienes créditos suficientes.",
+      "REMATCH_IN_PROGRESS": "Ya estamos buscando piezas para esta parte.",
+      "REMATCH_LIMIT_REACHED": "Has hecho demasiados intentos. Prueba de nuevo más tarde.",
+      "REMATCH_NOT_AVAILABLE": "Ahora no se puede buscar en esta parte. Espera a que termine el pedido."
+    },
     "confirmRematchTitle": "Re-emparejar pieza con IA",
     "confirmRematchDesc1": "¿Estás seguro de que quieres volver a emparejar esta pieza con Inteligencia Artificial?",
-    "confirmRematchWarning": "Nota: La IA analizará la foto de nuevo para esta categoría, pero podría llegar a sugerir las mismas piezas si considera que son la mejor opción disponible en el catálogo.",
-    "confirmRematchCost": "Coste de la operación: 30 créditos",
+    "confirmRematchWarning": "La IA buscará piezas distintas a las que ya has visto. Si no encuentra ninguna, no se te cobra.",
+    "confirmRematchCost": "Coste de la operación: {{cost}} créditos",
     "confirmRematchBtn": "Confirmar y Pagar"
   },
   "checkout": {
@@ -504,7 +521,9 @@
       "person_only_warning_title": "Sube solo fotos de personas",
       "person_only_warning": "Las imágenes que no sean de personas se cobrarán igualmente. La IA solo recomienda piezas LEGO para construir personas como minifiguras.",
       "confirm": "Confirmar y procesar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "insufficient_credits": "Te faltan {{missing}} créditos para hacer este pedido.",
+      "buy_credits": "Comprar créditos"
     }
   },
   "publicShare": {
