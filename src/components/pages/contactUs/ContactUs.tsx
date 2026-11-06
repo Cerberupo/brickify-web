@@ -19,7 +19,6 @@ export function ContactUsPage() {
 
     const onSubmit = (data: any) => {
         // In a real app, you would send the form data to a server
-        console.log('Contact form submitted:', data);
 
         // Simulate a successful submission
         setSubmitted(true);

@@ -24,9 +24,7 @@ export function LoginForm({redirect}: { redirect?: string }) {
     const handleLogin = async (data: { email: string; password: string }) => {
         setIsLoading(true);
         try {
-            console.log('Login attempt with:', data);
-            const response = await login(data.email, data.password);
-            console.log('Login response:', response);
+            await login(data.email, data.password);
 
             toast.success(t('login.successMessage', 'Login successful!'));
             // Navigate to dashboard or redirect path after successful login
@@ -49,12 +47,10 @@ export function LoginForm({redirect}: { redirect?: string }) {
 
     const handleGoogleLoginSuccess = async (credentialResponse: any) => {
         // Validate the credential with the backend
-        console.log('Google login success:', credentialResponse);
         setIsLoading(true);
 
         try {
-            const data = await googleLoginRequest(credentialResponse, i18n.language);
-            console.log('Login response:', data);
+            await googleLoginRequest(credentialResponse, i18n.language);
 
             toast.success(t('login.successMessage', 'Login successful!'));
             // Navigate to dashboard or redirect path after successful login
