@@ -49,15 +49,8 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
     const [saving, setSaving] = useState(false);
 
     // Image handling (add mode uses File, edit mode can keep existing image and optionally change)
-    const [noImage, setNoImage] = useState<boolean>(() => {
-        // If initial explicitly has no image OR there is no image source in initial, default to noImage in edit mode
-        if (mode === 'edit') {
-            const hasImgFlag = initial?.hasImage;
-            const hasSrc = Boolean(initial?.imageSignedUrl || initial?.imagePath || initial?.avatar);
-            if (hasImgFlag === false || !hasSrc) return true;
-        }
-        return false;
-    });
+    // La API exige foto en todos los miembros, así que el modo "sin imagen" ya no se activa.
+    const [noImage, setNoImage] = useState<boolean>(false);
     const [hairDescription, setHairDescription] = useState(initial?.hairDescription ?? '');
     const [faceDescription, setFaceDescription] = useState(initial?.faceDescription ?? '');
 
@@ -95,17 +88,11 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
         setName(initial.name ?? '');
         setDescription(initial.description ?? '');
         const hasSrc = Boolean(initial.imageSignedUrl || initial.imagePath || initial.avatar);
-        const derivedNoImage = initial.hasImage === false || !hasSrc;
-        setNoImage(derivedNoImage);
+        setNoImage(false);
         setHairDescription(initial.hairDescription ?? '');
         setFaceDescription(initial.faceDescription ?? '');
         setAvatarPreview(hasSrc ? (initial.imageSignedUrl || initial.imagePath || initial.avatar || null) : null);
         setAvatarFile(undefined);
-        // En modo "add" ya no permitimos la opción de "sin imagen".
-        // Forzamos noImage=false aunque llegue en initial, para requerir imagen al crear.
-        if (mode === 'add') {
-            setNoImage(false);
-        }
     }, [initial, mode]);
 
     const canSubmit = useMemo(() => {
@@ -118,9 +105,9 @@ export const InlineMemberEditor: React.FC<InlineMemberEditorProps> = ({
             // allow existing preview (coming from initial data) OR a new file
             return !!avatarFile || !!avatarPreview; // require some image when not in noImage mode
         }
-        // edit mode: image change is optional
-        return true;
-    }, [name, noImage, hairDescription, faceDescription, avatarFile, mode]);
+        // edit mode: image change is optional, except for older members saved without a photo
+        return initial?.hasImage !== false || !!avatarFile;
+    }, [name, noImage, hairDescription, faceDescription, avatarFile, avatarPreview, initial?.hasImage, mode]);
 
     // Emit current add payload & validity when used inside a composite editor
     useEffect(() => {

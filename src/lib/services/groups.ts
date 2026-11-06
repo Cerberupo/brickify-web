@@ -350,26 +350,55 @@ export async function disableMemberShare(groupId: string, personId: string, gues
     await fetchApi(url, {method: 'POST'});
 }
 
+/** A search for new pieces that has not finished yet. */
+export interface ActiveRematch {
+    jobId: string;
+    personId: string;
+    part: MatchPart;
+}
+
+export interface RematchJobStatus {
+    jobId: string;
+    personId: string;
+    part: MatchPart;
+    status: 'pending' | 'processing' | 'done' | 'failed';
+    cost: number;
+    failureCode?: string | null;
+    balance?: number;
+    groupStatus?: string;
+    referencePerson?: any;
+}
+
 /**
- * Rematches a specific part for a reference person by running the AI matcher.
- * Costs 30 credits.
+ * Asks for new pieces for one part. The credits are held and the search runs in the background.
  * POST /people/:id/rematch/:part?groupId=...
- * @returns The updated reference person and new user balance
  */
 export async function rematchPart(
     groupId: string,
     referencePersonId: string,
     part: MatchPart
-): Promise<{ referencePerson: any; balance: number }> {
+): Promise<{ jobId: string; status: string; balance: number }> {
     const url = `/people/${encodeURIComponent(referencePersonId)}/rematch/${encodeURIComponent(part)}?groupId=${encodeURIComponent(groupId)}`;
     const response = await fetchApi<{
         status: string;
         data: {
-            referencePerson: any;
+            jobId: string;
+            status: string;
             balance: number;
         };
     }>(url, {
         method: 'POST'
     });
+    return response.data;
+}
+
+/**
+ * Progress of a search started with rematchPart.
+ * GET /people/rematch-jobs/:id
+ */
+export async function getRematchJob(jobId: string): Promise<RematchJobStatus> {
+    const response = await fetchApi<{ status: string; data: RematchJobStatus }>(
+        `/people/rematch-jobs/${encodeURIComponent(jobId)}`
+    );
     return response.data;
 }

@@ -45,6 +45,8 @@ interface GroupedReferenceListProps {
     editingGroupInitial?: { entryId: string; name: string; people: any[] } | null;
     onCancelEditGroup?: () => void;
     onSaveEditGroup?: (data: { entryId: string; subgroupName: string; people: any[] }) => Promise<void>;
+    // Every member of the order, not only the current page: downloads must include all of them
+    allEntries?: any[];
     // Group state for share updates
     group: any;
     setGroup: (g: any) => void;
@@ -53,6 +55,7 @@ interface GroupedReferenceListProps {
 export function GroupedReferenceList({
                                          groupId,
                                          entries,
+                                         allEntries,
                                          onEdit,
                                          onDelete,
                                          onEditGroup,
@@ -122,7 +125,7 @@ export function GroupedReferenceList({
     };
 
     const hasAnyGeneratedPieces = (() => {
-        const people = flattenPeople(entries);
+        const people = flattenPeople(allEntries || entries);
         for (const p of people) {
             if (String(p?.status || '').toLowerCase() !== 'processed') continue;
             const matches = p?.matches && typeof p.matches === 'object' ? p.matches : null;
@@ -151,7 +154,7 @@ export function GroupedReferenceList({
     };
 
     const handleDownloadAllClick = () => {
-        const people = flattenPeople(entries).filter(p => String(p?.status || '').toLowerCase() === 'processed');
+        const people = flattenPeople(allEntries || entries).filter(p => String(p?.status || '').toLowerCase() === 'processed');
         const elementIds: string[] = [];
         for (const p of people) {
             elementIds.push(...collectFromPerson(p));

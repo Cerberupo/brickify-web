@@ -825,6 +825,7 @@ export function GroupPage() {
                             <GroupedReferenceList
                                 groupId={groupId}
                                 entries={pagedEntries as any}
+                                allEntries={group.referencePeople as any[]}
                                 group={group}
                                 setGroup={setGroup}
                                 onEdit={(member) => {
